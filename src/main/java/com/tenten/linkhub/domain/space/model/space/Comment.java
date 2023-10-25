@@ -10,11 +10,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Getter
 @Table(name = "comments")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class Comment {
 
     @Id
@@ -27,7 +30,7 @@ public class Comment {
     private Comment parentComment;
 
     @Column(nullable = false)
-    private Integer group;
+    private Long group;
 
     @Column(nullable = false)
     private String content;

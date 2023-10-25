@@ -10,12 +10,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jdk.jfr.Name;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Getter
 @Table(name = "tags")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class Tag {
 
     @Id
