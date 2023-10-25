@@ -37,16 +37,16 @@ public class Space {
     private Category category;
 
     @Column(nullable = false)
-    private boolean isVisible;
+    private Boolean isVisible;
 
     @Column(nullable = false)
-    private boolean isComment;
+    private Boolean isComment;
 
     @Column(nullable = false)
-    private boolean isLinkSummarizable;
+    private Boolean isLinkSummarizable;
 
     @Column(nullable = false)
-    private boolean isReadMarkEnabled;
+    private Boolean isReadMarkEnabled;
 
     @Column(nullable = false)
     private Long viewCount;
