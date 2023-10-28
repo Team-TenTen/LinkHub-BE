@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,11 +38,16 @@ public class SpaceController {
     @GetMapping(value = "/search",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SpacesFindByQueryApiResponses> findSpacesByQuery(
-            Pageable pageable,
             @ModelAttribute SpacesFindByQueryApiRequest request
     ) {
+        PageRequest pageRequest = PageRequest.of(
+                request.pageNumber(),
+                request.pageSize(),
+                request.sort() != null ? Sort.by(request.sort()) : Sort.unsorted()
+        );
+
         SpacesFindByQueryResponses responses = spaceService.findSpacesByQuery(
-                mapper.toSpacesFindByQueryRequest(request, pageable)
+                mapper.toSpacesFindByQueryRequest(request, pageRequest)
         );
 
         SpacesFindByQueryApiResponses apiResponses = SpacesFindByQueryApiResponses.from(responses);
