@@ -6,7 +6,9 @@ import com.tenten.linkhub.domain.space.controller.mapper.SpaceApiMapper;
 import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.SpacesFindByQueryResponses;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +25,9 @@ public class SpaceController {
         this.mapper = mapper;
     }
 
-    @RequestMapping("/search")
+
+    @GetMapping(value = "/search",
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SpacesFindByQueryApiResponses> findSpacesByQuery(
             Pageable pageable,
             @ModelAttribute SpacesFindByQueryApiRequest request
