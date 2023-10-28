@@ -20,7 +20,8 @@ public record SpacesFindByQueryApiResponses(
                         r.category(),
                         r.viewCount(),
                         r.scrapCount(),
-                        r.favoriteCount()));
+                        r.favoriteCount(),
+                        r.spaceImagePath()));
 
         PageMetaData pageMetaData = new PageMetaData(
                 mapResponses.hasNext(),

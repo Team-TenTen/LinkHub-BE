@@ -2,7 +2,9 @@ package com.tenten.linkhub.domain.space.service;
 
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.space.Space;
+import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
+import com.tenten.linkhub.domain.space.repository.spaceimage.SpaceImageJpaRepository;
 import com.tenten.linkhub.domain.space.service.dto.SpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.SpacesFindByQueryResponse;
 import com.tenten.linkhub.domain.space.service.dto.SpacesFindByQueryResponses;
@@ -30,6 +32,9 @@ class DefaultSpaceServiceTest {
 
     @Autowired
     private SpaceJpaRepository spaceJpaRepository;
+
+    @Autowired
+    private SpaceImageJpaRepository spaceImageJpaRepository;
 
     @BeforeEach
     void setUp() {
@@ -59,6 +64,7 @@ class DefaultSpaceServiceTest {
         assertThat(content.get(0).description()).isEqualTo("첫번째 스페이스 소개글");
         assertThat(content.get(0).category()).isEqualTo(Category.KNOWLEDGE_ISSUE_CAREER);
         assertThat(content.get(0).category()).isEqualTo(Category.KNOWLEDGE_ISSUE_CAREER);
+        assertThat(content.get(0).spaceImagePath()).isEqualTo("https://testimage1");
     }
 
     private void setupData() {
@@ -86,6 +92,14 @@ class DefaultSpaceServiceTest {
 
         spaceJpaRepository.save(space1);
         spaceJpaRepository.save(space2);
+
+        spaceImageJpaRepository.save(
+                new SpaceImage(space1, "https://testimage1", "테스트 이미지1")
+        );
+
+        spaceImageJpaRepository.save(
+                new SpaceImage(space2, "https://testimage2", "테스트 이미지2")
+        );
     }
 
 }

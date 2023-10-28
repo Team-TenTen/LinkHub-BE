@@ -1,8 +1,11 @@
 package com.tenten.linkhub.domain.space.repository.space.query;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.tenten.linkhub.domain.space.model.space.QSpaceImage;
 import com.tenten.linkhub.domain.space.model.space.Space;
+import com.tenten.linkhub.domain.space.repository.space.dto.QSpaceWithSpaceImage;
 import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
+import com.tenten.linkhub.domain.space.repository.space.dto.SpaceWithSpaceImage;
 import com.tenten.linkhub.domain.space.repository.space.query.DynamicQueryFactory;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static com.tenten.linkhub.domain.space.model.space.QSpace.space;
+import static com.tenten.linkhub.domain.space.model.space.QSpaceImage.spaceImage;
 
 @Repository
 public class SpaceQueryRepository {
@@ -23,11 +27,15 @@ public class SpaceQueryRepository {
         this.dynamicQueryFactory = new DynamicQueryFactory();
     }
 
-    public Slice<Space> findByCondition(QueryCondition condition) {
+    public Slice<SpaceWithSpaceImage> findByCondition(QueryCondition condition) {
 
-        List<Space> spaces = queryFactory
-                .select(space)
+        List<SpaceWithSpaceImage> spaces = queryFactory
+                .select(new QSpaceWithSpaceImage(
+                        space,
+                        spaceImage
+                ))
                 .from(space)
+                .join(spaceImage).on(space.id.eq(spaceImage.space.id))
                 .where(space.isDeleted.eq(false),
                         dynamicQueryFactory.eqSpaceName(condition.keyWord()),
                         dynamicQueryFactory.eqCategory(condition.filter())

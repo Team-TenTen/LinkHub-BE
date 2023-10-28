@@ -2,6 +2,7 @@ package com.tenten.linkhub.domain.space.repository.space;
 
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
+import com.tenten.linkhub.domain.space.repository.space.dto.SpaceWithSpaceImage;
 import com.tenten.linkhub.domain.space.repository.space.query.SpaceQueryRepository;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
@@ -18,7 +19,7 @@ public class DefaultSpaceRepository implements SpaceRepository {
     }
 
     @Override
-    public Slice<Space> findByQuery(QueryCondition queryCondition) {
+    public Slice<SpaceWithSpaceImage> findByQuery(QueryCondition queryCondition) {
         return spaceQueryRepository.findByCondition(queryCondition);
     }
 

@@ -9,6 +9,7 @@ public record SpacesFindByQueryApiResponse(
         Category category,
         Long viewCount,
         Long scrapCount,
-        Long favoriteCount
+        Long favoriteCount,
+        String spaceImagePath
 ) {
 }

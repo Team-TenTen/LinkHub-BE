@@ -2,6 +2,7 @@ package com.tenten.linkhub.domain.space.service;
 
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
+import com.tenten.linkhub.domain.space.repository.space.dto.SpaceWithSpaceImage;
 import com.tenten.linkhub.domain.space.service.dto.SpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.mapper.SpaceMapper;
@@ -23,7 +24,7 @@ public class DefaultSpaceService implements SpaceService{
     @Override
     @Transactional(readOnly = true)
     public SpacesFindByQueryResponses findSpacesByQuery(SpacesFindByQueryRequest request) {
-        Slice<Space> spaces = spaceRepository.findByQuery(mapper.toQueryCond(request));
+        Slice<SpaceWithSpaceImage> spaces = spaceRepository.findByQuery(mapper.toQueryCond(request));
 
         return SpacesFindByQueryResponses.from(spaces);
     }
