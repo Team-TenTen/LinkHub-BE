@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.space.repository.space;
 
+import com.querydsl.core.types.NullExpression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -50,7 +51,7 @@ public class SpaceQueryRepository {
         return new SliceImpl<>(spaces, condition.pageable(), hasNext);
     }
 
-    private OrderSpecifier<?> spaceSort(Pageable pageable) {
+    private OrderSpecifier<String> spaceSort(Pageable pageable) {
         for (Sort.Order sort: pageable.getSort()){
             String property = sort.getProperty();
 
@@ -64,7 +65,7 @@ public class SpaceQueryRepository {
             }
         }
 
-        return null;
+        return new OrderSpecifier(Order.ASC, NullExpression.DEFAULT, OrderSpecifier.NullHandling.Default);
     }
 
     private BooleanExpression eqCategory(Category filter) {

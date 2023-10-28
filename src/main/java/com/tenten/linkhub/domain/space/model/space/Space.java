@@ -13,6 +13,7 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.Assert;
 
 @Entity
 @Table(name = "spaces")
@@ -56,5 +57,27 @@ public class Space extends BaseEntity {
 
     @Column(nullable = false)
     private Long favoriteCount;
+
+    public Space(Long memberId, String spaceName, String description, Category category, Boolean isVisible, Boolean isComment, Boolean isLinkSummarizable, Boolean isReadMarkEnabled) {
+        Assert.notNull(memberId, "memberId는 null이 될 수 없습니다.");
+        Assert.notNull(spaceName, "spaceName은 null이 될 수 없습니다.");
+        Assert.notNull(category, "category는 null이 될 수 없습니다.");
+        Assert.notNull(isVisible, "isVisible는 null이 될 수 없습니다.");
+        Assert.notNull(isComment, "isComment는 null이 될 수 없습니다.");
+        Assert.notNull(isLinkSummarizable, "isLinkSummarizable는 null이 될 수 없습니다.");
+        Assert.notNull(isReadMarkEnabled, "isReadMarkEnabled는 null이 될 수 없습니다.");
+
+        this.memberId = memberId;
+        this.spaceName = spaceName;
+        this.description = description;
+        this.category = category;
+        this.isVisible = isVisible;
+        this.isComment = isComment;
+        this.isLinkSummarizable = isLinkSummarizable;
+        this.isReadMarkEnabled = isReadMarkEnabled;
+        this.viewCount = 0L;
+        this.scrapCount = 0L;
+        this.favoriteCount = 0L;
+    }
 
 }
