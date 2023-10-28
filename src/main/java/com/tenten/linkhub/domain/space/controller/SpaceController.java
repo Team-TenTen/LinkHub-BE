@@ -28,7 +28,7 @@ public class SpaceController {
     public ResponseEntity<SpacesFindByQueryApiResponses> findSpacesByQuery(
             Pageable pageable,
             @ModelAttribute @Valid SpacesFindByQueryApiRequest request
-    ){
+    ) {
         SpacesFindByQueryResponses responses = spaceService.findSpacesByQuery(
                 mapper.toSpacesFindByQueryRequest(request, pageable)
         );

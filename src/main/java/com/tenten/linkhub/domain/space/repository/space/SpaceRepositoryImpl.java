@@ -6,7 +6,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class SpaceRepositoryImpl implements SpaceRepository{
+public class SpaceRepositoryImpl implements SpaceRepository {
 
     private final SpaceJpaRepository spaceJpaRepository;
     private final SpaceQueryRepository spaceQueryRepository;

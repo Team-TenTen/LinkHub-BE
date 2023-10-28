@@ -32,13 +32,13 @@ class SpaceServiceImplTest {
     private SpaceJpaRepository spaceJpaRepository;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         setupData();
     }
 
     @Test
     @DisplayName("유저는 올바른 키워드, 필터, 정렬 조건들을 통해 Space를 검색할 수 있다.")
-    void findSpacesByQuery(){
+    void findSpacesByQuery() {
         //given
         PageRequest pageRequest = PageRequest.of(
                 0,

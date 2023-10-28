@@ -6,5 +6,4 @@ public record SpacesFindByQueryApiRequest(
         String keyWord,
         Category filter
 ) {
-
 }

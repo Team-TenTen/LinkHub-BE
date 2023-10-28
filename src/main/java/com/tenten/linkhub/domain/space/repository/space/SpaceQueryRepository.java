@@ -22,7 +22,7 @@ public class SpaceQueryRepository {
         this.dynamicQueryFactory = dynamicQueryFactory;
     }
 
-    public Slice<Space> findByCondition(QueryCondition condition){
+    public Slice<Space> findByCondition(QueryCondition condition) {
 
         List<Space> spaces = queryFactory
                 .select(space)

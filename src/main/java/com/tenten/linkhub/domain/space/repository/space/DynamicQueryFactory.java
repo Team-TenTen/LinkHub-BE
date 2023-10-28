@@ -18,14 +18,14 @@ import static com.tenten.linkhub.domain.space.model.space.QSpace.space;
 public class DynamicQueryFactory {
 
     public OrderSpecifier<String> spaceSort(Pageable pageable) {
-        for (Sort.Order sort: pageable.getSort()){
+        for (Sort.Order sort : pageable.getSort()) {
             String property = sort.getProperty();
 
-            switch (property){
+            switch (property) {
                 case "favorite_count" -> {
                     return new OrderSpecifier(Order.DESC, space.favoriteCount);
                 }
-                case "created_at"-> {
+                case "created_at" -> {
                     return new OrderSpecifier(Order.DESC, space.createdAt);
                 }
             }
@@ -35,7 +35,7 @@ public class DynamicQueryFactory {
     }
 
     public BooleanExpression eqCategory(Category filter) {
-        if (filter != null){
+        if (filter != null) {
             return space.category.eq(filter);
         }
 
@@ -43,7 +43,7 @@ public class DynamicQueryFactory {
     }
 
     public BooleanExpression eqSpaceName(String keyWord) {
-        if (StringUtils.hasText(keyWord)){
+        if (StringUtils.hasText(keyWord)) {
             return space.spaceName.contains(keyWord);
         }
 
