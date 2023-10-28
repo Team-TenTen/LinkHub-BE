@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @Transactional
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
-class SpaceServiceImplTest {
+class DefaultSpaceServiceTest {
 
     @Autowired
     private SpaceService spaceService;

@@ -9,15 +9,13 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
-public class SpaceServiceImpl implements SpaceService{
+public class DefaultSpaceService implements SpaceService{
 
     private final SpaceRepository spaceRepository;
     private final SpaceMapper mapper;
 
-    public SpaceServiceImpl(SpaceRepository spaceRepository, SpaceMapper mapper) {
+    public DefaultSpaceService(SpaceRepository spaceRepository, SpaceMapper mapper) {
         this.spaceRepository = spaceRepository;
         this.mapper = mapper;
     }

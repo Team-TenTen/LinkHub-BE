@@ -1,8 +1,9 @@
-package com.tenten.linkhub.domain.space.repository.space;
+package com.tenten.linkhub.domain.space.repository.space.query;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
+import com.tenten.linkhub.domain.space.repository.space.query.DynamicQueryFactory;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
@@ -17,9 +18,9 @@ public class SpaceQueryRepository {
     private final JPAQueryFactory queryFactory;
     private final DynamicQueryFactory dynamicQueryFactory;
 
-    public SpaceQueryRepository(JPAQueryFactory queryFactory, DynamicQueryFactory dynamicQueryFactory) {
+    public SpaceQueryRepository(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
-        this.dynamicQueryFactory = dynamicQueryFactory;
+        this.dynamicQueryFactory = new DynamicQueryFactory();
     }
 
     public Slice<Space> findByCondition(QueryCondition condition) {

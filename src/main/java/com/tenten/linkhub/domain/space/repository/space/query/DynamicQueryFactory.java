@@ -1,4 +1,4 @@
-package com.tenten.linkhub.domain.space.repository.space;
+package com.tenten.linkhub.domain.space.repository.space.query;
 
 import com.querydsl.core.types.NullExpression;
 import com.querydsl.core.types.Order;
@@ -8,12 +8,10 @@ import com.tenten.linkhub.domain.space.model.category.Category;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import static com.tenten.linkhub.domain.space.model.space.QSpace.space;
 
-@Component // 1
 @NoArgsConstructor
 public class DynamicQueryFactory {
 
