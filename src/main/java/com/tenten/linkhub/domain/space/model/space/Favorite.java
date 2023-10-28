@@ -15,15 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "favorites", uniqueConstraints = {
-        @UniqueConstraint(
-                name = "space_member_unique",
-                columnNames = {
-                        "member_id",
-                        "space_id"
-                }
-        )
-})
+@Table(name = "favorites")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Favorite {

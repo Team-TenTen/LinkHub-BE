@@ -1,6 +1,7 @@
 package com.tenten.linkhub.domain.space.model.space;
 
 import com.tenten.linkhub.domain.space.model.category.Category;
+import com.tenten.linkhub.global.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -13,12 +14,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-
 @Entity
 @Table(name = "spaces")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Space {
+public class Space extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

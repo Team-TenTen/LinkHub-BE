@@ -17,15 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "space_member", uniqueConstraints = {
-        @UniqueConstraint(
-                name = "space_member_unique",
-                columnNames = {
-                        "space_id",
-                        "member_id"
-                }
-        )
-})
+@Table(name = "space_member")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SpaceMember {
