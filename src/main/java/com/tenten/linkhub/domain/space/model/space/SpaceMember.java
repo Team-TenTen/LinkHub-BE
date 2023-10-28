@@ -17,7 +17,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "space_member")
+@Table(name = "space_member", uniqueConstraints = {
+        @UniqueConstraint(
+                name = "space_member_unique",
+                columnNames = {
+                        "space_id",
+                        "member_id"
+                }
+        )
+})
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SpaceMember {
@@ -30,7 +38,7 @@ public class SpaceMember {
     @JoinColumn(name = "space_id", referencedColumnName = "id", nullable = false)
     private Space space;
 
-    @Column(nullable = false)
+    @Column(name = "member_id", nullable = false)
     private Long memberId;
 
     @Enumerated(EnumType.STRING)
