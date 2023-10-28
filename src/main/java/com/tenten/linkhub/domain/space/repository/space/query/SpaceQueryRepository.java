@@ -32,7 +32,6 @@ public class SpaceQueryRepository {
                         dynamicQueryFactory.eqSpaceName(condition.keyWord()),
                         dynamicQueryFactory.eqCategory(condition.filter())
                 )
-                .orderBy()
                 .orderBy(dynamicQueryFactory.spaceSort(condition.pageable()))
                 .offset(condition.pageable().getOffset())
                 .limit(condition.pageable().getPageSize() + 1)

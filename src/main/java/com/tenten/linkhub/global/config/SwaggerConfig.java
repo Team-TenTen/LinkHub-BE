@@ -16,8 +16,8 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfig {
 
     @Bean
-    public GroupedOpenApi chatOpenApi() {
-        String[] paths = {"/v1/**"};
+    public GroupedOpenApi openApi() {
+        String[] paths = {"/**"};
 
         return GroupedOpenApi.builder()
                 .group("LinkHub 서비스 API v1")
