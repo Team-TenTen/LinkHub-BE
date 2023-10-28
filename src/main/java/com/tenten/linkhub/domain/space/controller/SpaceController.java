@@ -1,14 +1,12 @@
 package com.tenten.linkhub.domain.space.controller;
 
-import com.tenten.linkhub.domain.space.controller.dto.SpacesFindByQueryApiRequest;
-import com.tenten.linkhub.domain.space.controller.dto.SpacesFindByQueryApiResponses;
+import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiResponses;
 import com.tenten.linkhub.domain.space.controller.mapper.SpaceApiMapper;
 import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.SpacesFindByQueryResponses;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,6 +1,6 @@
 package com.tenten.linkhub.domain.space.service.mapper;
 
-import com.tenten.linkhub.domain.space.repository.space.dto.QueryCond;
+import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
 import com.tenten.linkhub.domain.space.service.dto.SpacesFindByQueryRequest;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
@@ -10,6 +10,6 @@ import org.mapstruct.Mapper;
 )
 public interface SpaceMapper {
 
-    QueryCond toQueryCond(SpacesFindByQueryRequest request);
+    QueryCondition toQueryCond(SpacesFindByQueryRequest request);
 
 }
