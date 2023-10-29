@@ -23,6 +23,7 @@ import static com.tenten.linkhub.domain.space.model.space.Role.OWNER;
 @Service
 public class DefaultSpaceService implements SpaceService{
     private static final String SPACE_IMAGE_FOLDER = "space-image/";
+    private static final String SPACE_DEFAULT_IMAGE_PATH = "https://team-10-bucket.s3.ap-northeast-2.amazonaws.com/%08space-image/space-default.png";
 
     private final SpaceRepository spaceRepository;
     private final SpaceMemberRepository spaceMemberRepository;
@@ -55,15 +56,23 @@ public class DefaultSpaceService implements SpaceService{
                 mapper.toSpaceMember(savedSpace, request, OWNER)
         );
 
-        ImageInfo imageInfo = s3Uploader.saveImage(
-                ImageSaveRequest.of(request.file(), SPACE_IMAGE_FOLDER)
-        );
+        ImageInfo imageInfo = ImageInfo.of(SPACE_DEFAULT_IMAGE_PATH, "default-image");
+        imageInfo = changeImageInfo(request, imageInfo);
 
         spaceImageRepository.save(
                 mapper.toSpaceImage(savedSpace, imageInfo)
         );
 
         return savedSpace.getId();
+    }
+
+    private ImageInfo changeImageInfo(SpaceCreateRequest request, ImageInfo defaultImageInfo) {
+        if (request.file() != null){
+            ImageSaveRequest imageSaveRequest = ImageSaveRequest.of(request.file(), SPACE_IMAGE_FOLDER);
+            return s3Uploader.saveImage(imageSaveRequest);
+        }
+
+        return defaultImageInfo;
     }
 
 }
