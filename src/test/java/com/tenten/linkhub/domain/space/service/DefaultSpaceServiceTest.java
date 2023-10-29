@@ -5,6 +5,7 @@ import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.repository.spaceimage.SpaceImageJpaRepository;
+import com.tenten.linkhub.domain.space.service.dto.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.SpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.SpacesFindByQueryResponse;
 import com.tenten.linkhub.domain.space.service.dto.SpacesFindByQueryResponses;
@@ -21,6 +22,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,7 +75,6 @@ class DefaultSpaceServiceTest {
         assertThat(content.get(0).spaceName()).isEqualTo("첫번째 스페이스");
         assertThat(content.get(0).description()).isEqualTo("첫번째 스페이스 소개글");
         assertThat(content.get(0).category()).isEqualTo(Category.KNOWLEDGE_ISSUE_CAREER);
-        assertThat(content.get(0).category()).isEqualTo(Category.KNOWLEDGE_ISSUE_CAREER);
         assertThat(content.get(0).spaceImagePath()).isEqualTo("https://testimage1");
     }
 
@@ -81,8 +82,34 @@ class DefaultSpaceServiceTest {
     @DisplayName("유저는 스페이스를 생성할 수 있다.")
     void createSpace(){
         //given
+        MockMultipartFile requestFile = new MockMultipartFile("테스트 이미지3", (byte[]) null);
+        ImageInfo imageInfo = ImageInfo.of("https://testimage3", requestFile.getName());
+        BDDMockito.given(s3Uploader.saveImage(any())).willReturn(imageInfo);
 
-        BDDMockito.given(s3Uploader.saveImage(any())).willReturn()
+        SpaceCreateRequest spaceCreateRequest = new SpaceCreateRequest(
+                "테스트용 스페이스 이름",
+                "테스트용 스페이스 소개글",
+                Category.ENTER_ART,
+                true,
+                true,
+                true,
+                true,
+                3L,
+                requestFile
+        );
+
+        //when
+        Long savedSpaceId = spaceService.createSpace(spaceCreateRequest);
+
+        //then
+        Space savedSpace = spaceJpaRepository.findById(savedSpaceId).get();
+        SpaceImage spaceImage = spaceImageJpaRepository.findSpaceImageBySpaceId(savedSpaceId).get();
+
+        assertThat(savedSpace.getSpaceName()).isEqualTo("테스트용 스페이스 이름");
+        assertThat(savedSpace.getDescription()).isEqualTo("테스트용 스페이스 소개글");
+        assertThat(savedSpace.getCategory()).isEqualTo(Category.ENTER_ART);
+        assertThat(spaceImage.getPath()).isEqualTo("https://testimage3");
+        assertThat(spaceImage.getName()).isEqualTo("테스트 이미지3");
     }
 
     private void setupData() {

@@ -10,6 +10,7 @@ import com.tenten.linkhub.domain.space.service.dto.SpacesFindByQueryRequest;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring",
         injectionStrategy = InjectionStrategy.CONSTRUCTOR
@@ -20,7 +21,8 @@ public interface SpaceMapper {
 
     Space toSpace(SpaceCreateRequest request);
 
-    SpaceMember toSpaceMember(SpaceCreateRequest request, Role role);
+    @Mapping(source = "request.memberId", target = "memberId")
+    SpaceMember toSpaceMember(Space space, SpaceCreateRequest request, Role role);
 
     SpaceImage toSpaceImage(Space space, ImageInfo imageInfo);
 

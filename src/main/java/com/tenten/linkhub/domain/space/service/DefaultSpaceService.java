@@ -52,7 +52,7 @@ public class DefaultSpaceService implements SpaceService{
         Space savedSpace = spaceRepository.save(mapper.toSpace(request));
 
         spaceMemberRepository.save(
-                mapper.toSpaceMember(request, OWNER)
+                mapper.toSpaceMember(savedSpace, request, OWNER)
         );
 
         ImageInfo imageInfo = s3Uploader.saveImage(
