@@ -29,7 +29,7 @@ public class Comment {
     private Comment parentComment;
 
     @Column(nullable = false)
-    private Long group;
+    private Long groupNumber;
 
     @Column(nullable = false)
     private String content;
