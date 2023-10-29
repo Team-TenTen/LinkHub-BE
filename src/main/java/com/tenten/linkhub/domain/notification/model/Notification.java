@@ -50,4 +50,5 @@ public class Notification {
         this.content = content;
         this.isChecked = false;
     }
+
 }

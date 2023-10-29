@@ -1,6 +1,6 @@
 package com.tenten.linkhub.domain.member.model;
 
-import com.tenten.linkhub.domain.space.model.Category;
+import com.tenten.linkhub.domain.space.model.category.Category;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
