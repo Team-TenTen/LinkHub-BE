@@ -8,11 +8,17 @@ import com.tenten.linkhub.domain.space.repository.spaceimage.SpaceImageJpaReposi
 import com.tenten.linkhub.domain.space.service.dto.SpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.SpacesFindByQueryResponse;
 import com.tenten.linkhub.domain.space.service.dto.SpacesFindByQueryResponses;
+import com.tenten.linkhub.global.aws.dto.ImageInfo;
+import com.tenten.linkhub.global.aws.s3.S3Uploader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatcher;
+import org.mockito.ArgumentMatchers;
+import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
@@ -21,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 
 @ActiveProfiles("test")
 @Transactional
@@ -35,6 +42,9 @@ class DefaultSpaceServiceTest {
 
     @Autowired
     private SpaceImageJpaRepository spaceImageJpaRepository;
+
+    @MockBean
+    private S3Uploader s3Uploader;
 
     @BeforeEach
     void setUp() {
@@ -65,6 +75,14 @@ class DefaultSpaceServiceTest {
         assertThat(content.get(0).category()).isEqualTo(Category.KNOWLEDGE_ISSUE_CAREER);
         assertThat(content.get(0).category()).isEqualTo(Category.KNOWLEDGE_ISSUE_CAREER);
         assertThat(content.get(0).spaceImagePath()).isEqualTo("https://testimage1");
+    }
+
+    @Test
+    @DisplayName("유저는 스페이스를 생성할 수 있다.")
+    void createSpace(){
+        //given
+
+        BDDMockito.given(s3Uploader.saveImage(any())).willReturn()
     }
 
     private void setupData() {

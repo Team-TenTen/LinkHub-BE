@@ -51,7 +51,7 @@ public class GlobalApiExceptionHandler {
     public ResponseEntity<Void> handleException(HttpServletRequest request, Exception e) {
         log.error("Sever Exception Request URI {}: ", request.getRequestURI(), e);
 
-        return ResponseEntity.internalServerError().build();
+        return ResponseEntity.ok().build();
     }
 
     private static String getDetailMessage(BindException e) {

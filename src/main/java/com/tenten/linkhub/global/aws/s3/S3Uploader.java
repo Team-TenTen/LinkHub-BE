@@ -1,11 +1,12 @@
 package com.tenten.linkhub.global.aws.s3;
 
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
-import org.springframework.web.multipart.MultipartFile;
+import com.tenten.linkhub.global.aws.dto.ImageSaveRequest;
 
 public interface S3Uploader {
 
-    ImageInfo saveImage(MultipartFile multipartFile, String folder);
+    ImageInfo saveImage(ImageSaveRequest request);
 
     void deleteImage(String fileName);
+
 }

@@ -5,12 +5,15 @@ import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
+import com.tenten.linkhub.global.aws.dto.ImageSaveRequest;
 import com.tenten.linkhub.global.exception.ImageUploadException;
 import com.tenten.linkhub.global.response.ErrorCode;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -29,9 +32,11 @@ public class DefaultS3Uploader implements S3Uploader{
         this.amazonS3Client = amazonS3Client;
     }
 
-    @Transactional
     @Override
-    public ImageInfo saveImage(MultipartFile multipartFile, String folder) {
+    public ImageInfo saveImage(ImageSaveRequest request) {
+        MultipartFile multipartFile = request.file();
+        String folder = request.folder();
+
         String originalFileName = multipartFile.getOriginalFilename();
         String changedFileName = changeFileName(originalFileName, folder);
         try {
@@ -42,7 +47,7 @@ public class DefaultS3Uploader implements S3Uploader{
             amazonS3Client.putObject(bucket, changedFileName, multipartFile.getInputStream(), objectMetadata);
 
             String url = amazonS3Client.getUrl(bucket, changedFileName).toString();
-            return new ImageInfo(url, changedFileName);
+            return ImageInfo.of(url, changedFileName);
 
         } catch (IOException e) {
             throw new ImageUploadException(ErrorCode.FAIL_TO_UPLOAD_IMAGES);
