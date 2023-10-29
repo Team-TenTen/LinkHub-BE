@@ -36,7 +36,7 @@ public class Favorite {
     @JoinColumn(name = "space_id", referencedColumnName = "id", nullable = false)
     private Space space;
 
-    @Column(nullable = false)
+    @Column(name = "member_id", nullable = false)
     private Long memberId;
 
 }
