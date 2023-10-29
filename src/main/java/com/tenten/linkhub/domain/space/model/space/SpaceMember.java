@@ -44,4 +44,10 @@ public class SpaceMember {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    public SpaceMember(Space space, Long memberId, Role role) {
+        this.space = space;
+        this.memberId = memberId;
+        this.role = role;
+    }
+
 }

@@ -43,6 +43,9 @@ dependencies {
 
     // Swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+
+    //aws
+    implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
 }
 
 tasks.named('test') {
