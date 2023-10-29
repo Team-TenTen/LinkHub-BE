@@ -67,6 +67,11 @@ public class SpaceController {
      * 로그인 구현되면 memberId 받는 방식 바꿔야하는 API.
      * 현재는 바디에서 받는중.
      */
+    @Operation(
+            summary = "스페이스 생성 API", description = "스페이스 생성 API 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "스페이스가 성공적으로 생성되었습니다."),
+            })
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<SpaceCreateApiResponse> createSpace(
             @RequestPart @Valid SpaceCreateApiRequest request,
