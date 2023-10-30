@@ -13,7 +13,9 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.util.Assert;
+
+import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
+import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 
 @Entity
 @Table(name = "spaces")
@@ -59,13 +61,13 @@ public class Space extends BaseEntity {
     private Long favoriteCount;
 
     public Space(Long memberId, String spaceName, String description, Category category, Boolean isVisible, Boolean isComment, Boolean isLinkSummarizable, Boolean isReadMarkEnabled) {
-        Assert.notNull(memberId, "memberId는 null이 될 수 없습니다.");
-        Assert.notNull(spaceName, "spaceName은 null이 될 수 없습니다.");
-        Assert.notNull(category, "category는 null이 될 수 없습니다.");
-        Assert.notNull(isVisible, "isVisible는 null이 될 수 없습니다.");
-        Assert.notNull(isComment, "isComment는 null이 될 수 없습니다.");
-        Assert.notNull(isLinkSummarizable, "isLinkSummarizable는 null이 될 수 없습니다.");
-        Assert.notNull(isReadMarkEnabled, "isReadMarkEnabled는 null이 될 수 없습니다.");
+        validateNotNull(memberId, "memberId");
+        validateNotNull(category, "category");
+        validateNotNull(isVisible, "isVisible");
+        validateNotNull(isComment, "isComment");
+        validateNotNull(isLinkSummarizable, "isLinkSummarizable");
+        validateNotNull(isReadMarkEnabled, "isReadMarkEnabled");
+        validateMaxSize(spaceName, 255, "spaceName");
 
         this.memberId = memberId;
         this.spaceName = spaceName;
