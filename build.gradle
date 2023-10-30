@@ -11,6 +11,10 @@ java {
     sourceCompatibility = '17'
 }
 
+bootJar {
+    archiveFileName = 'linkhub.jar'
+}
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
