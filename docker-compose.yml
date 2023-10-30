@@ -1,0 +1,27 @@
+services:
+  web_green:
+    image: ${LINKHUB_IMAGE}:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    env_file:
+      - .env
+    expose:
+      - "8080"
+
+  web_blue:
+    image: ${LINKHUB_IMAGE}:latest
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+    env_file:
+      - .env
+    expose:
+      - "8080"
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - /etc/letsencrypt/live/api.link-hub.site/fullchain.pem:/etc/letsencrypt/live/api.link-hub.site/fullchain.pem
+      - /etc/letsencrypt/live/api.link-hub.site/privkey.pem:/etc/letsencrypt/live/api.link-hub.site/privkey.pem
