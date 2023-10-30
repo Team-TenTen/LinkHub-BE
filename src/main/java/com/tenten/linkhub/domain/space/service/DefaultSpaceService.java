@@ -17,6 +17,7 @@ import com.tenten.linkhub.global.aws.s3.S3Uploader;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import static com.tenten.linkhub.domain.space.model.space.Role.OWNER;
 
@@ -56,8 +57,7 @@ public class DefaultSpaceService implements SpaceService{
                 mapper.toSpaceMember(savedSpace, request, OWNER)
         );
 
-        ImageInfo imageInfo = ImageInfo.of(SPACE_DEFAULT_IMAGE_PATH, "default-image");
-        imageInfo = changeImageInfo(request, imageInfo);
+        ImageInfo imageInfo = getImageInfo(request.file());
 
         spaceImageRepository.save(
                 mapper.toSpaceImage(savedSpace, imageInfo)
@@ -66,13 +66,13 @@ public class DefaultSpaceService implements SpaceService{
         return savedSpace.getId();
     }
 
-    private ImageInfo changeImageInfo(SpaceCreateRequest request, ImageInfo defaultImageInfo) {
-        if (request.file() != null){
-            ImageSaveRequest imageSaveRequest = ImageSaveRequest.of(request.file(), SPACE_IMAGE_FOLDER);
-            return s3Uploader.saveImage(imageSaveRequest);
+    private ImageInfo getImageInfo(MultipartFile file) {
+        if (file == null){
+            return ImageInfo.of(SPACE_DEFAULT_IMAGE_PATH, "default-image");
         }
 
-        return defaultImageInfo;
+        ImageSaveRequest imageSaveRequest = ImageSaveRequest.of(file, SPACE_IMAGE_FOLDER);
+        return s3Uploader.saveImage(imageSaveRequest);
     }
 
 }
