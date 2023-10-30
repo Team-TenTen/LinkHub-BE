@@ -32,7 +32,7 @@ public class SpaceImages {
         this.spaceImageList.add(spaceImage);
     }
 
-    public void remove(SpaceImage spaceImage){
+    public void removeSpaceImage(SpaceImage spaceImage){
         this.spaceImageList.remove(spaceImage);
     }
 

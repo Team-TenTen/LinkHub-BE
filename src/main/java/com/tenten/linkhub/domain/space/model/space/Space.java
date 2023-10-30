@@ -110,4 +110,13 @@ public class Space extends BaseEntity {
     public List<SpaceMember> getSpaceMembers() {
         return spaceMembers.getSpaceMemberList();
     }
+
+    public void removeSpaceImage(SpaceImage spaceImage){
+        spaceImages.removeSpaceImage(spaceImage);
+    }
+
+    public void removeSpaceMember(SpaceMember spaceMember){
+        spaceMembers.removeSpaceMember(spaceMember);
+    }
+
 }

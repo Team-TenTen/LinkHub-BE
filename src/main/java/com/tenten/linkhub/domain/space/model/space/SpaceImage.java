@@ -47,7 +47,7 @@ public class SpaceImage {
 
     public void changeSpace(Space space) {
         if (this.space != null) {
-            this.space.getSpaceImages().remove(this);
+            this.space.removeSpaceImage(this);
         }
 
         this.space = space;

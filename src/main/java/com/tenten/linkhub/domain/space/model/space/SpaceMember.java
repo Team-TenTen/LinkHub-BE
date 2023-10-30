@@ -57,7 +57,7 @@ public class SpaceMember {
 
     public void changeSpace(Space space) {
         if (this.space != null) {
-            this.space.getSpaceMembers().remove(this);
+            this.space.removeSpaceMember(this);
         }
 
         this.space = space;

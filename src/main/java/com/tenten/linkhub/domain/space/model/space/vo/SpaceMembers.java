@@ -27,7 +27,7 @@ public class SpaceMembers {
         this.spaceMemberList.add(spaceMember);
     }
 
-    public void remove(SpaceMember spaceMember){
+    public void removeSpaceMember(SpaceMember spaceMember){
         this.spaceMemberList.remove(spaceMember);
     }
 
