@@ -47,6 +47,13 @@ dependencies {
     // mail
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     implementation 'com.amazonaws:aws-java-sdk-ses:1.12.3'
+
+    //thymeleaf
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    //redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
 }
 
 tasks.named('test') {
