@@ -47,14 +47,20 @@ public class SpaceMember {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public SpaceMember(Space space, Long memberId, Role role) {
-        validateNotNull(space, "space");
+    public SpaceMember(Long memberId, Role role) {
         validateNotNull(memberId, "memberId");
         validateNotNull(role, "role");
 
-        this.space = space;
         this.memberId = memberId;
         this.role = role;
+    }
+
+    public void changeSpace(Space space) {
+        if (this.space != null) {
+            this.space.getSpaceMembers().remove(this);
+        }
+
+        this.space = space;
     }
 
 }

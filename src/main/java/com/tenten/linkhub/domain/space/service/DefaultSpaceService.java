@@ -3,8 +3,6 @@ package com.tenten.linkhub.domain.space.service;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.repository.space.dto.SpaceWithSpaceImage;
-import com.tenten.linkhub.domain.space.repository.spaceimage.SpaceImageRepository;
-import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberRepository;
 import com.tenten.linkhub.domain.space.service.dto.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.SpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.SpacesFindByQueryResponses;
@@ -27,15 +25,11 @@ public class DefaultSpaceService implements SpaceService{
     private static final String SPACE_DEFAULT_IMAGE_PATH = "https://team-10-bucket.s3.ap-northeast-2.amazonaws.com/%08space-image/space-default.png";
 
     private final SpaceRepository spaceRepository;
-    private final SpaceMemberRepository spaceMemberRepository;
-    private final SpaceImageRepository spaceImageRepository;
     private final S3Uploader s3Uploader;
     private final SpaceMapper mapper;
 
-    public DefaultSpaceService(SpaceRepository spaceRepository, SpaceMemberRepository spaceMemberRepository, SpaceImageRepository spaceImageRepository, S3Uploader s3Uploader, SpaceMapper mapper) {
+    public DefaultSpaceService(SpaceRepository spaceRepository, S3Uploader s3Uploader, SpaceMapper mapper) {
         this.spaceRepository = spaceRepository;
-        this.spaceMemberRepository = spaceMemberRepository;
-        this.spaceImageRepository = spaceImageRepository;
         this.s3Uploader = s3Uploader;
         this.mapper = mapper;
     }
@@ -51,19 +45,19 @@ public class DefaultSpaceService implements SpaceService{
     @Override
     @Transactional
     public Long createSpace(SpaceCreateRequest request) {
-        Space savedSpace = spaceRepository.save(mapper.toSpace(request));
+        Space space = mapper.toSpace(request);
 
-        spaceMemberRepository.save(
-                mapper.toSpaceMember(savedSpace, request, OWNER)
+        space.addSpaceMember(
+                mapper.toSpaceMember(request, OWNER)
         );
 
         ImageInfo imageInfo = getImageInfo(request.file());
 
-        spaceImageRepository.save(
-                mapper.toSpaceImage(savedSpace, imageInfo)
+        space.addSpaceImage(
+                mapper.toSpaceImage(imageInfo)
         );
 
-        return savedSpace.getId();
+        return spaceRepository.save(space).getId();
     }
 
     private ImageInfo getImageInfo(MultipartFile file) {

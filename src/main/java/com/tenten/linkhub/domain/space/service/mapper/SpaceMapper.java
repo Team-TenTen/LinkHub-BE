@@ -22,8 +22,8 @@ public interface SpaceMapper {
     Space toSpace(SpaceCreateRequest request);
 
     @Mapping(source = "request.memberId", target = "memberId")
-    SpaceMember toSpaceMember(Space space, SpaceCreateRequest request, Role role);
+    SpaceMember toSpaceMember(SpaceCreateRequest request, Role role);
 
-    SpaceImage toSpaceImage(Space space, ImageInfo imageInfo);
+    SpaceImage toSpaceImage(ImageInfo imageInfo);
 
 }
