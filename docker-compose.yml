@@ -3,6 +3,8 @@ services:
     image: ${LINKHUB_IMAGE}:latest
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+    env_file:
+      - .env
     expose:
       - "8080"
 
@@ -10,6 +12,8 @@ services:
     image: ${LINKHUB_IMAGE}:latest
     environment:
       - SPRING_PROFILES_ACTIVE=prod
+    env_file:
+      - .env
     expose:
       - "8080"
 

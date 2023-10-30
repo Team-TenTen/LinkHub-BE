@@ -9,7 +9,7 @@ fi
 docker pull $LINKHUB_IMAGE:latest
 
 # Get the current active environment
-ACTIVE_ENV=$(docker exec LinkHub-BE_nginx_1 nginx -T | grep "server web_" | awk -F'_' '{print $2}' | cut -d ':' -f 1)
+ACTIVE_ENV=$(docker exec linkhub-be_nginx_1 nginx -T | grep "server web_" | awk -F'_' '{print $2}' | cut -d ':' -f 1)
 
 # Switch between blue and green environments
 if [ "$ACTIVE_ENV" == "green" ]; then
