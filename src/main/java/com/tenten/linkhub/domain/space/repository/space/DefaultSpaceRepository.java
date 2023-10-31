@@ -23,4 +23,9 @@ public class DefaultSpaceRepository implements SpaceRepository {
         return spaceQueryRepository.findByCondition(queryCondition);
     }
 
+    @Override
+    public Space save(Space space) {
+        return spaceJpaRepository.save(space);
+    }
+
 }

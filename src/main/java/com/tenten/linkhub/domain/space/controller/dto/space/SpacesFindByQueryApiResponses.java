@@ -1,7 +1,7 @@
 package com.tenten.linkhub.domain.space.controller.dto.space;
 
 import com.tenten.linkhub.domain.space.service.dto.SpacesFindByQueryResponses;
-import com.tenten.linkhub.global.PageMetaData;
+import com.tenten.linkhub.global.util.PageMetaData;
 import org.springframework.data.domain.Slice;
 
 import java.util.List;

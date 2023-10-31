@@ -12,7 +12,9 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.util.Assert;
+
+import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
+import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 
 @Entity
 @Table(name = "space_images")
@@ -35,14 +37,20 @@ public class SpaceImage {
     @Column(nullable = false)
     private String name;
 
-    public SpaceImage(Space space, String path, String name) {
-        Assert.notNull(space, "space는 null이 될 수 없습니다.");
-        Assert.notNull(path, "path는 null이 될 수 없습니다.");
-        Assert.notNull(name, "name은 null이 될 수 없습니다.");
+    public SpaceImage(String path, String name) {
+        validateMaxSize(path, MAX_PATH_LENGTH, "path");
+        validateMaxSize(name, 255, "name");
 
-        this.space = space;
         this.path = path;
         this.name = name;
+    }
+
+    public void changeSpace(Space space) {
+        if (this.space != null) {
+            this.space.removeSpaceImage(this);
+        }
+
+        this.space = space;
     }
 
 }

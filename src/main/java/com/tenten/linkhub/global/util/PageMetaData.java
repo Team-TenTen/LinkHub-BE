@@ -1,4 +1,4 @@
-package com.tenten.linkhub.global;
+package com.tenten.linkhub.global.util;
 
 public record PageMetaData(
         Boolean hasNext,
