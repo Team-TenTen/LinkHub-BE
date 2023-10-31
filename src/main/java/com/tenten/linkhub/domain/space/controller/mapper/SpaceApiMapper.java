@@ -2,8 +2,8 @@ package com.tenten.linkhub.domain.space.controller.mapper;
 
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiRequest;
-import com.tenten.linkhub.domain.space.service.dto.SpaceCreateRequest;
-import com.tenten.linkhub.domain.space.service.dto.SpacesFindByQueryRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.springframework.data.domain.Pageable;

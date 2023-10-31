@@ -2,23 +2,28 @@ package com.tenten.linkhub.domain.space.controller;
 
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiResponse;
+import com.tenten.linkhub.domain.space.controller.dto.space.SpaceGetByIdApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiResponses;
 import com.tenten.linkhub.domain.space.controller.mapper.SpaceApiMapper;
 import com.tenten.linkhub.domain.space.service.SpaceService;
-import com.tenten.linkhub.domain.space.service.dto.SpacesFindByQueryResponses;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceGetByIdResponse;
+import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -94,6 +99,19 @@ public class SpaceController {
         return ResponseEntity
                 .created(URI.create(SPACE_LOCATION_PRE_FIX + savedSpaceId))
                 .body(apiResponse);
+    }
+
+    /**
+     * 스페이스 상세 조회 API
+     */
+    @GetMapping(value = "/{spaceId}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> getSpaceById(
+            @CookieValue(value = "spaceView", required = false) Cookie spaceViewCookie,
+            @PathVariable Long spaceId
+    ){
+        SpaceGetByIdResponse response = spaceService.getSpaceById(spaceId, spaceViewCookie.getValue());
+        return ResponseEntity.ok().build();
     }
 
 }

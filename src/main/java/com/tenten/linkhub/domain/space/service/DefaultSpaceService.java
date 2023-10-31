@@ -4,16 +4,19 @@ import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.repository.space.dto.SpaceWithSpaceImage;
 import com.tenten.linkhub.domain.space.repository.spaceimage.SpaceImageRepository;
+import com.tenten.linkhub.domain.space.repository.spaceimage.dto.SpaceMemberWithMemberInfo;
 import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberRepository;
-import com.tenten.linkhub.domain.space.service.dto.SpaceCreateRequest;
-import com.tenten.linkhub.domain.space.service.dto.SpacesFindByQueryRequest;
-import com.tenten.linkhub.domain.space.service.dto.SpacesFindByQueryResponses;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceGetByIdResponse;
+import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.mapper.SpaceMapper;
 
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.dto.ImageSaveRequest;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,20 +33,22 @@ public class DefaultSpaceService implements SpaceService{
     private final SpaceMemberRepository spaceMemberRepository;
     private final SpaceImageRepository spaceImageRepository;
     private final S3Uploader s3Uploader;
+    private final ApplicationEventPublisher eventPublisher;
     private final SpaceMapper mapper;
 
-    public DefaultSpaceService(SpaceRepository spaceRepository, SpaceMemberRepository spaceMemberRepository, SpaceImageRepository spaceImageRepository, S3Uploader s3Uploader, SpaceMapper mapper) {
+    public DefaultSpaceService(SpaceRepository spaceRepository, SpaceMemberRepository spaceMemberRepository, SpaceImageRepository spaceImageRepository, S3Uploader s3Uploader, ApplicationEventPublisher eventPublisher, SpaceMapper mapper) {
         this.spaceRepository = spaceRepository;
         this.spaceMemberRepository = spaceMemberRepository;
         this.spaceImageRepository = spaceImageRepository;
         this.s3Uploader = s3Uploader;
+        this.eventPublisher = eventPublisher;
         this.mapper = mapper;
     }
 
     @Override
     @Transactional(readOnly = true)
     public SpacesFindByQueryResponses findSpacesByQuery(SpacesFindByQueryRequest request) {
-        Slice<SpaceWithSpaceImage> spaces = spaceRepository.findByQuery(mapper.toQueryCond(request));
+        Slice<SpaceWithSpaceImage> spaces = spaceRepository.findSpaceWithSpaceImageByQuery(mapper.toQueryCond(request));
 
         return SpacesFindByQueryResponses.from(spaces);
     }
@@ -64,6 +69,15 @@ public class DefaultSpaceService implements SpaceService{
         );
 
         return savedSpace.getId();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public SpaceGetByIdResponse getSpaceById(Long spaceId, String cookieValue) {
+        SpaceWithSpaceImage spaceWithSpaceImage = spaceRepository.getSpaceWithSpaceImageById(spaceId);
+
+        SpaceMemberWithMemberInfo response = spaceMemberRepository.findSpaceMemberWithMemberInfoBySpaceId(spaceId);
+
     }
 
     private ImageInfo getImageInfo(MultipartFile file) {

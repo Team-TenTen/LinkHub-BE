@@ -1,6 +1,5 @@
-package com.tenten.linkhub.domain.space.service.dto;
+package com.tenten.linkhub.domain.space.service.dto.space;
 
-import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.space.dto.SpaceWithSpaceImage;
 import org.springframework.data.domain.Slice;
 

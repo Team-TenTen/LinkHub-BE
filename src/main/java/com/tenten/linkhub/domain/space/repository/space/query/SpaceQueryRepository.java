@@ -1,17 +1,15 @@
 package com.tenten.linkhub.domain.space.repository.space.query;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.tenten.linkhub.domain.space.model.space.QSpaceImage;
-import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.space.dto.QSpaceWithSpaceImage;
 import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
 import com.tenten.linkhub.domain.space.repository.space.dto.SpaceWithSpaceImage;
-import com.tenten.linkhub.domain.space.repository.space.query.DynamicQueryFactory;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.tenten.linkhub.domain.space.model.space.QSpace.space;
 import static com.tenten.linkhub.domain.space.model.space.QSpaceImage.spaceImage;
@@ -27,7 +25,7 @@ public class SpaceQueryRepository {
         this.dynamicQueryFactory = new DynamicQueryFactory();
     }
 
-    public Slice<SpaceWithSpaceImage> findByCondition(QueryCondition condition) {
+    public Slice<SpaceWithSpaceImage> findSpaceWithSpaceImageByCondition(QueryCondition condition) {
 
         List<SpaceWithSpaceImage> spaces = queryFactory
                 .select(new QSpaceWithSpaceImage(
@@ -53,6 +51,18 @@ public class SpaceQueryRepository {
         }
 
         return new SliceImpl<>(spaces, condition.pageable(), hasNext);
+    }
+
+    public Optional<SpaceWithSpaceImage> findSpaceWithSpaceImageById(Long spaceId) {
+        return Optional.ofNullable(queryFactory
+                .select(new QSpaceWithSpaceImage(
+                        space,
+                        spaceImage
+                ))
+                .from(space)
+                .where(space.id.eq(spaceId))
+                .join(spaceImage).on(space.id.eq(spaceImage.space.id))
+                .fetchOne());
     }
 
 }
