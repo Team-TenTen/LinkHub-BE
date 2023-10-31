@@ -3,9 +3,6 @@ package com.tenten.linkhub.domain.space.service;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.repository.space.dto.SpaceWithSpaceImage;
-import com.tenten.linkhub.domain.space.repository.spaceimage.SpaceImageRepository;
-import com.tenten.linkhub.domain.space.repository.spaceimage.dto.SpaceMemberWithMemberInfo;
-import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberRepository;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceGetByIdResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
@@ -31,13 +28,11 @@ public class DefaultSpaceService implements SpaceService{
 
     private final SpaceRepository spaceRepository;
     private final S3Uploader s3Uploader;
-    private final ApplicationEventPublisher eventPublisher;
     private final SpaceMapper mapper;
 
-    public DefaultSpaceService(SpaceRepository spaceRepository, SpaceMemberRepository spaceMemberRepository, SpaceImageRepository spaceImageRepository, S3Uploader s3Uploader, ApplicationEventPublisher eventPublisher, SpaceMapper mapper) {
+    public DefaultSpaceService(SpaceRepository spaceRepository, S3Uploader s3Uploader, SpaceMapper mapper) {
         this.spaceRepository = spaceRepository;
         this.s3Uploader = s3Uploader;
-        this.eventPublisher = eventPublisher;
         this.mapper = mapper;
     }
 
