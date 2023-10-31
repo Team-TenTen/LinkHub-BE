@@ -1,8 +1,10 @@
 package com.tenten.linkhub.domain.space.service;
 
 import com.tenten.linkhub.domain.space.model.category.Category;
+import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
+import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.repository.spaceimage.SpaceImageJpaRepository;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
@@ -39,9 +41,6 @@ class DefaultSpaceServiceTest {
 
     @Autowired
     private SpaceJpaRepository spaceJpaRepository;
-
-    @Autowired
-    private SpaceImageJpaRepository spaceImageJpaRepository;
 
     @MockBean
     private S3Uploader s3Uploader;
@@ -101,7 +100,7 @@ class DefaultSpaceServiceTest {
 
         //then
         Space savedSpace = spaceJpaRepository.findById(savedSpaceId).get();
-        SpaceImage spaceImage = spaceImageJpaRepository.findSpaceImageBySpaceId(savedSpaceId).get();
+        SpaceImage spaceImage = savedSpace.getSpaceImages().get(0);
 
         assertThat(savedSpace.getSpaceName()).isEqualTo("테스트용 스페이스 이름");
         assertThat(savedSpace.getDescription()).isEqualTo("테스트용 스페이스 소개글");
@@ -133,16 +132,24 @@ class DefaultSpaceServiceTest {
                 true
         );
 
+        space1.addSpaceMember(
+                new SpaceMember(1L, Role.OWNER)
+        );
+
+        space2.addSpaceMember(
+                new SpaceMember(1L, Role.OWNER)
+        );
+
+        space1.addSpaceImage(
+                new SpaceImage("https://testimage1", "테스트 이미지1")
+        );
+
+        space2.addSpaceImage(
+                new SpaceImage( "https://testimage2", "테스트 이미지2")
+        );
+
         spaceJpaRepository.save(space1);
         spaceJpaRepository.save(space2);
-
-        spaceImageJpaRepository.save(
-                new SpaceImage(space1, "https://testimage1", "테스트 이미지1")
-        );
-
-        spaceImageJpaRepository.save(
-                new SpaceImage(space2, "https://testimage2", "테스트 이미지2")
-        );
     }
 
 }

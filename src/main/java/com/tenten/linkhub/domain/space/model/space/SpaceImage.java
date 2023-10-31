@@ -37,14 +37,20 @@ public class SpaceImage {
     @Column(nullable = false)
     private String name;
 
-    public SpaceImage(Space space, String path, String name) {
-        validateNotNull(space, "space");
+    public SpaceImage(String path, String name) {
         validateMaxSize(path, MAX_PATH_LENGTH, "path");
         validateMaxSize(name, 255, "name");
 
-        this.space = space;
         this.path = path;
         this.name = name;
+    }
+
+    public void changeSpace(Space space) {
+        if (this.space != null) {
+            this.space.removeSpaceImage(this);
+        }
+
+        this.space = space;
     }
 
 }
