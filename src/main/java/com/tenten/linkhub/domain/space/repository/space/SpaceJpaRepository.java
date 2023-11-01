@@ -14,4 +14,7 @@ public interface SpaceJpaRepository extends JpaRepository<Space, Long> {
             "WHERE s.id = :spaceId AND s.isDeleted = false ")
     Optional<Space> findSpaceJoinSpaceMemberById(Long spaceId);
 
+    @Query("SELECT s FROM Space s WHERE s.id = :spaceId AND s.isDeleted = false ")
+    Optional<Space> findById(Long spaceId);
+
 }

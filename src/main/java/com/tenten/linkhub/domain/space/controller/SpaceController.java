@@ -129,7 +129,6 @@ public class SpaceController {
         SpaceDetailGetByIdFacadeResponse response = spaceFacade.getSpaceDetailById(spaceId, spaceViewCookie);
 
         servletResponse.addCookie(response.spaceViewCookie());
-
         SpaceDetailGetByIdApiResponse apiResponse = SpaceDetailGetByIdApiResponse.from(response);
 
         return ResponseEntity.ok(apiResponse);

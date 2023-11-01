@@ -83,12 +83,10 @@ public class SpaceFacade {
             Cookie newCookie = new Cookie("spaceView", "[" + spaceId + "]");
             newCookie.setPath("/");
             newCookie.setMaxAge(COOKIE_EXPIRE_TIME);
-
             return newCookie;
         }
 
         if (!spaceViewCookie.getValue().contains("[" + spaceId + "]")) {
-
             eventPublisher.publishEvent(
                     new SpaceIncreaseViewCountDto(spaceId)
             );
