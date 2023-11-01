@@ -63,7 +63,7 @@ public class DefaultSpaceService implements SpaceService{
     @Override
     @Transactional(readOnly = true)
     public SpaceWithSpaceImageAndSpaceMemberInfo getSpaceWithSpaceImageAndSpaceMemberById(Long spaceId) {
-        Space space = spaceRepository.getSpaceJoinSpaceImageAndSpaceMemberById(spaceId);
+        Space space = spaceRepository.getSpaceJoinSpaceMemberById(spaceId);
 
         return SpaceWithSpaceImageAndSpaceMemberInfo.from(space);
     }

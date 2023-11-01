@@ -18,7 +18,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Set;
 
 import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
 import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
@@ -108,7 +107,7 @@ public class Space extends BaseEntity {
         return spaceImages.getSpaceImageList();
     }
 
-    public Set<SpaceMember> getSpaceMembers() {
+    public List<SpaceMember> getSpaceMembers() {
         return spaceMembers.getSpaceMemberList();
     }
 

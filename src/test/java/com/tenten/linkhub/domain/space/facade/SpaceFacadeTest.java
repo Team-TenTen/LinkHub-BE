@@ -60,6 +60,7 @@ class SpaceFacadeTest {
         assertThat(response.spaceName()).isEqualTo("첫번째 스페이스");
         assertThat(response.description()).isEqualTo("첫번째 스페이스 소개글");
         assertThat(response.spaceImagePath()).isEqualTo("https://testimage1");
+        assertThat(response.viewCount()).isEqualTo(0L);
         assertThat(spaceMemberDetailInfos.get(0).memberId()).isEqualTo(setUpMemberId);
         assertThat(spaceMemberDetailInfos.get(0).nickname()).isEqualTo("잠자는 사자의 콧털");
         assertThat(spaceMemberDetailInfos.get(0).profilePath()).isEqualTo("https://testprofileimage");

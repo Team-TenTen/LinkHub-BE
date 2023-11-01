@@ -108,6 +108,11 @@ public class SpaceController {
     /**
      * 스페이스 상세 조회 API
      */
+    @Operation(
+            summary = "스페이스 상세 조회 API", description = "스페이스 상세 조회 API 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "스페이스가 성공적으로 조회되었습니다."),
+            })
     @GetMapping(value = "/{spaceId}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SpaceDetailGetByIdApiResponse> getSpaceDetailById(
