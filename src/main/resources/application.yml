@@ -4,6 +4,10 @@ spring:
     url: ${DB_URL}
     username: ${DB_USER_NAME}
     password: ${DB_PASSWORD}
+  data:
+    redis:
+      host: localhost
+      port: 6379
 
   jpa:
     hibernate:
@@ -13,7 +17,35 @@ spring:
       hibernate:
         format_sql: true
         default_batch_fetch_size: 1000
-
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3380/linkhub_db?serverTimezone=Asia/Seoul
+    username: root
+    password: root1234!
+  data:
+    redis:
+      host: localhost
+      port: 6379
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${RDS_URL}
+    username: ${RDS_USERNAME}
+    password: ${RDS_PASSWORD}
+  data:
+    redis:
+      host: ${REDIS_URL}
+      port: 6379
+---
 cloud:
   aws:
     s3:
