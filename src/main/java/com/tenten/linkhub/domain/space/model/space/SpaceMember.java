@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.space.model.space;
 
+import com.tenten.linkhub.global.util.CommonValidator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,6 +16,8 @@ import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 
 @Entity
 @Table(name = "space_member", uniqueConstraints = {
@@ -43,5 +46,21 @@ public class SpaceMember {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    public SpaceMember(Long memberId, Role role) {
+        validateNotNull(memberId, "memberId");
+        validateNotNull(role, "role");
+
+        this.memberId = memberId;
+        this.role = role;
+    }
+
+    public void changeSpace(Space space) {
+        if (this.space != null) {
+            this.space.removeSpaceMember(this);
+        }
+
+        this.space = space;
+    }
 
 }
