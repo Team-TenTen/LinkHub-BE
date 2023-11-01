@@ -1,10 +1,9 @@
-package com.tenten.linkhub.domain.space.service.dto.space;
+package com.tenten.linkhub.domain.space.facade.dto;
 
 import com.tenten.linkhub.domain.space.model.category.Category;
-import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import org.springframework.web.multipart.MultipartFile;
 
-public record SpaceCreateRequest(
+public record SpaceCreateFacadeRequest(
         String spaceName,
         String description,
         Category category,
@@ -13,6 +12,6 @@ public record SpaceCreateRequest(
         Boolean isLinkSummarizable,
         Boolean isReadMarkEnabled,
         Long memberId,
-        ImageInfo imageInfo
+        MultipartFile file
 ) {
 }

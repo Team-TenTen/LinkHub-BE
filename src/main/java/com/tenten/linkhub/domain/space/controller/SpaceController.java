@@ -99,7 +99,8 @@ public class SpaceController {
             @RequestPart @Valid SpaceCreateApiRequest request,
             @RequestPart(required = false) MultipartFile file
     ) {
-        Long savedSpaceId = spaceService.createSpace(mapper.toSpaceCreateRequest(request, file));
+        Long savedSpaceId = spaceFacade.createSpace(mapper.toSpaceCreateFacadeRequest(request, file));
+
         SpaceCreateApiResponse apiResponse = SpaceCreateApiResponse.from(savedSpaceId);
 
         return ResponseEntity
