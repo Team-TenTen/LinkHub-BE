@@ -26,12 +26,13 @@ spring:
       on-profile: local
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/linkhub?serverTimezone=Asia/Seoul
+    url: jdbc:mysql://localhost:3380/linkhub_db?serverTimezone=Asia/Seoul
     username: root
     password: root1234!
-  redis:
-    host: localhost
-    port: 6379
+  data:
+    redis:
+      host: localhost
+      port: 6379
 ---
 spring:
   config:
@@ -42,6 +43,10 @@ spring:
     url: ${RDS_URL}
     username: ${RDS_USERNAME}
     password: ${RDS_PASSWORD}
+  data:
+    redis:
+      host: ${REDIS_URL}
+      port: 6379
 ---
 cloud:
   aws:
