@@ -53,16 +53,4 @@ public class SpaceQueryRepository {
         return new SliceImpl<>(spaces, condition.pageable(), hasNext);
     }
 
-    public Optional<SpaceWithSpaceImageAndSpaceMember> findSpaceWithSpaceImageById(Long spaceId) {
-        return Optional.ofNullable(queryFactory
-                .select(new QSpaceWithSpaceImage(
-                        space,
-                        spaceImage
-                ))
-                .from(space)
-                .where(space.id.eq(spaceId))
-                .join(spaceImage).on(space.id.eq(spaceImage.space.id))
-                .fetchOne());
-    }
-
 }
