@@ -3,7 +3,7 @@ package com.tenten.linkhub.domain.space.repository.space.query;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tenten.linkhub.domain.space.repository.space.dto.QSpaceWithSpaceImage;
 import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
-import com.tenten.linkhub.domain.space.repository.space.dto.SpaceWithSpaceImage;
+import com.tenten.linkhub.domain.space.repository.space.dto.SpaceWithSpaceImageAndSpaceMember;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
@@ -25,9 +25,9 @@ public class SpaceQueryRepository {
         this.dynamicQueryFactory = new DynamicQueryFactory();
     }
 
-    public Slice<SpaceWithSpaceImage> findSpaceWithSpaceImageByCondition(QueryCondition condition) {
+    public Slice<SpaceWithSpaceImageAndSpaceMember> findSpaceWithSpaceImageByCondition(QueryCondition condition) {
 
-        List<SpaceWithSpaceImage> spaces = queryFactory
+        List<SpaceWithSpaceImageAndSpaceMember> spaces = queryFactory
                 .select(new QSpaceWithSpaceImage(
                         space,
                         spaceImage
@@ -53,7 +53,7 @@ public class SpaceQueryRepository {
         return new SliceImpl<>(spaces, condition.pageable(), hasNext);
     }
 
-    public Optional<SpaceWithSpaceImage> findSpaceWithSpaceImageById(Long spaceId) {
+    public Optional<SpaceWithSpaceImageAndSpaceMember> findSpaceWithSpaceImageById(Long spaceId) {
         return Optional.ofNullable(queryFactory
                 .select(new QSpaceWithSpaceImage(
                         space,

@@ -19,7 +19,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public MemberInfos findMemberInfosByMemberIds(List<String> memberIds){
+    public MemberInfos findMemberInfosByMemberIds(List<Long> memberIds){
         List<Member> members = memberRepository.findMemberWithProfileImageByMemberIds(memberIds);
 
         return MemberInfos.from(members);

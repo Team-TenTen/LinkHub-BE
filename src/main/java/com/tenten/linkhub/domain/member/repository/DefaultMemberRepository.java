@@ -15,7 +15,7 @@ public class DefaultMemberRepository implements MemberRepository{
     }
 
     @Override
-    public List<Member> findMemberWithProfileImageByMemberIds(List<String> memberIds) {
+    public List<Member> findMemberWithProfileImageByMemberIds(List<Long> memberIds) {
         return memberJpaRepository.findMemberJoinProfileImageByMemberIds(memberIds);
 
     }

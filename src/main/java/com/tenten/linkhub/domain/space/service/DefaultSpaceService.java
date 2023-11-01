@@ -2,9 +2,9 @@ package com.tenten.linkhub.domain.space.service;
 
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
-import com.tenten.linkhub.domain.space.repository.space.dto.SpaceWithSpaceImage;
+import com.tenten.linkhub.domain.space.repository.space.dto.SpaceWithSpaceImageAndSpaceMember;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.SpaceGetByIdResponse;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.mapper.SpaceMapper;
@@ -13,7 +13,6 @@ import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.dto.ImageSaveRequest;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
 
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +38,7 @@ public class DefaultSpaceService implements SpaceService{
     @Override
     @Transactional(readOnly = true)
     public SpacesFindByQueryResponses findSpacesByQuery(SpacesFindByQueryRequest request) {
-        Slice<SpaceWithSpaceImage> spaces = spaceRepository.findSpaceWithSpaceImageByQuery(mapper.toQueryCond(request));
+        Slice<SpaceWithSpaceImageAndSpaceMember> spaces = spaceRepository.findSpaceWithSpaceImageByQuery(mapper.toQueryCond(request));
 
         return SpacesFindByQueryResponses.from(spaces);
     }
@@ -64,11 +63,10 @@ public class DefaultSpaceService implements SpaceService{
 
     @Override
     @Transactional(readOnly = true)
-    public SpaceGetByIdResponse getSpaceById(Long spaceId, String cookieValue) {
-        SpaceWithSpaceImage spaceWithSpaceImage = spaceRepository.getSpaceWithSpaceImageById(spaceId);
+    public SpaceWithSpaceImageAndSpaceMemberInfo getSpaceWithSpaceImageAndSpaceMemberById(Long spaceId) {
+        Space space = spaceRepository.getSpaceJoinSpaceImageAndSpaceMemberById(spaceId);
 
-        SpaceMemberWithMemberInfo response = spaceMemberRepository.findSpaceMemberWithMemberInfoBySpaceId(spaceId);
-
+        return SpaceWithSpaceImageAndSpaceMemberInfo.from(space);
     }
 
     private ImageInfo getImageInfo(MultipartFile file) {

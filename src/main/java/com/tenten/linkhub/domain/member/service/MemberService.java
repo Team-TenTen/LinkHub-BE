@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface MemberService {
 
-    MemberInfos findMemberInfosByMemberIds(List<String> memberIds);
+    MemberInfos findMemberInfosByMemberIds(List<Long> memberIds);
 
 }

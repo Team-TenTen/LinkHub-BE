@@ -1,11 +1,11 @@
 package com.tenten.linkhub.domain.space.service.dto.space;
 
-import com.tenten.linkhub.domain.space.repository.space.dto.SpaceWithSpaceImage;
+import com.tenten.linkhub.domain.space.repository.space.dto.SpaceWithSpaceImageAndSpaceMember;
 import org.springframework.data.domain.Slice;
 
 public record SpacesFindByQueryResponses(Slice<SpacesFindByQueryResponse> responses) {
 
-    public static SpacesFindByQueryResponses from(Slice<SpaceWithSpaceImage> spaces){
+    public static SpacesFindByQueryResponses from(Slice<SpaceWithSpaceImageAndSpaceMember> spaces){
         Slice<SpacesFindByQueryResponse> mapResponses = spaces.map(s -> new SpacesFindByQueryResponse(
                 s.space().getId(),
                 s.space().getSpaceName(),

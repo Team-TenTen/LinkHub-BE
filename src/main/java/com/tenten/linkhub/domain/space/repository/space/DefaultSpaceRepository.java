@@ -2,7 +2,7 @@ package com.tenten.linkhub.domain.space.repository.space;
 
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
-import com.tenten.linkhub.domain.space.repository.space.dto.SpaceWithSpaceImage;
+import com.tenten.linkhub.domain.space.repository.space.dto.SpaceWithSpaceImageAndSpaceMember;
 import com.tenten.linkhub.domain.space.repository.space.query.SpaceQueryRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Slice;
@@ -20,7 +20,7 @@ public class DefaultSpaceRepository implements SpaceRepository {
     }
 
     @Override
-    public Slice<SpaceWithSpaceImage> findSpaceWithSpaceImageByQuery(QueryCondition queryCondition) {
+    public Slice<SpaceWithSpaceImageAndSpaceMember> findSpaceWithSpaceImageByQuery(QueryCondition queryCondition) {
         return spaceQueryRepository.findSpaceWithSpaceImageByCondition(queryCondition);
     }
 
@@ -36,8 +36,8 @@ public class DefaultSpaceRepository implements SpaceRepository {
     }
 
     @Override
-    public SpaceWithSpaceImage getSpaceWithSpaceImageById(Long spaceId) {
-        return spaceQueryRepository.findSpaceWithSpaceImageById(spaceId)
+    public Space getSpaceJoinSpaceImageAndSpaceMemberById(Long spaceId) {
+        return spaceJpaRepository.findSpaceJoinSpaceImageAndSpaceMemberById(spaceId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 spaceId를 가진 SpaceWithSpaceImage를 찾을 수 없습니다."));
     }
 

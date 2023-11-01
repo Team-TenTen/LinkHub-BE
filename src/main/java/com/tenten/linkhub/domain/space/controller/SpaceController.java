@@ -2,12 +2,13 @@ package com.tenten.linkhub.domain.space.controller;
 
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiResponse;
-import com.tenten.linkhub.domain.space.controller.dto.space.SpaceGetByIdApiResponse;
+import com.tenten.linkhub.domain.space.controller.dto.space.SpaceDetailGetByIdApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiResponses;
 import com.tenten.linkhub.domain.space.controller.mapper.SpaceApiMapper;
+import com.tenten.linkhub.domain.space.facade.SpaceFacade;
+import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
 import com.tenten.linkhub.domain.space.service.SpaceService;
-import com.tenten.linkhub.domain.space.service.dto.space.SpaceGetByIdResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -38,10 +40,12 @@ import java.net.URI;
 public class SpaceController {
     private static final String SPACE_LOCATION_PRE_FIX = "https://api.Link-hub.site/spaces/";
 
+    private final SpaceFacade spaceFacade;
     private final SpaceService spaceService;
     private final SpaceApiMapper mapper;
 
-    public SpaceController(SpaceService spaceService, SpaceApiMapper mapper) {
+    public SpaceController(SpaceFacade spaceFacade, SpaceService spaceService, SpaceApiMapper mapper) {
+        this.spaceFacade = spaceFacade;
         this.spaceService = spaceService;
         this.mapper = mapper;
     }
@@ -106,12 +110,18 @@ public class SpaceController {
      */
     @GetMapping(value = "/{spaceId}",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> getSpaceById(
+    public ResponseEntity<SpaceDetailGetByIdApiResponse> getSpaceDetailById(
             @CookieValue(value = "spaceView", required = false) Cookie spaceViewCookie,
-            @PathVariable Long spaceId
+            @PathVariable Long spaceId,
+            HttpServletResponse servletResponse
     ){
-        SpaceGetByIdResponse response = spaceService.getSpaceById(spaceId, spaceViewCookie.getValue());
-        return ResponseEntity.ok().build();
+        SpaceDetailGetByIdFacadeResponse response = spaceFacade.getSpaceDetailById(spaceId, spaceViewCookie);
+
+        servletResponse.addCookie(response.spaceViewCookie());
+
+        SpaceDetailGetByIdApiResponse apiResponse = SpaceDetailGetByIdApiResponse.from(response);
+
+        return ResponseEntity.ok(apiResponse);
     }
 
 }

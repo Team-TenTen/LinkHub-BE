@@ -1,7 +1,7 @@
 package com.tenten.linkhub.domain.space.service;
 
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.SpaceGetByIdResponse;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 
@@ -10,5 +10,5 @@ public interface SpaceService {
 
     Long createSpace(SpaceCreateRequest spaceCreateRequest);
 
-    SpaceGetByIdResponse getSpaceById(Long spaceId, String cookieValue);
+    SpaceWithSpaceImageAndSpaceMemberInfo getSpaceWithSpaceImageAndSpaceMemberById(Long spaceId);
 }

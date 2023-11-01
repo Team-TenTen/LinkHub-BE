@@ -9,6 +9,6 @@ import java.util.List;
 public interface MemberJpaRepository extends JpaRepository<Member, Long> {
 
     @Query("SELECT m FROM Member m JOIN FETCH m.profileImages pi WHERE m.id IN :memberIds AND m.isDeleted = false")
-    List<Member> findMemberJoinProfileImageByMemberIds(List<String> memberIds);
+    List<Member> findMemberJoinProfileImageByMemberIds(List<Long> memberIds);
 
 }
