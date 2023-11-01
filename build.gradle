@@ -61,6 +61,16 @@ dependencies {
 
     //aws
     implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
+
+    // Authentication & Authorization
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    testImplementation 'org.springframework.security:spring-security-test'
+
+
 }
 
 tasks.named('test') {

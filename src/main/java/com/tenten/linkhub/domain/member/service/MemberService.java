@@ -9,4 +9,6 @@ public interface MemberService {
     void sendVerificationEmail(EmailDto emailDto);
 
     MailVerificationResponse verificateEmail(MailVerificationRequest request);
+
+    Long findOrCreateUser(String socialId, String provider);
 }

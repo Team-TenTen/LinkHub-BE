@@ -1,6 +1,9 @@
 package com.tenten.linkhub.domain.member.service;
 
+import com.tenten.linkhub.domain.member.model.Member;
+import com.tenten.linkhub.domain.member.model.Provider;
 import com.tenten.linkhub.domain.member.repository.MemberEmailRedisRepository;
+import com.tenten.linkhub.domain.member.repository.MemberJpaRepository;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationRequest;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationResponse;
 import com.tenten.linkhub.global.infrastructure.ses.AwsSesService;
@@ -17,13 +20,16 @@ public class MemberServiceImpl implements MemberService {
     private final AwsSesService emailService;
     private final VerificationCodeCreator verificationCodeCreator;
     private final MemberEmailRedisRepository memberEmailRedisRepository;
+    private final MemberJpaRepository memberJpaRepository;
 
     public MemberServiceImpl(AwsSesService emailService,
                              VerificationCodeCreator verificationCodeCreator,
-                             MemberEmailRedisRepository memberEmailRedisRepository) {
+                             MemberEmailRedisRepository memberEmailRedisRepository,
+            MemberJpaRepository memberJpaRepository) {
         this.emailService = emailService;
         this.verificationCodeCreator = verificationCodeCreator;
         this.memberEmailRedisRepository = memberEmailRedisRepository;
+        this.memberJpaRepository = memberJpaRepository;
     }
 
     @Transactional
@@ -45,5 +51,18 @@ public class MemberServiceImpl implements MemberService {
 
         return new MailVerificationResponse(true);
     }
+
+    @Transactional
+    @Override
+    public Long findOrCreateUser(String socialId, String provider) {
+        Member user = memberJpaRepository.findBySocialIdAndProvider(socialId, provider)
+                .orElseGet(() -> {
+                    Member newUser = new Member(socialId, Provider.valueOf(provider));
+                    return memberJpaRepository.save(newUser);
+                });
+
+        return user.getId();
+    }
+
 
 }
