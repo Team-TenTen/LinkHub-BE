@@ -1,45 +1,18 @@
 spring:
-  profiles:
-    active: local
-    group:
-      local:
-        - common
-      prod:
-        - common
----
-spring:
-  config:
-    activate:
-      on-profile: common
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USER_NAME}
+    password: ${DB_PASSWORD}
+
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL57Dialect
         format_sql: true
----
-spring:
-  config:
-    activate:
-      on-profile: local
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/linkhub_db?serverTimezone=Asia/Seoul
-    username: root
-    password: root
----
-spring:
-  config:
-    activate:
-      on-profile: prod
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${RDS_URL}
-    username: ${RDS_USERNAME}
-    password: ${RDS_PASSWORD}
----
+
 cloud:
   aws:
     s3:

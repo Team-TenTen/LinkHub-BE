@@ -8,8 +8,8 @@ import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 
@@ -19,7 +19,7 @@ import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 public class SpaceMembers {
 
     @OneToMany(mappedBy = "space", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    private List<SpaceMember> spaceMemberList = new ArrayList<>();
+    private Set<SpaceMember> spaceMemberList = new HashSet<>();
 
     public void addSpaceMember(SpaceMember spaceMember) {
         validateNotNull(spaceMember, "spaceImage");

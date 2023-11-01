@@ -20,7 +20,7 @@ public class DefaultSpaceRepository implements SpaceRepository {
     }
 
     @Override
-    public Slice<SpaceWithSpaceImageAndSpaceMember> findSpaceWithSpaceImageByQuery(QueryCondition queryCondition) {
+    public Slice<Space> findSpaceWithSpaceImageByQuery(QueryCondition queryCondition) {
         return spaceQueryRepository.findSpaceWithSpaceImageByCondition(queryCondition);
     }
 
