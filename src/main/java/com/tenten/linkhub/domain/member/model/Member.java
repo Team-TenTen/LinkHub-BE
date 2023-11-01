@@ -1,9 +1,5 @@
 package com.tenten.linkhub.domain.member.model;
 
-import com.tenten.linkhub.domain.member.model.vo.AboutMe;
-import com.tenten.linkhub.domain.member.model.vo.NewsEmail;
-import com.tenten.linkhub.domain.member.model.vo.Nickname;
-import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.global.entity.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

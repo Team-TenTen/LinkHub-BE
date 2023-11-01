@@ -47,17 +47,28 @@ public class SpaceFacade {
     }
 
     private Cookie increaseSpaceViewCount(Cookie spaceViewCookie, Long spaceId) {
-        if (spaceViewCookie != null){
-            if(!spaceViewCookie.getValue().contains("[" + spaceId + "]")) {
+        if (spaceViewCookie == null) {
+            eventPublisher.publishEvent(
+                    new SpaceIncreaseViewCountDto(spaceId)
+            );
 
-                eventPublisher.publishEvent(
-                        new SpaceIncreaseViewCountDto(spaceId)
-                );
+            Cookie newCookie = new Cookie("spaceView", "[" + spaceId + "]");
+            newCookie.setPath("/");
+            newCookie.setMaxAge(COOKIE_EXPIRE_TIME);
 
-                spaceViewCookie.setValue(spaceViewCookie.getValue() + "_[" + spaceId + "]" ); //기존 쿠기내에 해당 게시물 Id 추가
-                spaceViewCookie.setPath("/");
-                spaceViewCookie.setMaxAge(COOKIE_EXPIRE_TIME);
-            }
+            return newCookie;
+        }
+
+        if (!spaceViewCookie.getValue().contains("[" + spaceId + "]")) {
+
+            eventPublisher.publishEvent(
+                    new SpaceIncreaseViewCountDto(spaceId)
+            );
+
+            spaceViewCookie.setValue(spaceViewCookie.getValue() + "_[" + spaceId + "]");
+            spaceViewCookie.setPath("/");
+            spaceViewCookie.setMaxAge(COOKIE_EXPIRE_TIME);
+            return spaceViewCookie;
         }
 
         return spaceViewCookie;
