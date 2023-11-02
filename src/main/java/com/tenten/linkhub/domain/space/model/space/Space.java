@@ -134,6 +134,7 @@ public class Space extends BaseEntity {
 
     public void updateSpaceAttributes(SpaceUpdateDto updateDto){
         validateOwnership(updateDto.memberId());
+
         validateMaxSize(updateDto.spaceName(), 255, "spaceName");
         validateNotNull(updateDto.category(), "category");
         validateNotNull(updateDto.isVisible(), "isVisible");

@@ -5,7 +5,6 @@ import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiReques
 import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
@@ -18,8 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 public interface SpaceApiMapper {
 
     SpacesFindByQueryRequest toSpacesFindByQueryRequest(SpacesFindByQueryApiRequest request, Pageable pageable);
-
-    SpaceCreateRequest toSpaceCreateRequest(SpaceCreateApiRequest request, MultipartFile file);
 
     SpaceCreateFacadeRequest toSpaceCreateFacadeRequest(SpaceCreateApiRequest request, MultipartFile file);
 
