@@ -31,7 +31,7 @@ public interface SpaceMapper {
 
     SpaceImage toSpaceImage(ImageInfo imageInfo);
 
-    @Mapping(source = "request.imageInfo", target = "imageInfo", qualifiedByName = "mapSpaceImage")
+    @Mapping(source = "request.imageInfo", target = "spaceImage", qualifiedByName = "mapSpaceImage")
     SpaceUpdateDto toSpaceUpdateDto(SpaceUpdateRequest request);
 
     @Named("mapSpaceImage")

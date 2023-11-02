@@ -6,13 +6,13 @@ import com.tenten.linkhub.domain.member.repository.MemberJpaRepository;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceMemberDetailInfo;
+import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
-import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +30,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-
 
 @Transactional
 @TestPropertySource(locations = "classpath:/application-test.yml")
@@ -53,13 +52,13 @@ class SpaceFacadeTest {
     private Long setUpMemberId;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         setUpData();
     }
 
     @Test
     @DisplayName("유저는 스페이스를 생성할 수 있다.")
-    void createSpace(){
+    void createSpace() {
         //given
         MockMultipartFile requestFile = new MockMultipartFile("테스트 이미지3", (byte[]) null);
         ImageInfo imageInfo = ImageInfo.of("https://testimage3", requestFile.getName());
@@ -108,6 +107,42 @@ class SpaceFacadeTest {
         assertThat(spaceMemberDetailInfos.get(0).memberId()).isEqualTo(setUpMemberId);
         assertThat(spaceMemberDetailInfos.get(0).nickname()).isEqualTo("잠자는 사자의 콧털");
         assertThat(spaceMemberDetailInfos.get(0).profilePath()).isEqualTo("https://testprofileimage");
+    }
+
+    @Test
+    @DisplayName("유저는 스페이스의 정보들을 변경할 수 있다.")
+    void updateSpace() {
+        //given
+        ImageInfo imageInfo = ImageInfo.of("https://testimage3", "테스트 이미지 파일 이름");
+        BDDMockito.given(mockS3Uploader.saveImage(any())).willReturn(imageInfo);
+
+        SpaceUpdateFacadeRequest request = new SpaceUpdateFacadeRequest(
+                setUpSpaceId,
+                "업데이트 스페이스 네임",
+                "업데이트 스페이스 소개글",
+                Category.HOBBY_LEISURE_TRAVEL,
+                false,
+                false,
+                false,
+                false,
+                setUpMemberId,
+                null
+        );
+
+        //when
+        Long updatedSpaceId = spaceFacade.updateSpace(request);
+
+        //then
+        Space space = spaceJpaRepository.findById(updatedSpaceId).get();
+
+        assertThat(space.getSpaceName()).isEqualTo("업데이트 스페이스 네임");
+        assertThat(space.getDescription()).isEqualTo("업데이트 스페이스 소개글");
+        assertThat(space.getCategory()).isEqualTo(Category.HOBBY_LEISURE_TRAVEL);
+        assertThat(space.getIsVisible()).isEqualTo(false);
+        assertThat(space.getIsComment()).isEqualTo(false);
+        assertThat(space.getIsLinkSummarizable()).isEqualTo(false);
+        assertThat(space.getIsReadMarkEnabled()).isEqualTo(false);
+        assertThat(space.getSpaceImages().get(0).getPath()).isEqualTo("https://testimage1");
     }
 
     private void setUpData() {
