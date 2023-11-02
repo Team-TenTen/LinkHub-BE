@@ -2,23 +2,32 @@ package com.tenten.linkhub.domain.space.controller;
 
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiResponse;
+import com.tenten.linkhub.domain.space.controller.dto.space.SpaceDetailGetByIdApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiResponses;
 import com.tenten.linkhub.domain.space.controller.mapper.SpaceApiMapper;
+import com.tenten.linkhub.domain.space.facade.SpaceFacade;
+import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
 import com.tenten.linkhub.domain.space.service.SpaceService;
-import com.tenten.linkhub.domain.space.service.dto.SpacesFindByQueryResponses;
+import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
+import com.tenten.linkhub.global.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -33,10 +42,12 @@ import java.net.URI;
 public class SpaceController {
     private static final String SPACE_LOCATION_PRE_FIX = "https://api.Link-hub.site/spaces/";
 
+    private final SpaceFacade spaceFacade;
     private final SpaceService spaceService;
     private final SpaceApiMapper mapper;
 
-    public SpaceController(SpaceService spaceService, SpaceApiMapper mapper) {
+    public SpaceController(SpaceFacade spaceFacade, SpaceService spaceService, SpaceApiMapper mapper) {
+        this.spaceFacade = spaceFacade;
         this.spaceService = spaceService;
         this.mapper = mapper;
     }
@@ -77,7 +88,7 @@ public class SpaceController {
     @Operation(
             summary = "스페이스 생성 API", description = "스페이스 생성 API 입니다.",
             responses = {
-                    @ApiResponse(responseCode = "201", description = "스페이스가 성공적으로 생성되었습니다."),
+                    @ApiResponse(responseCode = "201", description = "스페이스가 성공적으로 생성되었습니다.")
             })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<SpaceCreateApiResponse> createSpace(
@@ -88,12 +99,39 @@ public class SpaceController {
             @RequestPart @Valid SpaceCreateApiRequest request,
             @RequestPart(required = false) MultipartFile file
     ) {
-        Long savedSpaceId = spaceService.createSpace(mapper.toSpaceCreateRequest(request, file));
+        Long savedSpaceId = spaceFacade.createSpace(mapper.toSpaceCreateFacadeRequest(request, file));
+
         SpaceCreateApiResponse apiResponse = SpaceCreateApiResponse.from(savedSpaceId);
 
         return ResponseEntity
                 .created(URI.create(SPACE_LOCATION_PRE_FIX + savedSpaceId))
                 .body(apiResponse);
+    }
+
+    /**
+     * 스페이스 상세 조회 API
+     */
+    @Operation(
+            summary = "스페이스 상세 조회 API", description = "스페이스 상세 조회 API 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "스페이스가 성공적으로 조회되었습니다."),
+                    @ApiResponse(responseCode = "404", description = "요청한 spaceId에 해당하는 스페이스를 찾을 수 없습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @GetMapping(value = "/{spaceId}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SpaceDetailGetByIdApiResponse> getSpaceDetailById(
+            @Parameter(hidden = true)
+            @CookieValue(value = "spaceView", required = false) Cookie spaceViewCookie,
+            @PathVariable Long spaceId,
+            HttpServletResponse servletResponse
+    ){
+        SpaceDetailGetByIdFacadeResponse response = spaceFacade.getSpaceDetailById(spaceId, spaceViewCookie);
+
+        servletResponse.addCookie(response.spaceViewCookie());
+        SpaceDetailGetByIdApiResponse apiResponse = SpaceDetailGetByIdApiResponse.from(response);
+
+        return ResponseEntity.ok(apiResponse);
     }
 
 }

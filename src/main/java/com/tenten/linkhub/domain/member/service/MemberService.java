@@ -2,7 +2,10 @@ package com.tenten.linkhub.domain.member.service;
 
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationRequest;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationResponse;
+import com.tenten.linkhub.domain.member.service.dto.MemberInfos;
 import com.tenten.linkhub.global.util.email.EmailDto;
+
+import java.util.List;
 
 public interface MemberService {
 
@@ -11,4 +14,6 @@ public interface MemberService {
     MailVerificationResponse verificateEmail(MailVerificationRequest request);
 
     Long findOrCreateUser(String socialId, String provider);
+
+    MemberInfos findMemberInfosByMemberIds(List<Long> memberIds);
 }

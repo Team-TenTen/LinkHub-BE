@@ -3,6 +3,7 @@ package com.tenten.linkhub.domain.member.repository;
 import com.tenten.linkhub.domain.member.model.Member;
 import java.util.List;
 import org.springframework.stereotype.Repository;
+
 @Repository
 public class DefaultMemberRepository implements MemberRepository{
 

@@ -1,10 +1,7 @@
 package com.tenten.linkhub.domain.member.model;
 
-import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -12,7 +9,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -21,29 +17,23 @@ import lombok.NoArgsConstructor;
 @Table(name = "profile_image")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProfileImage {
-
     private static final int MAX_PATH_LENGTH = 2083;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "member_id")
     private Member member;
 
-    @Column(length = MAX_PATH_LENGTH, nullable = false)
+    @Column(name = "path", nullable = false)
     private String path;
 
-    @Column(nullable = false)
-    private String name;
-
-    public ProfileImage(String path, String name) {
-        validateMaxSize(path, MAX_PATH_LENGTH, "path");
-        validateMaxSize(name, 255, "name");
-
+    public ProfileImage(Long id, Member member, String path) {
+        this.id = id;
+        this.member = member;
         this.path = path;
-        this.name = name;
     }
 
     public void changeMember(Member member) {

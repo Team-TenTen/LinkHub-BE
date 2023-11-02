@@ -119,4 +119,8 @@ public class Space extends BaseEntity {
         spaceMembers.removeSpaceMember(spaceMember);
     }
 
+    public void increaseViewCount(){
+        viewCount++;
+    }
+
 }

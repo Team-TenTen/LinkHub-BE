@@ -1,11 +1,8 @@
 package com.tenten.linkhub.domain.member.model;
 
-import com.tenten.linkhub.domain.member.model.vo.AboutMe;
-import com.tenten.linkhub.domain.member.model.vo.NewsEmail;
-import com.tenten.linkhub.domain.member.model.vo.Nickname;
+import com.tenten.linkhub.global.entity.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -16,11 +13,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -28,7 +22,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "members")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member {
+public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,7 +54,8 @@ public class Member {
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<ProfileImage> profileImages = new ArrayList<>();
 
-    public Member(String socialId, Provider provider, Role role, String nickname, String aboutMe, String newsEmail, boolean isEmailVerified) {
+    public Member(String socialId, Provider provider, Role role, String nickname, String aboutMe, String newsEmail,
+            boolean isEmailVerified, List<ProfileImage> profileImages) {
         this.socialId = socialId;
         this.provider = provider;
         this.role = role;
@@ -68,11 +63,7 @@ public class Member {
         this.aboutMe = aboutMe;
         this.newsEmail = newsEmail;
         this.isEmailVerified = isEmailVerified;
-    }
-
-    public Member(String socialId, Provider provider) {
-        this.socialId = socialId;
-        this.provider = provider;
+        this.profileImages = profileImages;
     }
 
     public void addProfileImage(ProfileImage profileImage) {

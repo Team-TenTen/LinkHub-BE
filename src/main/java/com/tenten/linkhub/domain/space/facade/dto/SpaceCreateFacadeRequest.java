@@ -1,9 +1,9 @@
-package com.tenten.linkhub.domain.space.service.dto;
+package com.tenten.linkhub.domain.space.facade.dto;
 
 import com.tenten.linkhub.domain.space.model.category.Category;
 import org.springframework.web.multipart.MultipartFile;
 
-public record SpaceCreateRequest(
+public record SpaceCreateFacadeRequest(
         String spaceName,
         String description,
         Category category,

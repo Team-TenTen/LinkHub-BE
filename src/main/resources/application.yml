@@ -11,6 +11,15 @@ spring:
   config:
     activate:
       on-profile: common
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${RDS_URL}
+    username: ${RDS_USERNAME}
+    password: ${RDS_PASSWORD}
+  data:
+    redis:
+      host: ${REDIS_URL}
+      port: 6379
   jpa:
     hibernate:
       ddl-auto: update
@@ -19,6 +28,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL57Dialect
         format_sql: true
+        default_batch_fetch_size: 1000
   security:
     oauth2:
       client:
@@ -37,34 +47,17 @@ spring:
             authorization-grant-type: authorization_code
             client-name: kakao
             scope: profile_image, profile_nickname
+
 ---
 spring:
   config:
     activate:
       on-profile: local
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3380/linkhub_db?serverTimezone=Asia/Seoul
-    username: root
-    password: root1234!
-  data:
-    redis:
-      host: localhost
-      port: 6379
 ---
 spring:
   config:
     activate:
       on-profile: prod
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${RDS_URL}
-    username: ${RDS_USERNAME}
-    password: ${RDS_PASSWORD}
-  data:
-    redis:
-      host: ${REDIS_URL}
-      port: 6379
 ---
 cloud:
   aws:
