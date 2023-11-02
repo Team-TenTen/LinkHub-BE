@@ -144,9 +144,19 @@ public class SpaceController {
      * !로그인 구현되면 memberId 받는 방식 바꿔야하는 API.!
      * !현재는 바디에서 받는중.!
      */
-    @PatchMapping("/{spaceId}")
+    @Operation(
+            summary = "스페이스 정보 수정 API", description = "스페이스 정보 수정 API 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "스페이스가 성공적으로 수정되었습니다."),
+                    @ApiResponse(responseCode = "404", description = "권한이 없는 유저가 스페이스를 수정하려고 합니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @PatchMapping(value = "/{spaceId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<SpaceUpdateApiResponse> updateSpace(
             @PathVariable Long spaceId,
+            @Parameter(
+                    description = "이미지 파일과 spaceId 외의 데이터는 application/jsom 타입으로 받습니다."
+            )
             @RequestPart @Valid SpaceUpdateApiRequest request,
             @RequestPart(required = false) MultipartFile file
     ){
