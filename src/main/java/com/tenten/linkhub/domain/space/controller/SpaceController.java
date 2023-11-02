@@ -1,5 +1,7 @@
 package com.tenten.linkhub.domain.space.controller;
 
+import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceDetailGetByIdApiResponse;
@@ -27,8 +29,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -132,6 +137,24 @@ public class SpaceController {
         SpaceDetailGetByIdApiResponse apiResponse = SpaceDetailGetByIdApiResponse.from(response);
 
         return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
+     * 스페이스 수정 API
+     * !로그인 구현되면 memberId 받는 방식 바꿔야하는 API.!
+     * !현재는 바디에서 받는중.!
+     */
+    @PatchMapping("/{spaceId}")
+    public ResponseEntity<SpaceUpdateApiResponse> updateSpace(
+            @PathVariable Long spaceId,
+            @RequestPart @Valid SpaceUpdateApiRequest request,
+            @RequestPart(required = false) MultipartFile file
+    ){
+        Long updatedSpaceId = spaceFacade.updateSpace(
+                mapper.toSpaceUpdateFacadeRequest(spaceId, request, file));
+
+        return ResponseEntity
+                .ok(SpaceUpdateApiResponse.from(updatedSpaceId));
     }
 
 }

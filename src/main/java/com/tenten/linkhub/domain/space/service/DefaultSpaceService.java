@@ -3,6 +3,7 @@ package com.tenten.linkhub.domain.space.service;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
@@ -55,6 +56,15 @@ public class DefaultSpaceService implements SpaceService{
         Space space = spaceRepository.getSpaceJoinSpaceMemberById(spaceId);
 
         return SpaceWithSpaceImageAndSpaceMemberInfo.from(space);
+    }
+
+    @Override
+    @Transactional
+    public Long updateSpace(SpaceUpdateRequest request) {
+        Space space = spaceRepository.getById(request.spaceId());
+        space.updateSpaceAttributes(mapper.toSpaceUpdateDto(request));
+
+        return space.getId();
     }
 
 }

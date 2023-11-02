@@ -45,6 +45,15 @@ public class GlobalApiExceptionHandler {
                 .body(errorResponse);
     }
 
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedAccessException(HttpServletRequest request, UnauthorizedAccessException e) {
+        ErrorResponse errorResponse = ErrorResponse.of(e.getMessage(), request.getRequestURI());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(errorResponse);
+    }
+
     @ExceptionHandler(ImageUploadException.class)
     public ResponseEntity<ErrorWithDetailCodeResponse> handleImageUploadException(HttpServletRequest request, ImageUploadException e) {
         ErrorWithDetailCodeResponse errorResponse = ErrorWithDetailCodeResponse.of(

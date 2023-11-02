@@ -1,9 +1,11 @@
 package com.tenten.linkhub.domain.space.model.space;
 
 import com.tenten.linkhub.domain.space.model.category.Category;
+import com.tenten.linkhub.domain.space.model.space.dto.SpaceUpdateDto;
 import com.tenten.linkhub.domain.space.model.space.vo.SpaceImages;
 import com.tenten.linkhub.domain.space.model.space.vo.SpaceMembers;
 import com.tenten.linkhub.global.entity.BaseEntity;
+import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -18,6 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
 import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
@@ -121,6 +124,32 @@ public class Space extends BaseEntity {
 
     public void increaseViewCount(){
         viewCount++;
+    }
+
+    public void validateOwnership(Long memberId){
+        if (!Objects.equals(this.memberId, memberId)){
+            throw new UnauthorizedAccessException("해당 멤버는 이 스페이스의 owner가 아닙니다.");
+        }
+    }
+
+    public void updateSpaceAttributes(SpaceUpdateDto updateDto){
+        validateOwnership(updateDto.memberId());
+        validateMaxSize(updateDto.spaceName(), 255, "spaceName");
+        validateNotNull(updateDto.category(), "category");
+        validateNotNull(updateDto.isVisible(), "isVisible");
+        validateNotNull(updateDto.isComment(), "isComment");
+        validateNotNull(updateDto.isLinkSummarizable(), "isLinkSummarizable");
+        validateNotNull(updateDto.isReadMarkEnabled(), "isReadMarkEnabled");
+
+        this.spaceName = updateDto.spaceName();
+        this.description = updateDto.description();
+        this.category = updateDto.category();
+        this.isVisible = updateDto.isVisible();
+        this.isComment = updateDto.isComment();
+        this.isLinkSummarizable = updateDto.isLinkSummarizable();
+        this.isReadMarkEnabled = updateDto.isReadMarkEnabled();
+        updateDto.spaceImage()
+                .ifPresent(this::addSpaceImage);
     }
 
 }
