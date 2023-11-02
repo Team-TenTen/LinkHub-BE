@@ -1,7 +1,6 @@
 package com.tenten.linkhub.domain.member.model;
 
 import com.tenten.linkhub.domain.member.model.vo.AboutMe;
-import com.tenten.linkhub.domain.member.model.vo.NewsEmail;
 import com.tenten.linkhub.domain.member.model.vo.Nickname;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -13,12 +12,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.HashSet;
-import java.util.Set;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -45,10 +45,9 @@ public class Member {
     @Embedded
     @Column(name = "about_me")
     private AboutMe aboutMe;
-
-    @Embedded
+    
     @Column(name = "news_email")
-    private NewsEmail newsEmail;
+    private String newsEmail;
 
     @Column(name = "is_email_verified")
     private boolean isEmailVerified;
@@ -66,8 +65,8 @@ public class Member {
     private Set<FavoriteCategory> favoriteCategories = new HashSet<>();
 
     @Builder
-    public Member(Long id, String OAuthEmail, Role role, NewsEmail newsEmail, Nickname nickname, AboutMe aboutMe,
-            boolean isEmailVerified) {
+    public Member(Long id, String OAuthEmail, Role role, String newsEmail, Nickname nickname, AboutMe aboutMe,
+                  boolean isEmailVerified) {
         this.id = id;
         this.OAuthEmail = OAuthEmail;
         this.role = role;
