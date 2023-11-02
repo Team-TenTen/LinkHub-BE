@@ -64,6 +64,18 @@ public class GlobalApiExceptionHandler {
         return ResponseEntity.ok().build();
     }
 
+    @ExceptionHandler(DataDuplicateException.class)
+    public ResponseEntity<ErrorWithDetailCodeResponse> handleDataDuplicateException(HttpServletRequest request, DataDuplicateException e) {
+        ErrorWithDetailCodeResponse errorResponse = ErrorWithDetailCodeResponse.of(
+                e.getErrorCode(),
+                request.getRequestURI()
+        );
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(errorResponse);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Void> handleException(HttpServletRequest request, Exception e) {
         log.error("Sever Exception Request URI {}: ", request.getRequestURI(), e);
