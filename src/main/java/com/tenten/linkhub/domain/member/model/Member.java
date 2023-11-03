@@ -12,7 +12,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -30,13 +29,17 @@ public class Member extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String OAuthEmail;
+    private String socialId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Provider provider;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
-    @Column(nullable = false)
+    @Column
     private String nickname;
 
     @Column
@@ -45,19 +48,22 @@ public class Member extends BaseEntity {
     @Column
     private String newsEmail;
 
-    @Column(nullable = false)
-    private boolean isEmailVerified;
-
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<ProfileImage> profileImages = new ArrayList<>();
 
-    public Member(String OAuthEmail, Role role, String nickname, String aboutMe, String newsEmail, boolean isEmailVerified) {
-        this.OAuthEmail = OAuthEmail;
+    public Member(String socialId, Provider provider, Role role, String nickname, String aboutMe, String newsEmail) {
+        this.socialId = socialId;
+        this.provider = provider;
         this.role = role;
         this.nickname = nickname;
         this.aboutMe = aboutMe;
         this.newsEmail = newsEmail;
-        this.isEmailVerified = isEmailVerified;
+    }
+
+    public Member(String socialId, Provider provider, Role role) {
+        this.socialId = socialId;
+        this.provider = provider;
+        this.role = role;
     }
 
     public void addProfileImage(ProfileImage profileImage) {
