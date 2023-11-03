@@ -4,6 +4,7 @@ import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,11 +26,11 @@ public class ProfileImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", referencedColumnName = "id", nullable = false)
     private Member member;
 
-    @Column(name = "path", nullable = false)
+    @Column(length = MAX_PATH_LENGTH, nullable = false)
     private String path;
 
     @Column(nullable = false)
