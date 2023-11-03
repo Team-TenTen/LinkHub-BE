@@ -39,7 +39,7 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private Role role;
 
-    @Column(nullable = false)
+    @Column
     private String nickname;
 
     @Column
@@ -48,22 +48,22 @@ public class Member extends BaseEntity {
     @Column
     private String newsEmail;
 
-    @Column(nullable = false)
-    private boolean isEmailVerified;
-
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<ProfileImage> profileImages = new ArrayList<>();
 
-    public Member(String socialId, Provider provider, Role role, String nickname, String aboutMe, String newsEmail,
-            boolean isEmailVerified, List<ProfileImage> profileImages) {
+    public Member(String socialId, Provider provider, Role role, String nickname, String aboutMe, String newsEmail) {
         this.socialId = socialId;
         this.provider = provider;
         this.role = role;
         this.nickname = nickname;
         this.aboutMe = aboutMe;
         this.newsEmail = newsEmail;
-        this.isEmailVerified = isEmailVerified;
-        this.profileImages = profileImages;
+    }
+
+    public Member(String socialId, Provider provider, Role role) {
+        this.socialId = socialId;
+        this.provider = provider;
+        this.role = role;
     }
 
     public void addProfileImage(ProfileImage profileImage) {

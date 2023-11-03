@@ -1,5 +1,7 @@
 package com.tenten.linkhub.domain.member.model;
 
+import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,10 +32,15 @@ public class ProfileImage {
     @Column(name = "path", nullable = false)
     private String path;
 
-    public ProfileImage(Long id, Member member, String path) {
-        this.id = id;
-        this.member = member;
+    @Column(nullable = false)
+    private String name;
+
+    public ProfileImage(String path, String name) {
+        validateMaxSize(path, MAX_PATH_LENGTH, "path");
+        validateMaxSize(name, 255, "name");
+
         this.path = path;
+        this.name = name;
     }
 
     public void changeMember(Member member) {

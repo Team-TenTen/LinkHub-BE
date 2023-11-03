@@ -1,7 +1,9 @@
 package com.tenten.linkhub.domain.member.service;
 
+import com.tenten.linkhub.domain.auth.service.dto.MemberFindOrCreateResponse;
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.Provider;
+import com.tenten.linkhub.domain.member.model.Role;
 import com.tenten.linkhub.domain.member.repository.MemberEmailRedisRepository;
 import com.tenten.linkhub.domain.member.repository.MemberRepository;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationRequest;
@@ -62,14 +64,14 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public Long findOrCreateUser(String socialId, String provider) {
-        Member user = memberRepository.findBySocialIdAndProvider(socialId, provider)
+    public MemberFindOrCreateResponse findOrCreateMember(String socialId, Provider provider) {
+        Member member = memberRepository.findBySocialIdAndProvider(socialId, provider)
                 .orElseGet(() -> {
-                    Member newUser = new Member(socialId, Provider.valueOf(provider));
-                    return memberRepository.save(newUser);
+                    Member newMember = new Member(socialId, provider, Role.USER);
+                    return memberRepository.save(newMember);
                 });
 
-        return user.getId();
+        return MemberFindOrCreateResponse.from(member);
     }
 
 

@@ -1,39 +1,42 @@
 package com.tenten.linkhub.domain.auth;
 
-import com.tenten.linkhub.domain.member.model.Role;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import java.util.Base64;
+import io.jsonwebtoken.security.Keys;
+import java.security.Key;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class JwtProvider {
 
-    @Value("${jwt.secret}")
-    private String secret;
+    private final Key key;
 
     @Value("${jwt.expiration}")
-    private long expiration = 1000 * 60 * 60 * 10;
+    private long expiration;
 
-    private String SECRET_KEY = "44407b6f5caf26cf5cc82272d3719441ac716b2510f3bae495f7fffb73dfa608b8ad3ffc53f2a5c3f94421dac6cd2a8b2effe88988c837ea8b432a97a4de20ea";
-
-    byte[] decodedKey = Base64.getDecoder().decode(SECRET_KEY);
-    SecretKey originalKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256");
+    public JwtProvider(@Value("${jwt.secret}") String secretKey) {
+        this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
+    }
 
     public String generateToken(DefaultOAuth2User defaultOAuth2User) {
         Long memberId = (Long) defaultOAuth2User.getAttributes().get("memberId");
         String socialId = (String) defaultOAuth2User.getAttributes().get("socialId");
+        Boolean isLoggedIn = (Boolean) defaultOAuth2User.getAttributes().get("isLoggedIn");
+        String provider = (String) defaultOAuth2User.getAttributes().get("provider");
 
         List<String> roles = defaultOAuth2User.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -46,10 +49,41 @@ public class JwtProvider {
                 .setSubject(socialId)
                 .claim("memberId", memberId)
                 .claim("roles", roles)
+                .claim("isLoggedIn", isLoggedIn)
+                .claim("provider", provider)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
-                .signWith(originalKey, SignatureAlgorithm.HS256)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
     }
+
+    public boolean validateToken(String token) {
+        try {
+            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            return !claims.getBody().getExpiration().before(new Date());
+        } catch (JwtException | IllegalArgumentException e) {
+            log.info("Invalid JWT token: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public Authentication getAuthentication(String token) {
+        Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+
+        String socialId = claims.getSubject();
+        Long memberId = claims.get("memberId", Long.class);
+        String provider = claims.get("provider", String.class);
+
+        List<String> roles = claims.get("roles", List.class);
+        List<GrantedAuthority> authorities = roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+
+        MemberDetails memberDetails = new MemberDetails(memberId, socialId, provider, authorities);
+
+        return new UsernamePasswordAuthenticationToken(memberDetails, token, authorities);
+    }
+
+
 }

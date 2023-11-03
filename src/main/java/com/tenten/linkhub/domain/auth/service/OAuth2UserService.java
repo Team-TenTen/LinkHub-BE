@@ -1,7 +1,8 @@
-package com.tenten.linkhub.domain.auth;
+package com.tenten.linkhub.domain.auth.service;
 
+import com.tenten.linkhub.domain.auth.service.dto.MemberFindOrCreateResponse;
+import com.tenten.linkhub.domain.member.model.Provider;
 import com.tenten.linkhub.domain.member.service.MemberService;
-import jakarta.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,16 +36,21 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
                 .getUserInfoEndpoint()
                 .getUserNameAttributeName();
 
+        // 제공자 및 고유번호 DB 저장
         String socialId = Optional.ofNullable(oAuth2User.getAttribute("id"))
                 .map(Object::toString)
                 .orElseThrow(() -> new OAuth2AuthenticationException("Social ID not found"));
 
         String provider = userRequest.getClientRegistration().getRegistrationId();
 
-        Long memberId = memberService.findOrCreateUser(socialId, provider);
+        MemberFindOrCreateResponse memberFindOrCreateResponse = memberService.findOrCreateMember(socialId,
+                Provider.valueOf(provider));
 
         Map<String, Object> attributes = new HashMap<>(oAuth2User.getAttributes());
-        attributes.put("memberId", memberId);
+        attributes.put("socialId", socialId);
+        attributes.put("memberId", memberFindOrCreateResponse.memberId());
+        attributes.put("isLoggedIn", memberFindOrCreateResponse.isLoggedIn());
+        attributes.put("provider", provider);
 
         return new DefaultOAuth2User(authorities, attributes, userNameAttributeName);
     }

@@ -7,7 +7,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum Provider {
 
-    KAKAO("KAKAO");
+    kakao("kakao");
 
     private final String value;
 }
