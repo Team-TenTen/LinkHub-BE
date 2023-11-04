@@ -1,6 +1,9 @@
 package com.tenten.linkhub.domain.member.service;
 
+import com.tenten.linkhub.domain.auth.service.dto.MemberFindOrCreateResponse;
 import com.tenten.linkhub.domain.member.model.Member;
+import com.tenten.linkhub.domain.member.model.Provider;
+import com.tenten.linkhub.domain.member.model.Role;
 import com.tenten.linkhub.domain.member.repository.MemberEmailRedisRepository;
 import com.tenten.linkhub.domain.member.repository.MemberRepository;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationRequest;
@@ -9,10 +12,9 @@ import com.tenten.linkhub.domain.member.service.dto.MemberInfos;
 import com.tenten.linkhub.global.infrastructure.ses.AwsSesService;
 import com.tenten.linkhub.global.util.email.EmailDto;
 import com.tenten.linkhub.global.util.email.VerificationCodeCreator;
+import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,9 +26,9 @@ public class MemberServiceImpl implements MemberService {
     private final MemberEmailRedisRepository memberEmailRedisRepository;
 
     public MemberServiceImpl(MemberRepository memberRepository,
-                             AwsSesService emailService,
+            AwsSesService emailService,
                              VerificationCodeCreator verificationCodeCreator,
-                             MemberEmailRedisRepository memberEmailRedisRepository) {
+            MemberEmailRedisRepository memberEmailRedisRepository) {
         this.memberRepository = memberRepository;
         this.emailService = emailService;
         this.verificationCodeCreator = verificationCodeCreator;
@@ -52,12 +54,25 @@ public class MemberServiceImpl implements MemberService {
 
         return new MailVerificationResponse(true);
     }
-    
+
     @Override
-    public MemberInfos findMemberInfosByMemberIds(List<Long> memberIds){
+    public MemberInfos findMemberInfosByMemberIds(List<Long> memberIds) {
         List<Member> members = memberRepository.findMemberWithProfileImageByMemberIds(memberIds);
 
         return MemberInfos.from(members);
     }
+
+    @Transactional
+    @Override
+    public MemberFindOrCreateResponse findOrCreateMember(String socialId, Provider provider) {
+        Member member = memberRepository.findBySocialIdAndProvider(socialId, provider)
+                .orElseGet(() -> {
+                    Member newMember = new Member(socialId, provider, Role.USER);
+                    return memberRepository.save(newMember);
+                });
+
+        return MemberFindOrCreateResponse.from(member);
+    }
+
 
 }

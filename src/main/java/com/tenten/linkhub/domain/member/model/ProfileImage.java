@@ -1,5 +1,7 @@
 package com.tenten.linkhub.domain.member.model;
 
+import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -12,8 +14,6 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
 
 @Entity
 @Getter
