@@ -20,9 +20,10 @@ public record SpaceWithSpaceImageAndSpaceMemberInfo(
         Long favoriteCount,
         String spaceImagePath,
         String spaceImageName,
+        Boolean isOwner,
         List<SpaceMemberInfo> spaceMemberInfos
 ) {
-    public static SpaceWithSpaceImageAndSpaceMemberInfo from(Space space) {
+    public static SpaceWithSpaceImageAndSpaceMemberInfo of(Space space, Boolean isOwner) {
         List<SpaceMemberInfo> spaceMemberInfos = space.getSpaceMembers().stream()
                 .map(sm -> new SpaceMemberInfo(sm.getMemberId(), sm.getRole()))
                 .toList();
@@ -41,6 +42,7 @@ public record SpaceWithSpaceImageAndSpaceMemberInfo(
                 space.getFavoriteCount(),
                 Objects.isNull(space.getSpaceImages().get(0)) ? null: space.getSpaceImages().get(0).getPath(),
                 Objects.isNull(space.getSpaceImages().get(0)) ? null: space.getSpaceImages().get(0).getName(),
+                isOwner,
                 spaceMemberInfos
         );
     }

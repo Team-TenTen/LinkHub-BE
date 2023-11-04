@@ -3,6 +3,7 @@ package com.tenten.linkhub.domain.space.facade;
 import com.tenten.linkhub.domain.member.service.MemberService;
 import com.tenten.linkhub.domain.member.service.dto.MemberInfos;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceCreateFacadeRequest;
+import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.mapper.SpaceFacadeMapper;
@@ -50,12 +51,13 @@ public class SpaceFacade {
     }
 
     @Transactional(readOnly = true)
-    public SpaceDetailGetByIdFacadeResponse getSpaceDetailById(Long spaceId, Cookie spaceViewCookie) {
-        SpaceWithSpaceImageAndSpaceMemberInfo response = spaceService.getSpaceWithSpaceImageAndSpaceMemberById(spaceId);
+    public SpaceDetailGetByIdFacadeResponse getSpaceDetailById(SpaceDetailGetByIdFacadeRequest request) {
+        SpaceWithSpaceImageAndSpaceMemberInfo response = spaceService.getSpaceWithSpaceImageAndSpaceMemberById(request.spaceId(), request.memberId());
 
         List<Long> memberIds = getMemberIds(response);
         MemberInfos memberInfos = memberService.findMemberInfosByMemberIds(memberIds);
 
+        Cookie spaceViewCookie = request.spaceViewCookie();
         spaceViewCookie = increaseSpaceViewCount(spaceViewCookie, response.spaceId());
 
         return SpaceDetailGetByIdFacadeResponse.of(response, memberInfos, spaceViewCookie);

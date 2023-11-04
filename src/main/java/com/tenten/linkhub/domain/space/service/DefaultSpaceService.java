@@ -52,10 +52,11 @@ public class DefaultSpaceService implements SpaceService{
 
     @Override
     @Transactional(readOnly = true)
-    public SpaceWithSpaceImageAndSpaceMemberInfo getSpaceWithSpaceImageAndSpaceMemberById(Long spaceId) {
+    public SpaceWithSpaceImageAndSpaceMemberInfo getSpaceWithSpaceImageAndSpaceMemberById(Long spaceId, Long memberId) {
         Space space = spaceRepository.getSpaceJoinSpaceMemberById(spaceId);
 
-        return SpaceWithSpaceImageAndSpaceMemberInfo.from(space);
+        Boolean isOwner = space.isOwner(memberId);
+        return SpaceWithSpaceImageAndSpaceMemberInfo.of(space, isOwner);
     }
 
     @Override

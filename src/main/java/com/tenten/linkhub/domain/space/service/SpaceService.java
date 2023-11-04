@@ -11,7 +11,7 @@ public interface SpaceService {
 
     Long createSpace(SpaceCreateRequest spaceCreateRequest);
 
-    SpaceWithSpaceImageAndSpaceMemberInfo getSpaceWithSpaceImageAndSpaceMemberById(Long spaceId);
+    SpaceWithSpaceImageAndSpaceMemberInfo getSpaceWithSpaceImageAndSpaceMemberById(Long spaceId, Long memberId);
 
     Long updateSpace(SpaceUpdateRequest spaceUpdateRequest);
 }

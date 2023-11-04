@@ -10,6 +10,7 @@ import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApi
 import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiResponses;
 import com.tenten.linkhub.domain.space.controller.mapper.SpaceApiMapper;
 import com.tenten.linkhub.domain.space.facade.SpaceFacade;
+import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
 import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
@@ -40,6 +41,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
+import java.util.Objects;
 
 @Tag(name = "spaces", description = "space 템플릿 API Document")
 @RestController
@@ -124,12 +126,16 @@ public class SpaceController {
     @GetMapping(value = "/{spaceId}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SpaceDetailGetByIdApiResponse> getSpaceDetailById(
+            @AuthenticationPrincipal MemberDetails memberDetails,
             @Parameter(hidden = true)
             @CookieValue(value = "spaceView", required = false) Cookie spaceViewCookie,
             @PathVariable Long spaceId,
             HttpServletResponse servletResponse
     ){
-        SpaceDetailGetByIdFacadeResponse response = spaceFacade.getSpaceDetailById(spaceId, spaceViewCookie);
+        Long memberId = Objects.isNull(memberDetails) ? null : memberDetails.memberId();
+        SpaceDetailGetByIdFacadeRequest request = mapper.toSpaceDetailGetByIdFacadeRequest(spaceId, spaceViewCookie, memberId);
+
+        SpaceDetailGetByIdFacadeResponse response = spaceFacade.getSpaceDetailById(request);
 
         servletResponse.addCookie(response.spaceViewCookie());
         SpaceDetailGetByIdApiResponse apiResponse = SpaceDetailGetByIdApiResponse.from(response);

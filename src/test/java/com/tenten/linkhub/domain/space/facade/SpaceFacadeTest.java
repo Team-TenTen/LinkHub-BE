@@ -5,6 +5,7 @@ import com.tenten.linkhub.domain.member.model.ProfileImage;
 import com.tenten.linkhub.domain.member.model.Provider;
 import com.tenten.linkhub.domain.member.repository.MemberJpaRepository;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceCreateFacadeRequest;
+import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceMemberDetailInfo;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
@@ -93,8 +94,11 @@ class SpaceFacadeTest {
     @Test
     @DisplayName("유저는 spaceId를 통해 스페이스의 상세 정보를 조회할 수 있다.")
     void getSpaceDetailById() {
+        //given
+        SpaceDetailGetByIdFacadeRequest request = new SpaceDetailGetByIdFacadeRequest(setUpSpaceId, null, setUpMemberId);
+
         //when
-        SpaceDetailGetByIdFacadeResponse response = spaceFacade.getSpaceDetailById(setUpSpaceId, null);
+        SpaceDetailGetByIdFacadeResponse response = spaceFacade.getSpaceDetailById(request);
 
         //then
         List<SpaceMemberDetailInfo> spaceMemberDetailInfos = response.memberDetailInfos();
@@ -104,6 +108,7 @@ class SpaceFacadeTest {
         assertThat(response.description()).isEqualTo("첫번째 스페이스 소개글");
         assertThat(response.spaceImagePath()).isEqualTo("https://testimage1");
         assertThat(response.viewCount()).isEqualTo(0L);
+        assertThat(response.isOwner()).isEqualTo(true);
         assertThat(spaceMemberDetailInfos.get(0).memberId()).isEqualTo(setUpMemberId);
         assertThat(spaceMemberDetailInfos.get(0).nickname()).isEqualTo("잠자는 사자의 콧털");
         assertThat(spaceMemberDetailInfos.get(0).profilePath()).isEqualTo("https://testprofileimage");
