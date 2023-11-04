@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.space.controller;
 
+import com.tenten.linkhub.domain.auth.MemberDetails;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
@@ -26,14 +27,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -86,9 +86,6 @@ public class SpaceController {
 
     /**
      * 스페이스 생성 API
-     *
-     * !로그인 구현되면 memberId 받는 방식 바꿔야하는 API.!
-     * !현재는 바디에서 받는중.!
      */
     @Operation(
             summary = "스페이스 생성 API", description = "스페이스 생성 API 입니다.",
@@ -97,6 +94,7 @@ public class SpaceController {
             })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<SpaceCreateApiResponse> createSpace(
+            @AuthenticationPrincipal MemberDetails memberDetails,
             @Parameter(
                     description = "이미지 파일 외의 데이터는 application/jsom 타입으로 받습니다.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
@@ -104,7 +102,7 @@ public class SpaceController {
             @RequestPart @Valid SpaceCreateApiRequest request,
             @RequestPart(required = false) MultipartFile file
     ) {
-        Long savedSpaceId = spaceFacade.createSpace(mapper.toSpaceCreateFacadeRequest(request, file));
+        Long savedSpaceId = spaceFacade.createSpace(mapper.toSpaceCreateFacadeRequest(request, file, memberDetails.memberId()));
 
         SpaceCreateApiResponse apiResponse = SpaceCreateApiResponse.from(savedSpaceId);
 
@@ -141,8 +139,6 @@ public class SpaceController {
 
     /**
      * 스페이스 수정 API
-     * !로그인 구현되면 memberId 받는 방식 바꿔야하는 API.!
-     * !현재는 바디에서 받는중.!
      */
     @Operation(
             summary = "스페이스 정보 수정 API", description = "스페이스 정보 수정 API 입니다.",
@@ -153,6 +149,7 @@ public class SpaceController {
             })
     @PatchMapping(value = "/{spaceId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<SpaceUpdateApiResponse> updateSpace(
+            @AuthenticationPrincipal MemberDetails memberDetails,
             @PathVariable Long spaceId,
             @Parameter(
                     description = "이미지 파일과 spaceId 외의 데이터는 application/jsom 타입으로 받습니다."
@@ -161,10 +158,11 @@ public class SpaceController {
             @RequestPart(required = false) MultipartFile file
     ){
         Long updatedSpaceId = spaceFacade.updateSpace(
-                mapper.toSpaceUpdateFacadeRequest(spaceId, request, file));
+                mapper.toSpaceUpdateFacadeRequest(spaceId, request, file, memberDetails.memberId()));
 
-        return ResponseEntity
-                .ok(SpaceUpdateApiResponse.from(updatedSpaceId));
+        SpaceUpdateApiResponse apiResponse = SpaceUpdateApiResponse.from(updatedSpaceId);
+
+        return ResponseEntity.ok(apiResponse);
     }
 
 }
