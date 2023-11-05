@@ -3,7 +3,9 @@ package com.tenten.linkhub.domain.space.facade;
 import com.tenten.linkhub.domain.member.service.MemberService;
 import com.tenten.linkhub.domain.member.service.dto.MemberInfos;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceCreateFacadeRequest;
+import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
+import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.mapper.SpaceFacadeMapper;
 import com.tenten.linkhub.domain.space.handler.dto.SpaceIncreaseViewCountDto;
 import com.tenten.linkhub.domain.space.service.SpaceService;
@@ -19,11 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SpaceFacade {
     private static final String SPACE_IMAGE_FOLDER = "space-image/";
-    private static final String SPACE_DEFAULT_IMAGE_PATH = "https://team-10-bucket.s3.ap-northeast-2.amazonaws.com/%08space-image/space-default.png";
+    private static final String SPACE_DEFAULT_IMAGE_PATH = "https://team-10-bucket.s3.ap-northeast-2.amazonaws.com/space-image/space-default.png";
     private static final int COOKIE_EXPIRE_TIME = 60 * 60 * 24;
 
     private final SpaceService spaceService;
@@ -41,25 +44,43 @@ public class SpaceFacade {
     }
 
     public Long createSpace(SpaceCreateFacadeRequest request){
-        ImageInfo imageInfo = getImageInfo(request.file());
+        ImageInfo imageInfo = getNewImageInfoOrDefaultImageInfo(request.file());
 
         return spaceService.createSpace(
                 mapper.toSpaceCreateRequest(request, imageInfo));
     }
 
     @Transactional(readOnly = true)
-    public SpaceDetailGetByIdFacadeResponse getSpaceDetailById(Long spaceId, Cookie spaceViewCookie) {
-        SpaceWithSpaceImageAndSpaceMemberInfo response = spaceService.getSpaceWithSpaceImageAndSpaceMemberById(spaceId);
+    public SpaceDetailGetByIdFacadeResponse getSpaceDetailById(SpaceDetailGetByIdFacadeRequest request) {
+        SpaceWithSpaceImageAndSpaceMemberInfo response = spaceService.getSpaceWithSpaceImageAndSpaceMemberById(request.spaceId(), request.memberId());
 
         List<Long> memberIds = getMemberIds(response);
         MemberInfos memberInfos = memberService.findMemberInfosByMemberIds(memberIds);
 
+        Cookie spaceViewCookie = request.spaceViewCookie();
         spaceViewCookie = increaseSpaceViewCount(spaceViewCookie, response.spaceId());
 
         return SpaceDetailGetByIdFacadeResponse.of(response, memberInfos, spaceViewCookie);
     }
 
-    private ImageInfo getImageInfo(MultipartFile file) {
+    @Transactional
+    public Long updateSpace(SpaceUpdateFacadeRequest request) {
+        Optional<ImageInfo> imageInfo = getNewImageInfoOrEmptyImageInfo(request.file());
+
+        return spaceService.updateSpace(
+                mapper.toSpaceUpdateRequest(request, imageInfo));
+    }
+
+    private Optional<ImageInfo> getNewImageInfoOrEmptyImageInfo(MultipartFile file){
+        if (file == null){
+            return Optional.empty();
+        }
+
+        ImageSaveRequest imageSaveRequest = ImageSaveRequest.of(file, SPACE_IMAGE_FOLDER);
+        return Optional.ofNullable(s3Uploader.saveImage(imageSaveRequest));
+    }
+
+    private ImageInfo getNewImageInfoOrDefaultImageInfo(MultipartFile file) {
         if (file == null){
             return ImageInfo.of(SPACE_DEFAULT_IMAGE_PATH, "default-image");
         }

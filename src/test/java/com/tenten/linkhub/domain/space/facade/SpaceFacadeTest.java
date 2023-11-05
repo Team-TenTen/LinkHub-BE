@@ -1,15 +1,14 @@
 package com.tenten.linkhub.domain.space.facade;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.ProfileImage;
 import com.tenten.linkhub.domain.member.model.Provider;
 import com.tenten.linkhub.domain.member.repository.MemberJpaRepository;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceCreateFacadeRequest;
+import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceMemberDetailInfo;
+import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.Space;
@@ -30,10 +29,12 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 
 @Transactional
 @TestPropertySource(locations = "classpath:/application-test.yml")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest
 class SpaceFacadeTest {
 
     @Autowired
@@ -52,13 +53,13 @@ class SpaceFacadeTest {
     private Long setUpMemberId;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         setUpData();
     }
 
     @Test
     @DisplayName("유저는 스페이스를 생성할 수 있다.")
-    void createSpace(){
+    void createSpace() {
         //given
         MockMultipartFile requestFile = new MockMultipartFile("테스트 이미지3", (byte[]) null);
         ImageInfo imageInfo = ImageInfo.of("https://testimage3", requestFile.getName());
@@ -93,8 +94,11 @@ class SpaceFacadeTest {
     @Test
     @DisplayName("유저는 spaceId를 통해 스페이스의 상세 정보를 조회할 수 있다.")
     void getSpaceDetailById() {
+        //given
+        SpaceDetailGetByIdFacadeRequest request = new SpaceDetailGetByIdFacadeRequest(setUpSpaceId, null, setUpMemberId);
+
         //when
-        SpaceDetailGetByIdFacadeResponse response = spaceFacade.getSpaceDetailById(setUpSpaceId, null);
+        SpaceDetailGetByIdFacadeResponse response = spaceFacade.getSpaceDetailById(request);
 
         //then
         List<SpaceMemberDetailInfo> spaceMemberDetailInfos = response.memberDetailInfos();
@@ -104,9 +108,46 @@ class SpaceFacadeTest {
         assertThat(response.description()).isEqualTo("첫번째 스페이스 소개글");
         assertThat(response.spaceImagePath()).isEqualTo("https://testimage1");
         assertThat(response.viewCount()).isEqualTo(0L);
+        assertThat(response.isOwner()).isEqualTo(true);
         assertThat(spaceMemberDetailInfos.get(0).memberId()).isEqualTo(setUpMemberId);
         assertThat(spaceMemberDetailInfos.get(0).nickname()).isEqualTo("잠자는 사자의 콧털");
         assertThat(spaceMemberDetailInfos.get(0).profilePath()).isEqualTo("https://testprofileimage");
+    }
+
+    @Test
+    @DisplayName("유저는 스페이스의 정보들을 변경할 수 있다.")
+    void updateSpace() {
+        //given
+        ImageInfo imageInfo = ImageInfo.of("https://testimage3", "테스트 이미지 파일 이름");
+        BDDMockito.given(mockS3Uploader.saveImage(any())).willReturn(imageInfo);
+
+        SpaceUpdateFacadeRequest request = new SpaceUpdateFacadeRequest(
+                setUpSpaceId,
+                "업데이트 스페이스 네임",
+                "업데이트 스페이스 소개글",
+                Category.HOBBY_LEISURE_TRAVEL,
+                false,
+                false,
+                false,
+                false,
+                setUpMemberId,
+                null
+        );
+
+        //when
+        Long updatedSpaceId = spaceFacade.updateSpace(request);
+
+        //then
+        Space space = spaceJpaRepository.findById(updatedSpaceId).get();
+
+        assertThat(space.getSpaceName()).isEqualTo("업데이트 스페이스 네임");
+        assertThat(space.getDescription()).isEqualTo("업데이트 스페이스 소개글");
+        assertThat(space.getCategory()).isEqualTo(Category.HOBBY_LEISURE_TRAVEL);
+        assertThat(space.getIsVisible()).isEqualTo(false);
+        assertThat(space.getIsComment()).isEqualTo(false);
+        assertThat(space.getIsLinkSummarizable()).isEqualTo(false);
+        assertThat(space.getIsReadMarkEnabled()).isEqualTo(false);
+        assertThat(space.getSpaceImages().get(0).getPath()).isEqualTo("https://testimage1");
     }
 
     private void setUpData() {
