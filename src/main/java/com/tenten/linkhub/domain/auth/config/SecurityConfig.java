@@ -52,10 +52,11 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(config ->
                         config
-                                .requestMatchers(HttpMethod.GET).permitAll()
+                                .requestMatchers(HttpMethod.GET).permitAll() // 임시로 풀어준 것 운영시에는 허용 주소 관리
                                 .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(oAuth2UserService)
                         )

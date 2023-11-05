@@ -4,8 +4,11 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.PathItem.HttpMethod;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.NoArgsConstructor;
+import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +28,7 @@ public class SwaggerConfig {
         return GroupedOpenApi.builder()
                 .group("LinkHub 서비스 API v1")
                 .pathsToMatch(paths)
+                .addOpenApiCustomizer(securityCustomizer())
                 .build();
     }
 
@@ -38,6 +42,16 @@ public class SwaggerConfig {
                                 .bearerFormat("JWT")
                                 .in(SecurityScheme.In.HEADER)
                                 .name("Authorization")));
+    }
+
+    @Bean
+    public OpenApiCustomizer securityCustomizer() {
+        return openApi -> openApi.getPaths().values().forEach(pathItem ->
+                pathItem.readOperationsMap().forEach((httpMethod, operation) -> {
+                    if (!httpMethod.equals(HttpMethod.GET)) {
+                        operation.addSecurityItem(new SecurityRequirement().addList("bearer-jwt"));
+                    }
+                }));
     }
 
 }
