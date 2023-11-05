@@ -1,10 +1,11 @@
 package com.tenten.linkhub.domain.member.repository;
 
 import com.tenten.linkhub.domain.member.model.Member;
+import com.tenten.linkhub.domain.member.model.Provider;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
-import java.util.List;
 
 public interface MemberJpaRepository extends JpaRepository<Member, Long> {
 
@@ -12,5 +13,7 @@ public interface MemberJpaRepository extends JpaRepository<Member, Long> {
     List<Member> findMemberJoinProfileImageByMemberIds(List<Long> memberIds);
 
     boolean existsByNewsEmail(String email);
+
+    Optional<Member> findBySocialIdAndProvider(String socialId, Provider provider);
 
 }

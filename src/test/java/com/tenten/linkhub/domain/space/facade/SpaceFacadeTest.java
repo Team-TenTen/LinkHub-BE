@@ -1,7 +1,11 @@
 package com.tenten.linkhub.domain.space.facade;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.ProfileImage;
+import com.tenten.linkhub.domain.member.model.Provider;
 import com.tenten.linkhub.domain.member.repository.MemberJpaRepository;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
@@ -12,9 +16,9 @@ import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
-import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,11 +29,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 
 
 @Transactional
@@ -112,12 +111,12 @@ class SpaceFacadeTest {
 
     private void setUpData() {
         Member member = new Member(
-                "testOAuthEmail",
+                "testSocialId",
+                Provider.kakao,
                 com.tenten.linkhub.domain.member.model.Role.USER,
                 "잠자는 사자의 콧털",
                 "테스트용 소개글",
-                "abc@gmail.com",
-                true
+                "abc@gmail.com"
         );
 
         member.addProfileImage(
