@@ -92,3 +92,6 @@ jwt:
     ${JWT_SECRET}
   expiration:
     ${JWT_EXPIRATION}
+
+server:
+  forward-headers-strategy: framework
