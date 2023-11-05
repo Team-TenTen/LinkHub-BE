@@ -1,7 +1,6 @@
 package com.tenten.linkhub.domain.space.model.space.vo;
 
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
-import com.tenten.linkhub.global.exception.MaxImageCountExceededException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
@@ -11,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 
@@ -18,22 +18,45 @@ import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 @Embeddable
 @NoArgsConstructor
 public class SpaceImages {
-    private static final Integer MAX_IMAGE_COUNT = 1;
 
     @OneToMany(mappedBy = "space", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<SpaceImage> spaceImageList = new ArrayList<>();
 
     public void addSpaceImage(SpaceImage spaceImage) {
         validateNotNull(spaceImage, "spaceImage");
-        if (this.spaceImageList.size() >= MAX_IMAGE_COUNT ){
-            throw new MaxImageCountExceededException("스페이스 이미지는 최대 1개 입니다.");
-        }
 
         this.spaceImageList.add(spaceImage);
     }
 
+    public void changeSpaceImage(SpaceImage spaceImage){
+        validateNotNull(spaceImage, "spaceImage");
+
+        List<SpaceImage> imageList = getSpaceImageList();
+        imageList.get(0).deleteSpaceImage();
+
+        addSpaceImage(spaceImage);
+    }
+
+    /**
+     *  Space와 SpaceImage간의 편의 메서드용 메서드
+     */
     public void removeSpaceImage(SpaceImage spaceImage){
         this.spaceImageList.remove(spaceImage);
+    }
+
+    public List<SpaceImage> getSpaceImageList(){
+        return spaceImageList.stream()
+                .filter(spaceImage -> spaceImage.getIsDeleted() == false)
+                .collect(Collectors.toList());
+    }
+
+    public void deleteAll(){
+        spaceImageList.forEach(spaceImage -> spaceImage.deleteSpaceImage());
+    }
+
+    public List<SpaceImage> getAllSpaceImages(){
+        return spaceImageList.stream()
+                .toList();
     }
 
 }

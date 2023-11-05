@@ -30,6 +30,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -60,7 +61,7 @@ public class SpaceController {
     }
 
     /**
-     *  스페이스 검색 API
+     * 스페이스 검색 API
      */
     @Operation(
             summary = "스페이스 검색 API", description = "keyWord, pageNumber, pageSize, sort, filter를 받아 검색합니다.",
@@ -131,7 +132,7 @@ public class SpaceController {
             @CookieValue(value = "spaceView", required = false) Cookie spaceViewCookie,
             @PathVariable Long spaceId,
             HttpServletResponse servletResponse
-    ){
+    ) {
         Long memberId = Objects.isNull(memberDetails) ? null : memberDetails.memberId();
         SpaceDetailGetByIdFacadeRequest request = mapper.toSpaceDetailGetByIdFacadeRequest(spaceId, spaceViewCookie, memberId);
 
@@ -162,13 +163,26 @@ public class SpaceController {
             )
             @RequestPart @Valid SpaceUpdateApiRequest request,
             @RequestPart(required = false) MultipartFile file
-    ){
+    ) {
         Long updatedSpaceId = spaceFacade.updateSpace(
                 mapper.toSpaceUpdateFacadeRequest(spaceId, request, file, memberDetails.memberId()));
 
         SpaceUpdateApiResponse apiResponse = SpaceUpdateApiResponse.from(updatedSpaceId);
 
         return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
+     * 스페이스 삭제 API
+     */
+    @DeleteMapping("/{spaceId}")
+    public ResponseEntity<Void> deleteSpace(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long spaceId
+    ) {
+        spaceFacade.deleteSpace(spaceId, memberDetails.memberId());
+
+        return ResponseEntity.noContent().build();
     }
 
 }

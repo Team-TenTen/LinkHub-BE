@@ -7,8 +7,10 @@ import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeReques
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.mapper.SpaceFacadeMapper;
+import com.tenten.linkhub.domain.space.handler.dto.SpaceImagesDeleteDto;
 import com.tenten.linkhub.domain.space.handler.dto.SpaceIncreaseViewCountDto;
 import com.tenten.linkhub.domain.space.service.SpaceService;
+import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceMemberInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
@@ -69,6 +71,15 @@ public class SpaceFacade {
 
         return spaceService.updateSpace(
                 mapper.toSpaceUpdateRequest(request, imageInfo));
+    }
+
+    @Transactional
+    public void deleteSpace(Long spaceId, Long memberId) {
+        DeletedSpaceImageNames deletedSpaceImageNames = spaceService.deleteSpaceById(spaceId, memberId);
+
+        eventPublisher.publishEvent(
+                new SpaceImagesDeleteDto(deletedSpaceImageNames.fileNames())
+        );
     }
 
     private Optional<ImageInfo> getNewImageInfoOrEmptyImageInfo(MultipartFile file){

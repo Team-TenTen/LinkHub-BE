@@ -66,13 +66,6 @@ public class GlobalApiExceptionHandler {
                 .body(errorResponse);
     }
 
-    @ExceptionHandler(MaxImageCountExceededException.class)
-    public ResponseEntity<Void> handleMaxImageCountExceededException(HttpServletRequest request, MaxImageCountExceededException e) {
-        log.error("Sever Exception Request URI {}: ", request.getRequestURI(), e);
-
-        return ResponseEntity.ok().build();
-    }
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Void> handleException(HttpServletRequest request, Exception e) {
         log.error("Sever Exception Request URI {}: ", request.getRequestURI(), e);
