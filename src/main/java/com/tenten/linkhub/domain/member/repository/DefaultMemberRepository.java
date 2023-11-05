@@ -1,9 +1,12 @@
 package com.tenten.linkhub.domain.member.repository;
 
+import com.tenten.linkhub.domain.member.model.Member;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
-public class DefaultMemberRepository implements MemberRepository {
+public class DefaultMemberRepository implements MemberRepository{
 
     private final MemberJpaRepository memberJpaRepository;
 
@@ -12,6 +15,11 @@ public class DefaultMemberRepository implements MemberRepository {
     }
 
     @Override
+    public List<Member> findMemberWithProfileImageByMemberIds(List<Long> memberIds) {
+        return memberJpaRepository.findMemberJoinProfileImageByMemberIds(memberIds);
+
+    }
+
     public boolean existsMemberByNewsEmail(String email) {
         return memberJpaRepository.existsByNewsEmail(email);
     }

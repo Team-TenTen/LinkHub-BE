@@ -2,6 +2,7 @@ package com.tenten.linkhub.domain.member.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -9,33 +10,46 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
 
 @Entity
 @Getter
 @Table(name = "profile_image")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ProfileImage {
+    private static final int MAX_PATH_LENGTH = 2083;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", referencedColumnName = "id", nullable = false)
     private Member member;
 
-    @Column(name = "path", nullable = false)
+    @Column(length = MAX_PATH_LENGTH, nullable = false)
     private String path;
 
-    @Builder
-    public ProfileImage(Long id, Member member, String path) {
-        this.id = id;
-        this.member = member;
+    @Column(nullable = false)
+    private String name;
+
+    public ProfileImage(String path, String name) {
+        validateMaxSize(path, MAX_PATH_LENGTH, "path");
+        validateMaxSize(name, 255, "name");
+
         this.path = path;
+        this.name = name;
+    }
+
+    public void changeMember(Member member) {
+        if (this.member != null) {
+            this.member.getProfileImages().remove(this);
+        }
+
+        this.member = member;
     }
 
 }
