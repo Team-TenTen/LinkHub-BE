@@ -175,6 +175,13 @@ public class SpaceController {
     /**
      * 스페이스 삭제 API
      */
+    @Operation(
+            summary = "스페이스 삭제 API", description = "스페이스 삭제 API 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "스페이스가 성공적으로 삭제되었습니다."),
+                    @ApiResponse(responseCode = "404", description = "권한이 없는 유저가 스페이스를 삭제하려고 합니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
     @DeleteMapping("/{spaceId}")
     public ResponseEntity<Void> deleteSpace(
             @AuthenticationPrincipal MemberDetails memberDetails,
