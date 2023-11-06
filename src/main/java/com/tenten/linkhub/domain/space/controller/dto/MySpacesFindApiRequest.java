@@ -1,17 +1,14 @@
-package com.tenten.linkhub.domain.space.controller.dto.space;
+package com.tenten.linkhub.domain.space.controller.dto;
 
 import com.tenten.linkhub.domain.space.model.category.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-public record SpacesFindByQueryApiRequest(
+public record MySpacesFindApiRequest(
         @Schema(title = "페이지 번호", example = "0")
         Integer pageNumber,
 
         @Schema(title = "페이지 크기", example = "10")
         Integer pageSize,
-
-        @Schema(title = "정렬 조건 (컬럼명)", example = "created_at")
-        String sort,
 
         @Schema(title = "검색 키워드", example = "첫번째")
         String keyWord,

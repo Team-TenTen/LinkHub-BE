@@ -1,6 +1,8 @@
 package com.tenten.linkhub.domain.space.controller;
 
 import com.tenten.linkhub.domain.auth.MemberDetails;
+import com.tenten.linkhub.domain.space.controller.dto.MySpacesFindApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
@@ -190,6 +192,21 @@ public class SpaceController {
         spaceFacade.deleteSpace(spaceId, memberDetails.memberId());
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<MySpacesFindApiResponses> findMySpaces(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @ModelAttribute MySpacesFindApiRequest request
+    ){
+        PageRequest pageRequest = PageRequest.of(request.pageNumber(), request.pageSize());
+
+        SpacesFindByQueryResponses responses = spaceService.findMySpacesByQuery(
+                mapper.toMySpacesFindRequest(pageRequest, request, memberDetails.memberId())
+        );
+
+        MySpacesFindApiResponses apiResponses = MySpacesFindApiResponses.from(responses);
+        return ResponseEntity.ok(apiResponses);
     }
 
 }
