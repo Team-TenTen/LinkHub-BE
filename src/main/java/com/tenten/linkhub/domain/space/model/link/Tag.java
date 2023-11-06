@@ -33,6 +33,20 @@ public class Tag {
     private Link link;
 
     @Column(nullable = false)
-    private String tagName;
+    private String name;
+
+    public static Tag toTag(Space space, Link link, String name) {
+        return new Tag(space, link, name);
+    }
+
+    public void changeLink(Link link) {
+        this.link = link;
+    }
+
+    private Tag(Space space, Link link, String name) {
+        this.space = space;
+        this.link = link;
+        this.name = name;
+    }
 
 }
