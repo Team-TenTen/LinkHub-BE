@@ -7,6 +7,8 @@ import com.tenten.linkhub.domain.space.controller.mapper.LinkApiMapper;
 import com.tenten.linkhub.domain.space.facade.LinkFacade;
 import com.tenten.linkhub.domain.space.facade.dto.LinkCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.service.LinkService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +35,14 @@ public class LinkController {
     /**
      * 링크 생성 API
      */
+    @Operation(
+            summary = "링크 생성 API",
+            description = "[JWT 필요] 스페이스 내에서 링크를 생성하는 API 입니다. Tag는 필수로 포함되어야 하는 값은 아닙니다.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "링크가 성공적으로 생성된 경우"),
+                    @ApiResponse(responseCode = "404", description = "링크 생성 권한이 없습니다."),
+                    @ApiResponse(responseCode = "404", description = "요청한 spaceId에 해당하는 스페이스를 찾을 수 없습니다.")
+            })
     @PostMapping("/spaces/{spaceId}/links")
     public ResponseEntity<LinkCreateApiResponse> createLink(
             @PathVariable Long spaceId,
