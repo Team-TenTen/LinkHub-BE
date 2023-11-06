@@ -10,7 +10,7 @@ public interface SpaceJpaRepository extends JpaRepository<Space, Long> {
 
     @Query("SELECT s " +
             "FROM Space s " +
-            "JOIN FETCH s.spaceMembers.spaceMemberList sm " +
+            "LEFT JOIN FETCH s.spaceMembers.spaceMemberList sm " +
             "WHERE s.id = :spaceId AND s.isDeleted = false ")
     Optional<Space> findSpaceJoinSpaceMemberById(Long spaceId);
 

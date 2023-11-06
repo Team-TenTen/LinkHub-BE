@@ -5,6 +5,7 @@ import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberRepository;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceGetDto;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
@@ -55,10 +56,20 @@ public class DefaultSpaceService implements SpaceService {
 
     @Override
     @Transactional(readOnly = true)
-    public SpaceWithSpaceImageAndSpaceMemberInfo getSpaceWithSpaceImageAndSpaceMemberById(Long spaceId) {
+    public SpaceWithSpaceImageAndSpaceMemberInfo getSpaceWithSpaceImageAndSpaceMemberById(Long spaceId, Long memberId) {
         Space space = spaceRepository.getSpaceJoinSpaceMemberById(spaceId);
 
-        return SpaceWithSpaceImageAndSpaceMemberInfo.from(space);
+        Boolean isOwner = space.isOwner(memberId);
+        return SpaceWithSpaceImageAndSpaceMemberInfo.of(space, isOwner);
+    }
+
+    @Override
+    @Transactional
+    public Long updateSpace(SpaceUpdateRequest request) {
+        Space space = spaceRepository.getById(request.spaceId());
+        space.updateSpaceAttributes(mapper.toSpaceUpdateDto(request));
+
+        return space.getId();
     }
 
     @Override

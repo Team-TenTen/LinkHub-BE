@@ -1,6 +1,7 @@
 package com.tenten.linkhub.domain.space.service;
 
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceGetDto;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
@@ -11,7 +12,9 @@ public interface SpaceService {
 
     Long createSpace(SpaceCreateRequest spaceCreateRequest);
 
-    SpaceWithSpaceImageAndSpaceMemberInfo getSpaceWithSpaceImageAndSpaceMemberById(Long spaceId);
+    SpaceWithSpaceImageAndSpaceMemberInfo getSpaceWithSpaceImageAndSpaceMemberById(Long spaceId, Long memberId);
+
+    Long updateSpace(SpaceUpdateRequest spaceUpdateRequest);
 
     void checkMemberAddLink(Long memberId, Long spaceId);
 

@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
 @TestPropertySource(locations = "classpath:/application-test.yml")
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@SpringBootTest
 class DefaultSpaceServiceTest {
 
     @Autowired

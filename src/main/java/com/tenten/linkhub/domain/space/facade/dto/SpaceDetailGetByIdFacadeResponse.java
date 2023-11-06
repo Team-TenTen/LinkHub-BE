@@ -8,6 +8,7 @@ import jakarta.servlet.http.Cookie;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public record SpaceDetailGetByIdFacadeResponse(
         Long spaceId,
@@ -23,19 +24,24 @@ public record SpaceDetailGetByIdFacadeResponse(
         Long favoriteCount,
         String spaceImagePath,
         List<SpaceMemberDetailInfo> memberDetailInfos,
+        Boolean isOwner,
         Cookie spaceViewCookie
 ) {
     public static SpaceDetailGetByIdFacadeResponse of(SpaceWithSpaceImageAndSpaceMemberInfo response, MemberInfos memberDetailInfos, Cookie spaceViewCookie){
         Map<Long, MemberInfo> memberInfos = memberDetailInfos.memberInfos();
 
         List<SpaceMemberDetailInfo> spaceMemberDetailInfos = response.spaceMemberInfos().stream()
-                .map(s -> new SpaceMemberDetailInfo(
-                        s.memberId(),
-                        memberInfos.get(s.memberId()).nickname(),
-                        memberInfos.get(s.memberId()).aboutMe(),
-                        memberInfos.get(s.memberId()).path(),
-                        s.role()
-                ))
+                .map(s -> {
+                    MemberInfo memberInfo = memberInfos.get(s.memberId());
+
+                    return new SpaceMemberDetailInfo(
+                            s.memberId(),
+                            Objects.isNull(memberInfo) ? null : memberInfo.nickname(),
+                            Objects.isNull(memberInfo) ? null : memberInfo.aboutMe(),
+                            Objects.isNull(memberInfo) ? null : memberInfo.path(),
+                            s.role()
+                    );
+                })
                 .toList();
 
         return new SpaceDetailGetByIdFacadeResponse(
@@ -52,6 +58,7 @@ public record SpaceDetailGetByIdFacadeResponse(
                 response.favoriteCount(),
                 response.spaceImagePath(),
                 spaceMemberDetailInfos,
+                response.isOwner(),
                 spaceViewCookie
         );
     }

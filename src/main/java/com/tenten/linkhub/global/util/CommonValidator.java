@@ -1,6 +1,5 @@
 package com.tenten.linkhub.global.util;
 
-
 import java.util.Objects;
 
 public final class CommonValidator {
