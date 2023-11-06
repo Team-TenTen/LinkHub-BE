@@ -1,8 +1,6 @@
 package com.tenten.linkhub.domain.space.model.link;
 
-import com.tenten.linkhub.domain.space.model.link.vo.Url;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
