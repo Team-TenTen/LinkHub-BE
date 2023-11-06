@@ -76,6 +76,15 @@ public class GlobalApiExceptionHandler {
                 .body(errorResponse);
     }
 
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedAccessException(HttpServletRequest request, UnauthorizedAccessException e) {
+        ErrorResponse errorResponse = ErrorResponse.of(e.getMessage(), request.getRequestURI());
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(errorResponse);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Void> handleException(HttpServletRequest request, Exception e) {
         log.error("Sever Exception Request URI {}: ", request.getRequestURI(), e);
