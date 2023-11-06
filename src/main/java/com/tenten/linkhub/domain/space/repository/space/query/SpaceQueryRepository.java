@@ -53,7 +53,7 @@ public class SpaceQueryRepository {
                 .select(space)
                 .from(space)
                 .join(space.spaceMembers.spaceMemberList, spaceMember)
-                .join(space.spaceImages.spaceImageList).fetchJoin()
+                .leftJoin(space.spaceImages.spaceImageList).fetchJoin()
                 .where(spaceMember.memberId.eq(condition.memberId()),
                         space.isDeleted.eq(false),
                         dynamicQueryFactory.eqSpaceName(condition.keyWord()),

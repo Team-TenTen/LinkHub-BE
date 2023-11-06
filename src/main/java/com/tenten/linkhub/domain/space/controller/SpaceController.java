@@ -194,7 +194,17 @@ public class SpaceController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/me")
+    /**
+     *  내 스페이스 검색 API
+     *  !필터에 해당 API 추가해야 함!
+     */
+    @Operation(
+            summary = "내 스페이스 검색 API", description = "나의 스페이스를 keyWord, pageNumber, pageSize, filter를 통해 검색합니다.\n" +
+            "해당 API는 keyWord, filter 없이 사용 가능한 페이징 조회입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "검색이 성공적으로 완료 되었습니다."),
+            })
+    @GetMapping("/search/me")
     public ResponseEntity<MySpacesFindApiResponses> findMySpaces(
             @AuthenticationPrincipal MemberDetails memberDetails,
             @ModelAttribute MySpacesFindApiRequest request
