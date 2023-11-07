@@ -53,10 +53,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(config ->
                         config
                                 .requestMatchers(HttpMethod.GET).permitAll() // 임시로 풀어준 것 운영시에는 허용 주소 관리
+                                .requestMatchers("/members/join").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
-                        .loginPage("/login")
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(oAuth2UserService)
                         )
@@ -73,10 +73,17 @@ public class SecurityConfig {
         return ((request, response, authentication) -> {
             DefaultOAuth2User defaultOAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
 
-            final String jwt = jwtProvider.generateToken(defaultOAuth2User);
-
             Map<String, Object> responseData = new HashMap<>();
-            responseData.put("jwt", jwt);
+
+            if (memberIdExists(defaultOAuth2User)) {
+                final String jwt = jwtProvider.generateTokenFromOAuth(defaultOAuth2User);
+                responseData.put("jwt", jwt);
+            }
+
+            if (!memberIdExists(defaultOAuth2User)) {
+                responseData.put("socialId", defaultOAuth2User.getAttributes().get("socialId"));
+                responseData.put("provider", defaultOAuth2User.getAttributes().get("provider"));
+            }
 
             ObjectMapper objectMapper = new ObjectMapper();
             String body = objectMapper.writeValueAsString(responseData);
@@ -88,6 +95,10 @@ public class SecurityConfig {
             writer.println(body);
             writer.flush();
         });
+    }
+
+    private static boolean memberIdExists(DefaultOAuth2User defaultOAuth2User) {
+        return defaultOAuth2User.getAttributes().get("memberId") != null;
     }
 
     @Bean
