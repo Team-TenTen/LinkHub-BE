@@ -10,7 +10,10 @@ public enum ErrorCode {
 
     //s3 - image
     FAIL_TO_UPLOAD_IMAGES("S001", "이미지를 업로드 할 수 없습니다."),
-    FAIL_TO_DELETE_IMAGE("S002", "이미지를 삭제할 수 없습니다.");
+    FAIL_TO_DELETE_IMAGE("S002", "이미지를 삭제할 수 없습니다."),
+
+    //member
+    DUPLICATE_NEWS_EMAIL("M001", "중복된 이메일입니다.");
 
     private final String code;
     private final String message;

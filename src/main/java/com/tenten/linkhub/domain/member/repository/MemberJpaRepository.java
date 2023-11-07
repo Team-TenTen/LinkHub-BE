@@ -12,6 +12,8 @@ public interface MemberJpaRepository extends JpaRepository<Member, Long> {
     @Query("SELECT m FROM Member m LEFT JOIN FETCH m.profileImages pi WHERE m.id IN :memberIds AND m.isDeleted = false")
     List<Member> findMemberJoinProfileImageByMemberIds(List<Long> memberIds);
 
+    boolean existsByNewsEmail(String email);
+
     Optional<Member> findBySocialIdAndProvider(String socialId, Provider provider);
 
 }
