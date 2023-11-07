@@ -32,8 +32,13 @@ public class SpaceImages {
         validateNotNull(spaceImage, "spaceImage");
 
         List<SpaceImage> imageList = getSpaceImageList();
-        imageList.get(0).deleteSpaceImage();
 
+        if (imageList.isEmpty()){
+            addSpaceImage(spaceImage);
+            return;
+        }
+
+        imageList.get(0).deleteSpaceImage();
         addSpaceImage(spaceImage);
     }
 
