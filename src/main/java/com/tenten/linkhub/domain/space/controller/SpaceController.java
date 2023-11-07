@@ -101,7 +101,7 @@ public class SpaceController {
     public ResponseEntity<SpaceCreateApiResponse> createSpace(
             @AuthenticationPrincipal MemberDetails memberDetails,
             @Parameter(
-                    description = "이미지 파일 외의 데이터는 application/jsom 타입으로 받습니다.",
+                    description = "이미지 파일 외의 데이터는 application/json 타입으로 받습니다.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
             )
             @RequestPart @Valid SpaceCreateApiRequest request,
@@ -161,7 +161,7 @@ public class SpaceController {
             @AuthenticationPrincipal MemberDetails memberDetails,
             @PathVariable Long spaceId,
             @Parameter(
-                    description = "이미지 파일과 spaceId 외의 데이터는 application/jsom 타입으로 받습니다."
+                    description = "이미지 파일과 spaceId 외의 데이터는 application/json 타입으로 받습니다."
             )
             @RequestPart @Valid SpaceUpdateApiRequest request,
             @RequestPart(required = false) MultipartFile file
