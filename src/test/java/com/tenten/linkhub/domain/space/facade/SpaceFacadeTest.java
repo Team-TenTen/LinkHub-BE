@@ -18,6 +18,10 @@ import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
 import java.util.List;
+import java.util.Optional;
+
+import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -148,6 +152,26 @@ class SpaceFacadeTest {
         assertThat(space.getIsLinkSummarizable()).isEqualTo(false);
         assertThat(space.getIsReadMarkEnabled()).isEqualTo(false);
         assertThat(space.getSpaceImages().get(0).getPath()).isEqualTo("https://testimage1");
+    }
+
+    @Test
+    @DisplayName("유저는 스페이스를 삭제할 수 있다.")
+    void deleteSpace(){
+        //when
+        spaceFacade.deleteSpace(setUpSpaceId, setUpMemberId);
+
+        //then
+        Optional<Space> space = spaceJpaRepository.findById(setUpSpaceId);
+
+        assertThat(space.isEmpty()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("스페이스의 주인이 아닌 유저가 스페이스를 삭제할 경우 UnauthorizedAccessException가 발생한다. ")
+    void deleteSpace_UnauthorizedAccessException(){
+        //when, then
+        Assertions.assertThatThrownBy(() -> spaceFacade.deleteSpace(setUpSpaceId, setUpMemberId + 1))
+                .isInstanceOf(UnauthorizedAccessException.class);
     }
 
     private void setUpData() {

@@ -3,6 +3,7 @@ package com.tenten.linkhub.global.aws.s3;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.dto.ImageSaveRequest;
@@ -17,6 +18,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -72,6 +74,23 @@ public class DefaultS3Uploader implements S3Uploader{
             throw new ImageUploadException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Override
+    public void deleteImages(List<String> fileNames) {
+        DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(bucket)
+                .withKeys(fileNames.toArray(new String[0]))
+                .withQuiet(false);
+        try {
+            amazonS3Client.deleteObjects(deleteObjectsRequest);
+        } catch (AmazonServiceException e) {
+            log.error("uploadToAWS AmazonServiceException", e);
+            throw new ImageUploadException(ErrorCode.INTERNAL_SERVER_ERROR);
+        } catch (SdkClientException e) {
+            log.error("uploadToAWS SdkClientException", e);
+            throw new ImageUploadException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     private String changeFileName(String fileName, String folder) {
         String uuid = UUID.randomUUID().toString();
