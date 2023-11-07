@@ -94,7 +94,10 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOrigins(Arrays.asList("*")); // 임시로 풀어준 것으로 운영시에는 막아줘야함
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:3000",
+                "https://link-hub.site"
+        ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
