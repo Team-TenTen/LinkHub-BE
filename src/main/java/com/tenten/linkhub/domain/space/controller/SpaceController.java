@@ -232,6 +232,13 @@ public class SpaceController {
     /**
      *  댓글 생성 API
      */
+    @Operation(
+            summary = "댓글 생성 API", description = "댓글 생성 API 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "댓글이 성공적으로 생성되었습니다."),
+                    @ApiResponse(responseCode = "404", description = "댓글을 달 수 없는 스페이스에 댓글을 생성하려고 합니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
     @PostMapping("/{spaceId}/comments")
     public ResponseEntity<CommentCreateApiResponse> createComment(
             @AuthenticationPrincipal MemberDetails memberDetails,
