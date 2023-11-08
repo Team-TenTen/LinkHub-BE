@@ -1,5 +1,7 @@
 package com.tenten.linkhub.domain.space.model.space;
 
+import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
+
 import com.tenten.linkhub.global.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,8 +18,6 @@ import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 
 @Entity
 @Table(name = "space_member", uniqueConstraints = {
@@ -63,7 +63,7 @@ public class SpaceMember extends BaseEntity {
         this.space = space;
     }
 
-    public Long deleteSpaceMember(){
+    public Long deleteSpaceMember() {
         this.isDeleted = true;
         return id;
     }

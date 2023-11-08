@@ -1,5 +1,8 @@
 package com.tenten.linkhub.domain.auth;
 
+import com.tenten.linkhub.domain.member.model.Provider;
+import com.tenten.linkhub.domain.member.model.Role;
+import com.tenten.linkhub.domain.member.service.dto.MemberAuthInfo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -7,15 +10,12 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
+import java.util.Collections;
 import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.stereotype.Component;
 
@@ -32,30 +32,41 @@ public class JwtProvider {
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
-    public String generateToken(DefaultOAuth2User defaultOAuth2User) {
+    public String generateTokenFromOAuth(DefaultOAuth2User defaultOAuth2User) {
         Long memberId = (Long) defaultOAuth2User.getAttributes().get("memberId");
         String socialId = (String) defaultOAuth2User.getAttributes().get("socialId");
-        Boolean isLoggedIn = (Boolean) defaultOAuth2User.getAttributes().get("isLoggedIn");
         String provider = (String) defaultOAuth2User.getAttributes().get("provider");
+        Role role = (Role) defaultOAuth2User.getAttributes().get("role");
 
-        List<String> roles = defaultOAuth2User.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList();
+        return generateJwt(memberId, socialId, provider, role);
+    }
 
+    public String generateTokenFromMember(MemberAuthInfo memberAuthInfo) {
+        Long memberId = memberAuthInfo.memberId();
+        String socialId = memberAuthInfo.socialId();
+        Provider provider = memberAuthInfo.provider();
+        Role role = memberAuthInfo.role();
+
+        return generateJwt(memberId, socialId, provider.getValue(), role);
+    }
+
+    private String generateJwt(
+            Long memberId,
+            String socialId,
+            String provider,
+            Role role) {
         Date now = new Date(System.currentTimeMillis());
         Date expiryDate = new Date(now.getTime() + expiration);
 
         return Jwts.builder()
                 .setSubject(socialId)
                 .claim("memberId", memberId)
-                .claim("roles", roles)
-                .claim("isLoggedIn", isLoggedIn)
+                .claim("role", role.getCode())
                 .claim("provider", provider)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
-
     }
 
     public boolean validateToken(String token) {
@@ -74,15 +85,11 @@ public class JwtProvider {
         String socialId = claims.getSubject();
         Long memberId = claims.get("memberId", Long.class);
         String provider = claims.get("provider", String.class);
+        String role = claims.get("role", String.class);
 
-        List<String> roles = claims.get("roles", List.class);
-        List<GrantedAuthority> authorities = roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+        MemberDetails memberDetails = new MemberDetails(memberId, socialId, provider, Role.valueOf(role));
 
-        MemberDetails memberDetails = new MemberDetails(memberId, socialId, provider, authorities);
-
-        return new UsernamePasswordAuthenticationToken(memberDetails, token, authorities);
+        return new UsernamePasswordAuthenticationToken(memberDetails, token, Collections.emptyList());
     }
 
 

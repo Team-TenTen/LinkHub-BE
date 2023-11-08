@@ -16,8 +16,12 @@ public class EmailDto {
     private final String to; //받는 사람
     private final String subject; //제목
 
-    public static EmailDto toVerificationEmailDto(String to) {
-        return new EmailDto(to, VERIFICATION_EMAIL_SUBJECT);
+    private EmailDto(
+            final String to,
+            final String subject
+    ) {
+        this.to = to;
+        this.subject = subject;
     }
 
     public SendEmailRequest toSendEmailRequest(String content) {
@@ -34,16 +38,12 @@ public class EmailDto {
                 .withMessage(message);
     }
 
-    public String getTo() {
-        return to;
+    public static EmailDto toVerificationEmailDto(String to) {
+        return new EmailDto(to, VERIFICATION_EMAIL_SUBJECT);
     }
 
-    private EmailDto(
-            final String to,
-            final String subject
-    ) {
-        this.to = to;
-        this.subject = subject;
+    public String getTo() {
+        return to;
     }
 
     private Content createContent(final String text) {
