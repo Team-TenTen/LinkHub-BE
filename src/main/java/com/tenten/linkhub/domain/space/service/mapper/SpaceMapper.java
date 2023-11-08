@@ -5,7 +5,9 @@ import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.model.space.dto.SpaceUpdateDto;
+import com.tenten.linkhub.domain.space.repository.space.dto.MySpacesFindQueryCondition;
 import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
+import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
@@ -30,6 +32,8 @@ public interface SpaceMapper {
     SpaceMember toSpaceMember(SpaceCreateRequest request, Role role);
 
     SpaceImage toSpaceImage(ImageInfo imageInfo);
+
+    MySpacesFindQueryCondition toMySpacesFindQueryCondition(MySpacesFindRequest request);
 
     @Mapping(source = "request.imageInfo", target = "spaceImage", qualifiedByName = "mapSpaceImage")
     SpaceUpdateDto toSpaceUpdateDto(SpaceUpdateRequest request);

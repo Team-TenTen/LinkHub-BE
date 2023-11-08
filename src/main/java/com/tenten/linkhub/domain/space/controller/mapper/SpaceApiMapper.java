@@ -1,11 +1,13 @@
 package com.tenten.linkhub.domain.space.controller.mapper;
 
+import com.tenten.linkhub.domain.space.controller.dto.MySpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
 import jakarta.servlet.http.Cookie;
 import org.mapstruct.InjectionStrategy;
@@ -25,4 +27,6 @@ public interface SpaceApiMapper {
     SpaceUpdateFacadeRequest toSpaceUpdateFacadeRequest(Long spaceId, SpaceUpdateApiRequest request, MultipartFile file, Long memberId);
 
     SpaceDetailGetByIdFacadeRequest toSpaceDetailGetByIdFacadeRequest(Long spaceId, Cookie spaceViewCookie, Long memberId);
+
+    MySpacesFindRequest toMySpacesFindRequest(Pageable pageable, MySpacesFindApiRequest request, Long memberId);
 }
