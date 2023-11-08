@@ -146,6 +146,12 @@ public class Space extends BaseEntity {
         }
     }
 
+    public void validateCommentAvailability(){
+        if (!this.isComment){
+            throw new UnauthorizedAccessException("해당 게시글은 댓글을 작성할 수 없습니다.");
+        }
+    }
+
     public void updateSpaceAttributes(SpaceUpdateDto updateDto){
         validateOwnership(updateDto.memberId());
 
