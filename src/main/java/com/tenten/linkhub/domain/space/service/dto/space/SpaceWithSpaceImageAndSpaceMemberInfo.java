@@ -2,9 +2,7 @@ package com.tenten.linkhub.domain.space.service.dto.space;
 
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.space.Space;
-
 import java.util.List;
-import java.util.Objects;
 
 public record SpaceWithSpaceImageAndSpaceMemberInfo(
         Long spaceId,
@@ -40,8 +38,8 @@ public record SpaceWithSpaceImageAndSpaceMemberInfo(
                 space.getViewCount(),
                 space.getScrapCount(),
                 space.getFavoriteCount(),
-                Objects.isNull(space.getSpaceImages().get(0)) ? null: space.getSpaceImages().get(0).getPath(),
-                Objects.isNull(space.getSpaceImages().get(0)) ? null: space.getSpaceImages().get(0).getName(),
+                space.getSpaceImages().isEmpty() ? null : space.getSpaceImages().get(0).getPath(),
+                space.getSpaceImages().isEmpty() ? null : space.getSpaceImages().get(0).getName(),
                 isOwner,
                 spaceMemberInfos
         );

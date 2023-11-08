@@ -7,19 +7,21 @@ import com.amazonaws.services.simpleemail.model.Message;
 import com.amazonaws.services.simpleemail.model.SendEmailRequest;
 import lombok.Getter;
 
-import java.util.List;
-
 @Getter
 public class EmailDto {
 
     private static final String FROM = "TeamLinkHub@link-hub.site";
     private static final String VERIFICATION_EMAIL_SUBJECT = "링크허브 이메일 인증 코드 발송";
 
-    private final List<String> to; //받는 사람
+    private final String to; //받는 사람
     private final String subject; //제목
 
-    public static EmailDto toVerificationEmailDto(String to) {
-        return new EmailDto(List.of(to), VERIFICATION_EMAIL_SUBJECT);
+    private EmailDto(
+            final String to,
+            final String subject
+    ) {
+        this.to = to;
+        this.subject = subject;
     }
 
     public SendEmailRequest toSendEmailRequest(String content) {
@@ -36,12 +38,12 @@ public class EmailDto {
                 .withMessage(message);
     }
 
-    private EmailDto(
-            final List<String> to,
-            final String subject
-    ) {
-        this.to = to;
-        this.subject = subject;
+    public static EmailDto toVerificationEmailDto(String to) {
+        return new EmailDto(to, VERIFICATION_EMAIL_SUBJECT);
+    }
+
+    public String getTo() {
+        return to;
     }
 
     private Content createContent(final String text) {

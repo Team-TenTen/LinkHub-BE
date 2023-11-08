@@ -1,5 +1,8 @@
 package com.tenten.linkhub.domain.space.facade;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.ProfileImage;
 import com.tenten.linkhub.domain.member.model.Provider;
@@ -17,7 +20,10 @@ import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
+import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import java.util.List;
+import java.util.Optional;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,9 +34,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 
 @Transactional
 @TestPropertySource(locations = "classpath:/application-test.yml")
@@ -148,6 +151,26 @@ class SpaceFacadeTest {
         assertThat(space.getIsLinkSummarizable()).isEqualTo(false);
         assertThat(space.getIsReadMarkEnabled()).isEqualTo(false);
         assertThat(space.getSpaceImages().get(0).getPath()).isEqualTo("https://testimage1");
+    }
+
+    @Test
+    @DisplayName("유저는 스페이스를 삭제할 수 있다.")
+    void deleteSpace() {
+        //when
+        spaceFacade.deleteSpace(setUpSpaceId, setUpMemberId);
+
+        //then
+        Optional<Space> space = spaceJpaRepository.findById(setUpSpaceId);
+
+        assertThat(space.isEmpty()).isEqualTo(true);
+    }
+
+    @Test
+    @DisplayName("스페이스의 주인이 아닌 유저가 스페이스를 삭제할 경우 UnauthorizedAccessException가 발생한다. ")
+    void deleteSpace_UnauthorizedAccessException() {
+        //when, then
+        Assertions.assertThatThrownBy(() -> spaceFacade.deleteSpace(setUpSpaceId, setUpMemberId + 1))
+                .isInstanceOf(UnauthorizedAccessException.class);
     }
 
     private void setUpData() {

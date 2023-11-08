@@ -18,8 +18,10 @@ import com.tenten.linkhub.domain.member.service.dto.MemberJoinResponse;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.dto.ImageSaveRequest;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
+import com.tenten.linkhub.global.exception.DataDuplicateException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import com.tenten.linkhub.global.infrastructure.ses.AwsSesService;
+import com.tenten.linkhub.global.response.ErrorCode;
 import com.tenten.linkhub.global.util.email.EmailDto;
 import com.tenten.linkhub.global.util.email.VerificationCodeCreator;
 import java.util.List;
@@ -42,14 +44,18 @@ public class MemberServiceImpl implements MemberService {
     private final S3Uploader s3Uploader;
     private final JwtProvider jwtProvider;
 
-    public MemberServiceImpl(MemberRepository memberRepository,
+    public MemberServiceImpl(
+            MemberRepository memberRepository,
             AwsSesService emailService,
-                             VerificationCodeCreator verificationCodeCreator,
-            MemberEmailRedisRepository memberEmailRedisRepository, S3Uploader s3Uploader, JwtProvider jwtProvider) {
-        this.memberRepository = memberRepository;
+            VerificationCodeCreator verificationCodeCreator,
+            MemberEmailRedisRepository memberEmailRedisRepository,
+            S3Uploader s3Uploader,
+            JwtProvider jwtProvider
+    ) {
         this.emailService = emailService;
         this.verificationCodeCreator = verificationCodeCreator;
         this.memberEmailRedisRepository = memberEmailRedisRepository;
+        this.memberRepository = memberRepository;
         this.s3Uploader = s3Uploader;
         this.jwtProvider = jwtProvider;
     }
@@ -57,15 +63,17 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public void sendVerificationEmail(EmailDto emailDto) {
+        if (memberRepository.existsMemberByNewsEmail(emailDto.getTo())) {
+            throw new DataDuplicateException(ErrorCode.DUPLICATE_NEWS_EMAIL);
+        }
+
         final String authKey = verificationCodeCreator.createVerificationCode();
         emailService.sendVerificationCodeEmail(emailDto, authKey);
-        memberEmailRedisRepository.saveExpire(authKey, emailDto.getTo().get(0), 60 * 3L);
+        memberEmailRedisRepository.saveExpire(authKey, emailDto.getTo(), 60 * 3L);
     }
 
     @Override
     public MailVerificationResponse verificateEmail(MailVerificationRequest request) {
-        //todo : 이메일 중복 관련 기획 로직 추가 구현 고려해야함.
-
         String emailFoundByCode = memberEmailRedisRepository.getEmail(request.code());
         if (emailFoundByCode == null || !emailFoundByCode.equals(request.email())) {
             return new MailVerificationResponse(false);

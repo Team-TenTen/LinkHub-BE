@@ -1,11 +1,11 @@
 package com.tenten.linkhub.domain.space.controller;
 
 import com.tenten.linkhub.domain.auth.MemberDetails;
-import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiRequest;
-import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceDetailGetByIdApiResponse;
+import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiResponses;
 import com.tenten.linkhub.domain.space.controller.mapper.SpaceApiMapper;
@@ -24,12 +24,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import java.net.URI;
+import java.util.Objects;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -39,9 +42,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.net.URI;
-import java.util.Objects;
 
 @Tag(name = "spaces", description = "space 템플릿 API Document")
 @RestController
@@ -60,7 +60,7 @@ public class SpaceController {
     }
 
     /**
-     *  스페이스 검색 API
+     * 스페이스 검색 API
      */
     @Operation(
             summary = "스페이스 검색 API", description = "keyWord, pageNumber, pageSize, sort, filter를 받아 검색합니다.",
@@ -98,7 +98,7 @@ public class SpaceController {
     public ResponseEntity<SpaceCreateApiResponse> createSpace(
             @AuthenticationPrincipal MemberDetails memberDetails,
             @Parameter(
-                    description = "이미지 파일 외의 데이터는 application/jsom 타입으로 받습니다.",
+                    description = "이미지 파일 외의 데이터는 application/json 타입으로 받습니다.",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
             )
             @RequestPart @Valid SpaceCreateApiRequest request,
@@ -131,7 +131,7 @@ public class SpaceController {
             @CookieValue(value = "spaceView", required = false) Cookie spaceViewCookie,
             @PathVariable Long spaceId,
             HttpServletResponse servletResponse
-    ){
+    ) {
         Long memberId = Objects.isNull(memberDetails) ? null : memberDetails.memberId();
         SpaceDetailGetByIdFacadeRequest request = mapper.toSpaceDetailGetByIdFacadeRequest(spaceId, spaceViewCookie, memberId);
 
@@ -158,17 +158,37 @@ public class SpaceController {
             @AuthenticationPrincipal MemberDetails memberDetails,
             @PathVariable Long spaceId,
             @Parameter(
-                    description = "이미지 파일과 spaceId 외의 데이터는 application/jsom 타입으로 받습니다."
+                    description = "이미지 파일과 spaceId 외의 데이터는 application/json 타입으로 받습니다."
             )
             @RequestPart @Valid SpaceUpdateApiRequest request,
             @RequestPart(required = false) MultipartFile file
-    ){
+    ) {
         Long updatedSpaceId = spaceFacade.updateSpace(
                 mapper.toSpaceUpdateFacadeRequest(spaceId, request, file, memberDetails.memberId()));
 
         SpaceUpdateApiResponse apiResponse = SpaceUpdateApiResponse.from(updatedSpaceId);
 
         return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
+     * 스페이스 삭제 API
+     */
+    @Operation(
+            summary = "스페이스 삭제 API", description = "스페이스 삭제 API 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "스페이스가 성공적으로 삭제되었습니다."),
+                    @ApiResponse(responseCode = "404", description = "권한이 없는 유저가 스페이스를 삭제하려고 합니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @DeleteMapping("/{spaceId}")
+    public ResponseEntity<Void> deleteSpace(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long spaceId
+    ) {
+        spaceFacade.deleteSpace(spaceId, memberDetails.memberId());
+
+        return ResponseEntity.noContent().build();
     }
 
 }

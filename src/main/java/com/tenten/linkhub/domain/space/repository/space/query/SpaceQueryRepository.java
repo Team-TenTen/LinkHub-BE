@@ -1,15 +1,14 @@
 package com.tenten.linkhub.domain.space.repository.space.query;
 
+import static com.tenten.linkhub.domain.space.model.space.QSpace.space;
+
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
+import java.util.List;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-
-import static com.tenten.linkhub.domain.space.model.space.QSpace.space;
 
 @Repository
 public class SpaceQueryRepository {

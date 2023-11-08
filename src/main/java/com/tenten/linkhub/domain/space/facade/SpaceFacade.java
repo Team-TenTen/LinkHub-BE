@@ -7,21 +7,22 @@ import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeReques
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.mapper.SpaceFacadeMapper;
+import com.tenten.linkhub.domain.space.handler.dto.SpaceImagesDeleteDto;
 import com.tenten.linkhub.domain.space.handler.dto.SpaceIncreaseViewCountDto;
 import com.tenten.linkhub.domain.space.service.SpaceService;
+import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceMemberInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.dto.ImageSaveRequest;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
 import jakarta.servlet.http.Cookie;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class SpaceFacade {
@@ -69,6 +70,15 @@ public class SpaceFacade {
 
         return spaceService.updateSpace(
                 mapper.toSpaceUpdateRequest(request, imageInfo));
+    }
+
+    @Transactional
+    public void deleteSpace(Long spaceId, Long memberId) {
+        DeletedSpaceImageNames deletedSpaceImageNames = spaceService.deleteSpaceById(spaceId, memberId);
+
+        eventPublisher.publishEvent(
+                new SpaceImagesDeleteDto(deletedSpaceImageNames.fileNames())
+        );
     }
 
     private Optional<ImageInfo> getNewImageInfoOrEmptyImageInfo(MultipartFile file){

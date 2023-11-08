@@ -66,18 +66,24 @@ public class GlobalApiExceptionHandler {
                 .body(errorResponse);
     }
 
-    @ExceptionHandler(MaxImageCountExceededException.class)
-    public ResponseEntity<Void> handleMaxImageCountExceededException(HttpServletRequest request, MaxImageCountExceededException e) {
-        log.error("Sever Exception Request URI {}: ", request.getRequestURI(), e);
+    @ExceptionHandler(DataDuplicateException.class)
+    public ResponseEntity<ErrorWithDetailCodeResponse> handleDataDuplicateException(HttpServletRequest request,
+            DataDuplicateException e) {
+        ErrorWithDetailCodeResponse errorResponse = ErrorWithDetailCodeResponse.of(
+                e.getErrorCode(),
+                request.getRequestURI()
+        );
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(errorResponse);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Void> handleException(HttpServletRequest request, Exception e) {
         log.error("Sever Exception Request URI {}: ", request.getRequestURI(), e);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.internalServerError().build();
     }
 
     private static String getDetailMessage(BindException e) {

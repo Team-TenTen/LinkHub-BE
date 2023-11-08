@@ -1,19 +1,19 @@
 package com.tenten.linkhub.domain.space.service;
 
+import static com.tenten.linkhub.domain.space.model.space.Role.OWNER;
+
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
+import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.mapper.SpaceMapper;
-
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static com.tenten.linkhub.domain.space.model.space.Role.OWNER;
 
 @Service
 public class DefaultSpaceService implements SpaceService{
@@ -66,6 +66,15 @@ public class DefaultSpaceService implements SpaceService{
         space.updateSpaceAttributes(mapper.toSpaceUpdateDto(request));
 
         return space.getId();
+    }
+
+    @Override
+    @Transactional
+    public DeletedSpaceImageNames deleteSpaceById(Long spaceId, Long memberId) {
+        Space space = spaceRepository.getById(spaceId);
+        space.deleteSpace(memberId);
+
+        return DeletedSpaceImageNames.from(space.getAllSpaceImages());
     }
 
 }
