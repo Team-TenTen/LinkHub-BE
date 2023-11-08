@@ -40,7 +40,7 @@ public class Space extends BaseEntity {
     @Column(nullable = false)
     private String spaceName;
 
-    @Column
+    @Column(length = 500)
     private String description;
 
     @Enumerated(EnumType.STRING)

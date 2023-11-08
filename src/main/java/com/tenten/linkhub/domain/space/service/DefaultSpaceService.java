@@ -5,6 +5,7 @@ import static com.tenten.linkhub.domain.space.model.space.Role.OWNER;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
+import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
@@ -29,7 +30,7 @@ public class DefaultSpaceService implements SpaceService{
     @Override
     @Transactional(readOnly = true)
     public SpacesFindByQueryResponses findSpacesByQuery(SpacesFindByQueryRequest request) {
-        Slice<Space> spaces = spaceRepository.findSpaceWithSpaceImageByQuery(mapper.toQueryCond(request));
+        Slice<Space> spaces = spaceRepository.findSpacesJoinSpaceImageByQuery(mapper.toQueryCond(request));
 
         return SpacesFindByQueryResponses.from(spaces);
     }
@@ -75,6 +76,14 @@ public class DefaultSpaceService implements SpaceService{
         space.deleteSpace(memberId);
 
         return DeletedSpaceImageNames.from(space.getAllSpaceImages());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public SpacesFindByQueryResponses findMySpacesByQuery(MySpacesFindRequest request) {
+        Slice<Space> spaces = spaceRepository.findMySpacesJoinSpaceImageByQuery(mapper.toMySpacesFindQueryCondition(request));
+
+        return SpacesFindByQueryResponses.from(spaces);
     }
 
 }
