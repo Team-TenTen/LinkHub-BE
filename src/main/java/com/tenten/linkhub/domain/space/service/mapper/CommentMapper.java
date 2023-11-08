@@ -3,13 +3,18 @@ package com.tenten.linkhub.domain.space.service.mapper;
 import com.tenten.linkhub.domain.space.model.space.Comment;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.service.dto.comment.CommentCreateRequest;
-import org.mapstruct.InjectionStrategy;
-import org.mapstruct.Mapper;
+import org.springframework.stereotype.Component;
 
-@Mapper(componentModel = "spring",
-        injectionStrategy = InjectionStrategy.CONSTRUCTOR
-)
-public interface CommentMapper {
+@Component
+public class CommentMapper {
 
-    Comment toComment(CommentCreateRequest request, Space space);
+    public Comment toComment(CommentCreateRequest request, Space space){
+        return new Comment(
+                null,
+                null,
+                request.content(),
+                request.memberId(),
+                space);
+    }
+
 }

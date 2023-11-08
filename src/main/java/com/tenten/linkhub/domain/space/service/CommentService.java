@@ -16,10 +16,10 @@ public class CommentService {
     private final SpaceRepository spaceRepository;
     private final CommentMapper mapper;
 
-    public CommentService(CommentRepository commentRepository, SpaceRepository spaceRepository, CommentMapper mapper) {
+    public CommentService(CommentRepository commentRepository, SpaceRepository spaceRepository, CommentMapper commentMapper) {
         this.commentRepository = commentRepository;
         this.spaceRepository = spaceRepository;
-        this.mapper = mapper;
+        this.mapper = commentMapper;
     }
 
     @Transactional

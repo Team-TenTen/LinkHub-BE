@@ -34,6 +34,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 
 @Transactional
@@ -170,7 +171,7 @@ class SpaceFacadeTest {
     @DisplayName("스페이스의 주인이 아닌 유저가 스페이스를 삭제할 경우 UnauthorizedAccessException가 발생한다. ")
     void deleteSpace_UnauthorizedAccessException(){
         //when, then
-        Assertions.assertThatThrownBy(() -> spaceFacade.deleteSpace(setUpSpaceId, setUpMemberId + 1))
+        assertThatThrownBy(() -> spaceFacade.deleteSpace(setUpSpaceId, setUpMemberId + 1))
                 .isInstanceOf(UnauthorizedAccessException.class);
     }
 
