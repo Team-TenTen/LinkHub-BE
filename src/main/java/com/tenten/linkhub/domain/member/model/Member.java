@@ -43,13 +43,13 @@ public class Member extends BaseEntity {
     @Embedded
     private FavoriteCategories favoriteCategories = new FavoriteCategories();
 
-    @Column
+    @Column(length = 24)
     private String nickname;
 
-    @Column
+    @Column(length = 500)
     private String aboutMe;
 
-    @Column
+    @Column(length = 320)
     private String newsEmail;
 
     @Column
