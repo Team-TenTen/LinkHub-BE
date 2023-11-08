@@ -54,6 +54,7 @@ public class SecurityConfig {
                         config
                                 .requestMatchers(HttpMethod.GET).permitAll() // 임시로 풀어준 것 운영시에는 허용 주소 관리
                                 .requestMatchers("/members/join").permitAll()
+                                .requestMatchers("/members/emails/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
