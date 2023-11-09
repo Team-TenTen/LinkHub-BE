@@ -14,6 +14,10 @@ public interface MemberJpaRepository extends JpaRepository<Member, Long> {
 
     boolean existsByNewsEmail(String email);
 
+    @Query("SELECT m FROM Member m " +
+            "WHERE m.socialId = :socialId " +
+            "AND m.provider = :provider " +
+            "AND m.isDeleted = false")
     Optional<Member> findBySocialIdAndProvider(String socialId, Provider provider);
 
     @Query("SELECT m FROM Member m " +
