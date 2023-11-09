@@ -4,7 +4,6 @@ import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberRepository;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.SpaceGetDto;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
@@ -77,11 +76,6 @@ public class DefaultSpaceService implements SpaceService {
         if (!spaceMemberRepository.existsAuthorizedSpaceMember(memberId, spaceId)) {
             throw new UnauthorizedAccessException("링크를 생성할 수 있는 권한이 없습니다.");
         }
-    }
-
-    @Override
-    public SpaceGetDto getSpace(Long spaceId) {
-        return new SpaceGetDto(spaceRepository.getById(spaceId));
     }
 
 }
