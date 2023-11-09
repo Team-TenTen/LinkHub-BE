@@ -1,5 +1,8 @@
 package com.tenten.linkhub.domain.space.model.space;
 
+import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
+import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
+
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.space.dto.SpaceUpdateDto;
 import com.tenten.linkhub.domain.space.model.space.vo.SpaceImages;
@@ -15,15 +18,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.List;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
-import java.util.Objects;
-
-import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
-import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 
 @Entity
 @Table(name = "spaces")
@@ -41,7 +40,7 @@ public class Space extends BaseEntity {
     @Column(nullable = false)
     private String spaceName;
 
-    @Column
+    @Column(length = 500)
     private String description;
 
     @Enumerated(EnumType.STRING)
@@ -114,10 +113,20 @@ public class Space extends BaseEntity {
         return spaceMembers.getSpaceMemberList();
     }
 
+    public void changeSpaceImage(SpaceImage spaceImage) {
+        this.spaceImages.changeSpaceImage(spaceImage);
+    }
+
+    /**
+     * Space와 SpaceImage간의 편의 메서드용 메서드.
+     */
     public void removeSpaceImage(SpaceImage spaceImage){
         spaceImages.removeSpaceImage(spaceImage);
     }
 
+    /**
+     * Space와 SpaceMember간의 편의 메서드용 메서드.
+     */
     public void removeSpaceMember(SpaceMember spaceMember){
         spaceMembers.removeSpaceMember(spaceMember);
     }
@@ -154,7 +163,21 @@ public class Space extends BaseEntity {
         this.isLinkSummarizable = updateDto.isLinkSummarizable();
         this.isReadMarkEnabled = updateDto.isReadMarkEnabled();
         updateDto.spaceImage()
-                .ifPresent(this::addSpaceImage);
+                .ifPresent(this::changeSpaceImage);
+    }
+
+    public Long deleteSpace(Long memberId) {
+        validateOwnership(memberId);
+
+        this.spaceMembers.deleteAll();
+        this.spaceImages.deleteAll();
+        this.isDeleted = true;
+
+        return id;
+    }
+
+    public List<SpaceImage> getAllSpaceImages() {
+        return spaceImages.getAllSpaceImages();
     }
 
 }

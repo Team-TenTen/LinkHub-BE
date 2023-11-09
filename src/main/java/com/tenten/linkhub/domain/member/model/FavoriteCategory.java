@@ -12,7 +12,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -35,10 +34,15 @@ public class FavoriteCategory {
     @Column(nullable = false)
     private Category category;
 
-    @Builder
-    public FavoriteCategory(Long id, Category category) {
-        this.id = id;
+    public FavoriteCategory(Category category) {
         this.category = category;
     }
 
+    public void changeMember(Member member) {
+        if (this.member != null) {
+            this.member.getFavoriteCategories().removeFavoriteCategory(this);
+        }
+
+        this.member = member;
+    }
 }

@@ -1,17 +1,17 @@
 package com.tenten.linkhub.domain.space.model.space.vo;
 
+import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
+
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
+import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Embeddable
@@ -27,8 +27,21 @@ public class SpaceMembers {
         this.spaceMemberList.add(spaceMember);
     }
 
+    /**
+     * Space와 SpaceMember간의 편의 메서드용 메서드.
+     */
     public void removeSpaceMember(SpaceMember spaceMember){
         this.spaceMemberList.remove(spaceMember);
+    }
+
+    public List<SpaceMember> getSpaceMemberList() {
+        return spaceMemberList.stream()
+                .filter(spaceMember -> spaceMember.getIsDeleted() == false)
+                .collect(Collectors.toList());
+    }
+
+    public void deleteAll() {
+        spaceMemberList.forEach(spaceMember -> spaceMember.deleteSpaceMember());
     }
 
 }

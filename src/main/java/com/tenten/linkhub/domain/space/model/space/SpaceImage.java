@@ -1,5 +1,8 @@
 package com.tenten.linkhub.domain.space.model.space;
 
+import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
+
+import com.tenten.linkhub.global.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -13,14 +16,11 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
-import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
-
 @Entity
 @Table(name = "space_images")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class SpaceImage {
+public class SpaceImage extends BaseEntity {
     private static final int MAX_PATH_LENGTH = 2083;
 
     @Id
@@ -28,7 +28,7 @@ public class SpaceImage {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "space_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "space_id", referencedColumnName = "id")
     private Space space;
 
     @Column(length = MAX_PATH_LENGTH, nullable = false)
@@ -51,6 +51,11 @@ public class SpaceImage {
         }
 
         this.space = space;
+    }
+
+    public Long deleteSpaceImage() {
+        this.isDeleted = true;
+        return id;
     }
 
 }

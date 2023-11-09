@@ -1,5 +1,7 @@
 package com.tenten.linkhub.domain.space.service;
 
+import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
+import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
@@ -18,4 +20,7 @@ public interface SpaceService {
 
     void checkMemberAddLink(Long memberId, Long spaceId);
 
+    DeletedSpaceImageNames deleteSpaceById(Long spaceId, Long memberId);
+
+    SpacesFindByQueryResponses findMySpacesByQuery(MySpacesFindRequest mySpacesFindRequest);
 }
