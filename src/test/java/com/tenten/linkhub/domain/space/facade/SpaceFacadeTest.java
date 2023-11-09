@@ -1,8 +1,6 @@
 package com.tenten.linkhub.domain.space.facade;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-
+import com.tenten.linkhub.domain.member.model.FavoriteCategory;
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.ProfileImage;
 import com.tenten.linkhub.domain.member.model.Provider;
@@ -21,8 +19,6 @@ import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
-import java.util.List;
-import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,6 +30,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 
 @Transactional
 @TestPropertySource(locations = "classpath:/application-test.yml")
@@ -180,11 +182,10 @@ class SpaceFacadeTest {
                 com.tenten.linkhub.domain.member.model.Role.USER,
                 "잠자는 사자의 콧털",
                 "테스트용 소개글",
-                "abc@gmail.com"
-        );
-
-        member.addProfileImage(
-                new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지")
+                "abc@gmail.com",
+                false,
+                new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지"),
+                new FavoriteCategory(Category.ENTER_ART)
         );
 
         setUpMemberId = memberJpaRepository.save(member).getId();
