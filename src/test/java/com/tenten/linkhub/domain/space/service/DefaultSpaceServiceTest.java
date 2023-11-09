@@ -1,11 +1,17 @@
 package com.tenten.linkhub.domain.space.service;
 
+import com.tenten.linkhub.domain.member.model.FavoriteCategory;
+import com.tenten.linkhub.domain.member.model.Member;
+import com.tenten.linkhub.domain.member.model.ProfileImage;
+import com.tenten.linkhub.domain.member.model.Provider;
+import com.tenten.linkhub.domain.member.repository.MemberJpaRepository;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
+import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
@@ -33,6 +39,11 @@ class DefaultSpaceServiceTest {
 
     @Autowired
     private SpaceJpaRepository spaceJpaRepository;
+
+    @Autowired
+    private MemberJpaRepository memberJpaRepository;
+
+    private Long setUpMemberId;
 
     @BeforeEach
     void setUp() {
@@ -64,9 +75,84 @@ class DefaultSpaceServiceTest {
         assertThat(content.get(0).spaceImagePath()).isEqualTo("https://testimage1");
     }
 
+    @Test
+    @DisplayName("유저는 키워드와 필터 조건 없이 자신의 Space를 검색할 수 있다.")
+    void findMySpacesByQuery_emptyKeyWord_emptyFilter() {
+        //given
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        MySpacesFindRequest mySpacesFindRequest = new MySpacesFindRequest(pageRequest, "", null, setUpMemberId);
+
+        //when
+        SpacesFindByQueryResponses response = spaceService.findMySpacesByQuery(mySpacesFindRequest);
+
+        //then
+        List<SpacesFindByQueryResponse> content = response.responses().getContent();
+
+        assertThat(content.size()).isEqualTo(2);
+        assertThat(content.get(0).spaceName()).isEqualTo("첫번째 스페이스");
+        assertThat(content.get(0).description()).isEqualTo("첫번째 스페이스 소개글");
+        assertThat(content.get(0).category()).isEqualTo(Category.KNOWLEDGE_ISSUE_CAREER);
+        assertThat(content.get(0).spaceImagePath()).isEqualTo("https://testimage1");
+        assertThat(content.get(1).spaceName()).isEqualTo("두번째 스페이스");
+    }
+
+    @Test
+    @DisplayName("유저는 키워드를 통해 자신의 Space를 검색할 수 있다.")
+    void findMySpacesByQuery_keyWord_emptyFilter() {
+        //given
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        MySpacesFindRequest mySpacesFindRequest = new MySpacesFindRequest(pageRequest, "두번째", null, setUpMemberId);
+
+        //when
+        SpacesFindByQueryResponses response = spaceService.findMySpacesByQuery(mySpacesFindRequest);
+
+        //then
+        List<SpacesFindByQueryResponse> content = response.responses().getContent();
+
+        assertThat(content.size()).isEqualTo(1);
+        assertThat(content.get(0).spaceName()).isEqualTo("두번째 스페이스");
+        assertThat(content.get(0).spaceImagePath()).isEqualTo("https://testimage2");
+    }
+
+    @Test
+    @DisplayName("유저는 필터 조건을 통해 자신의 Space를 검색할 수 있다.")
+    void findMySpacesByQuery_emptyKeyWord_filter() {
+        //given
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        MySpacesFindRequest mySpacesFindRequest = new MySpacesFindRequest(pageRequest, "", Category.LIFE_KNOWHOW_SHOPPING, setUpMemberId);
+
+        //when
+        SpacesFindByQueryResponses response = spaceService.findMySpacesByQuery(mySpacesFindRequest);
+
+        //then
+        List<SpacesFindByQueryResponse> content = response.responses().getContent();
+
+        assertThat(content.size()).isEqualTo(1);
+        assertThat(content.get(0).spaceName()).isEqualTo("두번째 스페이스");
+        assertThat(content.get(0).spaceImagePath()).isEqualTo("https://testimage2");
+    }
+
     private void setupData() {
+        Member member = new Member(
+                "testSocialId",
+                Provider.kakao,
+                com.tenten.linkhub.domain.member.model.Role.USER,
+                "잠자는 사자의 콧털",
+                "테스트용 소개글",
+                "abc@gmail.com",
+                false,
+                new ProfileImage("https://testimage1", "테스트 이미지1"),
+                new FavoriteCategory(Category.ENTER_ART)
+        );
+
+        member.addProfileImage(
+                new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지")
+        );
+
+        setUpMemberId = memberJpaRepository.save(member).getId();
+
         Space space1 = new Space(
-                1L,
+                setUpMemberId,
                 "첫번째 스페이스",
                 "첫번째 스페이스 소개글",
                 Category.KNOWLEDGE_ISSUE_CAREER,
@@ -77,10 +163,21 @@ class DefaultSpaceServiceTest {
         );
 
         Space space2 = new Space(
-                1L,
+                setUpMemberId,
                 "두번째 스페이스",
                 "두번째 스페이스 소개글",
-                Category.ENTER_ART,
+                Category.LIFE_KNOWHOW_SHOPPING,
+                true,
+                true,
+                true,
+                true
+        );
+
+        Space space3 = new Space(
+                setUpMemberId + 1,
+                "세번째 스페이스",
+                "세번째 스페이스 소개글",
+                Category.KNOWLEDGE_ISSUE_CAREER,
                 true,
                 true,
                 true,
@@ -88,11 +185,15 @@ class DefaultSpaceServiceTest {
         );
 
         space1.addSpaceMember(
-                new SpaceMember(1L, Role.OWNER)
+                new SpaceMember(setUpMemberId, Role.OWNER)
         );
 
         space2.addSpaceMember(
-                new SpaceMember(1L, Role.OWNER)
+                new SpaceMember(setUpMemberId, Role.OWNER)
+        );
+
+        space3.addSpaceMember(
+                new SpaceMember(setUpMemberId + 1, Role.OWNER)
         );
 
         space1.addSpaceImage(
@@ -100,11 +201,16 @@ class DefaultSpaceServiceTest {
         );
 
         space2.addSpaceImage(
-                new SpaceImage( "https://testimage2", "테스트 이미지2")
+                new SpaceImage("https://testimage2", "테스트 이미지2")
+        );
+
+        space3.addSpaceImage(
+                new SpaceImage("https://testimage3", "테스트 이미지3")
         );
 
         spaceJpaRepository.save(space1);
         spaceJpaRepository.save(space2);
+        spaceJpaRepository.save(space3);
     }
 
 }

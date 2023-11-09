@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.space.facade;
 
+import com.tenten.linkhub.domain.member.model.FavoriteCategory;
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.ProfileImage;
 import com.tenten.linkhub.domain.member.model.Provider;
@@ -95,7 +96,10 @@ class LinkFacadeTest {
                 com.tenten.linkhub.domain.member.model.Role.USER,
                 "닉네임 데이터",
                 "소개 데이터",
-                "1111@gmail.com"
+                "1111@gmail.com",
+                false,
+                new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지1"),
+                new FavoriteCategory(Category.ENTER_ART)
         );
 
         Member member2 = new Member(
@@ -104,16 +108,12 @@ class LinkFacadeTest {
                 com.tenten.linkhub.domain.member.model.Role.USER,
                 "닉네임 데이터2",
                 "소개 데이터2",
-                "2222@gmail.com"
+                "2222@gmail.com",
+                false,
+                new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지2"),
+                new FavoriteCategory(Category.ENTER_ART)
         );
 
-
-        member1.addProfileImage(
-                new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지1")
-        );
-        member2.addProfileImage(
-                new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지2")
-        );
 
         memberId1 = memberJpaRepository.save(member1).getId();
         memberId2 = memberJpaRepository.save(member2).getId();
