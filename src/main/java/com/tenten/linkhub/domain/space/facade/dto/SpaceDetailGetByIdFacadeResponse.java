@@ -24,13 +24,11 @@ public record SpaceDetailGetByIdFacadeResponse(
         Long favoriteCount,
         String spaceImagePath,
         List<SpaceMemberDetailInfo> memberDetailInfos,
-        Boolean isOwner,
-        Cookie spaceViewCookie
+        Boolean isOwner
 ) {
     public static SpaceDetailGetByIdFacadeResponse of(
             SpaceWithSpaceImageAndSpaceMemberInfo response,
-            MemberInfos memberDetailInfos,
-            Cookie spaceViewCookie
+            MemberInfos memberDetailInfos
     ){
         Map<Long, MemberInfo> memberInfos = memberDetailInfos.memberInfos();
 
@@ -62,8 +60,7 @@ public record SpaceDetailGetByIdFacadeResponse(
                 response.favoriteCount(),
                 response.spaceImagePath(),
                 spaceMemberDetailInfos,
-                response.isOwner(),
-                spaceViewCookie
+                response.isOwner()
         );
     }
 

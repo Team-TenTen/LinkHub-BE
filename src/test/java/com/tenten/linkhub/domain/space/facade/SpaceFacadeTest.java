@@ -101,7 +101,7 @@ class SpaceFacadeTest {
     @DisplayName("유저는 spaceId를 통해 스페이스의 상세 정보를 조회할 수 있다.")
     void getSpaceDetailById() {
         //given
-        SpaceDetailGetByIdFacadeRequest request = new SpaceDetailGetByIdFacadeRequest(setUpSpaceId, null, setUpMemberId);
+        SpaceDetailGetByIdFacadeRequest request = new SpaceDetailGetByIdFacadeRequest(setUpSpaceId, setUpMemberId);
 
         //when
         SpaceDetailGetByIdFacadeResponse response = spaceFacade.getSpaceDetailById(request);

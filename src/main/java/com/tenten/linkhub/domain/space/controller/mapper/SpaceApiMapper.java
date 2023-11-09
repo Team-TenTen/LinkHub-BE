@@ -26,7 +26,7 @@ public interface SpaceApiMapper {
 
     SpaceUpdateFacadeRequest toSpaceUpdateFacadeRequest(Long spaceId, SpaceUpdateApiRequest request, MultipartFile file, Long memberId);
 
-    SpaceDetailGetByIdFacadeRequest toSpaceDetailGetByIdFacadeRequest(Long spaceId, Cookie spaceViewCookie, Long memberId);
+    SpaceDetailGetByIdFacadeRequest toSpaceDetailGetByIdFacadeRequest(Long spaceId, Long memberId);
 
     MySpacesFindRequest toMySpacesFindRequest(Pageable pageable, MySpacesFindApiRequest request, Long memberId);
 }

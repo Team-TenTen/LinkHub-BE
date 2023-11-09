@@ -21,6 +21,7 @@ import com.tenten.linkhub.domain.space.service.CommentService;
 import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
+import com.tenten.linkhub.domain.space.util.CheckSpaceView;
 import com.tenten.linkhub.global.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -136,21 +137,18 @@ public class SpaceController {
                     @ApiResponse(responseCode = "404", description = "요청한 spaceId에 해당하는 스페이스를 찾을 수 없습니다.",
                             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
+    @CheckSpaceView
     @GetMapping(value = "/{spaceId}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SpaceDetailGetByIdApiResponse> getSpaceDetailById(
             @AuthenticationPrincipal MemberDetails memberDetails,
-            @Parameter(hidden = true)
-            @CookieValue(value = "spaceView", required = false) Cookie spaceViewCookie,
-            @PathVariable Long spaceId,
-            HttpServletResponse servletResponse
+            @PathVariable Long spaceId
     ) {
         Long memberId = Objects.isNull(memberDetails) ? null : memberDetails.memberId();
-        SpaceDetailGetByIdFacadeRequest request = spaceMapper.toSpaceDetailGetByIdFacadeRequest(spaceId, spaceViewCookie, memberId);
+        SpaceDetailGetByIdFacadeRequest request = spaceMapper.toSpaceDetailGetByIdFacadeRequest(spaceId, memberId);
 
         SpaceDetailGetByIdFacadeResponse response = spaceFacade.getSpaceDetailById(request);
 
-        servletResponse.addCookie(response.spaceViewCookie());
         SpaceDetailGetByIdApiResponse apiResponse = SpaceDetailGetByIdApiResponse.from(response);
 
         return ResponseEntity.ok(apiResponse);

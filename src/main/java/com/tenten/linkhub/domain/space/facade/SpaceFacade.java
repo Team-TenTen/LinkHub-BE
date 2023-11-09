@@ -8,7 +8,6 @@ import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRespon
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.mapper.SpaceFacadeMapper;
 import com.tenten.linkhub.domain.space.handler.dto.SpaceImagesDeleteDto;
-import com.tenten.linkhub.domain.space.handler.dto.SpaceIncreaseViewCountDto;
 import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceMemberInfo;
@@ -16,7 +15,6 @@ import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndS
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.dto.ImageSaveRequest;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
-import jakarta.servlet.http.Cookie;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.context.ApplicationEventPublisher;
@@ -58,10 +56,7 @@ public class SpaceFacade {
         List<Long> memberIds = getMemberIds(response);
         MemberInfos memberInfos = memberService.findMemberInfosByMemberIds(memberIds);
 
-        Cookie spaceViewCookie = request.spaceViewCookie();
-        spaceViewCookie = increaseSpaceViewCount(spaceViewCookie, response.spaceId());
-
-        return SpaceDetailGetByIdFacadeResponse.of(response, memberInfos, spaceViewCookie);
+        return SpaceDetailGetByIdFacadeResponse.of(response, memberInfos);
     }
 
     @Transactional
@@ -103,32 +98,6 @@ public class SpaceFacade {
         return response.spaceMemberInfos().stream()
                 .map(SpaceMemberInfo::memberId)
                 .toList();
-    }
-
-    private Cookie increaseSpaceViewCount(Cookie spaceViewCookie, Long spaceId) {
-        if (spaceViewCookie == null) {
-            eventPublisher.publishEvent(
-                    new SpaceIncreaseViewCountDto(spaceId)
-            );
-
-            Cookie newCookie = new Cookie("spaceView", "[" + spaceId + "]");
-            newCookie.setPath("/");
-            newCookie.setMaxAge(COOKIE_EXPIRE_TIME);
-            return newCookie;
-        }
-
-        if (!spaceViewCookie.getValue().contains("[" + spaceId + "]")) {
-            eventPublisher.publishEvent(
-                    new SpaceIncreaseViewCountDto(spaceId)
-            );
-
-            spaceViewCookie.setValue(spaceViewCookie.getValue() + "_[" + spaceId + "]");
-            spaceViewCookie.setPath("/");
-            spaceViewCookie.setMaxAge(COOKIE_EXPIRE_TIME);
-            return spaceViewCookie;
-        }
-
-        return spaceViewCookie;
     }
 
 }
