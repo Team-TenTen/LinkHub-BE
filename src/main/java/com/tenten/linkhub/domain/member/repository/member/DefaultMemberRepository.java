@@ -1,4 +1,4 @@
-package com.tenten.linkhub.domain.member.repository;
+package com.tenten.linkhub.domain.member.repository.member;
 
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.Provider;
@@ -7,7 +7,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class DefaultMemberRepository implements MemberRepository{
+public class DefaultMemberRepository implements MemberRepository {
 
     private final MemberJpaRepository memberJpaRepository;
 
@@ -32,6 +32,11 @@ public class DefaultMemberRepository implements MemberRepository{
     @Override
     public Member save(Member newUser) {
         return memberJpaRepository.save(newUser);
+    }
+
+    @Override
+    public Optional<Member> findByIdWithImageAndCategory(Long memberId) {
+        return memberJpaRepository.findByIdWithImageAndCategory(memberId);
     }
 
 }

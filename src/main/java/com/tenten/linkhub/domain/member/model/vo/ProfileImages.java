@@ -29,7 +29,9 @@ public class ProfileImages {
         this.profileImageList.remove(profileImage);
     }
 
-    public ProfileImage getProfileImage() {
-        return this.profileImageList.get(0);
+    public List<ProfileImage> retrieveProfileImages() {
+        return profileImageList.stream()
+                .filter(profileImage -> !profileImage.getIsDeleted())
+                .toList();
     }
 }

@@ -29,4 +29,7 @@ public class FavoriteCategories {
         this.favoriteCategoryList.remove(favoriteCategory);
     }
 
+    public List<FavoriteCategory> retrieveFavoriteCategories() {
+        return this.favoriteCategoryList;
+    }
 }

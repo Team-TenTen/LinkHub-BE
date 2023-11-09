@@ -2,6 +2,7 @@ package com.tenten.linkhub.domain.member.model;
 
 import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
 
+import com.tenten.linkhub.global.entity.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Table(name = "profile_images")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ProfileImage {
+public class ProfileImage extends BaseEntity {
     private static final int MAX_PATH_LENGTH = 2083;
 
     @Id

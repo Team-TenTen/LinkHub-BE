@@ -12,6 +12,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -74,6 +75,15 @@ public class Member extends BaseEntity {
         this.role = role;
     }
 
+    public Member(String socialId, Provider provider, Role role, String nickname, String aboutMe, String newsEmail) {
+        this.socialId = socialId;
+        this.provider = provider;
+        this.role = role;
+        this.nickname = nickname;
+        this.aboutMe = aboutMe;
+        this.newsEmail = newsEmail;
+    }
+
     public void addProfileImage(ProfileImage profileImage) {
         this.profileImages.addProfileImage(profileImage);
         profileImage.changeMember(this);
@@ -84,8 +94,11 @@ public class Member extends BaseEntity {
         favoriteCategory.changeMember(this);
     }
 
-    public ProfileImage getProfileImage() {
-        return this.profileImages.getProfileImage();
+    public List<ProfileImage> retrieveProfileImages() {
+        return this.profileImages.retrieveProfileImages();
     }
 
+    public List<FavoriteCategory> retrieveFavoriteCategories() {
+        return this.favoriteCategories.retrieveFavoriteCategories();
+    }
 }

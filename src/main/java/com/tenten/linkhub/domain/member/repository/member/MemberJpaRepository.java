@@ -1,4 +1,4 @@
-package com.tenten.linkhub.domain.member.repository;
+package com.tenten.linkhub.domain.member.repository.member;
 
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.Provider;
@@ -16,4 +16,11 @@ public interface MemberJpaRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findBySocialIdAndProvider(String socialId, Provider provider);
 
+    @Query("SELECT m FROM Member m " +
+            "LEFT JOIN FETCH m.profileImages pi " +
+            "LEFT JOIN FETCH m.favoriteCategories fc " +
+            "WHERE m.id = :memberId")
+    Optional<Member> findByIdWithImageAndCategory(Long memberId);
+
 }
+
