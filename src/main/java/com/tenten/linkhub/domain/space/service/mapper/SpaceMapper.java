@@ -12,39 +12,69 @@ import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
-import org.mapstruct.InjectionStrategy;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.Named;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@Mapper(componentModel = "spring",
-        injectionStrategy = InjectionStrategy.CONSTRUCTOR
-)
-public interface SpaceMapper {
+@Component
+public class SpaceMapper {
 
-    QueryCondition toQueryCond(SpacesFindByQueryRequest request);
+    public QueryCondition toQueryCond(SpacesFindByQueryRequest request) {
+        return new QueryCondition(
+                request.pageable(),
+                request.keyWord(),
+                request.filter());
+    }
 
-    Space toSpace(SpaceCreateRequest request);
+    public Space toSpace(SpaceCreateRequest request, SpaceMember spaceMember, SpaceImage spaceImage) {
+        return new Space(
+                request.memberId(),
+                request.spaceName(),
+                request.description(),
+                request.category(),
+                spaceImage,
+                spaceMember,
+                request.isVisible(),
+                request.isComment(),
+                request.isLinkSummarizable(),
+                request.isReadMarkEnabled());
+    }
 
-    @Mapping(source = "request.memberId", target = "memberId")
-    SpaceMember toSpaceMember(SpaceCreateRequest request, Role role);
+    public SpaceMember toSpaceMember(SpaceCreateRequest request, Role role) {
+        return new SpaceMember(
+                request.memberId(),
+                role);
+    }
 
-    SpaceImage toSpaceImage(ImageInfo imageInfo);
+    public SpaceImage toSpaceImage(ImageInfo imageInfo) {
+        return new SpaceImage(
+                imageInfo.path(),
+                imageInfo.name());
+    }
 
-    MySpacesFindQueryCondition toMySpacesFindQueryCondition(MySpacesFindRequest request);
+    public MySpacesFindQueryCondition toMySpacesFindQueryCondition(MySpacesFindRequest request) {
+        return new MySpacesFindQueryCondition(
+                request.pageable(),
+                request.keyWord(),
+                request.filter(),
+                request.memberId());
+    }
 
-    @Mapping(source = "request.imageInfo", target = "spaceImage", qualifiedByName = "mapSpaceImage")
-    SpaceUpdateDto toSpaceUpdateDto(SpaceUpdateRequest request);
+    public SpaceUpdateDto toSpaceUpdateDto(SpaceUpdateRequest request){
+        Optional<ImageInfo> imageInfo = request.imageInfo();
+        Optional<SpaceImage> spaceImage = imageInfo.map(i -> new SpaceImage(i.path(), i.name()));
 
-    @Named("mapSpaceImage")
-    static Optional<SpaceImage> mapSpaceImage(Optional<ImageInfo> imageInfo){
-        if (imageInfo.isPresent()){
-            return imageInfo.map(i -> new SpaceImage(i.path(), i.name()));
-        }
-
-        return Optional.empty();
+        return new SpaceUpdateDto(
+                request.memberId(),
+                request.spaceName(),
+                request.description(),
+                request.category(),
+                request.isVisible(),
+                request.isComment(),
+                request.isLinkSummarizable(),
+                request.isReadMarkEnabled(),
+                spaceImage
+        );
     }
 
 }

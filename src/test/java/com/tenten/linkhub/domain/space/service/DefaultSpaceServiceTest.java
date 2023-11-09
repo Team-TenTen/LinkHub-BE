@@ -152,6 +152,8 @@ class DefaultSpaceServiceTest {
                 "첫번째 스페이스",
                 "첫번째 스페이스 소개글",
                 Category.KNOWLEDGE_ISSUE_CAREER,
+                new SpaceImage("https://testimage1", "테스트 이미지1"),
+                new SpaceMember(setUpMemberId, Role.OWNER),
                 true,
                 true,
                 true,
@@ -163,6 +165,8 @@ class DefaultSpaceServiceTest {
                 "두번째 스페이스",
                 "두번째 스페이스 소개글",
                 Category.LIFE_KNOWHOW_SHOPPING,
+                new SpaceImage( "https://testimage2", "테스트 이미지2"),
+                new SpaceMember(setUpMemberId, Role.OWNER),
                 true,
                 true,
                 true,
@@ -174,34 +178,12 @@ class DefaultSpaceServiceTest {
                 "세번째 스페이스",
                 "세번째 스페이스 소개글",
                 Category.KNOWLEDGE_ISSUE_CAREER,
+                new SpaceImage( "https://testimage3", "테스트 이미지3"),
+                new SpaceMember(setUpMemberId + 1, Role.OWNER),
                 true,
                 true,
                 true,
                 true
-        );
-
-        space1.addSpaceMember(
-                new SpaceMember(setUpMemberId, Role.OWNER)
-        );
-
-        space2.addSpaceMember(
-                new SpaceMember(setUpMemberId, Role.OWNER)
-        );
-
-        space3.addSpaceMember(
-                new SpaceMember(setUpMemberId + 1, Role.OWNER)
-        );
-
-        space1.addSpaceImage(
-                new SpaceImage("https://testimage1", "테스트 이미지1")
-        );
-
-        space2.addSpaceImage(
-                new SpaceImage( "https://testimage2", "테스트 이미지2")
-        );
-
-        space3.addSpaceImage(
-                new SpaceImage( "https://testimage3", "테스트 이미지3")
         );
 
         spaceJpaRepository.save(space1);

@@ -7,7 +7,10 @@ import com.tenten.linkhub.domain.member.model.Provider;
 import com.tenten.linkhub.domain.member.repository.MemberJpaRepository;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.space.Comment;
+import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.Space;
+import com.tenten.linkhub.domain.space.model.space.SpaceImage;
+import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.comment.CommentJpaRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
@@ -85,31 +88,6 @@ class CommentServiceTest {
     }
 
     private void setUpTestData(){
-        Space space1 = new Space(
-                1L,
-                "첫번째 스페이스",
-                "첫번째 스페이스 소개글",
-                Category.KNOWLEDGE_ISSUE_CAREER,
-                true,
-                true,
-                true,
-                true
-        );
-
-        Space space2 = new Space(
-                1L,
-                "두번째 스페이스",
-                "두번째 스페이스 소개글",
-                Category.ETC,
-                true,
-                false,
-                true,
-                true
-        );
-
-        setUpSpaceId1 = spaceJpaRepository.save(space1).getId();
-        setUpSpaceId2 = spaceJpaRepository.save(space2).getId();
-
         Member member = new Member(
                 "testSocialId",
                 Provider.kakao,
@@ -123,6 +101,35 @@ class CommentServiceTest {
         );
 
         setUpMemberId = memberJpaRepository.save(member).getId();
+
+        Space space1 = new Space(
+                1L,
+                "첫번째 스페이스",
+                "첫번째 스페이스 소개글",
+                Category.KNOWLEDGE_ISSUE_CAREER,
+                new SpaceImage("https://testimage1", "테스트 이미지1"),
+                new SpaceMember(setUpMemberId, Role.OWNER),
+                true,
+                true,
+                true,
+                true
+        );
+
+        Space space2 = new Space(
+                1L,
+                "두번째 스페이스",
+                "두번째 스페이스 소개글",
+                Category.ETC,
+                new SpaceImage( "https://testimage2", "테스트 이미지2"),
+                new SpaceMember(setUpMemberId, Role.OWNER),
+                true,
+                false,
+                true,
+                true
+        );
+
+        setUpSpaceId1 = spaceJpaRepository.save(space1).getId();
+        setUpSpaceId2 = spaceJpaRepository.save(space2).getId();
     }
 
 }

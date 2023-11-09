@@ -75,9 +75,11 @@ public class Space extends BaseEntity {
     @Column(nullable = false)
     private Long favoriteCount;
 
-    public Space(Long memberId, String spaceName, String description, Category category, Boolean isVisible, Boolean isComment, Boolean isLinkSummarizable, Boolean isReadMarkEnabled) {
+    public Space(Long memberId, String spaceName, String description, Category category, SpaceImage spaceImage, SpaceMember spaceMember, Boolean isVisible, Boolean isComment, Boolean isLinkSummarizable, Boolean isReadMarkEnabled) {
         validateNotNull(memberId, "memberId");
         validateNotNull(category, "category");
+        validateNotNull(spaceImage, "spaceImage");
+        validateNotNull(spaceMember, "spaceMember");
         validateNotNull(isVisible, "isVisible");
         validateNotNull(isComment, "isComment");
         validateNotNull(isLinkSummarizable, "isLinkSummarizable");
@@ -88,6 +90,8 @@ public class Space extends BaseEntity {
         this.spaceName = spaceName;
         this.description = description;
         this.category = category;
+        this.addSpaceImage(spaceImage);
+        this.addSpaceMember(spaceMember);
         this.isVisible = isVisible;
         this.isComment = isComment;
         this.isLinkSummarizable = isLinkSummarizable;

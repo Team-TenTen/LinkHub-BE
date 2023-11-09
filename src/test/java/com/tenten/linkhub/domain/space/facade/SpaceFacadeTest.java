@@ -196,18 +196,12 @@ class SpaceFacadeTest {
                 "첫번째 스페이스",
                 "첫번째 스페이스 소개글",
                 Category.KNOWLEDGE_ISSUE_CAREER,
+                new SpaceImage("https://testimage1", "테스트 이미지1"),
+                new SpaceMember(setUpMemberId, Role.OWNER),
                 true,
                 true,
                 true,
                 true
-        );
-
-        space.addSpaceMember(
-                new SpaceMember(setUpMemberId, Role.OWNER)
-        );
-
-        space.addSpaceImage(
-                new SpaceImage("https://testimage1", "테스트 이미지1")
         );
 
         setUpSpaceId = spaceJpaRepository.save(space).getId();

@@ -1,6 +1,8 @@
 package com.tenten.linkhub.domain.space.service;
 
 import com.tenten.linkhub.domain.space.model.space.Space;
+import com.tenten.linkhub.domain.space.model.space.SpaceImage;
+import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
 import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
@@ -38,15 +40,10 @@ public class DefaultSpaceService implements SpaceService {
     @Override
     @Transactional
     public Long createSpace(SpaceCreateRequest request) {
-        Space space = mapper.toSpace(request);
+        SpaceMember spaceMember = mapper.toSpaceMember(request, OWNER);
+        SpaceImage spaceImage = mapper.toSpaceImage(request.imageInfo());
 
-        space.addSpaceMember(
-                mapper.toSpaceMember(request, OWNER)
-        );
-
-        space.addSpaceImage(
-                mapper.toSpaceImage(request.imageInfo())
-        );
+        Space space = mapper.toSpace(request, spaceMember, spaceImage);
 
         return spaceRepository.save(space).getId();
     }
