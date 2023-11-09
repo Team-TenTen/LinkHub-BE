@@ -9,6 +9,7 @@ import com.tenten.linkhub.domain.space.facade.dto.LinkCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.service.LinkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.print.attribute.standard.MediaSize;
 import java.net.URI;
 
 @RestController
@@ -43,7 +45,9 @@ public class LinkController {
                     @ApiResponse(responseCode = "404", description = "링크 생성 권한이 없습니다."),
                     @ApiResponse(responseCode = "404", description = "요청한 spaceId에 해당하는 스페이스를 찾을 수 없습니다.")
             })
-    @PostMapping("/spaces/{spaceId}/links")
+    @PostMapping(value = "/spaces/{spaceId}/links",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<LinkCreateApiResponse> createLink(
             @PathVariable Long spaceId,
             @RequestBody LinkCreateApiRequest apiRequest,
