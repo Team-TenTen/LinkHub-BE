@@ -32,7 +32,7 @@ public class SpaceEventHandler {
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void deleteImageFiles(SpaceImagesDeleteDto imagesDeleteDto){
+    public void deleteImageFiles(SpaceImagesDeleteDto imagesDeleteDto) {
         s3Uploader.deleteImages(imagesDeleteDto.spaceImageNames());
     }
 

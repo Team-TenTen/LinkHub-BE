@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.space.facade;
 
+import com.tenten.linkhub.domain.member.model.FavoriteCategory;
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.ProfileImage;
 import com.tenten.linkhub.domain.member.model.Provider;
@@ -17,11 +18,11 @@ import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
+import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
+
 import java.util.List;
 import java.util.Optional;
 
-import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -157,7 +158,7 @@ class SpaceFacadeTest {
 
     @Test
     @DisplayName("유저는 스페이스를 삭제할 수 있다.")
-    void deleteSpace(){
+    void deleteSpace() {
         //when
         spaceFacade.deleteSpace(setUpSpaceId, setUpMemberId);
 
@@ -169,7 +170,7 @@ class SpaceFacadeTest {
 
     @Test
     @DisplayName("스페이스의 주인이 아닌 유저가 스페이스를 삭제할 경우 UnauthorizedAccessException가 발생한다. ")
-    void deleteSpace_UnauthorizedAccessException(){
+    void deleteSpace_UnauthorizedAccessException() {
         //when, then
         assertThatThrownBy(() -> spaceFacade.deleteSpace(setUpSpaceId, setUpMemberId + 1))
                 .isInstanceOf(UnauthorizedAccessException.class);
@@ -182,11 +183,10 @@ class SpaceFacadeTest {
                 com.tenten.linkhub.domain.member.model.Role.USER,
                 "잠자는 사자의 콧털",
                 "테스트용 소개글",
-                "abc@gmail.com"
-        );
-
-        member.addProfileImage(
-                new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지")
+                "abc@gmail.com",
+                true,
+                new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지"),
+                new FavoriteCategory(Category.KNOWLEDGE_ISSUE_CAREER)
         );
 
         setUpMemberId = memberJpaRepository.save(member).getId();

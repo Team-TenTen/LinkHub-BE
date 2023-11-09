@@ -46,7 +46,7 @@ public class ProfileImage {
 
     public void changeMember(Member member) {
         if (this.member != null) {
-            this.member.getProfileImages().remove(this);
+            this.member.getProfileImages().removeProfileImage(this);
         }
 
         this.member = member;

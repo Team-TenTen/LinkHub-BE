@@ -63,7 +63,7 @@ public class SpaceMember extends BaseEntity {
         this.space = space;
     }
 
-    public Long deleteSpaceMember(){
+    public Long deleteSpaceMember() {
         this.isDeleted = true;
         return id;
     }

@@ -1,8 +1,9 @@
 package com.tenten.linkhub.domain.auth.service;
 
-import com.tenten.linkhub.domain.auth.service.dto.MemberFindOrCreateResponse;
 import com.tenten.linkhub.domain.member.model.Provider;
+import com.tenten.linkhub.domain.member.model.Role;
 import com.tenten.linkhub.domain.member.service.MemberService;
+import com.tenten.linkhub.domain.member.service.dto.MemberFindResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,14 +44,13 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
 
         String provider = userRequest.getClientRegistration().getRegistrationId();
 
-        MemberFindOrCreateResponse memberFindOrCreateResponse = memberService.findOrCreateMember(socialId,
-                Provider.valueOf(provider));
+        MemberFindResponse memberFindResponse = memberService.findMember(socialId, Provider.valueOf(provider));
 
         Map<String, Object> attributes = new HashMap<>(oAuth2User.getAttributes());
         attributes.put("socialId", socialId);
-        attributes.put("memberId", memberFindOrCreateResponse.memberId());
-        attributes.put("isLoggedIn", memberFindOrCreateResponse.isLoggedIn());
+        attributes.put("memberId", memberFindResponse.memberId());
         attributes.put("provider", provider);
+        attributes.put("role", Role.USER);
 
         return new DefaultOAuth2User(authorities, attributes, userNameAttributeName);
     }

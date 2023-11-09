@@ -1,9 +1,8 @@
 package com.tenten.linkhub.domain.space.service.dto.space;
 
 import com.tenten.linkhub.domain.space.model.space.Space;
-import org.springframework.data.domain.Slice;
-
 import java.util.Objects;
+import org.springframework.data.domain.Slice;
 
 public record SpacesFindByQueryResponses(Slice<SpacesFindByQueryResponse> responses) {
 

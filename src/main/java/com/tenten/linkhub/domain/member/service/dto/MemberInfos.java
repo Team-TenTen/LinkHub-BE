@@ -1,10 +1,8 @@
 package com.tenten.linkhub.domain.member.service.dto;
 
 import com.tenten.linkhub.domain.member.model.Member;
-
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public record MemberInfos(Map<Long, MemberInfo> memberInfos) {
@@ -16,7 +14,8 @@ public record MemberInfos(Map<Long, MemberInfo> memberInfos) {
                         m -> new MemberInfo(
                                 m.getNickname(),
                                 m.getAboutMe(),
-                                m.getProfileImages().isEmpty() ? null : m.getProfileImages().get(0).getPath()
+                                m.getProfileImages().getProfileImageList().isEmpty() ? null
+                                        : m.getProfileImage().getPath()
                         )
                 ));
 

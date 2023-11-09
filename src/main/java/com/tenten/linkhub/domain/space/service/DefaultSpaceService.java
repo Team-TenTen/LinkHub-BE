@@ -10,7 +10,6 @@ import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndS
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.mapper.SpaceMapper;
-
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static com.tenten.linkhub.domain.space.model.space.Role.OWNER;
 
 @Service
-public class DefaultSpaceService implements SpaceService{
+public class DefaultSpaceService implements SpaceService {
 
     private final SpaceRepository spaceRepository;
     private final SpaceMapper mapper;

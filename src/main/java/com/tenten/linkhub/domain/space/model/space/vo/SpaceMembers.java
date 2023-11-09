@@ -5,12 +5,13 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 
@@ -29,19 +30,19 @@ public class SpaceMembers {
     }
 
     /**
-     *  Space와 SpaceMember간의 편의 메서드용 메서드.
+     * Space와 SpaceMember간의 편의 메서드용 메서드.
      */
-    public void removeSpaceMember(SpaceMember spaceMember){
+    public void removeSpaceMember(SpaceMember spaceMember) {
         this.spaceMemberList.remove(spaceMember);
     }
 
-    public List<SpaceMember> getSpaceMemberList(){
+    public List<SpaceMember> getSpaceMemberList() {
         return spaceMemberList.stream()
                 .filter(spaceMember -> spaceMember.getIsDeleted() == false)
                 .collect(Collectors.toList());
     }
 
-    public void deleteAll(){
+    public void deleteAll() {
         spaceMemberList.forEach(spaceMember -> spaceMember.deleteSpaceMember());
     }
 

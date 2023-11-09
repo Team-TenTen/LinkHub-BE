@@ -67,7 +67,8 @@ public class GlobalApiExceptionHandler {
     }
 
     @ExceptionHandler(DataDuplicateException.class)
-    public ResponseEntity<ErrorWithDetailCodeResponse> handleDataDuplicateException(HttpServletRequest request, DataDuplicateException e) {
+    public ResponseEntity<ErrorWithDetailCodeResponse> handleDataDuplicateException(HttpServletRequest request,
+            DataDuplicateException e) {
         ErrorWithDetailCodeResponse errorResponse = ErrorWithDetailCodeResponse.of(
                 e.getErrorCode(),
                 request.getRequestURI()

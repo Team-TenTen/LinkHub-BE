@@ -1,19 +1,17 @@
 package com.tenten.linkhub.domain.member.model;
 
+import com.tenten.linkhub.domain.member.model.vo.FavoriteCategories;
+import com.tenten.linkhub.domain.member.model.vo.ProfileImages;
 import com.tenten.linkhub.global.entity.BaseEntity;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,25 +37,35 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private Role role;
 
-    @Column
+    @Embedded
+    private ProfileImages profileImages = new ProfileImages();
+
+    @Embedded
+    private FavoriteCategories favoriteCategories = new FavoriteCategories();
+
+    @Column(length = 24)
     private String nickname;
 
-    @Column
+    @Column(length = 500)
     private String aboutMe;
 
-    @Column
+    @Column(length = 320)
     private String newsEmail;
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    private List<ProfileImage> profileImages = new ArrayList<>();
+    @Column
+    private Boolean isSubscribed;
 
-    public Member(String socialId, Provider provider, Role role, String nickname, String aboutMe, String newsEmail) {
+    public Member(String socialId, Provider provider, Role role, String nickname, String aboutMe, String newsEmail,
+            Boolean isSubscribed, ProfileImage profileImage, FavoriteCategory favoriteCategory) {
         this.socialId = socialId;
         this.provider = provider;
         this.role = role;
         this.nickname = nickname;
         this.aboutMe = aboutMe;
         this.newsEmail = newsEmail;
+        this.isSubscribed = isSubscribed;
+        this.addProfileImage(profileImage);
+        this.addFavoriteCategory(favoriteCategory);
     }
 
     public Member(String socialId, Provider provider, Role role) {
@@ -67,8 +75,17 @@ public class Member extends BaseEntity {
     }
 
     public void addProfileImage(ProfileImage profileImage) {
-        this.profileImages.add(profileImage);
+        this.profileImages.addProfileImage(profileImage);
         profileImage.changeMember(this);
+    }
+
+    public void addFavoriteCategory(FavoriteCategory favoriteCategory) {
+        this.favoriteCategories.addFavoriteCategory(favoriteCategory);
+        favoriteCategory.changeMember(this);
+    }
+
+    public ProfileImage getProfileImage() {
+        return this.profileImages.getProfileImage();
     }
 
 }
