@@ -1,7 +1,6 @@
 package com.tenten.linkhub.domain.auth.service;
 
 import com.tenten.linkhub.domain.auth.controller.dto.LogoutApiResponse;
-import java.nio.charset.Charset;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,6 +11,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+
+import java.nio.charset.Charset;
 
 @Service
 public class AuthService {

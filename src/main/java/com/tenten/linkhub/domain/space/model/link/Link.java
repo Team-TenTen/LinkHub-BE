@@ -1,6 +1,5 @@
 package com.tenten.linkhub.domain.space.model.link;
 
-import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.space.model.link.vo.Url;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import jakarta.persistence.Column;

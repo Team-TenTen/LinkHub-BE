@@ -1,7 +1,5 @@
 package com.tenten.linkhub.domain.space.service;
 
-import static com.tenten.linkhub.domain.space.model.space.Role.OWNER;
-
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
@@ -15,6 +13,8 @@ import com.tenten.linkhub.domain.space.service.mapper.SpaceMapper;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.tenten.linkhub.domain.space.model.space.Role.OWNER;
 
 @Service
 public class DefaultSpaceService implements SpaceService{

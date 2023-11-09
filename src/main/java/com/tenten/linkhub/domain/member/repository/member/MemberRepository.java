@@ -2,6 +2,7 @@ package com.tenten.linkhub.domain.member.repository.member;
 
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.Provider;
+
 import java.util.List;
 import java.util.Optional;
 
