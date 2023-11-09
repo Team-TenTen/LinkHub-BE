@@ -9,6 +9,7 @@ import com.tenten.linkhub.domain.space.facade.dto.LinkCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.service.LinkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -50,7 +51,7 @@ public class LinkController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<LinkCreateApiResponse> createLink(
             @PathVariable Long spaceId,
-            @RequestBody LinkCreateApiRequest apiRequest,
+            @Valid @RequestBody LinkCreateApiRequest apiRequest,
             @AuthenticationPrincipal MemberDetails memberDetails
     ) {
         LinkCreateFacadeRequest request = mapper.toLinkCreateFacadeRequest(apiRequest);
