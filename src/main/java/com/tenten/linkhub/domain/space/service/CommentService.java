@@ -4,7 +4,7 @@ import com.tenten.linkhub.domain.space.model.space.Comment;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.comment.CommentRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
-import com.tenten.linkhub.domain.space.service.dto.comment.CommentCreateRequest;
+import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
 import com.tenten.linkhub.domain.space.service.mapper.CommentMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +23,7 @@ public class CommentService {
     }
 
     @Transactional
-    public Long createComment(CommentCreateRequest request) {
+    public Long createComment(RootCommentCreateRequest request) {
         Space space = spaceRepository.getById(request.spaceId());
 
         space.validateCommentAvailability();

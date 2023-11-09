@@ -9,7 +9,7 @@ import com.tenten.linkhub.domain.space.model.space.Comment;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.comment.CommentJpaRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
-import com.tenten.linkhub.domain.space.service.dto.comment.CommentCreateRequest;
+import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -52,7 +52,7 @@ class CommentServiceTest {
     @DisplayName("유저는 스페이스에 댓글을 생성할 수 있다.")
     void createComment() {
         //given
-        CommentCreateRequest reqeust = new CommentCreateRequest(
+        RootCommentCreateRequest reqeust = new RootCommentCreateRequest(
                 setUpSpaceId1,
                 setUpMemberId,
                 "첫번째 댓글");
@@ -72,7 +72,7 @@ class CommentServiceTest {
     @DisplayName("유저가 댓글 여부를 false로 설정한 스페이스에 댓글을 생성하려고 할 경우 예외가 발생한다.")
     void createComment_UnauthorizedAccessException() {
         //given
-        CommentCreateRequest reqeust = new CommentCreateRequest(
+        RootCommentCreateRequest reqeust = new RootCommentCreateRequest(
                 setUpSpaceId2,
                 setUpMemberId,
                 "첫번째 댓글");
