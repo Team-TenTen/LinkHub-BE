@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.space.facade;
 
+import com.tenten.linkhub.domain.member.model.FavoriteCategory;
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.ProfileImage;
 import com.tenten.linkhub.domain.member.model.Provider;
@@ -181,11 +182,10 @@ class SpaceFacadeTest {
                 com.tenten.linkhub.domain.member.model.Role.USER,
                 "잠자는 사자의 콧털",
                 "테스트용 소개글",
-                "abc@gmail.com"
-        );
-
-        member.addProfileImage(
-                new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지")
+                "abc@gmail.com",
+                false,
+                new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지"),
+                new FavoriteCategory(Category.ENTER_ART)
         );
 
         setUpMemberId = memberJpaRepository.save(member).getId();

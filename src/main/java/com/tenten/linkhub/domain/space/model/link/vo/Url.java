@@ -4,7 +4,9 @@ import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.util.Assert;
+
+import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
+import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 
 @Getter
 @Embeddable
@@ -14,7 +16,8 @@ public class Url {
     private String url;
 
     public Url(String url) {
-        Assert.notNull(url, "url은 null일 수 없습니다.");
+        validateNotNull(url, "url");
+        validateMaxSize(url, 2083, "url");
         this.url = url;
     }
 
