@@ -42,6 +42,13 @@ public class SpaceMembers {
                 .collect(Collectors.toList());
     }
 
+    public List<Long> getSpaceMemberIds() {
+        return getSpaceMemberList()
+                .stream()
+                .map(SpaceMember::getId)
+                .toList();
+    }
+
     public void deleteAll() {
         spaceMemberList.forEach(spaceMember -> spaceMember.deleteSpaceMember());
     }

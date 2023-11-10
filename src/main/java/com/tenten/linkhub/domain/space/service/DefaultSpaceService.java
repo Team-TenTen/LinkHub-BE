@@ -57,6 +57,8 @@ public class DefaultSpaceService implements SpaceService {
     public SpaceWithSpaceImageAndSpaceMemberInfo getSpaceWithSpaceImageAndSpaceMemberById(Long spaceId, Long memberId) {
         Space space = spaceRepository.getSpaceJoinSpaceMemberById(spaceId);
 
+        space.validateVisibilityAndMembership(memberId);
+
         Boolean isOwner = space.isOwner(memberId);
         return SpaceWithSpaceImageAndSpaceMemberInfo.of(space, isOwner);
     }

@@ -151,6 +151,17 @@ public class Space extends BaseEntity {
         }
     }
 
+    public void validateVisibilityAndMembership(Long memberId){
+        if (this.isVisible = true){
+            return;
+        }
+
+        List<Long> spaceMemberIds = this.spaceMembers.getSpaceMemberIds();
+        if (!spaceMemberIds.contains(memberId)){
+            throw new UnauthorizedAccessException("이 스페이스는 권한이 없으면 볼 수 없는 스페이스입니다.");
+        }
+    }
+
     public void validateCommentAvailability() {
         if (!this.isComment) {
             throw new UnauthorizedAccessException("해당 게시글은 댓글을 작성할 수 없습니다.");
