@@ -15,6 +15,8 @@ import org.mapstruct.Mapper;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring",
         injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
@@ -26,7 +28,7 @@ public interface SpaceApiMapper {
 
     SpaceUpdateFacadeRequest toSpaceUpdateFacadeRequest(Long spaceId, SpaceUpdateApiRequest request, MultipartFile file, Long memberId);
 
-    SpaceDetailGetByIdFacadeRequest toSpaceDetailGetByIdFacadeRequest(Long spaceId, Long memberId);
+    SpaceDetailGetByIdFacadeRequest toSpaceDetailGetByIdFacadeRequest(Long spaceId, Long memberId, List<Long> spaceViews);
 
     MySpacesFindRequest toMySpacesFindRequest(Pageable pageable, MySpacesFindApiRequest request, Long memberId);
 }

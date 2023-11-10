@@ -20,6 +20,7 @@ import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -101,7 +102,10 @@ class SpaceFacadeTest {
     @DisplayName("유저는 spaceId를 통해 스페이스의 상세 정보를 조회할 수 있다.")
     void getSpaceDetailById() {
         //given
-        SpaceDetailGetByIdFacadeRequest request = new SpaceDetailGetByIdFacadeRequest(setUpSpaceId, setUpMemberId);
+        SpaceDetailGetByIdFacadeRequest request = new SpaceDetailGetByIdFacadeRequest(
+                setUpSpaceId,
+                setUpMemberId,
+                new ArrayList<>());
 
         //when
         SpaceDetailGetByIdFacadeResponse response = spaceFacade.getSpaceDetailById(request);
