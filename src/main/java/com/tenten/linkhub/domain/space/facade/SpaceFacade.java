@@ -17,12 +17,13 @@ import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.dto.ImageSaveRequest;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
 import jakarta.servlet.http.Cookie;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SpaceFacade {

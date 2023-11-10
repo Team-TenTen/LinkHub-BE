@@ -1,17 +1,18 @@
 package com.tenten.linkhub.domain.space.model.space.vo;
 
-import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
-
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+
+import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 
 @Getter
 @Embeddable

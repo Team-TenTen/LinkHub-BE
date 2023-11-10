@@ -7,6 +7,7 @@ public enum ErrorCode {
 
     //global
     INTERNAL_SERVER_ERROR("G001", "Internal Server Error"),
+    UNAUTHENTICATED_ERROR("G002", "Requires Authentication"),
 
     //s3 - image
     FAIL_TO_UPLOAD_IMAGES("S001", "이미지를 업로드 할 수 없습니다."),

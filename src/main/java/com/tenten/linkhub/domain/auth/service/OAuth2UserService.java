@@ -4,10 +4,6 @@ import com.tenten.linkhub.domain.member.model.Provider;
 import com.tenten.linkhub.domain.member.model.Role;
 import com.tenten.linkhub.domain.member.service.MemberService;
 import com.tenten.linkhub.domain.member.service.dto.MemberFindResponse;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -16,6 +12,11 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class OAuth2UserService extends DefaultOAuth2UserService {

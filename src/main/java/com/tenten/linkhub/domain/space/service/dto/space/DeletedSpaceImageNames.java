@@ -1,6 +1,7 @@
 package com.tenten.linkhub.domain.space.service.dto.space;
 
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
+
 import java.util.List;
 
 public record DeletedSpaceImageNames(
