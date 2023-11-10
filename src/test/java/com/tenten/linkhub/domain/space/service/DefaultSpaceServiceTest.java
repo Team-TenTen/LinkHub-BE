@@ -77,7 +77,7 @@ class DefaultSpaceServiceTest {
 
     @Test
     @DisplayName("유저는 키워드와 필터 조건 없이 자신의 Space를 검색할 수 있다.")
-    void findMySpacesByQuery_emptyKeyWord_emptyFilter(){
+    void findMySpacesByQuery_emptyKeyWord_emptyFilter() {
         //given
         PageRequest pageRequest = PageRequest.of(0, 10);
         MySpacesFindRequest mySpacesFindRequest = new MySpacesFindRequest(pageRequest, "", null, setUpMemberId);
@@ -98,7 +98,7 @@ class DefaultSpaceServiceTest {
 
     @Test
     @DisplayName("유저는 키워드를 통해 자신의 Space를 검색할 수 있다.")
-    void findMySpacesByQuery_keyWord_emptyFilter(){
+    void findMySpacesByQuery_keyWord_emptyFilter() {
         //given
         PageRequest pageRequest = PageRequest.of(0, 10);
         MySpacesFindRequest mySpacesFindRequest = new MySpacesFindRequest(pageRequest, "두번째", null, setUpMemberId);
@@ -116,7 +116,7 @@ class DefaultSpaceServiceTest {
 
     @Test
     @DisplayName("유저는 필터 조건을 통해 자신의 Space를 검색할 수 있다.")
-    void findMySpacesByQuery_emptyKeyWord_filter(){
+    void findMySpacesByQuery_emptyKeyWord_filter() {
         //given
         PageRequest pageRequest = PageRequest.of(0, 10);
         MySpacesFindRequest mySpacesFindRequest = new MySpacesFindRequest(pageRequest, "", Category.LIFE_KNOWHOW_SHOPPING, setUpMemberId);
@@ -165,7 +165,7 @@ class DefaultSpaceServiceTest {
                 "두번째 스페이스",
                 "두번째 스페이스 소개글",
                 Category.LIFE_KNOWHOW_SHOPPING,
-                new SpaceImage( "https://testimage2", "테스트 이미지2"),
+                new SpaceImage("https://testimage2", "테스트 이미지2"),
                 new SpaceMember(setUpMemberId, Role.OWNER),
                 true,
                 true,
@@ -178,7 +178,7 @@ class DefaultSpaceServiceTest {
                 "세번째 스페이스",
                 "세번째 스페이스 소개글",
                 Category.KNOWLEDGE_ISSUE_CAREER,
-                new SpaceImage( "https://testimage3", "테스트 이미지3"),
+                new SpaceImage("https://testimage3", "테스트 이미지3"),
                 new SpaceMember(setUpMemberId + 1, Role.OWNER),
                 true,
                 true,
