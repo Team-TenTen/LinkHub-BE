@@ -152,7 +152,7 @@ public class Space extends BaseEntity {
     }
 
     public void validateVisibilityAndMembership(Long memberId){
-        if (this.isVisible = true){
+        if (this.isVisible){
             return;
         }
 

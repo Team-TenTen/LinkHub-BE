@@ -10,6 +10,7 @@ import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeReques
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceMemberDetailInfo;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
+import com.tenten.linkhub.domain.space.handler.SpaceEventHandler;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.Space;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -55,6 +57,9 @@ class SpaceFacadeTest {
 
     @MockBean
     private S3Uploader mockS3Uploader;
+
+    @MockBean
+    private SpaceEventHandler spaceEventHandler;
 
     private Long setUpSpaceId;
     private Long setUpMemberId;
@@ -122,6 +127,20 @@ class SpaceFacadeTest {
         assertThat(spaceMemberDetailInfos.get(0).memberId()).isEqualTo(setUpMemberId);
         assertThat(spaceMemberDetailInfos.get(0).nickname()).isEqualTo("잠자는 사자의 콧털");
         assertThat(spaceMemberDetailInfos.get(0).profilePath()).isEqualTo("https://testprofileimage");
+    }
+
+    @Test
+    @DisplayName("프라이빗 스페이스의 상세 조회 시 권한이 없는 유저는 UnauthorizedAccessException가 발생한다.")
+    void getSpaceDetailById_UnauthorizedAccessException() {
+        //given
+        SpaceDetailGetByIdFacadeRequest request = new SpaceDetailGetByIdFacadeRequest(
+                setUpSpaceId,
+                setUpMemberId + 100,
+                new ArrayList<>());
+
+        //when//then
+        assertThatThrownBy(() -> spaceFacade.getSpaceDetailById(request))
+                .isInstanceOf(UnauthorizedAccessException.class);
     }
 
     @Test
@@ -202,7 +221,7 @@ class SpaceFacadeTest {
                 Category.KNOWLEDGE_ISSUE_CAREER,
                 new SpaceImage("https://testimage1", "테스트 이미지1"),
                 new SpaceMember(setUpMemberId, Role.OWNER),
-                true,
+                false,
                 true,
                 true,
                 true
