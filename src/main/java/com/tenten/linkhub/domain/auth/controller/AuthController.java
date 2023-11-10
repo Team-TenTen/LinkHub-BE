@@ -37,12 +37,12 @@ public class AuthController {
             responses = {
                     @ApiResponse(
                             responseCode = "401",
-                            description = "로그인 페이지로 리다이렉션이 필요합니다.",
+                            description = "로그아웃 요청을 보낸 경우에는 홈페이지 또는 로그아웃 전 기존 페이지로, 그 외의 경우는 권한이 없는 접근을 한 것이므로 소셜 로그인 페이지로 리다이렉션 해야합니다.",
                             content = @Content(
                                     mediaType = "application/json",
                                     examples = @ExampleObject(
                                             name = "RedirectRequired",
-                                            value = "{\"redirectURL\":\"https://api.link-hub.site/oauth2/authorization/kakao\",\"message\":\"로그인 페이지로 리다이렉션이 필요합니다.\"}"
+                                            value = "{\"errorCode\":\"G002\",\"message\":\"리다이렉션이 필요합니다.\"}"
                                     )
                             )
                     )

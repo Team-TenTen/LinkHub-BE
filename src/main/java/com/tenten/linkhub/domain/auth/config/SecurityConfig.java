@@ -3,6 +3,8 @@ package com.tenten.linkhub.domain.auth.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tenten.linkhub.domain.auth.JwtAuthenticationFilter;
 import com.tenten.linkhub.domain.auth.JwtProvider;
+import com.tenten.linkhub.domain.auth.OAuth2SuccessHandler;
+import com.tenten.linkhub.global.response.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
@@ -16,17 +18,14 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,11 +37,13 @@ import java.util.Map;
 public class SecurityConfig {
 
     private final OAuth2UserService oAuth2UserService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     private final JwtProvider jwtProvider;
 
-    public SecurityConfig(OAuth2UserService oAuth2UserService, JwtProvider jwtProvider) {
+    public SecurityConfig(OAuth2UserService oAuth2UserService, OAuth2SuccessHandler oAuth2SuccessHandler, JwtProvider jwtProvider) {
         this.oAuth2UserService = oAuth2UserService;
+        this.oAuth2SuccessHandler = oAuth2SuccessHandler;
         this.jwtProvider = jwtProvider;
     }
 
@@ -58,6 +59,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(config ->
                         config
+                                .requestMatchers("/members/profile").authenticated()
                                 .requestMatchers(HttpMethod.GET).permitAll() // 임시로 풀어준 것 운영시에는 허용 주소 관리
                                 .requestMatchers("/members/join").permitAll()
                                 .requestMatchers("/members/emails/**").permitAll()
@@ -67,7 +69,7 @@ public class SecurityConfig {
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(oAuth2UserService)
                         )
-                        .successHandler(successHandler())
+                        .successHandler(oAuth2SuccessHandler)
                 )
                 .exceptionHandling(exceptionHandlingConfigurer ->
                         exceptionHandlingConfigurer
@@ -76,40 +78,6 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-    }
-
-    @Bean
-    public AuthenticationSuccessHandler successHandler() {
-
-        return ((request, response, authentication) -> {
-            DefaultOAuth2User defaultOAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
-
-            Map<String, Object> responseData = new HashMap<>();
-
-            if (memberIdExists(defaultOAuth2User)) {
-                final String jwt = jwtProvider.generateTokenFromOAuth(defaultOAuth2User);
-                responseData.put("jwt", jwt);
-            }
-
-            if (!memberIdExists(defaultOAuth2User)) {
-                responseData.put("socialId", defaultOAuth2User.getAttributes().get("socialId"));
-                responseData.put("provider", defaultOAuth2User.getAttributes().get("provider"));
-            }
-
-            ObjectMapper objectMapper = new ObjectMapper();
-            String body = objectMapper.writeValueAsString(responseData);
-
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-
-            PrintWriter writer = response.getWriter();
-            writer.println(body);
-            writer.flush();
-        });
-    }
-
-    private static boolean memberIdExists(DefaultOAuth2User defaultOAuth2User) {
-        return defaultOAuth2User.getAttributes().get("memberId") != null;
     }
 
     @Bean
@@ -139,10 +107,9 @@ public class SecurityConfig {
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 
-            String redirectUrl = "https://api.link-hub.site/oauth2/authorization/kakao";
             Map<String, String> responseBody = new HashMap<>();
-            responseBody.put("redirectURL", redirectUrl);
-            responseBody.put("message", "로그인 페이지로 리다이렉션이 필요합니다.");
+            responseBody.put("errorCode", ErrorCode.UNAUTHENTICATED_ERROR.getCode());
+            responseBody.put("message", "리다이렉션이 필요합니다.");
 
             ObjectMapper objectMapper = new ObjectMapper();
             String json = objectMapper.writeValueAsString(responseBody);
