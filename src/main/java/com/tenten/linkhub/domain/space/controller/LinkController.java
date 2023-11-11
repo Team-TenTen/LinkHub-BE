@@ -69,6 +69,15 @@ public class LinkController {
     /**
      * 링크 수정 API
      */
+    @Operation(
+            summary = "링크 수정 API",
+            description = "[JWT 필요] 스페이스 내에서 링크를 수정하는 API 입니다. Tag는 필수로 포함되어야 하는 값은 아닙니다. \n - Tag를 포함하여 링크를 수정하는 경우: tag 필드 포함. 단, \"\" 나 \" \"를 허용하지 않습니다.\n - Tag를 포함하지 않고 링크를 수하는 경우: 아예 tag 필드 없이 보내주세요",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "링크가 성공적으로 수정된 경우"),
+                    @ApiResponse(responseCode = "404", description = "링크 수정 권한이 없습니다."),
+                    @ApiResponse(responseCode = "404", description = "요청한 spaceId에 해당하는 스페이스를 찾을 수 없습니다."),
+                    @ApiResponse(responseCode = "404", description = "요청한 linkId에 해당하는 스페이스를 찾을 수 없습니다.")
+            })
     @PutMapping(value = "/spaces/{spaceId}/links/{linkId}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
