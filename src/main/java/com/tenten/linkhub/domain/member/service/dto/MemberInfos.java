@@ -14,8 +14,7 @@ public record MemberInfos(Map<Long, MemberInfo> memberInfos) {
                         m -> new MemberInfo(
                                 m.getNickname(),
                                 m.getAboutMe(),
-                                m.getProfileImages().getProfileImageList().isEmpty() ? null
-                                        : m.getProfileImage().getPath()
+                                m.retrieveProfileImages().isEmpty() ? null : m.retrieveProfileImages().get(0).getPath()
                         )
                 ));
 

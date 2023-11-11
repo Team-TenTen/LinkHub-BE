@@ -4,7 +4,7 @@ import com.tenten.linkhub.domain.member.model.FavoriteCategory;
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.ProfileImage;
 import com.tenten.linkhub.domain.member.model.Provider;
-import com.tenten.linkhub.domain.member.repository.MemberJpaRepository;
+import com.tenten.linkhub.domain.member.repository.member.MemberJpaRepository;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.Space;
@@ -77,7 +77,7 @@ class DefaultSpaceServiceTest {
 
     @Test
     @DisplayName("유저는 키워드와 필터 조건 없이 자신의 Space를 검색할 수 있다.")
-    void findMySpacesByQuery_emptyKeyWord_emptyFilter(){
+    void findMySpacesByQuery_emptyKeyWord_emptyFilter() {
         //given
         PageRequest pageRequest = PageRequest.of(0, 10);
         MySpacesFindRequest mySpacesFindRequest = new MySpacesFindRequest(pageRequest, "", null, setUpMemberId);
@@ -98,7 +98,7 @@ class DefaultSpaceServiceTest {
 
     @Test
     @DisplayName("유저는 키워드를 통해 자신의 Space를 검색할 수 있다.")
-    void findMySpacesByQuery_keyWord_emptyFilter(){
+    void findMySpacesByQuery_keyWord_emptyFilter() {
         //given
         PageRequest pageRequest = PageRequest.of(0, 10);
         MySpacesFindRequest mySpacesFindRequest = new MySpacesFindRequest(pageRequest, "두번째", null, setUpMemberId);
@@ -116,7 +116,7 @@ class DefaultSpaceServiceTest {
 
     @Test
     @DisplayName("유저는 필터 조건을 통해 자신의 Space를 검색할 수 있다.")
-    void findMySpacesByQuery_emptyKeyWord_filter(){
+    void findMySpacesByQuery_emptyKeyWord_filter() {
         //given
         PageRequest pageRequest = PageRequest.of(0, 10);
         MySpacesFindRequest mySpacesFindRequest = new MySpacesFindRequest(pageRequest, "", Category.LIFE_KNOWHOW_SHOPPING, setUpMemberId);
@@ -197,11 +197,11 @@ class DefaultSpaceServiceTest {
         );
 
         space2.addSpaceImage(
-                new SpaceImage( "https://testimage2", "테스트 이미지2")
+                new SpaceImage("https://testimage2", "테스트 이미지2")
         );
 
         space3.addSpaceImage(
-                new SpaceImage( "https://testimage3", "테스트 이미지3")
+                new SpaceImage("https://testimage3", "테스트 이미지3")
         );
 
         spaceJpaRepository.save(space1);

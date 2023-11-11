@@ -1,15 +1,18 @@
 package com.tenten.linkhub.domain.member.controller;
 
+import com.tenten.linkhub.domain.auth.MemberDetails;
 import com.tenten.linkhub.domain.member.controller.dto.MailSendApiRequest;
 import com.tenten.linkhub.domain.member.controller.dto.MailVerificationApiRequest;
 import com.tenten.linkhub.domain.member.controller.dto.MailVerificationApiResponse;
 import com.tenten.linkhub.domain.member.controller.dto.MemberJoinApiRequest;
 import com.tenten.linkhub.domain.member.controller.dto.MemberJoinApiResponse;
+import com.tenten.linkhub.domain.member.controller.dto.MemberProfileApiResponse;
 import com.tenten.linkhub.domain.member.controller.mapper.MemberApiMapper;
 import com.tenten.linkhub.domain.member.service.MemberService;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationRequest;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberJoinResponse;
+import com.tenten.linkhub.domain.member.service.dto.MemberProfileResponse;
 import com.tenten.linkhub.global.response.ErrorResponse;
 import com.tenten.linkhub.global.util.email.EmailDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,6 +24,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -100,6 +106,37 @@ public class MemberController {
         MemberJoinApiResponse memberJoinApiResponse = MemberJoinApiResponse.from(memberJoinResponse);
 
         return ResponseEntity.ok(memberJoinApiResponse);
+    }
+
+    @Operation(
+            summary = "사용자 프로필 조회 API", description = "멤버 아이디를 받아 프로필을 조회합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "프로필 조회를 완료하였습니다."),
+                    @ApiResponse(responseCode = "404", description = "존재하지 않는 회원입니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    )
+            })
+    @GetMapping(value = "/{memberId}/profile", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MemberProfileApiResponse> getProfile(@PathVariable Long memberId) {
+        MemberProfileResponse memberProfileResponse = memberService.getProfile(memberId);
+
+        MemberProfileApiResponse memberProfileApiResponse = mapper.toMemberProfileApiResponse(memberProfileResponse);
+
+        return ResponseEntity.ok(memberProfileApiResponse);
+    }
+
+    @Operation(
+            summary = "내 프로필 조회 API", description = "JWT를 받아 자신의 프로필을 조회합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "프로필 조회를 완료하였습니다."),
+            })
+    @GetMapping(value = "/profile", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MemberProfileApiResponse> getMyProfile(@AuthenticationPrincipal MemberDetails memberDetails) {
+        MemberProfileResponse memberProfileResponse = memberService.getProfile(memberDetails.memberId());
+
+        MemberProfileApiResponse memberProfileApiResponse = mapper.toMemberProfileApiResponse(memberProfileResponse);
+
+        return ResponseEntity.ok(memberProfileApiResponse);
     }
 
 }

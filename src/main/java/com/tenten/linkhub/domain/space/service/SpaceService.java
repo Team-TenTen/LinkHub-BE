@@ -9,6 +9,7 @@ import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryReques
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 
 public interface SpaceService {
+
     SpacesFindByQueryResponses findSpacesByQuery(SpacesFindByQueryRequest request);
 
     Long createSpace(SpaceCreateRequest spaceCreateRequest);
@@ -16,6 +17,8 @@ public interface SpaceService {
     SpaceWithSpaceImageAndSpaceMemberInfo getSpaceWithSpaceImageAndSpaceMemberById(Long spaceId, Long memberId);
 
     Long updateSpace(SpaceUpdateRequest spaceUpdateRequest);
+
+    void checkMemberAddLink(Long memberId, Long spaceId);
 
     DeletedSpaceImageNames deleteSpaceById(Long spaceId, Long memberId);
 

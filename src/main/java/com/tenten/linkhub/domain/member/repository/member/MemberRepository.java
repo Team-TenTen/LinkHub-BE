@@ -1,7 +1,8 @@
-package com.tenten.linkhub.domain.member.repository;
+package com.tenten.linkhub.domain.member.repository.member;
 
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.Provider;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -14,5 +15,7 @@ public interface MemberRepository {
     Optional<Member> findBySocialIdAndProvider(String socialId, Provider provider);
 
     Member save(Member newUser);
+
+    Optional<Member> findByIdWithImageAndCategory(Long memberId);
 
 }
