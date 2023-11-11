@@ -15,8 +15,10 @@ import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceMemberInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
+
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +40,7 @@ public class SpaceFacade {
         this.eventPublisher = eventPublisher;
     }
 
-    public Long createSpace(SpaceCreateFacadeRequest request){
+    public Long createSpace(SpaceCreateFacadeRequest request) {
         ImageInfo imageInfo = spaceImageUploader.getNewImageInfoOrDefaultImageInfo(request.file());
 
         return spaceService.createSpace(

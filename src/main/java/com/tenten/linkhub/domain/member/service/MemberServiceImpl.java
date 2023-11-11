@@ -7,7 +7,8 @@ import com.tenten.linkhub.domain.member.model.ProfileImage;
 import com.tenten.linkhub.domain.member.model.Provider;
 import com.tenten.linkhub.domain.member.model.Role;
 import com.tenten.linkhub.domain.member.repository.MemberEmailRedisRepository;
-import com.tenten.linkhub.domain.member.repository.MemberRepository;
+import com.tenten.linkhub.domain.member.repository.follow.FollowRepository;
+import com.tenten.linkhub.domain.member.repository.member.MemberRepository;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationRequest;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberAuthInfo;
@@ -15,6 +16,7 @@ import com.tenten.linkhub.domain.member.service.dto.MemberFindResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberInfos;
 import com.tenten.linkhub.domain.member.service.dto.MemberJoinRequest;
 import com.tenten.linkhub.domain.member.service.dto.MemberJoinResponse;
+import com.tenten.linkhub.domain.member.service.dto.MemberProfileResponse;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.dto.ImageSaveRequest;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
@@ -24,11 +26,12 @@ import com.tenten.linkhub.global.infrastructure.ses.AwsSesService;
 import com.tenten.linkhub.global.response.ErrorCode;
 import com.tenten.linkhub.global.util.email.EmailDto;
 import com.tenten.linkhub.global.util.email.VerificationCodeCreator;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -38,6 +41,7 @@ public class MemberServiceImpl implements MemberService {
     private static final String MEMBER_DEFAULT_IMAGE_PATH = "https://team-10-bucket.s3.ap-northeast-2.amazonaws.com/member-image/member-default.png";
 
     private final MemberRepository memberRepository;
+    private final FollowRepository followRepository;
     private final AwsSesService emailService;
     private final VerificationCodeCreator verificationCodeCreator;
     private final MemberEmailRedisRepository memberEmailRedisRepository;
@@ -46,12 +50,13 @@ public class MemberServiceImpl implements MemberService {
 
     public MemberServiceImpl(
             MemberRepository memberRepository,
-            AwsSesService emailService,
+            FollowRepository followRepository, AwsSesService emailService,
             VerificationCodeCreator verificationCodeCreator,
             MemberEmailRedisRepository memberEmailRedisRepository,
             S3Uploader s3Uploader,
             JwtProvider jwtProvider
     ) {
+        this.followRepository = followRepository;
         this.emailService = emailService;
         this.verificationCodeCreator = verificationCodeCreator;
         this.memberEmailRedisRepository = memberEmailRedisRepository;
@@ -126,6 +131,7 @@ public class MemberServiceImpl implements MemberService {
         return MemberJoinResponse.from(jwt);
     }
 
+
     private ImageInfo getNewImageInfoOrDefaultImageInfo(MultipartFile file) {
         if (file == null) {
             return ImageInfo.of(MEMBER_DEFAULT_IMAGE_PATH, "default-image");
@@ -133,6 +139,17 @@ public class MemberServiceImpl implements MemberService {
 
         ImageSaveRequest imageSaveRequest = ImageSaveRequest.of(file, MEMBER_IMAGE_FOLDER);
         return s3Uploader.saveImage(imageSaveRequest);
+    }
+
+    @Override
+    public MemberProfileResponse getProfile(Long memberId) {
+        Member member = memberRepository.findByIdWithImageAndCategory(memberId)
+                .orElseThrow(() -> new UnauthorizedAccessException("존재하지 않는 회원입니다."));
+
+        Long followerCount = followRepository.countFollowers(memberId);
+        Long followingCount = followRepository.countFollowing(memberId);
+
+        return MemberProfileResponse.from(member, followerCount, followingCount);
     }
 
 }
