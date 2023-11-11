@@ -4,7 +4,7 @@ import com.tenten.linkhub.domain.member.model.FavoriteCategory;
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.ProfileImage;
 import com.tenten.linkhub.domain.member.model.Provider;
-import com.tenten.linkhub.domain.member.repository.MemberJpaRepository;
+import com.tenten.linkhub.domain.member.repository.member.MemberJpaRepository;
 import com.tenten.linkhub.domain.space.facade.dto.CommentAndChildCountAndMemberInfo;
 import com.tenten.linkhub.domain.space.facade.dto.CommentAndChildCountAndMemberInfoResponses;
 import com.tenten.linkhub.domain.space.model.category.Category;
@@ -16,7 +16,6 @@ import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.comment.CommentJpaRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,7 +58,7 @@ class CommentFacadeTest {
 
     @Test
     @DisplayName("유저는 루트 댓글들을 페이징 조회할 수 있다.")
-    void findRootComments(){
+    void findRootComments() {
         //given
         PageRequest pageRequest = PageRequest.of(0, 10);
 
@@ -81,7 +80,7 @@ class CommentFacadeTest {
 
     @Test
     @DisplayName("댓글을 달 수 없는 스페이스의 루트 댓글 페이지 조회 시 UnauthorizedAccessException가 발생한다. ")
-    void findRootComments_UnauthorizedAccessException(){
+    void findRootComments_UnauthorizedAccessException() {
         //given
         PageRequest pageRequest = PageRequest.of(0, 10);
 
