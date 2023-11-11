@@ -38,6 +38,9 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public CommentAndChildCountResponses findRootComments(Long spaceId, Pageable pageable) {
+        Space space = spaceRepository.getById(spaceId);
+        space.validateCommentAvailability();
+
         Slice<CommentAndChildCommentCount> responses = commentRepository.findCommentAndChildCommentCountBySpaceId(spaceId, pageable);
 
         return CommentAndChildCountResponses.from(responses);

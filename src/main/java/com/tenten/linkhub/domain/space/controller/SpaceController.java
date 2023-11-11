@@ -1,7 +1,7 @@
 package com.tenten.linkhub.domain.space.controller;
 
 import com.tenten.linkhub.domain.auth.MemberDetails;
-import com.tenten.linkhub.domain.space.controller.dto.MySpacesFindApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentFindApiResponses;
@@ -266,6 +266,11 @@ public class SpaceController {
     /**
      * 루트 댓글 페이징 조회 API
      */
+    @Operation(
+            summary = "루트 댓글 페이징 조회 API", description = "루트 댓글 페이징 조회 API 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "조회가 성공적으로 완료 되었습니다."),
+            })
     @GetMapping(
             value = "/{spaceId}/comments",
             produces = MediaType.APPLICATION_JSON_VALUE)

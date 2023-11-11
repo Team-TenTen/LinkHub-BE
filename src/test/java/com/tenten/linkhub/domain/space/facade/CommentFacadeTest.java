@@ -15,6 +15,7 @@ import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.comment.CommentJpaRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
+import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @Transactional
 @TestPropertySource(locations = "classpath:/application-test.yml")
@@ -46,7 +48,8 @@ class CommentFacadeTest {
     @Autowired
     private MemberJpaRepository memberJpaRepository;
 
-    private Long setUpSpaceId;
+    private Long setUpSpaceId1;
+    private Long setUpSpaceId2;
     private Long setUpMemberId;
 
     @BeforeEach
@@ -61,7 +64,7 @@ class CommentFacadeTest {
         PageRequest pageRequest = PageRequest.of(0, 10);
 
         //when
-        CommentAndChildCountAndMemberInfoResponses facadeResponses = commentFacade.findRootComments(setUpSpaceId, pageRequest);
+        CommentAndChildCountAndMemberInfoResponses facadeResponses = commentFacade.findRootComments(setUpSpaceId1, pageRequest);
 
         //then
         List<CommentAndChildCountAndMemberInfo> content = facadeResponses.responses().getContent();
@@ -74,6 +77,17 @@ class CommentFacadeTest {
         assertThat(content.get(1).content()).isEqualTo("두번째 루트 댓글");
         assertThat(content.get(1).nickname()).isEqualTo("테스트 유저");
         assertThat(content.get(1).childCount()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("댓글을 달 수 없는 스페이스의 루트 댓글 페이지 조회 시 UnauthorizedAccessException가 발생한다. ")
+    void findRootComments_UnauthorizedAccessException(){
+        //given
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        //when//then
+        assertThatThrownBy(() -> commentFacade.findRootComments(setUpSpaceId2, pageRequest))
+                .isInstanceOf(UnauthorizedAccessException.class);
     }
 
     private void setUpTestData() {
@@ -103,7 +117,7 @@ class CommentFacadeTest {
         );
         Long setUpMemberId1 = memberJpaRepository.save(member1).getId();
 
-        Space space = new Space(
+        Space space1 = new Space(
                 setUpMemberId,
                 "첫번째 스페이스",
                 "첫번째 스페이스 소개글",
@@ -115,14 +129,29 @@ class CommentFacadeTest {
                 true,
                 true
         );
-        setUpSpaceId = spaceJpaRepository.save(space).getId();
+
+        Space space2 = new Space(
+                setUpMemberId1,
+                "두번째 스페이스",
+                "두번째 스페이스 소개글",
+                Category.LIFE_KNOWHOW_SHOPPING,
+                new SpaceImage("https://testimage2", "테스트 이미지2"),
+                new SpaceMember(setUpMemberId1, Role.OWNER),
+                true,
+                false,
+                true,
+                true
+        );
+
+        setUpSpaceId1 = spaceJpaRepository.save(space1).getId();
+        setUpSpaceId2 = spaceJpaRepository.save(space2).getId();
 
         Comment comment1 = new Comment(
                 null,
                 null,
                 "첫번째 루트 댓글",
                 setUpMemberId,
-                space
+                space1
         );
 
         Comment comment2 = new Comment(
@@ -130,7 +159,7 @@ class CommentFacadeTest {
                 null,
                 "두번째 루트 댓글",
                 setUpMemberId1,
-                space
+                space1
         );
 
         Comment savedComment1 = commentJpaRepository.save(comment1);
@@ -141,7 +170,7 @@ class CommentFacadeTest {
                 savedComment1.getId(),
                 "첫번째 루트 댓글의 대댓글1",
                 setUpMemberId1,
-                space
+                space1
         );
 
         Comment childComment2 = new Comment(
@@ -149,7 +178,7 @@ class CommentFacadeTest {
                 savedComment1.getId(),
                 "첫번째 루트 댓글의 대댓글2",
                 setUpMemberId,
-                space
+                space1
         );
 
         Comment childComment3 = new Comment(
@@ -157,7 +186,7 @@ class CommentFacadeTest {
                 savedComment2.getId(),
                 "두번째 루트 댓글의 대댓글1",
                 setUpMemberId,
-                space
+                space1
         );
 
         commentJpaRepository.save(childComment1);
