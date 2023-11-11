@@ -4,7 +4,7 @@ import com.tenten.linkhub.domain.member.model.FavoriteCategory;
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.ProfileImage;
 import com.tenten.linkhub.domain.member.model.Provider;
-import com.tenten.linkhub.domain.member.repository.MemberJpaRepository;
+import com.tenten.linkhub.domain.member.repository.member.MemberJpaRepository;
 import com.tenten.linkhub.domain.space.facade.dto.LinkCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.link.Link;
