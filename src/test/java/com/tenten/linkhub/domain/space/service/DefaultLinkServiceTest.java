@@ -15,6 +15,7 @@ import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.link.LinkJpaRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkCreateRequest;
+import com.tenten.linkhub.domain.space.service.dto.link.LinkUpdateRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,7 @@ public class DefaultLinkServiceTest {
 
     private Long memberId1;
     private Long spaceId;
+    private Long linkId;
 
     @BeforeEach
     void setUp() {
@@ -70,7 +72,30 @@ public class DefaultLinkServiceTest {
         assertThat(savedLink.getTitle()).isEqualTo("개발 블로그 1");
         assertThat(savedLink.getTags().get(0).getName()).isEqualTo("백엔드");
     }
-    
+
+    @Test
+    @DisplayName("사용자는 권한이 있는 경우 링크를 수정할 수 있다.")
+    void updateLink_request_Success() {
+        //given
+        LinkUpdateRequest request = new LinkUpdateRequest(
+                spaceId,
+                "https://mideveloperni2.tistory.com/",
+                "바꾼 타이틀",
+                "바꾼 태그",
+                memberId1,
+                linkId
+        );
+
+        //when
+        Long updatedLinkId = linkService.updateLink(request);
+
+        //then
+        Link savedLink = linkJpaRepository.findById(updatedLinkId).get();
+
+        assertThat(savedLink.getUrl()).usingRecursiveComparison().isEqualTo(new Url("https://mideveloperni2.tistory.com/"));
+        assertThat(savedLink.getTitle()).isEqualTo("바꾼 타이틀");
+        assertThat(savedLink.getTags().get(0).getName()).isEqualTo("바꾼 태그");
+    }
 
     private void setUpTestData() {
         Member member1 = new Member(
@@ -106,5 +131,9 @@ public class DefaultLinkServiceTest {
         );
 
         spaceId = spaceJpaRepository.save(space).getId();
+
+        //링크 생성
+        Link link = Link.toLink(space, memberId1, "링크의 제목", new Url("https://www.naver.com"));
+        linkId = linkJpaRepository.save(link).getId();
     }
 }
