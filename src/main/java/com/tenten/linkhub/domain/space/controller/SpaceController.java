@@ -270,6 +270,8 @@ public class SpaceController {
             summary = "루트 댓글 페이징 조회 API", description = "루트 댓글 페이징 조회 API 입니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "조회가 성공적으로 완료 되었습니다."),
+                    @ApiResponse(responseCode = "404", description = "댓글을 달 수 없는 스페이스의 댓글을 보려고 합니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @GetMapping(
             value = "/{spaceId}/comments",

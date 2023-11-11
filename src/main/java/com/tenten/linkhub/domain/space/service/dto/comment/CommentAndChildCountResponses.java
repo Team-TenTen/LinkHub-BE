@@ -9,6 +9,8 @@ public record CommentAndChildCountResponses(Slice<CommentAndChildCountDto> respo
         Slice<CommentAndChildCountDto> mapResponses = responses.map(c -> new CommentAndChildCountDto(
                 c.comment().getId(),
                 c.comment().getContent(),
+                c.comment().getCreatedAt(),
+                c.comment().getUpdatedAt(),
                 c.comment().getMemberId(),
                 c.childCommentCount()
         ));

@@ -15,6 +15,8 @@ public record RootCommentFindApiResponses(
                 .map(r -> new RootCommentFindApiResponse(
                         r.commentId(),
                         r.content(),
+                        r.createdAt(),
+                        r.updatedAt(),
                         r.childCount(),
                         r.memberId(),
                         r.nickname(),

@@ -20,6 +20,8 @@ public record CommentAndChildCountAndMemberInfoResponses(Slice<CommentAndChildCo
                     return new CommentAndChildCountAndMemberInfo(
                             c.commentId(),
                             c.content(),
+                            c.createdAt(),
+                            c.updatedAt(),
                             c.childCount(),
                             c.memberId(),
                             Objects.isNull(memberInfo) ? null : memberInfo.nickname(),
