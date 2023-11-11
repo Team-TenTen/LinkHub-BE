@@ -4,6 +4,7 @@ import com.tenten.linkhub.domain.space.handler.dto.SpaceImagesDeleteDto;
 import com.tenten.linkhub.domain.space.handler.dto.SpaceIncreaseViewCountDto;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
+import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -23,7 +24,7 @@ public class SpaceEventHandler {
     }
 
     @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @EventListener
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void increaseSpaceViewCount(SpaceIncreaseViewCountDto increaseViewCountDto){
         spaceRepository.getById(increaseViewCountDto.spaceId())

@@ -10,6 +10,7 @@ import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeReques
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceMemberDetailInfo;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
+import com.tenten.linkhub.domain.space.handler.SpaceEventHandler;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.Space;
@@ -20,9 +21,11 @@ import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -54,6 +57,9 @@ class SpaceFacadeTest {
 
     @MockBean
     private S3Uploader mockS3Uploader;
+
+    @MockBean
+    private SpaceEventHandler spaceEventHandler;
 
     private Long setUpSpaceId;
     private Long setUpMemberId;
@@ -101,7 +107,10 @@ class SpaceFacadeTest {
     @DisplayName("유저는 spaceId를 통해 스페이스의 상세 정보를 조회할 수 있다.")
     void getSpaceDetailById() {
         //given
-        SpaceDetailGetByIdFacadeRequest request = new SpaceDetailGetByIdFacadeRequest(setUpSpaceId, null, setUpMemberId);
+        SpaceDetailGetByIdFacadeRequest request = new SpaceDetailGetByIdFacadeRequest(
+                setUpSpaceId,
+                setUpMemberId,
+                new ArrayList<>());
 
         //when
         SpaceDetailGetByIdFacadeResponse response = spaceFacade.getSpaceDetailById(request);
@@ -118,6 +127,20 @@ class SpaceFacadeTest {
         assertThat(spaceMemberDetailInfos.get(0).memberId()).isEqualTo(setUpMemberId);
         assertThat(spaceMemberDetailInfos.get(0).nickname()).isEqualTo("잠자는 사자의 콧털");
         assertThat(spaceMemberDetailInfos.get(0).profilePath()).isEqualTo("https://testprofileimage");
+    }
+
+    @Test
+    @DisplayName("프라이빗 스페이스의 상세 조회 시 권한이 없는 유저는 UnauthorizedAccessException가 발생한다.")
+    void getSpaceDetailById_UnauthorizedAccessException() {
+        //given
+        SpaceDetailGetByIdFacadeRequest request = new SpaceDetailGetByIdFacadeRequest(
+                setUpSpaceId,
+                setUpMemberId + 100,
+                new ArrayList<>());
+
+        //when//then
+        assertThatThrownBy(() -> spaceFacade.getSpaceDetailById(request))
+                .isInstanceOf(UnauthorizedAccessException.class);
     }
 
     @Test
@@ -196,18 +219,12 @@ class SpaceFacadeTest {
                 "첫번째 스페이스",
                 "첫번째 스페이스 소개글",
                 Category.KNOWLEDGE_ISSUE_CAREER,
-                true,
+                new SpaceImage("https://testimage1", "테스트 이미지1"),
+                new SpaceMember(setUpMemberId, Role.OWNER),
+                false,
                 true,
                 true,
                 true
-        );
-
-        space.addSpaceMember(
-                new SpaceMember(setUpMemberId, Role.OWNER)
-        );
-
-        space.addSpaceImage(
-                new SpaceImage("https://testimage1", "테스트 이미지1")
         );
 
         setUpSpaceId = spaceJpaRepository.save(space).getId();

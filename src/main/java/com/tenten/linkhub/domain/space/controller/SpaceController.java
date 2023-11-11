@@ -21,6 +21,7 @@ import com.tenten.linkhub.domain.space.service.CommentService;
 import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
+import com.tenten.linkhub.domain.space.util.SpaceViewList;
 import com.tenten.linkhub.global.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -36,7 +37,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -50,6 +50,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Objects;
 
 @Tag(name = "spaces", description = "space 템플릿 API Document")
@@ -57,6 +58,7 @@ import java.util.Objects;
 @RequestMapping("/spaces")
 public class SpaceController {
     private static final String SPACE_LOCATION_PRE_FIX = "https://api.Link-hub.site/spaces/";
+    private static final int COOKIE_EXPIRE_TIME = 60 * 60 * 24;
 
     private final SpaceFacade spaceFacade;
     private final SpaceService spaceService;
@@ -140,18 +142,18 @@ public class SpaceController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SpaceDetailGetByIdApiResponse> getSpaceDetailById(
             @AuthenticationPrincipal MemberDetails memberDetails,
-            @Parameter(hidden = true)
-            @CookieValue(value = "spaceView", required = false) Cookie spaceViewCookie,
             @PathVariable Long spaceId,
+            @Parameter(hidden = true)
+            @SpaceViewList List<Long> spaceViews,
             HttpServletResponse servletResponse
     ) {
         Long memberId = Objects.isNull(memberDetails) ? null : memberDetails.memberId();
-        SpaceDetailGetByIdFacadeRequest request = spaceMapper.toSpaceDetailGetByIdFacadeRequest(spaceId, spaceViewCookie, memberId);
+        SpaceDetailGetByIdFacadeRequest request = spaceMapper.toSpaceDetailGetByIdFacadeRequest(spaceId, memberId, spaceViews);
 
         SpaceDetailGetByIdFacadeResponse response = spaceFacade.getSpaceDetailById(request);
-
-        servletResponse.addCookie(response.spaceViewCookie());
         SpaceDetailGetByIdApiResponse apiResponse = SpaceDetailGetByIdApiResponse.from(response);
+
+        setSpaceViewCookie(servletResponse, response.spaceViews());
 
         return ResponseEntity.ok(apiResponse);
     }
@@ -253,6 +255,18 @@ public class SpaceController {
         return ResponseEntity
                 .created(URI.create(SPACE_LOCATION_PRE_FIX + "/commments/" + savedCommentId))
                 .body(apiResponse);
+    }
+
+    private void setSpaceViewCookie(HttpServletResponse servletResponse, List<Long> spaceViews) {
+        String spaceViewCookieValue = spaceViews.toString()
+                .replace(",", "_")
+                .replace(" ", "");
+
+        Cookie spaceViewCookie = new Cookie("spaceView", spaceViewCookieValue);
+        spaceViewCookie.setPath("/spaces");
+        spaceViewCookie.setMaxAge(COOKIE_EXPIRE_TIME);
+
+        servletResponse.addCookie(spaceViewCookie);
     }
 
 }

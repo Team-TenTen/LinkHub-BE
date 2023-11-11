@@ -75,9 +75,11 @@ public class Space extends BaseEntity {
     @Column(nullable = false)
     private Long favoriteCount;
 
-    public Space(Long memberId, String spaceName, String description, Category category, Boolean isVisible, Boolean isComment, Boolean isLinkSummarizable, Boolean isReadMarkEnabled) {
+    public Space(Long memberId, String spaceName, String description, Category category, SpaceImage spaceImage, SpaceMember spaceMember, Boolean isVisible, Boolean isComment, Boolean isLinkSummarizable, Boolean isReadMarkEnabled) {
         validateNotNull(memberId, "memberId");
         validateNotNull(category, "category");
+        validateNotNull(spaceImage, "spaceImage");
+        validateNotNull(spaceMember, "spaceMember");
         validateNotNull(isVisible, "isVisible");
         validateNotNull(isComment, "isComment");
         validateNotNull(isLinkSummarizable, "isLinkSummarizable");
@@ -88,6 +90,8 @@ public class Space extends BaseEntity {
         this.spaceName = spaceName;
         this.description = description;
         this.category = category;
+        this.addSpaceImage(spaceImage);
+        this.addSpaceMember(spaceMember);
         this.isVisible = isVisible;
         this.isComment = isComment;
         this.isLinkSummarizable = isLinkSummarizable;
@@ -144,6 +148,17 @@ public class Space extends BaseEntity {
     public void validateOwnership(Long memberId) {
         if (!Objects.equals(this.memberId, memberId)) {
             throw new UnauthorizedAccessException("해당 멤버는 이 스페이스의 owner가 아닙니다.");
+        }
+    }
+
+    public void validateVisibilityAndMembership(Long memberId){
+        if (this.isVisible){
+            return;
+        }
+
+        List<Long> spaceMemberIds = this.spaceMembers.getSpaceMemberIds();
+        if (!spaceMemberIds.contains(memberId)){
+            throw new UnauthorizedAccessException("이 스페이스는 권한이 없으면 볼 수 없는 스페이스입니다.");
         }
     }
 

@@ -124,16 +124,12 @@ class LinkFacadeTest {
                 "스페이스의 제목",
                 "스페이스 설명",
                 Category.ENTER_ART,
+                new SpaceImage("https://testimage1", "테스트 이미지1"),
+                new SpaceMember(memberId1, Role.OWNER),
                 true,
                 true,
                 true,
                 true
-        );
-        space.addSpaceImage(
-                new SpaceImage("https://testimage1", "테스트 이미지1")
-        );
-        space.addSpaceMember(
-                new SpaceMember(memberId1, Role.OWNER)
         );
 
         //스페이스 참여 - member2

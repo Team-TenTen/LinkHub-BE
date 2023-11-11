@@ -38,12 +38,19 @@ public class SpaceMembers {
 
     public List<SpaceMember> getSpaceMemberList() {
         return spaceMemberList.stream()
-                .filter(spaceMember -> spaceMember.getIsDeleted() == false)
+                .filter(spaceMember -> !spaceMember.getIsDeleted())
                 .collect(Collectors.toList());
     }
 
+    public List<Long> getSpaceMemberIds() {
+        return getSpaceMemberList()
+                .stream()
+                .map(SpaceMember::getMemberId)
+                .toList();
+    }
+
     public void deleteAll() {
-        spaceMemberList.forEach(spaceMember -> spaceMember.deleteSpaceMember());
+        spaceMemberList.forEach(SpaceMember::deleteSpaceMember);
     }
 
 }

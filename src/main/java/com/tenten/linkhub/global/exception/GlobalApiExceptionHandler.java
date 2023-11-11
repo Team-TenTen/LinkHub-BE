@@ -2,7 +2,6 @@ package com.tenten.linkhub.global.exception;
 
 import com.tenten.linkhub.global.response.ErrorResponse;
 import com.tenten.linkhub.global.response.ErrorWithDetailCodeResponse;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -36,8 +35,8 @@ public class GlobalApiExceptionHandler {
                 .body(errorResponse);
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleEntityNotFoundException(HttpServletRequest request, EntityNotFoundException e) {
+    @ExceptionHandler(DataNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleDataNotFoundException(HttpServletRequest request, DataNotFoundException e) {
         ErrorResponse errorResponse = ErrorResponse.of(e.getMessage(), request.getRequestURI());
 
         return ResponseEntity

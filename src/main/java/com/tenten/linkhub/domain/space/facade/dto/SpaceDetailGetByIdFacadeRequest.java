@@ -1,10 +1,10 @@
 package com.tenten.linkhub.domain.space.facade.dto;
 
-import jakarta.servlet.http.Cookie;
+import java.util.List;
 
 public record SpaceDetailGetByIdFacadeRequest(
         Long spaceId,
-        Cookie spaceViewCookie,
-        Long memberId
+        Long memberId,
+        List<Long> spaceViews
 ) {
 }
