@@ -4,7 +4,6 @@ import com.tenten.linkhub.domain.auth.JwtProvider;
 import com.tenten.linkhub.domain.auth.MemberDetails;
 import com.tenten.linkhub.domain.member.model.Provider;
 import com.tenten.linkhub.domain.member.repository.MemberEmailRedisRepository;
-import com.tenten.linkhub.domain.member.repository.member.MemberRepository;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationRequest;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberJoinRequest;
@@ -19,7 +18,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -27,8 +25,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -50,9 +46,6 @@ class MemberServiceTest {
 
     @Autowired
     private JwtProvider jwtProvider;
-
-    @MockBean
-    private MemberRepository memberRepository;
 
     @AfterEach
     void tearDown() {
@@ -163,8 +156,8 @@ class MemberServiceTest {
         assertThat(response.aboutMe()).isEqualTo(memberJoinRequest.aboutMe());
         assertThat(response.nickname()).isEqualTo(memberJoinRequest.nickname());
         assertThat(response.newsEmail()).isEqualTo(memberJoinRequest.newsEmail());
-        assertThat(response.followerCount()).isGreaterThanOrEqualTo(0);
-        assertThat(response.followingCount()).isGreaterThanOrEqualTo(0);
+        assertThat(response.followerCount()).isNotNegative();
+        assertThat(response.followingCount()).isNotNegative();
         assertThat(response.profileImagePath()).isEqualTo("https://testimage");
         assertThat(response.favoriteCategory()).isEqualTo(memberJoinRequest.favoriteCategory());
     }
@@ -176,13 +169,11 @@ class MemberServiceTest {
         MockMultipartFile requestFile = new MockMultipartFile("테스트 이미지", (byte[]) null);
         ImageInfo imageInfo = ImageInfo.of("https://testimage", requestFile.getName());
         BDDMockito.given(mockS3Uploader.saveImage(any())).willReturn(imageInfo);
-        Mockito.when(memberRepository.findByIdWithImageAndCategory(any())).thenReturn(Optional.empty());
 
         //when & then
         assertThatThrownBy(() -> memberService.getProfile(1L))
                 .isInstanceOf(UnauthorizedAccessException.class)
                 .hasMessageContaining("존재하지 않는 회원입니다.");
     }
-
 
 }
