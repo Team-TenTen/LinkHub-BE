@@ -103,7 +103,7 @@ class CommentServiceTest {
         setUpMemberId = memberJpaRepository.save(member).getId();
 
         Space space1 = new Space(
-                1L,
+                setUpMemberId,
                 "첫번째 스페이스",
                 "첫번째 스페이스 소개글",
                 Category.KNOWLEDGE_ISSUE_CAREER,
@@ -116,7 +116,7 @@ class CommentServiceTest {
         );
 
         Space space2 = new Space(
-                1L,
+                setUpMemberId,
                 "두번째 스페이스",
                 "두번째 스페이스 소개글",
                 Category.ETC,
