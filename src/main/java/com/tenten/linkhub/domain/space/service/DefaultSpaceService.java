@@ -1,7 +1,5 @@
 package com.tenten.linkhub.domain.space.service;
 
-import static com.tenten.linkhub.domain.space.model.space.Role.OWNER;
-
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberRepository;
@@ -17,6 +15,8 @@ import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.tenten.linkhub.domain.space.model.space.Role.OWNER;
 
 @Service
 public class DefaultSpaceService implements SpaceService {
@@ -74,7 +74,7 @@ public class DefaultSpaceService implements SpaceService {
     }
 
     @Override
-    public void checkMemberAddLink(Long memberId, Long spaceId) {
+    public void checkMemberEditLink(Long memberId, Long spaceId) {
         if (!spaceMemberRepository.existsAuthorizedSpaceMember(memberId, spaceId)) {
             throw new UnauthorizedAccessException("링크를 생성할 수 있는 권한이 없습니다.");
         }

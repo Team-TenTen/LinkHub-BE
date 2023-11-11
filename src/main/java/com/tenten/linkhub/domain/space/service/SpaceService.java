@@ -18,7 +18,7 @@ public interface SpaceService {
 
     Long updateSpace(SpaceUpdateRequest spaceUpdateRequest);
 
-    void checkMemberAddLink(Long memberId, Long spaceId);
+    void checkMemberEditLink(Long memberId, Long spaceId);
 
     DeletedSpaceImageNames deleteSpaceById(Long spaceId, Long memberId);
 

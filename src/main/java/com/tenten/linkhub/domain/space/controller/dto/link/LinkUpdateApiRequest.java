@@ -1,10 +1,10 @@
-package com.tenten.linkhub.domain.space.facade.dto;
+package com.tenten.linkhub.domain.space.controller.dto.link;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.URL;
 
-public record LinkCreateFacadeRequest(
+public record LinkUpdateApiRequest(
         @NotBlank(message = "URL은 빈 값이 들어올 수 없습니다.")
         @URL(message = "적절한 URL 형식이 아닙니다.")
         String url,
