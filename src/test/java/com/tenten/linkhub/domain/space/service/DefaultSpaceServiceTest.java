@@ -4,7 +4,7 @@ import com.tenten.linkhub.domain.member.model.FavoriteCategory;
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.ProfileImage;
 import com.tenten.linkhub.domain.member.model.Provider;
-import com.tenten.linkhub.domain.member.repository.MemberJpaRepository;
+import com.tenten.linkhub.domain.member.repository.member.MemberJpaRepository;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.Space;
@@ -140,13 +140,9 @@ class DefaultSpaceServiceTest {
                 "잠자는 사자의 콧털",
                 "테스트용 소개글",
                 "abc@gmail.com",
-                false,
-                new ProfileImage("https://testimage1", "테스트 이미지1"),
-                new FavoriteCategory(Category.ENTER_ART)
-        );
-
-        member.addProfileImage(
-                new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지")
+                true,
+                new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지"),
+                new FavoriteCategory(Category.KNOWLEDGE_ISSUE_CAREER)
         );
 
         setUpMemberId = memberJpaRepository.save(member).getId();
@@ -156,6 +152,8 @@ class DefaultSpaceServiceTest {
                 "첫번째 스페이스",
                 "첫번째 스페이스 소개글",
                 Category.KNOWLEDGE_ISSUE_CAREER,
+                new SpaceImage("https://testimage1", "테스트 이미지1"),
+                new SpaceMember(setUpMemberId, Role.OWNER),
                 true,
                 true,
                 true,
@@ -167,6 +165,8 @@ class DefaultSpaceServiceTest {
                 "두번째 스페이스",
                 "두번째 스페이스 소개글",
                 Category.LIFE_KNOWHOW_SHOPPING,
+                new SpaceImage("https://testimage2", "테스트 이미지2"),
+                new SpaceMember(setUpMemberId, Role.OWNER),
                 true,
                 true,
                 true,
@@ -178,34 +178,12 @@ class DefaultSpaceServiceTest {
                 "세번째 스페이스",
                 "세번째 스페이스 소개글",
                 Category.KNOWLEDGE_ISSUE_CAREER,
+                new SpaceImage("https://testimage3", "테스트 이미지3"),
+                new SpaceMember(setUpMemberId + 1, Role.OWNER),
                 true,
                 true,
                 true,
                 true
-        );
-
-        space1.addSpaceMember(
-                new SpaceMember(setUpMemberId, Role.OWNER)
-        );
-
-        space2.addSpaceMember(
-                new SpaceMember(setUpMemberId, Role.OWNER)
-        );
-
-        space3.addSpaceMember(
-                new SpaceMember(setUpMemberId + 1, Role.OWNER)
-        );
-
-        space1.addSpaceImage(
-                new SpaceImage("https://testimage1", "테스트 이미지1")
-        );
-
-        space2.addSpaceImage(
-                new SpaceImage("https://testimage2", "테스트 이미지2")
-        );
-
-        space3.addSpaceImage(
-                new SpaceImage("https://testimage3", "테스트 이미지3")
         );
 
         spaceJpaRepository.save(space1);

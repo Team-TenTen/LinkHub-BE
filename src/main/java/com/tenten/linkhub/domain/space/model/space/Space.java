@@ -1,8 +1,5 @@
 package com.tenten.linkhub.domain.space.model.space;
 
-import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
-import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
-
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.space.dto.SpaceUpdateDto;
 import com.tenten.linkhub.domain.space.model.space.vo.SpaceImages;
@@ -18,11 +15,16 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
 import java.util.List;
 import java.util.Objects;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
+import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 
 @Entity
 @Table(name = "spaces")
@@ -73,9 +75,11 @@ public class Space extends BaseEntity {
     @Column(nullable = false)
     private Long favoriteCount;
 
-    public Space(Long memberId, String spaceName, String description, Category category, Boolean isVisible, Boolean isComment, Boolean isLinkSummarizable, Boolean isReadMarkEnabled) {
+    public Space(Long memberId, String spaceName, String description, Category category, SpaceImage spaceImage, SpaceMember spaceMember, Boolean isVisible, Boolean isComment, Boolean isLinkSummarizable, Boolean isReadMarkEnabled) {
         validateNotNull(memberId, "memberId");
         validateNotNull(category, "category");
+        validateNotNull(spaceImage, "spaceImage");
+        validateNotNull(spaceMember, "spaceMember");
         validateNotNull(isVisible, "isVisible");
         validateNotNull(isComment, "isComment");
         validateNotNull(isLinkSummarizable, "isLinkSummarizable");
@@ -86,6 +90,8 @@ public class Space extends BaseEntity {
         this.spaceName = spaceName;
         this.description = description;
         this.category = category;
+        this.addSpaceImage(spaceImage);
+        this.addSpaceMember(spaceMember);
         this.isVisible = isVisible;
         this.isComment = isComment;
         this.isLinkSummarizable = isLinkSummarizable;
@@ -120,32 +126,49 @@ public class Space extends BaseEntity {
     /**
      * Space와 SpaceImage간의 편의 메서드용 메서드.
      */
-    public void removeSpaceImage(SpaceImage spaceImage){
+    public void removeSpaceImage(SpaceImage spaceImage) {
         spaceImages.removeSpaceImage(spaceImage);
     }
 
     /**
      * Space와 SpaceMember간의 편의 메서드용 메서드.
      */
-    public void removeSpaceMember(SpaceMember spaceMember){
+    public void removeSpaceMember(SpaceMember spaceMember) {
         spaceMembers.removeSpaceMember(spaceMember);
     }
 
-    public void increaseViewCount(){
+    public void increaseViewCount() {
         viewCount++;
     }
 
-    public Boolean isOwner(Long memberId){
+    public Boolean isOwner(Long memberId) {
         return Objects.equals(this.memberId, memberId);
     }
 
-    public void validateOwnership(Long memberId){
-        if (!Objects.equals(this.memberId, memberId)){
+    public void validateOwnership(Long memberId) {
+        if (!Objects.equals(this.memberId, memberId)) {
             throw new UnauthorizedAccessException("해당 멤버는 이 스페이스의 owner가 아닙니다.");
         }
     }
 
-    public void updateSpaceAttributes(SpaceUpdateDto updateDto){
+    public void validateVisibilityAndMembership(Long memberId){
+        if (this.isVisible){
+            return;
+        }
+
+        List<Long> spaceMemberIds = this.spaceMembers.getSpaceMemberIds();
+        if (!spaceMemberIds.contains(memberId)){
+            throw new UnauthorizedAccessException("이 스페이스는 권한이 없으면 볼 수 없는 스페이스입니다.");
+        }
+    }
+
+    public void validateCommentAvailability() {
+        if (!this.isComment) {
+            throw new UnauthorizedAccessException("해당 게시글은 댓글을 작성할 수 없습니다.");
+        }
+    }
+
+    public void updateSpaceAttributes(SpaceUpdateDto updateDto) {
         validateOwnership(updateDto.memberId());
 
         validateMaxSize(updateDto.spaceName(), 255, "spaceName");

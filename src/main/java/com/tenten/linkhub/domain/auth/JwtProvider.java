@@ -9,15 +9,16 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import java.security.Key;
-import java.util.Collections;
-import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
+
+import java.security.Key;
+import java.util.Collections;
+import java.util.Date;
 
 @Component
 @Slf4j
@@ -32,11 +33,11 @@ public class JwtProvider {
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
-    public String generateTokenFromOAuth(DefaultOAuth2User defaultOAuth2User) {
-        Long memberId = (Long) defaultOAuth2User.getAttributes().get("memberId");
-        String socialId = (String) defaultOAuth2User.getAttributes().get("socialId");
-        String provider = (String) defaultOAuth2User.getAttributes().get("provider");
-        Role role = (Role) defaultOAuth2User.getAttributes().get("role");
+    public String generateTokenFromOAuth(OAuth2User oAuth2User) {
+        Long memberId = (Long) oAuth2User.getAttributes().get("memberId");
+        String socialId = (String) oAuth2User.getAttributes().get("socialId");
+        String provider = (String) oAuth2User.getAttributes().get("provider");
+        Role role = (Role) oAuth2User.getAttributes().get("role");
 
         return generateJwt(memberId, socialId, provider, role);
     }
