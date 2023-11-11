@@ -140,13 +140,9 @@ class DefaultSpaceServiceTest {
                 "잠자는 사자의 콧털",
                 "테스트용 소개글",
                 "abc@gmail.com",
-                false,
-                new ProfileImage("https://testimage1", "테스트 이미지1"),
-                new FavoriteCategory(Category.ENTER_ART)
-        );
-
-        member.addProfileImage(
-                new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지")
+                true,
+                new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지"),
+                new FavoriteCategory(Category.KNOWLEDGE_ISSUE_CAREER)
         );
 
         setUpMemberId = memberJpaRepository.save(member).getId();

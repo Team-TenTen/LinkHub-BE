@@ -27,7 +27,11 @@ public record SpaceDetailGetByIdFacadeResponse(
         Boolean isOwner,
         Cookie spaceViewCookie
 ) {
-    public static SpaceDetailGetByIdFacadeResponse of(SpaceWithSpaceImageAndSpaceMemberInfo response, MemberInfos memberDetailInfos, Cookie spaceViewCookie){
+    public static SpaceDetailGetByIdFacadeResponse of(
+            SpaceWithSpaceImageAndSpaceMemberInfo response,
+            MemberInfos memberDetailInfos,
+            Cookie spaceViewCookie
+    ){
         Map<Long, MemberInfo> memberInfos = memberDetailInfos.memberInfos();
 
         List<SpaceMemberDetailInfo> spaceMemberDetailInfos = response.spaceMemberInfos().stream()

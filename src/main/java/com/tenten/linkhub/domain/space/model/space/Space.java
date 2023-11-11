@@ -15,12 +15,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Objects;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
 import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
@@ -121,32 +122,38 @@ public class Space extends BaseEntity {
     /**
      * Space와 SpaceImage간의 편의 메서드용 메서드.
      */
-    public void removeSpaceImage(SpaceImage spaceImage){
+    public void removeSpaceImage(SpaceImage spaceImage) {
         spaceImages.removeSpaceImage(spaceImage);
     }
 
     /**
      * Space와 SpaceMember간의 편의 메서드용 메서드.
      */
-    public void removeSpaceMember(SpaceMember spaceMember){
+    public void removeSpaceMember(SpaceMember spaceMember) {
         spaceMembers.removeSpaceMember(spaceMember);
     }
 
-    public void increaseViewCount(){
+    public void increaseViewCount() {
         viewCount++;
     }
 
-    public Boolean isOwner(Long memberId){
+    public Boolean isOwner(Long memberId) {
         return Objects.equals(this.memberId, memberId);
     }
 
-    public void validateOwnership(Long memberId){
-        if (!Objects.equals(this.memberId, memberId)){
+    public void validateOwnership(Long memberId) {
+        if (!Objects.equals(this.memberId, memberId)) {
             throw new UnauthorizedAccessException("해당 멤버는 이 스페이스의 owner가 아닙니다.");
         }
     }
 
-    public void updateSpaceAttributes(SpaceUpdateDto updateDto){
+    public void validateCommentAvailability() {
+        if (!this.isComment) {
+            throw new UnauthorizedAccessException("해당 게시글은 댓글을 작성할 수 없습니다.");
+        }
+    }
+
+    public void updateSpaceAttributes(SpaceUpdateDto updateDto) {
         validateOwnership(updateDto.memberId());
 
         validateMaxSize(updateDto.spaceName(), 255, "spaceName");

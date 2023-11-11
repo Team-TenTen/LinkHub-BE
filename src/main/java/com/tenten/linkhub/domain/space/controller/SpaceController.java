@@ -2,6 +2,8 @@ package com.tenten.linkhub.domain.space.controller;
 
 import com.tenten.linkhub.domain.auth.MemberDetails;
 import com.tenten.linkhub.domain.space.controller.dto.MySpacesFindApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiResponse;
@@ -10,11 +12,14 @@ import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiReques
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiResponses;
+import com.tenten.linkhub.domain.space.controller.mapper.CommentApiMapper;
 import com.tenten.linkhub.domain.space.controller.mapper.SpaceApiMapper;
 import com.tenten.linkhub.domain.space.facade.SpaceFacade;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
+import com.tenten.linkhub.domain.space.service.CommentService;
 import com.tenten.linkhub.domain.space.service.SpaceService;
+import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.global.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,6 +43,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -54,12 +60,16 @@ public class SpaceController {
 
     private final SpaceFacade spaceFacade;
     private final SpaceService spaceService;
-    private final SpaceApiMapper mapper;
+    private final CommentService commentService;
+    private final SpaceApiMapper spaceMapper;
+    private final CommentApiMapper commentMapper;
 
-    public SpaceController(SpaceFacade spaceFacade, SpaceService spaceService, SpaceApiMapper mapper) {
+    public SpaceController(SpaceFacade spaceFacade, SpaceService spaceService, CommentService commentService, SpaceApiMapper spaceMapper, CommentApiMapper commentMapper) {
         this.spaceFacade = spaceFacade;
         this.spaceService = spaceService;
-        this.mapper = mapper;
+        this.commentService = commentService;
+        this.spaceMapper = spaceMapper;
+        this.commentMapper = commentMapper;
     }
 
     /**
@@ -82,7 +92,7 @@ public class SpaceController {
         );
 
         SpacesFindByQueryResponses responses = spaceService.findSpacesByQuery(
-                mapper.toSpacesFindByQueryRequest(request, pageRequest)
+                spaceMapper.toSpacesFindByQueryRequest(request, pageRequest)
         );
 
         SpacesFindByQueryApiResponses apiResponses = SpacesFindByQueryApiResponses.from(responses);
@@ -107,7 +117,7 @@ public class SpaceController {
             @RequestPart @Valid SpaceCreateApiRequest request,
             @RequestPart(required = false) MultipartFile file
     ) {
-        Long savedSpaceId = spaceFacade.createSpace(mapper.toSpaceCreateFacadeRequest(request, file, memberDetails.memberId()));
+        Long savedSpaceId = spaceFacade.createSpace(spaceMapper.toSpaceCreateFacadeRequest(request, file, memberDetails.memberId()));
 
         SpaceCreateApiResponse apiResponse = SpaceCreateApiResponse.from(savedSpaceId);
 
@@ -136,7 +146,7 @@ public class SpaceController {
             HttpServletResponse servletResponse
     ) {
         Long memberId = Objects.isNull(memberDetails) ? null : memberDetails.memberId();
-        SpaceDetailGetByIdFacadeRequest request = mapper.toSpaceDetailGetByIdFacadeRequest(spaceId, spaceViewCookie, memberId);
+        SpaceDetailGetByIdFacadeRequest request = spaceMapper.toSpaceDetailGetByIdFacadeRequest(spaceId, spaceViewCookie, memberId);
 
         SpaceDetailGetByIdFacadeResponse response = spaceFacade.getSpaceDetailById(request);
 
@@ -167,7 +177,7 @@ public class SpaceController {
             @RequestPart(required = false) MultipartFile file
     ) {
         Long updatedSpaceId = spaceFacade.updateSpace(
-                mapper.toSpaceUpdateFacadeRequest(spaceId, request, file, memberDetails.memberId()));
+                spaceMapper.toSpaceUpdateFacadeRequest(spaceId, request, file, memberDetails.memberId()));
 
         SpaceUpdateApiResponse apiResponse = SpaceUpdateApiResponse.from(updatedSpaceId);
 
@@ -195,8 +205,8 @@ public class SpaceController {
     }
 
     /**
-     *  내 스페이스 검색 API
-     *  !필터에 해당 API 추가해야 함!
+     * 내 스페이스 검색 API
+     * !필터에 해당 API 추가해야 함!
      */
     @Operation(
             summary = "내 스페이스 검색 API", description = "나의 스페이스를 keyWord, pageNumber, pageSize, filter를 통해 검색합니다.\n" +
@@ -208,15 +218,41 @@ public class SpaceController {
     public ResponseEntity<MySpacesFindApiResponses> findMySpaces(
             @AuthenticationPrincipal MemberDetails memberDetails,
             @ModelAttribute MySpacesFindApiRequest request
-    ){
+    ) {
         PageRequest pageRequest = PageRequest.of(request.pageNumber(), request.pageSize());
 
         SpacesFindByQueryResponses responses = spaceService.findMySpacesByQuery(
-                mapper.toMySpacesFindRequest(pageRequest, request, memberDetails.memberId())
+                spaceMapper.toMySpacesFindRequest(pageRequest, request, memberDetails.memberId())
         );
 
         MySpacesFindApiResponses apiResponses = MySpacesFindApiResponses.from(responses);
         return ResponseEntity.ok(apiResponses);
+    }
+
+    /**
+     *  루트 댓글 생성 API
+     */
+    @Operation(
+            summary = "루트 댓글 생성 API", description = "루트 댓글 생성 API 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "루트 댓글이 성공적으로 생성되었습니다."),
+                    @ApiResponse(responseCode = "404", description = "댓글을 달 수 없는 스페이스에 댓글을 생성하려고 합니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @PostMapping("/{spaceId}/comments")
+    public ResponseEntity<RootCommentCreateApiResponse> createRootComment(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long spaceId,
+            @RequestBody @Valid RootCommentCreateApiRequest request
+    ) {
+        RootCommentCreateRequest apiRequest = commentMapper.toRootCommentCreateRequest(spaceId, memberDetails.memberId(), request.content());
+        Long savedCommentId = commentService.createComment(apiRequest);
+
+        RootCommentCreateApiResponse apiResponse = RootCommentCreateApiResponse.from(savedCommentId);
+
+        return ResponseEntity
+                .created(URI.create(SPACE_LOCATION_PRE_FIX + "/commments/" + savedCommentId))
+                .body(apiResponse);
     }
 
 }

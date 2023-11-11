@@ -5,12 +5,13 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 
@@ -45,7 +46,7 @@ public class SpaceImages {
     /**
      * Space와 SpaceImage간의 편의 메서드용 메서드
      */
-    public void removeSpaceImage(SpaceImage spaceImage){
+    public void removeSpaceImage(SpaceImage spaceImage) {
         this.spaceImageList.remove(spaceImage);
     }
 

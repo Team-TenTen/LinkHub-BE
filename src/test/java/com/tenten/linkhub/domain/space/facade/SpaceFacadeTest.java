@@ -19,7 +19,10 @@ import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
-import org.assertj.core.api.Assertions;
+
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,10 +34,8 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 
 @Transactional
@@ -171,7 +172,7 @@ class SpaceFacadeTest {
     @DisplayName("스페이스의 주인이 아닌 유저가 스페이스를 삭제할 경우 UnauthorizedAccessException가 발생한다. ")
     void deleteSpace_UnauthorizedAccessException() {
         //when, then
-        Assertions.assertThatThrownBy(() -> spaceFacade.deleteSpace(setUpSpaceId, setUpMemberId + 1))
+        assertThatThrownBy(() -> spaceFacade.deleteSpace(setUpSpaceId, setUpMemberId + 1))
                 .isInstanceOf(UnauthorizedAccessException.class);
     }
 
@@ -183,9 +184,9 @@ class SpaceFacadeTest {
                 "잠자는 사자의 콧털",
                 "테스트용 소개글",
                 "abc@gmail.com",
-                false,
+                true,
                 new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지"),
-                new FavoriteCategory(Category.ENTER_ART)
+                new FavoriteCategory(Category.KNOWLEDGE_ISSUE_CAREER)
         );
 
         setUpMemberId = memberJpaRepository.save(member).getId();
