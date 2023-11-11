@@ -95,3 +95,7 @@ jwt:
 
 server:
   forward-headers-strategy: framework
+
+kakao:
+  admin-key:
+    ${KAKAO_ADMIN_KEY}

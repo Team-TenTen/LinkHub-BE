@@ -7,11 +7,11 @@ import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateA
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentFindApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentsFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiResponses;
-import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiRequest;
-import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceDetailGetByIdApiResponse;
+import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiResponses;
 import com.tenten.linkhub.domain.space.controller.mapper.CommentApiMapper;
