@@ -8,6 +8,7 @@ import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiRespo
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceDetailGetByIdApiResponse;
+import com.tenten.linkhub.domain.space.controller.dto.space.SpaceTagsGetApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiRequest;
@@ -20,6 +21,7 @@ import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRespon
 import com.tenten.linkhub.domain.space.service.CommentService;
 import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagsGetResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.util.SpaceViewList;
 import com.tenten.linkhub.global.response.ErrorResponse;
@@ -232,7 +234,7 @@ public class SpaceController {
     }
 
     /**
-     *  루트 댓글 생성 API
+     * 루트 댓글 생성 API
      */
     @Operation(
             summary = "루트 댓글 생성 API", description = "루트 댓글 생성 API 입니다.",
@@ -254,6 +256,21 @@ public class SpaceController {
 
         return ResponseEntity
                 .created(URI.create(SPACE_LOCATION_PRE_FIX + "/commments/" + savedCommentId))
+                .body(apiResponse);
+    }
+
+    /**
+     * 스페이스에서 사용된 태그 목록 확인 API
+     */
+    @GetMapping(value = "/{spaceId}/tags", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SpaceTagsGetApiResponse> getSpaceTags(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long spaceId
+    ) {
+        SpaceTagsGetResponse response = spaceService.getTagsBySpaceId(spaceId);
+        SpaceTagsGetApiResponse apiResponse = spaceMapper.toSpaceTagsGetApiResponse(response);
+        return ResponseEntity
+                .ok()
                 .body(apiResponse);
     }
 
