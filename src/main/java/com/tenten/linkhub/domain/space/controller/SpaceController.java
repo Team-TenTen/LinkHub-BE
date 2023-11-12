@@ -260,8 +260,13 @@ public class SpaceController {
     }
 
     /**
-     * 스페이스에서 사용된 태그 목록 확인 API
+     * 스페이스에서 사용된 태그 목록 조회 API
      */
+    @Operation(
+            summary = "스페이스 내 태그 목록 조회 API", description = "스페이스 내 생성된 태그 목록을 조회하는 API 입니다. ",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "스페이스 내 생성된 태그 목록을 정상적으로 조회했습니다.")
+            })
     @GetMapping(value = "/{spaceId}/tags", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SpaceTagsGetApiResponse> getSpaceTags(
             @AuthenticationPrincipal MemberDetails memberDetails,
