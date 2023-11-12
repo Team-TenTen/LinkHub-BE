@@ -4,7 +4,7 @@ import com.tenten.linkhub.domain.member.model.FavoriteCategory;
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.ProfileImage;
 import com.tenten.linkhub.domain.member.model.Provider;
-import com.tenten.linkhub.domain.member.repository.MemberJpaRepository;
+import com.tenten.linkhub.domain.member.repository.member.MemberJpaRepository;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.link.Link;
 import com.tenten.linkhub.domain.space.model.link.vo.Url;
@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
-public class DefaultLinkServiceTest {
+class DefaultLinkServiceTest {
 
     @Autowired
     private LinkService linkService;
@@ -112,22 +112,18 @@ public class DefaultLinkServiceTest {
 
         memberId1 = memberJpaRepository.save(member1).getId();
 
-        //스페이스 생성 - member1
+        //스페이스 생성 - member1가 owner
         Space space = new Space(
                 memberId1,
                 "스페이스의 제목",
                 "스페이스 설명",
                 Category.ENTER_ART,
+                new SpaceImage("https://testimage1", "테스트 이미지1"),
+                new SpaceMember(memberId1, Role.OWNER),
                 true,
                 true,
                 true,
                 true
-        );
-        space.addSpaceImage(
-                new SpaceImage("https://testimage1", "테스트 이미지1")
-        );
-        space.addSpaceMember(
-                new SpaceMember(memberId1, Role.OWNER)
         );
 
         spaceId = spaceJpaRepository.save(space).getId();
