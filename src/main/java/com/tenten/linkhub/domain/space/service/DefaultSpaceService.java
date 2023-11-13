@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.space.service;
 
+import com.tenten.linkhub.domain.space.model.space.Favorite;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
@@ -101,6 +102,17 @@ public class DefaultSpaceService implements SpaceService {
         Slice<Space> spaces = spaceRepository.findMySpacesJoinSpaceImageByQuery(mapper.toMySpacesFindQueryCondition(request));
 
         return SpacesFindByQueryResponses.from(spaces);
+    }
+
+    @Override
+    @Transactional
+    public Long registerSpaceInFavorite(Long spaceId, Long memberId) {
+        Space space = spaceRepository.getById(spaceId);
+
+        Favorite favorite = mapper.toFavorite(space, memberId);
+        favoriteRepository.save(favorite);
+
+        return space.getId();
     }
 
 }

@@ -1,7 +1,7 @@
 package com.tenten.linkhub.domain.space.controller;
 
 import com.tenten.linkhub.domain.auth.MemberDetails;
-import com.tenten.linkhub.domain.space.controller.dto.favorite.FavoriteCreateApiResponse;
+import com.tenten.linkhub.domain.space.controller.dto.favorite.SpaceRegisterInFavoriteApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateApiResponse;
@@ -294,6 +294,22 @@ public class SpaceController {
         RootCommentFindApiResponses apiResponses = RootCommentFindApiResponses.from(responses);
 
         return ResponseEntity.ok(apiResponses);
+    }
+
+    /**
+     *  스페이스 즐겨찾기 추가 API
+     */
+    @PostMapping(value = "/favorites",
+    consumes = MediaType.APPLICATION_JSON_VALUE,
+    produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SpaceRegisterInFavoriteApiResponse> registerSpaceInFavorite(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @RequestBody Long spaceId
+    ){
+        Long registeredSpaceId = spaceService.registerSpaceInFavorite(spaceId, memberDetails.memberId());
+        SpaceRegisterInFavoriteApiResponse apiResponse = SpaceRegisterInFavoriteApiResponse.from(registeredSpaceId);
+
+        return ResponseEntity.ok(apiResponse);
     }
 
     private void setSpaceViewCookie(HttpServletResponse servletResponse, List<Long> spaceViews) {

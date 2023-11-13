@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.space.service.mapper;
 
+import com.tenten.linkhub.domain.space.model.space.Favorite;
 import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
@@ -75,6 +76,10 @@ public class SpaceMapper {
                 request.isReadMarkEnabled(),
                 spaceImage
         );
+    }
+
+    public Favorite toFavorite(Space space, Long memberId) {
+        return new Favorite(space, memberId);
     }
 
 }

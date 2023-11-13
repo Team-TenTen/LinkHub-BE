@@ -23,4 +23,6 @@ public interface SpaceService {
     DeletedSpaceImageNames deleteSpaceById(Long spaceId, Long memberId);
 
     SpacesFindByQueryResponses findMySpacesByQuery(MySpacesFindRequest mySpacesFindRequest);
+
+    Long registerSpaceInFavorite(Long spaceId, Long memberId);
 }
