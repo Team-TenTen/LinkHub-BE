@@ -10,6 +10,7 @@ import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberReposit
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
 import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceRegisterInFavoriteResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
@@ -106,13 +107,13 @@ public class DefaultSpaceService implements SpaceService {
 
     @Override
     @Transactional
-    public Long registerSpaceInFavorite(Long spaceId, Long memberId) {
+    public SpaceRegisterInFavoriteResponse registerSpaceInFavorite(Long spaceId, Long memberId) {
         Space space = spaceRepository.getById(spaceId);
 
         Favorite favorite = mapper.toFavorite(space, memberId);
-        favoriteRepository.save(favorite);
+        Favorite savedFavorite = favoriteRepository.save(favorite);
 
-        return space.getId();
+        return SpaceRegisterInFavoriteResponse.of(savedFavorite.getId(), spaceId);
     }
 
 }

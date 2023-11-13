@@ -25,6 +25,7 @@ import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRespon
 import com.tenten.linkhub.domain.space.service.CommentService;
 import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceRegisterInFavoriteResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.util.SpaceViewList;
 import com.tenten.linkhub.global.response.ErrorResponse;
@@ -306,8 +307,8 @@ public class SpaceController {
             @AuthenticationPrincipal MemberDetails memberDetails,
             @RequestBody Long spaceId
     ){
-        Long registeredSpaceId = spaceService.registerSpaceInFavorite(spaceId, memberDetails.memberId());
-        SpaceRegisterInFavoriteApiResponse apiResponse = SpaceRegisterInFavoriteApiResponse.from(registeredSpaceId);
+        SpaceRegisterInFavoriteResponse response = spaceService.registerSpaceInFavorite(spaceId, memberDetails.memberId());
+        SpaceRegisterInFavoriteApiResponse apiResponse = SpaceRegisterInFavoriteApiResponse.from(response.registeredSpaceId());
 
         return ResponseEntity.ok(apiResponse);
     }

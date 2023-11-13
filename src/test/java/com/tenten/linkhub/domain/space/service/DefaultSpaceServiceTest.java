@@ -132,6 +132,13 @@ class DefaultSpaceServiceTest {
         assertThat(content.get(0).spaceImagePath()).isEqualTo("https://testimage2");
     }
 
+    @Test
+    @DisplayName("유저는 스페이스를 즐겨찾기에 등록할 수 있다.")
+    void registerSpaceInFavorite() {
+        //when
+
+    }
+
     private void setupData() {
         Member member = new Member(
                 "testSocialId",
