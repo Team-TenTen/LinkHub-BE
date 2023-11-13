@@ -14,6 +14,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -55,6 +56,9 @@ public class Link {
     @Column(nullable = false)
     private Long likeCount;
 
+    @Version
+    private int version;
+
     public void addTag(Tag tag) {
         tags.add(tag);
         tag.changeLink(this);
@@ -88,4 +92,11 @@ public class Link {
         this.viewCount = 0L;
     }
 
+    public void increaseLikeCount() {
+        likeCount++;
+    }
+
+    public void decreaseLikeCount() {
+        likeCount--;
+    }
 }
