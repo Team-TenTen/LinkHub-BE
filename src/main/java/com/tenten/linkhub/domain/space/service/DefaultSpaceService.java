@@ -3,6 +3,7 @@ package com.tenten.linkhub.domain.space.service;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
+import com.tenten.linkhub.domain.space.repository.favorite.FavoriteRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberRepository;
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
@@ -24,13 +25,15 @@ import static com.tenten.linkhub.domain.space.model.space.Role.OWNER;
 public class DefaultSpaceService implements SpaceService {
 
     private final SpaceRepository spaceRepository;
-    private final SpaceMapper mapper;
     private final SpaceMemberRepository spaceMemberRepository;
+    private final FavoriteRepository favoriteRepository;
+    private final SpaceMapper mapper;
 
-    public DefaultSpaceService(SpaceRepository spaceRepository, SpaceMapper mapper, SpaceMemberRepository spaceMemberRepository) {
+    public DefaultSpaceService(SpaceRepository spaceRepository, SpaceMemberRepository spaceMemberRepository, FavoriteRepository favoriteRepository, SpaceMapper mapper) {
         this.spaceRepository = spaceRepository;
-        this.mapper = mapper;
         this.spaceMemberRepository = spaceMemberRepository;
+        this.favoriteRepository = favoriteRepository;
+        this.mapper = mapper;
     }
 
     @Override
@@ -62,7 +65,9 @@ public class DefaultSpaceService implements SpaceService {
         Boolean isOwner = space.isOwner(memberId);
         Boolean isCanEdit = space.isCanEdit(memberId);
 
-        return SpaceWithSpaceImageAndSpaceMemberInfo.of(space, isOwner, isCanEdit);
+        Boolean hasFavorite = favoriteRepository.isExist(memberId, spaceId);
+
+        return SpaceWithSpaceImageAndSpaceMemberInfo.of(space, isOwner, isCanEdit, hasFavorite);
     }
 
     @Override

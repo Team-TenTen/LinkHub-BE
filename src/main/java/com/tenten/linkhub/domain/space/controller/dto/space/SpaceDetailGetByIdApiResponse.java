@@ -21,6 +21,7 @@ public record SpaceDetailGetByIdApiResponse(
         String spaceImagePath,
         Boolean isOwner,
         Boolean isCanEdit,
+        Boolean hasFavorite,
         List<SpaceMemberDetailInfo> memberDetailInfos
 ) {
     public static SpaceDetailGetByIdApiResponse from(SpaceDetailGetByIdFacadeResponse response){
@@ -39,6 +40,7 @@ public record SpaceDetailGetByIdApiResponse(
                 response.spaceImagePath(),
                 response.isOwner(),
                 response.isCanEdit(),
+                response.hasFavorite(),
                 response.memberDetailInfos()
         );
     }
