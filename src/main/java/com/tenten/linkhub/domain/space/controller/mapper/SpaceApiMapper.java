@@ -1,6 +1,6 @@
 package com.tenten.linkhub.domain.space.controller.mapper;
 
-import com.tenten.linkhub.domain.space.controller.dto.MySpacesFindApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiRequest;
@@ -9,7 +9,6 @@ import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeReques
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
-import jakarta.servlet.http.Cookie;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.springframework.data.domain.Pageable;

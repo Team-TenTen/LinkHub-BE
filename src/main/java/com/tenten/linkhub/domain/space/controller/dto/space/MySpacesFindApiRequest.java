@@ -1,4 +1,4 @@
-package com.tenten.linkhub.domain.space.controller.dto;
+package com.tenten.linkhub.domain.space.controller.dto.space;
 
 import com.tenten.linkhub.domain.space.model.category.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
