@@ -8,6 +8,7 @@ import com.tenten.linkhub.domain.member.repository.member.MemberJpaRepository;
 import com.tenten.linkhub.domain.space.facade.dto.LinkCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.LinkUpdateFacadeRequest;
 import com.tenten.linkhub.domain.space.model.category.Category;
+import com.tenten.linkhub.domain.space.model.link.Color;
 import com.tenten.linkhub.domain.space.model.link.Link;
 import com.tenten.linkhub.domain.space.model.link.vo.Url;
 import com.tenten.linkhub.domain.space.model.space.Role;
@@ -64,7 +65,8 @@ class LinkFacadeTest {
         LinkCreateFacadeRequest request = new LinkCreateFacadeRequest(
                 "https://naver.com",
                 "링크의 제목",
-                "태그의 이름"
+                "태그의 이름",
+                Color.RED
         );
 
         //when
@@ -84,7 +86,8 @@ class LinkFacadeTest {
         LinkCreateFacadeRequest request = new LinkCreateFacadeRequest(
                 "https://naver.com",
                 "링크의 제목",
-                "태그의 이름"
+                "태그의 이름",
+                Color.EMERALD
         );
 
         //when
@@ -99,7 +102,8 @@ class LinkFacadeTest {
         LinkUpdateFacadeRequest request = new LinkUpdateFacadeRequest(
                 "https://naver2.com",
                 "수정할 링크의 제목",
-                "수정할 태그의 이름"
+                "수정할 태그의 이름",
+                Color.GRAY
         );
 
         //when
@@ -119,7 +123,8 @@ class LinkFacadeTest {
         LinkUpdateFacadeRequest request = new LinkUpdateFacadeRequest(
                 "https://naver2.com",
                 "수정할 링크의 제목",
-                "수정할 태그의 이름"
+                "수정할 태그의 이름",
+                Color.BLUE
         );
 
         //when

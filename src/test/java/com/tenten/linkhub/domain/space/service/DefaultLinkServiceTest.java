@@ -6,6 +6,7 @@ import com.tenten.linkhub.domain.member.model.ProfileImage;
 import com.tenten.linkhub.domain.member.model.Provider;
 import com.tenten.linkhub.domain.member.repository.member.MemberJpaRepository;
 import com.tenten.linkhub.domain.space.model.category.Category;
+import com.tenten.linkhub.domain.space.model.link.Color;
 import com.tenten.linkhub.domain.space.model.link.Link;
 import com.tenten.linkhub.domain.space.model.link.vo.Url;
 import com.tenten.linkhub.domain.space.model.space.Role;
@@ -59,7 +60,8 @@ class DefaultLinkServiceTest {
                 "https://mideveloperni.tistory.com/",
                 "개발 블로그 1",
                 "백엔드",
-                memberId1
+                memberId1,
+                Color.BLUE
         );
 
         //when
@@ -83,7 +85,8 @@ class DefaultLinkServiceTest {
                 "바꾼 타이틀",
                 "바꾼 태그",
                 memberId1,
-                linkId
+                linkId,
+                Color.GRAY
         );
 
         //when
