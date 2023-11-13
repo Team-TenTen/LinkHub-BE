@@ -1,8 +1,7 @@
 package com.tenten.linkhub.domain.space.controller;
 
 import com.tenten.linkhub.domain.auth.MemberDetails;
-import com.tenten.linkhub.domain.space.controller.dto.favorite.SpaceRegisterInFavoriteApiRequest;
-import com.tenten.linkhub.domain.space.controller.dto.favorite.SpaceRegisterInFavoriteApiResponse;
+import com.tenten.linkhub.domain.space.controller.dto.space.SpaceRegisterInFavoriteApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateApiResponse;
@@ -308,14 +307,14 @@ public class SpaceController {
                     @ApiResponse(responseCode = "404", description = "존재하지 않는 스페이스를 즐겨찾기 등록하려고 합니다.",
                             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
-    @PostMapping(value = "/favorites",
+    @PostMapping(value = "{spaceId}/favorites",
     consumes = MediaType.APPLICATION_JSON_VALUE,
     produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SpaceRegisterInFavoriteApiResponse> registerSpaceInFavorite(
             @AuthenticationPrincipal MemberDetails memberDetails,
-            @RequestBody SpaceRegisterInFavoriteApiRequest request
+            @PathVariable Long spaceId
     ){
-        SpaceRegisterInFavoriteResponse response = spaceService.registerSpaceInFavorite(request.spaceId(), memberDetails.memberId());
+        SpaceRegisterInFavoriteResponse response = spaceService.registerSpaceInFavorite(spaceId, memberDetails.memberId());
         SpaceRegisterInFavoriteApiResponse apiResponse = SpaceRegisterInFavoriteApiResponse.from(response);
 
         return ResponseEntity.ok(apiResponse);
