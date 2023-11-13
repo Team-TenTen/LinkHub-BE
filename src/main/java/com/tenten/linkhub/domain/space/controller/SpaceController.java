@@ -316,7 +316,7 @@ public class SpaceController {
             @RequestBody SpaceRegisterInFavoriteApiRequest request
     ){
         SpaceRegisterInFavoriteResponse response = spaceService.registerSpaceInFavorite(request.spaceId(), memberDetails.memberId());
-        SpaceRegisterInFavoriteApiResponse apiResponse = SpaceRegisterInFavoriteApiResponse.from(response.registeredSpaceId());
+        SpaceRegisterInFavoriteApiResponse apiResponse = SpaceRegisterInFavoriteApiResponse.from(response);
 
         return ResponseEntity.ok(apiResponse);
     }

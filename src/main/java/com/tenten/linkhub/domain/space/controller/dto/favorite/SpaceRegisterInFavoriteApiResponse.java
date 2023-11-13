@@ -1,9 +1,13 @@
 package com.tenten.linkhub.domain.space.controller.dto.favorite;
 
-public record SpaceRegisterInFavoriteApiResponse(Long registeredSpaceId) {
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceRegisterInFavoriteResponse;
 
-    public static SpaceRegisterInFavoriteApiResponse from(Long registeredSpaceId){
-        return new SpaceRegisterInFavoriteApiResponse(registeredSpaceId);
+public record SpaceRegisterInFavoriteApiResponse(
+        Long favoriteId,
+        Long registeredSpaceId
+) {
+    public static SpaceRegisterInFavoriteApiResponse from(SpaceRegisterInFavoriteResponse response){
+        return new SpaceRegisterInFavoriteApiResponse(response.favoriteId(), response.registeredSpaceId());
     }
 
 }
