@@ -60,7 +60,9 @@ public class DefaultSpaceService implements SpaceService {
         space.validateVisibilityAndMembership(memberId);
 
         Boolean isOwner = space.isOwner(memberId);
-        return SpaceWithSpaceImageAndSpaceMemberInfo.of(space, isOwner);
+        Boolean isCanEdit = space.isCanEdit(memberId);
+
+        return SpaceWithSpaceImageAndSpaceMemberInfo.of(space, isOwner, isCanEdit);
     }
 
     @Override

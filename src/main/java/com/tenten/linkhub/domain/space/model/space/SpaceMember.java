@@ -17,6 +17,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 
 @Entity
@@ -66,6 +68,10 @@ public class SpaceMember extends BaseEntity {
     public Long deleteSpaceMember() {
         this.isDeleted = true;
         return id;
+    }
+
+    public Boolean hasHigherRoleCanView(){
+        return !Objects.equals(this.role, Role.CAN_VIEW);
     }
 
 }

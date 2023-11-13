@@ -20,9 +20,10 @@ public record SpaceWithSpaceImageAndSpaceMemberInfo(
         String spaceImagePath,
         String spaceImageName,
         Boolean isOwner,
+        Boolean isCanEdit,
         List<SpaceMemberInfo> spaceMemberInfos
 ) {
-    public static SpaceWithSpaceImageAndSpaceMemberInfo of(Space space, Boolean isOwner) {
+    public static SpaceWithSpaceImageAndSpaceMemberInfo of(Space space, Boolean isOwner, Boolean isCanEdit) {
         List<SpaceMemberInfo> spaceMemberInfos = space.getSpaceMembers().stream()
                 .map(sm -> new SpaceMemberInfo(sm.getMemberId(), sm.getRole()))
                 .toList();
@@ -42,6 +43,7 @@ public record SpaceWithSpaceImageAndSpaceMemberInfo(
                 space.getSpaceImages().isEmpty() ? null : space.getSpaceImages().get(0).getPath(),
                 space.getSpaceImages().isEmpty() ? null : space.getSpaceImages().get(0).getName(),
                 isOwner,
+                isCanEdit,
                 spaceMemberInfos
         );
     }
