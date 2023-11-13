@@ -3,6 +3,8 @@ package com.tenten.linkhub.domain.space.model.link;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -35,8 +37,14 @@ public class Tag {
     @Column(nullable = false)
     private String name;
 
-    public static Tag toTag(Space space, Link link, String name) {
-        return new Tag(space, link, name);
+    @Enumerated(EnumType.STRING)
+    private Color color;
+
+    public static Tag toTag(Space space,
+                            Link link,
+                            String name,
+                            Color color) {
+        return new Tag(space, link, name, color);
     }
 
     public void changeLink(Link link) {
@@ -47,10 +55,11 @@ public class Tag {
         this.link = null;
     }
 
-    private Tag(Space space, Link link, String name) {
+    private Tag(Space space, Link link, String name, Color color) {
         this.space = space;
         this.link = link;
         this.name = name;
+        this.color = color;
     }
 
 }

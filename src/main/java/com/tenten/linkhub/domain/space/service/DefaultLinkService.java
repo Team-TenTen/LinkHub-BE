@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.space.service;
 
+import com.tenten.linkhub.domain.space.model.link.Color;
 import com.tenten.linkhub.domain.space.model.link.Link;
 import com.tenten.linkhub.domain.space.model.link.Tag;
 import com.tenten.linkhub.domain.space.model.link.vo.Url;
@@ -40,7 +41,7 @@ public class DefaultLinkService implements LinkService {
                 new Url(request.url()));
 
         if (Objects.nonNull(request.tag())) {
-            Tag tag = Tag.toTag(space, link, request.tag());
+            Tag tag = Tag.toTag(space, link, request.tag(), request.color());
             link.addTag(tag);
         }
         return linkRepository.save(link).getId();
@@ -51,16 +52,16 @@ public class DefaultLinkService implements LinkService {
     public Long updateLink(LinkUpdateRequest request) {
         Space space = spaceRepository.getById(request.spaceId());
         Link link = linkRepository.getById(request.linkId());
-        Optional<Tag> tag = toTag(space, link, request.tag());
+        Optional<Tag> tag = toTag(space, link, request.tag(), request.color());
 
         link.updateLink(new Url(request.url()), request.title(), tag);
 
         return link.getId();
     }
 
-    private Optional<Tag> toTag(Space space, Link link, String tagName) {
+    private Optional<Tag> toTag(Space space, Link link, String tagName, Color color) {
         if (Objects.nonNull(tagName)) {
-            return Optional.of(Tag.toTag(space, link, tagName));
+            return Optional.of(Tag.toTag(space, link, tagName, color));
         }
         return Optional.empty();
     }
