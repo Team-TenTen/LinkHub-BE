@@ -59,7 +59,7 @@ public class SpaceMembers {
     public Boolean hasHigherRoleCanView(Long memberId) {
         Optional<SpaceMember> spaceMember = getSpaceMemberList()
                 .stream()
-                .filter(sm -> Objects.equals(sm.getId(), memberId))
+                .filter(sm -> Objects.equals(sm.getMemberId(), memberId))
                 .findFirst();
 
         if (spaceMember.isEmpty()){
