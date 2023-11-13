@@ -1,6 +1,7 @@
 package com.tenten.linkhub.domain.space.controller;
 
 import com.tenten.linkhub.domain.auth.MemberDetails;
+import com.tenten.linkhub.domain.space.controller.dto.favorite.FavoriteCreateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateApiResponse;
@@ -115,7 +116,9 @@ public class SpaceController {
             responses = {
                     @ApiResponse(responseCode = "201", description = "스페이스가 성공적으로 생성되었습니다.")
             })
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SpaceCreateApiResponse> createSpace(
             @AuthenticationPrincipal MemberDetails memberDetails,
             @Parameter(
@@ -174,7 +177,9 @@ public class SpaceController {
                     @ApiResponse(responseCode = "404", description = "권한이 없는 유저가 스페이스를 수정하려고 합니다.",
                             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
-    @PatchMapping(value = "/{spaceId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value = "/{spaceId}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SpaceUpdateApiResponse> updateSpace(
             @AuthenticationPrincipal MemberDetails memberDetails,
             @PathVariable Long spaceId,
@@ -222,7 +227,8 @@ public class SpaceController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "검색이 성공적으로 완료 되었습니다."),
             })
-    @GetMapping("/search/me")
+    @GetMapping(value = "/search/me",
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MySpacesFindApiResponses> findMySpaces(
             @AuthenticationPrincipal MemberDetails memberDetails,
             @ModelAttribute MySpacesFindApiRequest request
@@ -247,7 +253,9 @@ public class SpaceController {
                     @ApiResponse(responseCode = "404", description = "댓글을 달 수 없는 스페이스에 댓글을 생성하려고 합니다.",
                             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
-    @PostMapping("/{spaceId}/comments")
+    @PostMapping(value = "/{spaceId}/comments",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RootCommentCreateApiResponse> createRootComment(
             @AuthenticationPrincipal MemberDetails memberDetails,
             @PathVariable Long spaceId,
