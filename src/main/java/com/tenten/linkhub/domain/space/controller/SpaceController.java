@@ -1,9 +1,11 @@
 package com.tenten.linkhub.domain.space.controller;
 
 import com.tenten.linkhub.domain.auth.MemberDetails;
-import com.tenten.linkhub.domain.space.controller.dto.MySpacesFindApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateApiResponse;
+import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentFindApiResponses;
+import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentsFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiResponse;
@@ -14,7 +16,9 @@ import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApi
 import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiResponses;
 import com.tenten.linkhub.domain.space.controller.mapper.CommentApiMapper;
 import com.tenten.linkhub.domain.space.controller.mapper.SpaceApiMapper;
+import com.tenten.linkhub.domain.space.facade.CommentFacade;
 import com.tenten.linkhub.domain.space.facade.SpaceFacade;
+import com.tenten.linkhub.domain.space.facade.dto.CommentAndChildCountAndMemberInfoResponses;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
 import com.tenten.linkhub.domain.space.service.CommentService;
@@ -62,13 +66,15 @@ public class SpaceController {
 
     private final SpaceFacade spaceFacade;
     private final SpaceService spaceService;
+    private final CommentFacade commentFacade;
     private final CommentService commentService;
     private final SpaceApiMapper spaceMapper;
     private final CommentApiMapper commentMapper;
 
-    public SpaceController(SpaceFacade spaceFacade, SpaceService spaceService, CommentService commentService, SpaceApiMapper spaceMapper, CommentApiMapper commentMapper) {
+    public SpaceController(SpaceFacade spaceFacade, SpaceService spaceService, CommentFacade commentFacade, CommentService commentService, SpaceApiMapper spaceMapper, CommentApiMapper commentMapper) {
         this.spaceFacade = spaceFacade;
         this.spaceService = spaceService;
+        this.commentFacade = commentFacade;
         this.commentService = commentService;
         this.spaceMapper = spaceMapper;
         this.commentMapper = commentMapper;
@@ -232,7 +238,7 @@ public class SpaceController {
     }
 
     /**
-     *  루트 댓글 생성 API
+     * 루트 댓글 생성 API
      */
     @Operation(
             summary = "루트 댓글 생성 API", description = "루트 댓글 생성 API 입니다.",
@@ -255,6 +261,31 @@ public class SpaceController {
         return ResponseEntity
                 .created(URI.create(SPACE_LOCATION_PRE_FIX + "/commments/" + savedCommentId))
                 .body(apiResponse);
+    }
+
+    /**
+     * 루트 댓글 페이징 조회 API
+     */
+    @Operation(
+            summary = "루트 댓글 페이징 조회 API", description = "루트 댓글 페이징 조회 API 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "조회가 성공적으로 완료 되었습니다."),
+                    @ApiResponse(responseCode = "404", description = "댓글을 달 수 없는 스페이스의 댓글을 보려고 합니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @GetMapping(
+            value = "/{spaceId}/comments",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RootCommentFindApiResponses> findRootComments(
+            @PathVariable Long spaceId,
+            @ModelAttribute RootCommentsFindApiRequest request
+    ) {
+        PageRequest pageRequest = PageRequest.of(request.pageNumber(), request.pageSize());
+        CommentAndChildCountAndMemberInfoResponses responses = commentFacade.findRootComments(spaceId, pageRequest);
+
+        RootCommentFindApiResponses apiResponses = RootCommentFindApiResponses.from(responses);
+
+        return ResponseEntity.ok(apiResponses);
     }
 
     private void setSpaceViewCookie(HttpServletResponse servletResponse, List<Long> spaceViews) {
