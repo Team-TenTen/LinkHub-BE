@@ -6,12 +6,16 @@ import com.tenten.linkhub.domain.space.repository.comment.CommentRepository;
 import com.tenten.linkhub.domain.space.repository.comment.dto.CommentAndChildCommentCount;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.service.dto.comment.CommentAndChildCountResponses;
+import com.tenten.linkhub.domain.space.service.dto.comment.ReplyCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
 import com.tenten.linkhub.domain.space.service.mapper.CommentMapper;
+import com.tenten.linkhub.global.exception.DataNotFoundException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 public class CommentService {
@@ -33,6 +37,7 @@ public class CommentService {
         space.validateCommentAvailability();
 
         Comment comment = mapper.toComment(request, space);
+
         return commentRepository.save(comment).getId();
     }
 
@@ -46,4 +51,49 @@ public class CommentService {
         return CommentAndChildCountResponses.from(responses);
     }
 
+    @Transactional
+    public Long createReply(ReplyCreateRequest request) {
+        Space space = spaceRepository.getById(request.spaceId());
+
+        space.validateCommentAvailability();
+
+        Comment parentComment = commentRepository.findById(request.commentId())
+                .orElseThrow(() -> new DataNotFoundException("부모 댓글을 찾을 수 없습니다."));
+
+        Long groupNumber = parentComment.getGroupNumber();
+
+        if (groupNumber == null) {
+            groupNumber = parentComment.getId();
+        }
+
+        Comment comment = mapper.toReply(request, space, parentComment, groupNumber);
+
+        return commentRepository.save(comment).getId();
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

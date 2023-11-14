@@ -5,9 +5,13 @@ import com.tenten.linkhub.domain.space.repository.comment.dto.CommentAndChildCom
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
+import java.util.Optional;
+
 public interface CommentRepository {
 
     Comment save(Comment comment);
 
     Slice<CommentAndChildCommentCount> findCommentAndChildCommentCountBySpaceId(Long spaceId, Pageable pageable);
+
+    Optional<Comment> findById(Long parentCommentId);
 }

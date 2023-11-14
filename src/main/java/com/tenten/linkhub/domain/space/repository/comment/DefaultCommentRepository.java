@@ -7,6 +7,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public class DefaultCommentRepository implements CommentRepository{
 
@@ -26,6 +28,11 @@ public class DefaultCommentRepository implements CommentRepository{
     @Override
     public Slice<CommentAndChildCommentCount> findCommentAndChildCommentCountBySpaceId(Long spaceId, Pageable pageable) {
         return commentQueryRepository.findCommentAndChildCommentCountBySpaceId(spaceId, pageable);
+    }
+
+    @Override
+    public Optional<Comment> findById(Long parentCommentId) {
+        return commentJpaRepository.findById(parentCommentId);
     }
 
 }
