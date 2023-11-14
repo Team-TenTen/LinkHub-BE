@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.URL;
 
-public record LinkCreateApiRequest(
+public record LinkUpdateApiRequest(
         @Schema(title = "링크 URL", example = "https://mideveloperni.tistory.com/")
         @NotBlank(message = "URL은 빈 값이 들어올 수 없습니다.")
         @URL(message = "적절한 URL 형식이 아닙니다.")

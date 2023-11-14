@@ -43,6 +43,10 @@ public class Tag {
         this.link = link;
     }
 
+    public void deleteTag() {
+        this.link = null;
+    }
+
     private Tag(Space space, Link link, String name) {
         this.space = space;
         this.link = link;

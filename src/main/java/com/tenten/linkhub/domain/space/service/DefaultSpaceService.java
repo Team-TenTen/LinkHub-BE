@@ -73,7 +73,7 @@ public class DefaultSpaceService implements SpaceService {
     }
 
     @Override
-    public void checkMemberAddLink(Long memberId, Long spaceId) {
+    public void checkMemberEditLink(Long memberId, Long spaceId) {
         if (!spaceMemberRepository.existsAuthorizedSpaceMember(memberId, spaceId)) {
             throw new UnauthorizedAccessException("링크를 생성할 수 있는 권한이 없습니다.");
         }
