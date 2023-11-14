@@ -8,6 +8,7 @@ import com.tenten.linkhub.domain.member.repository.member.MemberJpaRepository;
 import com.tenten.linkhub.domain.space.facade.dto.LinkCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.LinkUpdateFacadeRequest;
 import com.tenten.linkhub.domain.space.model.category.Category;
+import com.tenten.linkhub.domain.space.model.link.Like;
 import com.tenten.linkhub.domain.space.model.link.Color;
 import com.tenten.linkhub.domain.space.model.link.Link;
 import com.tenten.linkhub.domain.space.model.link.vo.Url;
@@ -15,9 +16,11 @@ import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
+import com.tenten.linkhub.domain.space.repository.like.LikeJpaRepository;
 import com.tenten.linkhub.domain.space.repository.link.LinkJpaRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberJpaRepository;
+import com.tenten.linkhub.global.exception.DataNotFoundException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +29,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,6 +52,9 @@ class LinkFacadeTest {
 
     @Autowired
     private LinkJpaRepository linkJpaRepository;
+
+    @Autowired
+    private LikeJpaRepository likeJpaRepository;
 
     private Long memberId1;
     private Long memberId2;
@@ -132,6 +140,50 @@ class LinkFacadeTest {
                 .isInstanceOf(UnauthorizedAccessException.class);
     }
 
+    @Test
+    @DisplayName("좋아요에 성공한다.")
+    void createLike_request_Success() {
+        //given & when
+        linkFacade.createLike(linkId, memberId1);
+
+        //then
+        Optional<Like> like = likeJpaRepository.findByLinkIdAndMemberId(linkId, memberId1);
+        assertThat(like).isPresent();
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 링크에 좋아요를 실패한다.")
+    void createLike_request_ThrowsDataNotFoundException() {
+        //given & when & then
+        Assertions.assertThatThrownBy(() -> linkFacade.createLike(999L, memberId1))
+                .isInstanceOf(DataNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("이미 좋아요한 링크에 좋아요를 실패한다.")
+    void createLike_request_ThrowsUnauthorizedAccessException() {
+        //given
+        linkFacade.createLike(linkId, memberId1);
+
+        //when & then
+        Assertions.assertThatThrownBy(() -> linkFacade.createLike(linkId, memberId1))
+                .isInstanceOf(UnauthorizedAccessException.class);
+    }
+
+    @Test
+    @DisplayName("좋아요 한 링크의 좋아요를 취소한다.")
+    void cancelLike_request_noContent() {
+        //given
+        linkFacade.createLike(linkId, memberId1);
+
+        //when
+        linkFacade.cancelLike(linkId, memberId1);
+
+        //then
+        Optional<Like> like = likeJpaRepository.findByLinkIdAndMemberId(linkId, memberId1);
+        assertThat(like).isEmpty();
+    }
+
     private void setUpTestData() {
         Member member1 = new Member(
                 "123456",
@@ -182,8 +234,15 @@ class LinkFacadeTest {
 
         spaceId = spaceJpaRepository.save(space).getId();
 
-        //링크 생성
-        Link link = Link.toLink(space, memberId1, "링크의 제목", new Url("https://www.naver.com"));
+        //링크 생성 - link
+        Link link = Link.toLink(
+                space,
+                memberId1,
+                "보기 좋은 블로그 링크",
+                new Url("https://www.tistory.com"));
+
         linkId = linkJpaRepository.save(link).getId();
     }
+
+
 }

@@ -1,6 +1,7 @@
 package com.tenten.linkhub.domain.space.controller;
 
 import com.tenten.linkhub.domain.auth.MemberDetails;
+import com.tenten.linkhub.domain.space.controller.dto.like.LikeCreateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.link.LinkCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.link.LinkCreateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.link.LinkUpdateApiRequest;
@@ -8,13 +9,17 @@ import com.tenten.linkhub.domain.space.controller.dto.link.LinkUpdateApiResponse
 import com.tenten.linkhub.domain.space.controller.mapper.LinkApiMapper;
 import com.tenten.linkhub.domain.space.facade.LinkFacade;
 import com.tenten.linkhub.domain.space.facade.dto.LinkCreateFacadeRequest;
+import com.tenten.linkhub.global.response.ErrorResponse;
 import com.tenten.linkhub.domain.space.facade.dto.LinkUpdateFacadeRequest;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -99,5 +104,45 @@ public class LinkController {
         return ResponseEntity
                 .ok()
                 .body(response);
+    }
+
+    /**
+     * 링크 좋아요 API
+     */
+    @Operation(
+            summary = "링크 좋아요 API",
+            description = "[JWT 필요] 링크에 좋아요를 누르는 기능입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "좋아요가 성공한 경우"),
+                    @ApiResponse(responseCode = "404", description = "이미 좋아요한 링크인 경우 또는 존재하지 않는 링크인 경우",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            })
+    @PostMapping(value = "/links/{linkId}/like", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<LikeCreateApiResponse> createLike(
+            @PathVariable Long linkId,
+            @AuthenticationPrincipal MemberDetails memberDetails
+    ) {
+        Boolean isLiked = linkFacade.createLike(linkId, memberDetails.memberId());
+
+        return ResponseEntity.ok().body(LikeCreateApiResponse.from(isLiked));
+    }
+
+    /**
+     * 링크 좋아요 취소 API
+     */
+    @Operation(
+            summary = "링크 좋아요 취소 API",
+            description = "[JWT 필요] 링크에 누른 좋아요를 취소하는 기능입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "좋아요 취소를 성공한 경우"),
+            })
+    @DeleteMapping(value = "/links/{linkId}/like", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> cancelLike(
+            @PathVariable Long linkId,
+            @AuthenticationPrincipal MemberDetails memberDetails
+    ) {
+        linkFacade.cancelLike(linkId, memberDetails.memberId());
+
+        return ResponseEntity.noContent().build();
     }
 }
