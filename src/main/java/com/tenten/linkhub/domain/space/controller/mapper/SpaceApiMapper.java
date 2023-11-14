@@ -1,6 +1,6 @@
 package com.tenten.linkhub.domain.space.controller.mapper;
 
-import com.tenten.linkhub.domain.space.controller.dto.MySpacesFindApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceTagsGetApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiRequest;
