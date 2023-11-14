@@ -1,30 +1,42 @@
 package com.tenten.linkhub.domain.space.service;
 
+import com.tenten.linkhub.domain.space.model.link.Color;
+import com.tenten.linkhub.domain.space.model.link.Like;
 import com.tenten.linkhub.domain.space.model.link.Link;
 import com.tenten.linkhub.domain.space.model.link.Tag;
 import com.tenten.linkhub.domain.space.model.link.vo.Url;
 import com.tenten.linkhub.domain.space.model.space.Space;
+import com.tenten.linkhub.domain.space.repository.like.LikeRepository;
 import com.tenten.linkhub.domain.space.repository.link.LinkRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.repository.tag.TagRepository;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkCreateRequest;
+import com.tenten.linkhub.domain.space.service.dto.link.LinkUpdateRequest;
+import com.tenten.linkhub.global.exception.DataNotFoundException;
+import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 public class DefaultLinkService implements LinkService {
     private final LinkRepository linkRepository;
     private final TagRepository tagRepository;
     private final SpaceRepository spaceRepository;
+    private final LikeRepository likeRepository;
 
-    public DefaultLinkService(LinkRepository linkRepository, TagRepository tagRepository, SpaceRepository spaceRepository) {
+    public DefaultLinkService(LinkRepository linkRepository, TagRepository tagRepository, SpaceRepository spaceRepository, LikeRepository likeRepository) {
         this.linkRepository = linkRepository;
         this.tagRepository = tagRepository;
         this.spaceRepository = spaceRepository;
+        this.likeRepository = likeRepository;
     }
 
     @Override
+    @Transactional
     public Long createLink(LinkCreateRequest request) {
         Space space = spaceRepository.getById(request.spaceId());
 
@@ -35,9 +47,52 @@ public class DefaultLinkService implements LinkService {
                 new Url(request.url()));
 
         if (Objects.nonNull(request.tag())) {
-            Tag tag = Tag.toTag(space, link, request.tag());
+            Tag tag = Tag.toTag(space, link, request.tag(), request.color());
             link.addTag(tag);
         }
         return linkRepository.save(link).getId();
+    }
+
+    @Override
+    @Transactional
+    public Long updateLink(LinkUpdateRequest request) {
+        Space space = spaceRepository.getById(request.spaceId());
+        Link link = linkRepository.getById(request.linkId());
+        Optional<Tag> tag = toTag(space, link, request.tag(), request.color());
+
+        link.updateLink(new Url(request.url()), request.title(), tag);
+
+        return link.getId();
+    }
+
+    private Optional<Tag> toTag(Space space, Link link, String tagName, Color color) {
+        if (Objects.nonNull(tagName)) {
+            return Optional.of(Tag.toTag(space, link, tagName, color));
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    @Transactional
+    public Boolean createLike(Long linkId, Long memberId) {
+        Link link = linkRepository.findById(linkId)
+                .orElseThrow(() -> new DataNotFoundException("존재하지 않는 링크입니다."));
+
+        likeRepository.findByLinkIdAndMemberId(linkId, memberId)
+                .ifPresent(m -> {
+                    throw new UnauthorizedAccessException("이미 좋아요한 링크입니다.");
+                });
+
+        likeRepository.save(new Like(link, memberId));
+
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public void cancelLike(Long linkId, Long memberId) {
+        Optional<Like> like = likeRepository.findByLinkIdAndMemberId(linkId, memberId);
+
+        like.ifPresent(likeRepository::delete);
     }
 }

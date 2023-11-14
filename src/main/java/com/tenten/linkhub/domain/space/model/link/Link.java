@@ -2,6 +2,7 @@ package com.tenten.linkhub.domain.space.model.link;
 
 import com.tenten.linkhub.domain.space.model.link.vo.Url;
 import com.tenten.linkhub.domain.space.model.space.Space;
+import com.tenten.linkhub.global.entity.BaseEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -14,12 +15,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 
@@ -27,7 +30,7 @@ import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 @Table(name = "links")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class Link {
+public class Link extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +40,7 @@ public class Link {
     @JoinColumn(name = "space_id", nullable = false)
     private Space space;
 
-    @OneToMany(mappedBy = "link", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "link", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Tag> tags = new ArrayList<>();
 
     @Column(nullable = false)
@@ -54,6 +57,9 @@ public class Link {
 
     @Column(nullable = false)
     private Long likeCount;
+
+    @Version
+    private int version;
 
     public void addTag(Tag tag) {
         tags.add(tag);
@@ -88,4 +94,32 @@ public class Link {
         this.viewCount = 0L;
     }
 
+    public void updateLink(Url url, String title, Optional<Tag> tag) {
+        validateNotNull(url, "url");
+        validateNotNull(title, "title");
+        this.url = url;
+        this.title = title;
+
+        if (hasTag()) {
+            deleteTag();
+        }
+
+        tag.ifPresent(value -> this.tags.add(value));
+    }
+
+    private boolean hasTag() {
+        return !tags.isEmpty();
+    }
+
+    private void deleteTag() {
+        this.tags.forEach(Tag::deleteTag);
+        this.tags.clear();
+    }
+    public void increaseLikeCount() {
+        likeCount++;
+    }
+
+    public void decreaseLikeCount() {
+        likeCount--;
+    }
 }
