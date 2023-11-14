@@ -57,4 +57,12 @@ public class Comment extends BaseEntity {
         this.memberId = memberId;
         this.space = space;
     }
+
+    public Comment updateComment(String content) {
+        validateMaxSize(content, 1000, "content");
+
+        this.content = content;
+
+        return this;
+    }
 }

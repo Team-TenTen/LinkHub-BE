@@ -5,9 +5,11 @@ import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.comment.CommentRepository;
 import com.tenten.linkhub.domain.space.repository.comment.dto.CommentAndChildCommentCount;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
+import com.tenten.linkhub.domain.space.service.dto.CommentUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.CommentAndChildCountResponses;
 import com.tenten.linkhub.domain.space.service.dto.comment.ReplyCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
+import com.tenten.linkhub.domain.space.service.dto.comment.updateCommentRequest;
 import com.tenten.linkhub.domain.space.service.mapper.CommentMapper;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import org.springframework.data.domain.Pageable;
@@ -70,30 +72,18 @@ public class CommentService {
 
         return commentRepository.save(comment).getId();
     }
+
+    @Transactional
+    public Long updateComment(CommentUpdateRequest request) {
+        Space space = spaceRepository.getById(request.spaceId());
+
+        space.validateCommentAvailability();
+
+        Comment comment = commentRepository.findById(request.commentId())
+                .orElseThrow(() -> new DataNotFoundException("수정할 댓글을 찾을 수 없습니다."));
+
+        Comment updatedComment = comment.updateComment(request.content());
+
+        return updatedComment.getId();
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
