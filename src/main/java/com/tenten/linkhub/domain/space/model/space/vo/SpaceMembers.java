@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.space.model.space.vo;
 
+import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
@@ -8,6 +9,8 @@ import jakarta.persistence.OneToMany;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
@@ -51,6 +54,19 @@ public class SpaceMembers {
 
     public void deleteAll() {
         spaceMemberList.forEach(SpaceMember::deleteSpaceMember);
+    }
+
+    public Boolean hasHigherRoleCanView(Long memberId) {
+        Optional<SpaceMember> spaceMember = getSpaceMemberList()
+                .stream()
+                .filter(sm -> Objects.equals(sm.getMemberId(), memberId))
+                .findFirst();
+
+        if (spaceMember.isEmpty()){
+            return false;
+        }
+
+        return spaceMember.get().hasHigherRoleCanView();
     }
 
 }

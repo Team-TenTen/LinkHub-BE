@@ -145,6 +145,10 @@ public class Space extends BaseEntity {
         return Objects.equals(this.memberId, memberId);
     }
 
+    public Boolean isCanEdit(Long memberId) {
+        return spaceMembers.hasHigherRoleCanView(memberId);
+    }
+
     public void validateOwnership(Long memberId) {
         if (!Objects.equals(this.memberId, memberId)) {
             throw new UnauthorizedAccessException("해당 멤버는 이 스페이스의 owner가 아닙니다.");

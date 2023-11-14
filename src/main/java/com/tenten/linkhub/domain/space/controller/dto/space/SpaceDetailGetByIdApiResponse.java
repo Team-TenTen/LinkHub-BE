@@ -19,8 +19,10 @@ public record SpaceDetailGetByIdApiResponse(
         Long scrapCount,
         Long favoriteCount,
         String spaceImagePath,
-        List<SpaceMemberDetailInfo> memberDetailInfos,
-        Boolean isOwner
+        Boolean isOwner,
+        Boolean isCanEdit,
+        Boolean hasFavorite,
+        List<SpaceMemberDetailInfo> memberDetailInfos
 ) {
     public static SpaceDetailGetByIdApiResponse from(SpaceDetailGetByIdFacadeResponse response){
         return new SpaceDetailGetByIdApiResponse(
@@ -36,8 +38,10 @@ public record SpaceDetailGetByIdApiResponse(
                 response.scrapCount(),
                 response.favoriteCount(),
                 response.spaceImagePath(),
-                response.memberDetailInfos(),
-                response.isOwner()
+                response.isOwner(),
+                response.isCanEdit(),
+                response.hasFavorite(),
+                response.memberDetailInfos()
         );
     }
 

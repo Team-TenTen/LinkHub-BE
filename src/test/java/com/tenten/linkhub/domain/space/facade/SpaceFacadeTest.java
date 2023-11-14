@@ -12,10 +12,12 @@ import com.tenten.linkhub.domain.space.facade.dto.SpaceMemberDetailInfo;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
 import com.tenten.linkhub.domain.space.handler.SpaceEventHandler;
 import com.tenten.linkhub.domain.space.model.category.Category;
+import com.tenten.linkhub.domain.space.model.space.Favorite;
 import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
+import com.tenten.linkhub.domain.space.repository.favorite.FavoriteJpaRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
@@ -55,11 +57,11 @@ class SpaceFacadeTest {
     @Autowired
     private MemberJpaRepository memberJpaRepository;
 
-    @MockBean
-    private S3Uploader mockS3Uploader;
+    @Autowired
+    private FavoriteJpaRepository favoriteJpaRepository;
 
     @MockBean
-    private SpaceEventHandler spaceEventHandler;
+    private S3Uploader mockS3Uploader;
 
     private Long setUpSpaceId;
     private Long setUpMemberId;
@@ -124,6 +126,8 @@ class SpaceFacadeTest {
         assertThat(response.spaceImagePath()).isEqualTo("https://testimage1");
         assertThat(response.viewCount()).isEqualTo(0L);
         assertThat(response.isOwner()).isEqualTo(true);
+        assertThat(response.isCanEdit()).isEqualTo(true);
+        assertThat(response.hasFavorite()).isEqualTo(true);
         assertThat(spaceMemberDetailInfos.get(0).memberId()).isEqualTo(setUpMemberId);
         assertThat(spaceMemberDetailInfos.get(0).nickname()).isEqualTo("잠자는 사자의 콧털");
         assertThat(spaceMemberDetailInfos.get(0).profilePath()).isEqualTo("https://testprofileimage");
@@ -227,7 +231,11 @@ class SpaceFacadeTest {
                 true
         );
 
-        setUpSpaceId = spaceJpaRepository.save(space).getId();
+        Space savedSpace = spaceJpaRepository.save(space);
+        setUpSpaceId = savedSpace.getId();
+
+        Favorite favorite = new Favorite(savedSpace, setUpMemberId);
+        favoriteJpaRepository.save(favorite);
     }
 
 }
