@@ -10,4 +10,5 @@ import org.mapstruct.Mapper;
 public interface CommentApiMapper {
 
     RootCommentCreateRequest toRootCommentCreateRequest(Long spaceId, Long memberId, String content);
+
 }
