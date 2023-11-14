@@ -37,7 +37,12 @@ public class DefaultCommentRepository implements CommentRepository{
 
     @Override
     public void deleteById(Long commentId) {
-        return commentJpaRepository.deleteById(commentId);
+        commentJpaRepository.deleteById(commentId);
+    }
+
+    @Override
+    public Slice<Comment> findRepliesById(Long commentId, Pageable pageable) {
+        return commentJpaRepository.findRepliesByParentCommentId(commentId, pageable);
     }
 
 }

@@ -15,5 +15,7 @@ public interface CommentRepository {
 
     Optional<Comment> findById(Long parentCommentId);
 
-    Comment deleteById(Long commentId);
+    void deleteById(Long commentId);
+
+    Slice<Comment> findRepliesById(Long commentId, Pageable pageable);
 }
