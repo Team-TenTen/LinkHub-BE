@@ -103,10 +103,11 @@ class LinkFacadeTest {
     @DisplayName("좋아요에 성공한다.")
     void createLike_request_Success() {
         //given & when
-        Boolean isLiked = linkFacade.createLike(linkId, memberId1);
+        linkFacade.createLike(linkId, memberId1);
 
         //then
-        assertThat(isLiked).isTrue();
+        Optional<Like> like = likeJpaRepository.findByLinkIdAndMemberId(linkId, memberId1);
+        assertThat(like).isPresent();
     }
 
     @Test
