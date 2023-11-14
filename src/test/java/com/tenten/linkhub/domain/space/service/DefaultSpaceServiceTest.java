@@ -8,6 +8,7 @@ import com.tenten.linkhub.domain.member.repository.member.MemberJpaRepository;
 import com.tenten.linkhub.domain.space.facade.LinkFacade;
 import com.tenten.linkhub.domain.space.facade.dto.LinkCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.model.category.Category;
+import com.tenten.linkhub.domain.space.model.link.Color;
 import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
@@ -144,9 +145,9 @@ class DefaultSpaceServiceTest {
     void getTagsBySpaceId_spaceId_Success() {
         //given - 링크 생성 3개 생성 그 중 2개는 태그명이 같다.
         Space space = spaceJpaRepository.findById(spaceId1).get();
-        linkFacade.createLink(spaceId1, setUpMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목A", "태그1"));
-        linkFacade.createLink(spaceId1, setUpMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목B", "태그1"));
-        linkFacade.createLink(spaceId1, setUpMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목C", "태그2"));
+        linkFacade.createLink(spaceId1, setUpMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목A", "태그1", Color.BLUE));
+        linkFacade.createLink(spaceId1, setUpMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목B", "태그1", Color.GRAY));
+        linkFacade.createLink(spaceId1, setUpMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목C", "태그2", Color.RED));
 
         //when
         SpaceTagsGetResponse response = spaceService.getTagsBySpaceId(spaceId1);
