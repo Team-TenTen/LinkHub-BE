@@ -17,12 +17,14 @@ import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryReques
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.mapper.SpaceMapper;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.tenten.linkhub.domain.space.model.space.Role.OWNER;
 
+@RequiredArgsConstructor
 @Service
 public class DefaultSpaceService implements SpaceService {
 
@@ -30,13 +32,6 @@ public class DefaultSpaceService implements SpaceService {
     private final SpaceMemberRepository spaceMemberRepository;
     private final FavoriteRepository favoriteRepository;
     private final SpaceMapper mapper;
-
-    public DefaultSpaceService(SpaceRepository spaceRepository, SpaceMemberRepository spaceMemberRepository, FavoriteRepository favoriteRepository, SpaceMapper mapper) {
-        this.spaceRepository = spaceRepository;
-        this.spaceMemberRepository = spaceMemberRepository;
-        this.favoriteRepository = favoriteRepository;
-        this.mapper = mapper;
-    }
 
     @Override
     @Transactional(readOnly = true)

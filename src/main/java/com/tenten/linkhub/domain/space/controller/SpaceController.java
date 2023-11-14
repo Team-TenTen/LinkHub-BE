@@ -38,6 +38,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
@@ -60,6 +61,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Tag(name = "spaces", description = "space 템플릿 API Document")
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/spaces")
 public class SpaceController {
@@ -72,15 +74,6 @@ public class SpaceController {
     private final CommentService commentService;
     private final SpaceApiMapper spaceMapper;
     private final CommentApiMapper commentMapper;
-
-    public SpaceController(SpaceFacade spaceFacade, SpaceService spaceService, CommentFacade commentFacade, CommentService commentService, SpaceApiMapper spaceMapper, CommentApiMapper commentMapper) {
-        this.spaceFacade = spaceFacade;
-        this.spaceService = spaceService;
-        this.commentFacade = commentFacade;
-        this.commentService = commentService;
-        this.spaceMapper = spaceMapper;
-        this.commentMapper = commentMapper;
-    }
 
     /**
      * 스페이스 검색 API
