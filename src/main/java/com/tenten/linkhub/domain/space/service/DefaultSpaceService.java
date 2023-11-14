@@ -1,6 +1,5 @@
 package com.tenten.linkhub.domain.space.service;
 
-import com.tenten.linkhub.domain.space.model.space.Favorite;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
@@ -10,7 +9,6 @@ import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberReposit
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
 import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.SpaceRegisterInFavoriteResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
@@ -98,17 +96,6 @@ public class DefaultSpaceService implements SpaceService {
         Slice<Space> spaces = spaceRepository.findMySpacesJoinSpaceImageByQuery(mapper.toMySpacesFindQueryCondition(request));
 
         return SpacesFindByQueryResponses.from(spaces);
-    }
-
-    @Override
-    @Transactional
-    public SpaceRegisterInFavoriteResponse registerSpaceInFavorite(Long spaceId, Long memberId) {
-        Space space = spaceRepository.getById(spaceId);
-
-        Favorite favorite = mapper.toFavorite(space, memberId);
-        Favorite savedFavorite = favoriteRepository.save(favorite);
-
-        return SpaceRegisterInFavoriteResponse.of(savedFavorite.getId(), spaceId);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.tenten.linkhub.domain.space.service.dto.space;
+package com.tenten.linkhub.domain.space.service.dto.favorite;
 
 public record SpaceRegisterInFavoriteResponse(Long favoriteId, Long registeredSpaceId) {
 

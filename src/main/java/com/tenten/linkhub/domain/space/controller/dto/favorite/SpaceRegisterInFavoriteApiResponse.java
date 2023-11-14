@@ -1,6 +1,6 @@
-package com.tenten.linkhub.domain.space.controller.dto.space;
+package com.tenten.linkhub.domain.space.controller.dto.favorite;
 
-import com.tenten.linkhub.domain.space.service.dto.space.SpaceRegisterInFavoriteResponse;
+import com.tenten.linkhub.domain.space.service.dto.favorite.SpaceRegisterInFavoriteResponse;
 
 public record SpaceRegisterInFavoriteApiResponse(
         Long favoriteId,

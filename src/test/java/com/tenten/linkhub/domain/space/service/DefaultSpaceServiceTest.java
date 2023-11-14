@@ -6,15 +6,12 @@ import com.tenten.linkhub.domain.member.model.ProfileImage;
 import com.tenten.linkhub.domain.member.model.Provider;
 import com.tenten.linkhub.domain.member.repository.member.MemberJpaRepository;
 import com.tenten.linkhub.domain.space.model.category.Category;
-import com.tenten.linkhub.domain.space.model.space.Favorite;
 import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
-import com.tenten.linkhub.domain.space.repository.favorite.FavoriteJpaRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.SpaceRegisterInFavoriteResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
@@ -46,11 +43,7 @@ class DefaultSpaceServiceTest {
     @Autowired
     private MemberJpaRepository memberJpaRepository;
 
-    @Autowired
-    private FavoriteJpaRepository favoriteJpaRepository;
-
     private Long setUpMemberId;
-    private Long setUpSpaceId3;
 
     @BeforeEach
     void setUp() {
@@ -139,19 +132,6 @@ class DefaultSpaceServiceTest {
         assertThat(content.get(0).spaceImagePath()).isEqualTo("https://testimage2");
     }
 
-    @Test
-    @DisplayName("유저는 스페이스를 즐겨찾기에 등록할 수 있다.")
-    void registerSpaceInFavorite() {
-        //when
-        SpaceRegisterInFavoriteResponse response = spaceService.registerSpaceInFavorite(setUpSpaceId3, setUpMemberId);
-
-        //then
-        Favorite savedFavorite = favoriteJpaRepository.findById(response.favoriteId()).get();
-
-        assertThat(savedFavorite.getMemberId()).isEqualTo(setUpMemberId);
-        assertThat(savedFavorite.getSpace().getSpaceName()).isEqualTo("세번째 스페이스");
-    }
-
     private void setupData() {
         Member member = new Member(
                 "testSocialId",
@@ -208,7 +188,7 @@ class DefaultSpaceServiceTest {
 
         spaceJpaRepository.save(space1);
         spaceJpaRepository.save(space2);
-        setUpSpaceId3 = spaceJpaRepository.save(space3).getId();
+        spaceJpaRepository.save(space3);
     }
 
 }

@@ -1,7 +1,7 @@
 package com.tenten.linkhub.domain.space.controller;
 
 import com.tenten.linkhub.domain.auth.MemberDetails;
-import com.tenten.linkhub.domain.space.controller.dto.space.SpaceRegisterInFavoriteApiResponse;
+import com.tenten.linkhub.domain.space.controller.dto.favorite.SpaceRegisterInFavoriteApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateApiResponse;
@@ -23,9 +23,10 @@ import com.tenten.linkhub.domain.space.facade.dto.CommentAndChildCountAndMemberI
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
 import com.tenten.linkhub.domain.space.service.CommentService;
+import com.tenten.linkhub.domain.space.service.FavoriteService;
 import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.SpaceRegisterInFavoriteResponse;
+import com.tenten.linkhub.domain.space.service.dto.favorite.SpaceRegisterInFavoriteResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.util.SpaceViewList;
 import com.tenten.linkhub.global.response.ErrorResponse;
@@ -72,6 +73,7 @@ public class SpaceController {
     private final SpaceService spaceService;
     private final CommentFacade commentFacade;
     private final CommentService commentService;
+    private final FavoriteService favoriteService;
     private final SpaceApiMapper spaceMapper;
     private final CommentApiMapper commentMapper;
 
@@ -307,7 +309,7 @@ public class SpaceController {
             @AuthenticationPrincipal MemberDetails memberDetails,
             @PathVariable Long spaceId
     ){
-        SpaceRegisterInFavoriteResponse response = spaceService.registerSpaceInFavorite(spaceId, memberDetails.memberId());
+        SpaceRegisterInFavoriteResponse response = favoriteService.createFavorite(spaceId, memberDetails.memberId());
         SpaceRegisterInFavoriteApiResponse apiResponse = SpaceRegisterInFavoriteApiResponse.from(response);
 
         return ResponseEntity.ok(apiResponse);

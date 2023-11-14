@@ -78,8 +78,4 @@ public class SpaceMapper {
         );
     }
 
-    public Favorite toFavorite(Space space, Long memberId) {
-        return new Favorite(space, memberId);
-    }
-
 }
