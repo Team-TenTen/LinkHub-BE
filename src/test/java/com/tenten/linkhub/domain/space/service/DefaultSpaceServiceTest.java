@@ -5,13 +5,17 @@ import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.ProfileImage;
 import com.tenten.linkhub.domain.member.model.Provider;
 import com.tenten.linkhub.domain.member.repository.member.MemberJpaRepository;
+import com.tenten.linkhub.domain.space.facade.LinkFacade;
+import com.tenten.linkhub.domain.space.facade.dto.LinkCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.model.category.Category;
+import com.tenten.linkhub.domain.space.model.link.Color;
 import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagsGetResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
@@ -43,7 +47,11 @@ class DefaultSpaceServiceTest {
     @Autowired
     private MemberJpaRepository memberJpaRepository;
 
+    @Autowired
+    private LinkFacade linkFacade;
+
     private Long setUpMemberId;
+    private Long spaceId1;
 
     @BeforeEach
     void setUp() {
@@ -132,6 +140,23 @@ class DefaultSpaceServiceTest {
         assertThat(content.get(0).spaceImagePath()).isEqualTo("https://testimage2");
     }
 
+    @Test
+    @DisplayName("유저는 스페이스에서 사용된 태그 목록을 확인할 수 있다. - 링크 생성")
+    void getTagsBySpaceId_spaceId_Success() {
+        //given - 링크 생성 3개 생성 그 중 2개는 태그명이 같다.
+        Space space = spaceJpaRepository.findById(spaceId1).get();
+        linkFacade.createLink(spaceId1, setUpMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목A", "태그1", Color.BLUE));
+        linkFacade.createLink(spaceId1, setUpMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목B", "태그1", Color.GRAY));
+        linkFacade.createLink(spaceId1, setUpMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목C", "태그2", Color.RED));
+
+        //when
+        SpaceTagsGetResponse response = spaceService.getTagsBySpaceId(spaceId1);
+
+        //then
+        assertThat(response.tagNames()).hasSize(2);
+        assertThat(response.tagNames()).containsExactlyInAnyOrderElementsOf(List.of("태그1", "태그2"));
+    }
+
     private void setupData() {
         Member member = new Member(
                 "testSocialId",
@@ -189,6 +214,8 @@ class DefaultSpaceServiceTest {
         spaceJpaRepository.save(space1);
         spaceJpaRepository.save(space2);
         spaceJpaRepository.save(space3);
+
+        spaceId1 = space1.getId();
     }
 
 }

@@ -6,8 +6,10 @@ import com.tenten.linkhub.domain.member.model.ProfileImage;
 import com.tenten.linkhub.domain.member.model.Provider;
 import com.tenten.linkhub.domain.member.repository.member.MemberJpaRepository;
 import com.tenten.linkhub.domain.space.facade.dto.LinkCreateFacadeRequest;
+import com.tenten.linkhub.domain.space.facade.dto.LinkUpdateFacadeRequest;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.link.Like;
+import com.tenten.linkhub.domain.space.model.link.Color;
 import com.tenten.linkhub.domain.space.model.link.Link;
 import com.tenten.linkhub.domain.space.model.link.vo.Url;
 import com.tenten.linkhub.domain.space.model.space.Role;
@@ -71,7 +73,8 @@ class LinkFacadeTest {
         LinkCreateFacadeRequest request = new LinkCreateFacadeRequest(
                 "https://naver.com",
                 "링크의 제목",
-                "태그의 이름"
+                "태그의 이름",
+                Color.RED
         );
 
         //when
@@ -91,11 +94,49 @@ class LinkFacadeTest {
         LinkCreateFacadeRequest request = new LinkCreateFacadeRequest(
                 "https://naver.com",
                 "링크의 제목",
-                "태그의 이름"
+                "태그의 이름",
+                Color.EMERALD
         );
 
         //when
         Assertions.assertThatThrownBy(() -> linkFacade.createLink(spaceId, memberId2, request))
+                .isInstanceOf(UnauthorizedAccessException.class);
+    }
+
+    @Test
+    @DisplayName("사용자는 CAN_EDIT이나 OWNER 권한을 가진 경우 링크를 수정할 수 있다.")
+    void updateLink_request_Success() {
+        //given
+        LinkUpdateFacadeRequest request = new LinkUpdateFacadeRequest(
+                "https://naver2.com",
+                "수정할 링크의 제목",
+                "수정할 태그의 이름",
+                Color.GRAY
+        );
+
+        //when
+        Long updateLinkId = linkFacade.updateLink(spaceId, linkId, memberId1, request);
+
+        //then
+        Link link = linkJpaRepository.findById(linkId).get();
+        assertThat(link.getUrl().getUrl()).isEqualTo("https://naver2.com");
+        assertThat(link.getTitle()).isEqualTo("수정할 링크의 제목");
+        assertThat(link.getTags().get(0).getName()).isEqualTo("수정할 태그의 이름");
+    }
+
+    @Test
+    @DisplayName("사용자는 CAN_EDIT이나 OWNER 권한이 아닌 경우 링크를 수정할 수 없다.")
+    void updateLink_request_ThrowsUnauthorizedAccessException() {
+        //given
+        LinkUpdateFacadeRequest request = new LinkUpdateFacadeRequest(
+                "https://naver2.com",
+                "수정할 링크의 제목",
+                "수정할 태그의 이름",
+                Color.BLUE
+        );
+
+        //when
+        Assertions.assertThatThrownBy(() -> linkFacade.updateLink(spaceId, linkId, memberId2, request))
                 .isInstanceOf(UnauthorizedAccessException.class);
     }
 
