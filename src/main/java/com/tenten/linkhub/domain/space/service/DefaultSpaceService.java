@@ -5,9 +5,11 @@ import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberRepository;
+import com.tenten.linkhub.domain.space.repository.tag.TagRepository;
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
 import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagsGetResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
@@ -18,6 +20,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static com.tenten.linkhub.domain.space.model.space.Role.OWNER;
 
 @Service
@@ -26,11 +30,16 @@ public class DefaultSpaceService implements SpaceService {
     private final SpaceRepository spaceRepository;
     private final SpaceMapper mapper;
     private final SpaceMemberRepository spaceMemberRepository;
+    private final TagRepository tagRepository;
 
-    public DefaultSpaceService(SpaceRepository spaceRepository, SpaceMapper mapper, SpaceMemberRepository spaceMemberRepository) {
+    public DefaultSpaceService(SpaceRepository spaceRepository,
+                               SpaceMapper mapper,
+                               SpaceMemberRepository spaceMemberRepository,
+                               TagRepository tagRepository) {
         this.spaceRepository = spaceRepository;
         this.mapper = mapper;
         this.spaceMemberRepository = spaceMemberRepository;
+        this.tagRepository = tagRepository;
     }
 
     @Override
@@ -94,6 +103,12 @@ public class DefaultSpaceService implements SpaceService {
         Slice<Space> spaces = spaceRepository.findMySpacesJoinSpaceImageByQuery(mapper.toMySpacesFindQueryCondition(request));
 
         return SpacesFindByQueryResponses.from(spaces);
+    }
+
+    @Override
+    public SpaceTagsGetResponse getTagsBySpaceId(Long spaceId) {
+        List<String> tagNames = tagRepository.findBySpaceIdAndGroupBySpaceName(spaceId);
+        return SpaceTagsGetResponse.from(tagNames);
     }
 
 }

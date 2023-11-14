@@ -60,7 +60,7 @@ public class SpaceMapper {
                 request.memberId());
     }
 
-    public SpaceUpdateDto toSpaceUpdateDto(SpaceUpdateRequest request){
+    public SpaceUpdateDto toSpaceUpdateDto(SpaceUpdateRequest request) {
         Optional<ImageInfo> imageInfo = request.imageInfo();
         Optional<SpaceImage> spaceImage = imageInfo.map(i -> new SpaceImage(i.path(), i.name()));
 
@@ -76,5 +76,4 @@ public class SpaceMapper {
                 spaceImage
         );
     }
-
 }
