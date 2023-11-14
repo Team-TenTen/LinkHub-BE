@@ -14,4 +14,6 @@ public interface CommentRepository {
     Slice<CommentAndChildCommentCount> findCommentAndChildCommentCountBySpaceId(Long spaceId, Pageable pageable);
 
     Optional<Comment> findById(Long parentCommentId);
+
+    Comment deleteById(Long commentId);
 }

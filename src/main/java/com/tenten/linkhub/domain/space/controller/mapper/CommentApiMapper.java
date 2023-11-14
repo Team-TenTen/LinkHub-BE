@@ -13,7 +13,7 @@ public interface CommentApiMapper {
 
     RootCommentCreateRequest toRootCommentCreateRequest(Long spaceId, Long memberId, String content);
 
-    ReplyCreateRequest toReplyCreateRequest(Long spaceId, String commentId, Long aLong, String content);
+    ReplyCreateRequest toReplyCreateRequest(Long spaceId, Long commentId, Long memberId, String content);
 
-    CommentUpdateRequest toCommentUpdateRequest(Long spaceId, String commentId, Long aLong, String content);
+    CommentUpdateRequest toCommentUpdateRequest(Long spaceId, Long commentId, Long memberId, String content);
 }

@@ -1,6 +1,7 @@
 package com.tenten.linkhub.domain.space.controller;
 
 import com.tenten.linkhub.domain.auth.MemberDetails;
+import com.tenten.linkhub.domain.space.controller.dto.comment.CommentUpdateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.comment.CommentUpdateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.comment.ReplyCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.comment.ReplyCreateApiResponse;
@@ -286,7 +287,7 @@ public class SpaceController {
     public ResponseEntity<ReplyCreateApiResponse> createReply(
             @AuthenticationPrincipal MemberDetails memberDetails,
             @PathVariable Long spaceId,
-            @PathVariable String commentId,
+            @PathVariable Long commentId,
             @RequestBody @Valid ReplyCreateApiRequest request
     ) {
         ReplyCreateRequest apiRequest = commentMapper.toReplyCreateRequest(spaceId, commentId, memberDetails.memberId(), request.content());
@@ -355,8 +356,8 @@ public class SpaceController {
     public ResponseEntity<CommentUpdateApiResponse> updateComment(
             @AuthenticationPrincipal MemberDetails memberDetails,
             @PathVariable Long spaceId,
-            @PathVariable String commentId,
-            @RequestBody @Valid ReplyCreateApiRequest request
+            @PathVariable Long commentId,
+            @RequestBody @Valid CommentUpdateApiRequest request
     ) {
         CommentUpdateRequest apiRequest = commentMapper.toCommentUpdateRequest(spaceId, commentId, memberDetails.memberId(), request.content());
         Long updatedCommentId = commentService.updateComment(apiRequest);
@@ -366,6 +367,26 @@ public class SpaceController {
         return ResponseEntity
                 .created(URI.create(SPACE_LOCATION_PRE_FIX + "/commments/" + updatedCommentId))
                 .body(apiResponse);
+    }
+
+    @Operation(
+            summary = "댓글 삭제 API", description = "댓글 삭제 API 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "댓글이 성공적으로 삭제되었습니다."),
+                    @ApiResponse(responseCode = "404", description = "존재하지 않는 스페이스 / 댓글을 달 수 없는 스페이스 / 존재하지 않는 댓글",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @DeleteMapping("/{spaceId}/comments/{commentId}")
+    public ResponseEntity<Void> deleteComment(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long spaceId,
+            @PathVariable Long commentId
+    ) {
+        commentService.deleteComment(spaceId, commentId, memberDetails);
+
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 
     private void setSpaceViewCookie(HttpServletResponse servletResponse, List<Long> spaceViews) {

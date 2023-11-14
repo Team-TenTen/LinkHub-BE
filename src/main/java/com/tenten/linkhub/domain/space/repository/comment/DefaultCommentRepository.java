@@ -35,4 +35,9 @@ public class DefaultCommentRepository implements CommentRepository{
         return commentJpaRepository.findById(parentCommentId);
     }
 
+    @Override
+    public void deleteById(Long commentId) {
+        return commentJpaRepository.deleteById(commentId);
+    }
+
 }
