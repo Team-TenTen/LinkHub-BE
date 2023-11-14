@@ -39,4 +39,9 @@ public class Favorite {
     @Column(name = "member_id", nullable = false)
     private Long memberId;
 
+    public Favorite(Space space, Long memberId) {
+        this.space = space;
+        this.memberId = memberId;
+    }
+
 }
