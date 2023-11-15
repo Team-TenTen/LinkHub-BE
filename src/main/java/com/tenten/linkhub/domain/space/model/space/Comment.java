@@ -2,7 +2,7 @@
 package com.tenten.linkhub.domain.space.model.space;
 
 import com.tenten.linkhub.global.entity.BaseEntity;
-import com.tenten.linkhub.global.util.CommonValidator;
+import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -15,6 +15,8 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.Objects;
 
 import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
 import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
@@ -64,5 +66,15 @@ public class Comment extends BaseEntity {
         this.content = content;
 
         return this;
+    }
+
+    public void delete() {
+        this.isDeleted = true;
+    }
+
+    public void validateCommentOwner(Long requestingMemberId) {
+        if (!Objects.equals(this.memberId, requestingMemberId)) {
+            throw new UnauthorizedAccessException("댓글을 삭제 할 권한이 없습니다.");
+        }
     }
 }
