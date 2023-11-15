@@ -5,13 +5,12 @@ import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.comment.CommentRepository;
 import com.tenten.linkhub.domain.space.repository.comment.dto.CommentAndChildCommentCount;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
-import com.tenten.linkhub.domain.space.service.dto.CommentUpdateRequest;
+import com.tenten.linkhub.domain.space.service.dto.comment.CommentUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.CommentAndChildCountResponses;
 import com.tenten.linkhub.domain.space.service.dto.comment.RepliesFindResponses;
 import com.tenten.linkhub.domain.space.service.dto.comment.ReplyCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
 import com.tenten.linkhub.domain.space.service.mapper.CommentMapper;
-import com.tenten.linkhub.global.exception.DataNotFoundException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -54,11 +53,9 @@ public class CommentService {
     @Transactional
     public Long createReply(ReplyCreateRequest request) {
         Space space = spaceRepository.getById(request.spaceId());
-
         space.validateCommentAvailability();
 
-        Comment parentComment = commentRepository.findById(request.commentId())
-                .orElseThrow(() -> new DataNotFoundException("부모 댓글을 찾을 수 없습니다."));
+        Comment parentComment = commentRepository.getById(request.commentId());
 
         Long groupNumber = parentComment.getGroupNumber();
 
@@ -74,14 +71,10 @@ public class CommentService {
     @Transactional
     public Long updateComment(CommentUpdateRequest request) {
         Space space = spaceRepository.getById(request.spaceId());
-
         space.validateCommentAvailability();
 
-        Comment comment = commentRepository.findById(request.commentId())
-                .orElseThrow(() -> new DataNotFoundException("수정할 댓글을 찾을 수 없습니다."));
-
+        Comment comment = commentRepository.getById(request.commentId());
         comment.validateCommentOwner(request.memberId());
-
         Comment updatedComment = comment.updateComment(request.content());
 
         return updatedComment.getId();
@@ -90,14 +83,10 @@ public class CommentService {
     @Transactional
     public Long deleteComment(Long spaceId, Long commentId, Long memberId) {
         Space space = spaceRepository.getById(spaceId);
-
         space.validateCommentAvailability();
 
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new DataNotFoundException("수정할 댓글을 찾을 수 없습니다."));
-
+        Comment comment = commentRepository.getById(commentId);
         comment.validateCommentOwner(memberId);
-
         comment.delete();
 
         return commentId;
@@ -106,7 +95,6 @@ public class CommentService {
     @Transactional(readOnly = true)
     public RepliesFindResponses findReplies(Long spaceId, Long commentId, Pageable pageable) {
         Space space = spaceRepository.getById(spaceId);
-
         space.validateCommentAvailability();
 
         Slice<Comment> responses = commentRepository.findRepliesById(commentId, pageable);

@@ -7,11 +7,11 @@ import com.tenten.linkhub.domain.space.controller.dto.comment.RepliesFindApiRequ
 import com.tenten.linkhub.domain.space.controller.dto.comment.RepliesFindApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.comment.ReplyCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.comment.ReplyCreateApiResponse;
-import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentFindApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentsFindApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiResponse;
@@ -31,7 +31,7 @@ import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeReques
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
 import com.tenten.linkhub.domain.space.service.CommentService;
 import com.tenten.linkhub.domain.space.service.SpaceService;
-import com.tenten.linkhub.domain.space.service.dto.CommentUpdateRequest;
+import com.tenten.linkhub.domain.space.service.dto.comment.CommentUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.ReplyCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagsGetResponse;
@@ -410,7 +410,7 @@ public class SpaceController {
             @PathVariable Long spaceId,
             @PathVariable Long commentId
     ) {
-        Long deletedCommentId = commentService.deleteComment(spaceId, commentId, memberDetails.memberId());
+        commentService.deleteComment(spaceId, commentId, memberDetails.memberId());
 
         return ResponseEntity
                 .noContent()

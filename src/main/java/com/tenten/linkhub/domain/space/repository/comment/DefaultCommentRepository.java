@@ -3,6 +3,7 @@ package com.tenten.linkhub.domain.space.repository.comment;
 import com.tenten.linkhub.domain.space.model.space.Comment;
 import com.tenten.linkhub.domain.space.repository.comment.dto.CommentAndChildCommentCount;
 import com.tenten.linkhub.domain.space.repository.comment.query.CommentQueryRepository;
+import com.tenten.linkhub.global.exception.DataNotFoundException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
@@ -31,8 +32,9 @@ public class DefaultCommentRepository implements CommentRepository{
     }
 
     @Override
-    public Optional<Comment> findById(Long commentId) {
-        return commentJpaRepository.findById(commentId);
+    public Comment getById(Long commentId) {
+        return commentJpaRepository.findById(commentId)
+                .orElseThrow(() -> new DataNotFoundException("댓글을 찾을 수 없습니다."));
     }
 
     @Override

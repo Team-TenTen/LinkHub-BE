@@ -2,7 +2,6 @@ package com.tenten.linkhub.domain.space.facade.dto;
 
 import com.tenten.linkhub.domain.member.service.dto.MemberInfo;
 import com.tenten.linkhub.domain.member.service.dto.MemberInfos;
-import com.tenten.linkhub.domain.space.service.dto.comment.CommentAndChildCountResponses;
 import com.tenten.linkhub.domain.space.service.dto.comment.RepliesFindResponses;
 import org.springframework.data.domain.Slice;
 

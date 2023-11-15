@@ -1,6 +1,5 @@
 package com.tenten.linkhub.domain.space.controller.dto.comment;
 
-import com.tenten.linkhub.domain.space.facade.dto.CommentAndChildCountAndMemberInfoResponses;
 import com.tenten.linkhub.domain.space.facade.dto.RepliesAndMemberInfoResponses;
 import com.tenten.linkhub.global.util.PageMetaData;
 import org.springframework.data.domain.Slice;

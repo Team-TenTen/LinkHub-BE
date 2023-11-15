@@ -13,7 +13,7 @@ import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.comment.CommentJpaRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
-import com.tenten.linkhub.domain.space.service.dto.CommentUpdateRequest;
+import com.tenten.linkhub.domain.space.service.dto.comment.CommentUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.ReplyCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
