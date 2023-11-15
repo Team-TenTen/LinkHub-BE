@@ -1,17 +1,17 @@
 package com.tenten.linkhub.domain.space.controller.mapper;
 
 import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindWithFilterApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceTagsGetApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiRequest;
-import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiRequest;
-import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindWithFilterApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindByQueryApiRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagsGetResponse;
-import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.springframework.data.domain.Pageable;
@@ -24,9 +24,9 @@ import java.util.List;
 )
 public interface SpaceApiMapper {
 
-    SpacesFindByQueryRequest toSpacesFindByQueryRequest(SpacesFindByQueryApiRequest request, Pageable pageable);
+    PublicSpacesFindByQueryRequest toPublicSpacesFindByQueryRequest(PublicSpacesFindByQueryApiRequest request, Pageable pageable);
 
-    SpacesFindByQueryRequest toSpacesFindByQueryRequest(SpacesFindWithFilterApiRequest request, Pageable pageable);
+    PublicSpacesFindByQueryRequest toPublicSpacesFindByQueryRequest(PublicSpacesFindWithFilterApiRequest request, Pageable pageable);
 
     SpaceCreateFacadeRequest toSpaceCreateFacadeRequest(SpaceCreateApiRequest request, MultipartFile file, Long memberId);
 

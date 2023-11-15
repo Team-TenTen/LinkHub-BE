@@ -8,16 +8,16 @@ import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateA
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentFindApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentsFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiResponses;
+import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindByQueryApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindWithFilterApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceDetailGetByIdApiResponse;
-import com.tenten.linkhub.domain.space.controller.dto.space.SpaceFindWithFilterApiResponses;
+import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpaceFindWithFilterApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceTagsGetApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiResponse;
-import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiRequest;
-import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiResponses;
-import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindWithFilterApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindByQueryApiResponses;
 import com.tenten.linkhub.domain.space.controller.mapper.CommentApiMapper;
 import com.tenten.linkhub.domain.space.controller.mapper.SpaceApiMapper;
 import com.tenten.linkhub.domain.space.facade.CommentFacade;
@@ -30,9 +30,9 @@ import com.tenten.linkhub.domain.space.service.FavoriteService;
 import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.favorite.SpaceRegisterInFavoriteResponse;
+import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagsGetResponse;
-import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
+import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.util.SpaceViewList;
 import com.tenten.linkhub.global.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -94,8 +94,8 @@ public class SpaceController {
             })
     @GetMapping(value = "/search",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SpacesFindByQueryApiResponses> findSpacesByQuery(
-            @ModelAttribute SpacesFindByQueryApiRequest request
+    public ResponseEntity<PublicSpacesFindByQueryApiResponses> findPublicSpacesByQuery(
+            @ModelAttribute PublicSpacesFindByQueryApiRequest request
     ) {
         PageRequest pageRequest = PageRequest.of(
                 request.pageNumber(),
@@ -103,11 +103,11 @@ public class SpaceController {
                 request.sort() != null ? Sort.by(request.sort()) : Sort.unsorted()
         );
 
-        SpacesFindByQueryResponses responses = spaceService.findSpacesByQuery(
-                spaceMapper.toSpacesFindByQueryRequest(request, pageRequest)
+        PublicSpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(
+                spaceMapper.toPublicSpacesFindByQueryRequest(request, pageRequest)
         );
 
-        SpacesFindByQueryApiResponses apiResponses = SpacesFindByQueryApiResponses.from(responses);
+        PublicSpacesFindByQueryApiResponses apiResponses = PublicSpacesFindByQueryApiResponses.from(responses);
         return ResponseEntity.ok(apiResponses);
     }
 
@@ -231,18 +231,18 @@ public class SpaceController {
                     @ApiResponse(responseCode = "200", description = "검색이 성공적으로 완료 되었습니다."),
             })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SpaceFindWithFilterApiResponses> findSpacesWithFilter(
-            @ModelAttribute SpacesFindWithFilterApiRequest request
+    public ResponseEntity<PublicSpaceFindWithFilterApiResponses> findPublicSpacesWithFilter(
+            @ModelAttribute PublicSpacesFindWithFilterApiRequest request
     ) {
         PageRequest pageRequest = PageRequest.of(
                 request.pageNumber(),
                 request.pageSize(),
                 request.sort() != null ? Sort.by(request.sort()) : Sort.unsorted());
 
-        SpacesFindByQueryRequest serviceRequest = spaceMapper.toSpacesFindByQueryRequest(request, pageRequest);
-        SpacesFindByQueryResponses responses = spaceService.findSpacesByQuery(serviceRequest);
+        PublicSpacesFindByQueryRequest serviceRequest = spaceMapper.toPublicSpacesFindByQueryRequest(request, pageRequest);
+        PublicSpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(serviceRequest);
 
-        SpaceFindWithFilterApiResponses apiResponses = SpaceFindWithFilterApiResponses.from(responses);
+        PublicSpaceFindWithFilterApiResponses apiResponses = PublicSpaceFindWithFilterApiResponses.from(responses);
 
         return ResponseEntity.ok(apiResponses);
     }
@@ -267,7 +267,7 @@ public class SpaceController {
     ) {
         PageRequest pageRequest = PageRequest.of(request.pageNumber(), request.pageSize());
 
-        SpacesFindByQueryResponses responses = spaceService.findMySpacesByQuery(
+        PublicSpacesFindByQueryResponses responses = spaceService.findMySpacesByQuery(
                 spaceMapper.toMySpacesFindRequest(pageRequest, request, memberDetails.memberId())
         );
 

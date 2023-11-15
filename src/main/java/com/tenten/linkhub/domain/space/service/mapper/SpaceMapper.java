@@ -1,6 +1,5 @@
 package com.tenten.linkhub.domain.space.service.mapper;
 
-import com.tenten.linkhub.domain.space.model.space.Favorite;
 import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
@@ -11,7 +10,7 @@ import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
 import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import org.springframework.stereotype.Component;
 
@@ -20,7 +19,7 @@ import java.util.Optional;
 @Component
 public class SpaceMapper {
 
-    public QueryCondition toQueryCond(SpacesFindByQueryRequest request) {
+    public QueryCondition toQueryCond(PublicSpacesFindByQueryRequest request) {
         return new QueryCondition(
                 request.pageable(),
                 request.keyWord(),
