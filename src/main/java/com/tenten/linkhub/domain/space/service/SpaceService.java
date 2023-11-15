@@ -6,12 +6,12 @@ import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagsGetResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
-import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
+import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryResponses;
 
 public interface SpaceService {
 
-    SpacesFindByQueryResponses findSpacesByQuery(SpacesFindByQueryRequest request);
+    PublicSpacesFindByQueryResponses findPublicSpacesByQuery(PublicSpacesFindByQueryRequest request);
 
     Long createSpace(SpaceCreateRequest spaceCreateRequest);
 
@@ -23,7 +23,7 @@ public interface SpaceService {
 
     DeletedSpaceImageNames deleteSpaceById(Long spaceId, Long memberId);
 
-    SpacesFindByQueryResponses findMySpacesByQuery(MySpacesFindRequest mySpacesFindRequest);
+    PublicSpacesFindByQueryResponses findMySpacesByQuery(MySpacesFindRequest mySpacesFindRequest);
 
     SpaceTagsGetResponse getTagsBySpaceId(Long spaceId);
 }

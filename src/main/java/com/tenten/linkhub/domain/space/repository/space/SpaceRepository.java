@@ -7,7 +7,7 @@ import org.springframework.data.domain.Slice;
 
 public interface SpaceRepository {
 
-    Slice<Space> findSpacesJoinSpaceImageByQuery(QueryCondition queryCondition);
+    Slice<Space> findPublicSpacesJoinSpaceImageByQuery(QueryCondition queryCondition);
 
     Space save(Space space);
 
