@@ -14,6 +14,7 @@ import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.comment.CommentJpaRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.service.dto.CommentUpdateRequest;
+import com.tenten.linkhub.domain.space.service.dto.comment.ReplyCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
@@ -196,6 +197,58 @@ class CommentServiceTest {
         //given //when //then
         assertThatThrownBy(() -> commentService.deleteComment(setUpSpaceId2, setUpCommentId2, setUpMemberId1))
                 .isInstanceOf(UnauthorizedAccessException.class);
+    }
+
+    @Test
+    @DisplayName("유저가 대댓글을 다는데 성공한다.")
+    void createReply() {
+        //given
+        ReplyCreateRequest request = new ReplyCreateRequest(
+                setUpSpaceId1,
+                setUpCommentId1,
+                setUpMemberId1,
+                "댓글1에 대한 대댓글입니다.");
+
+        //when
+        Long createdReplyId = commentService.createReply(request);
+
+        // then
+        Comment createdReply = commentJpaRepository.findById(createdReplyId).get();
+
+        assertThat(createdReply.getId()).isEqualTo(createdReplyId);
+        assertThat(createdReply.getContent()).isEqualTo("댓글1에 대한 대댓글입니다.");
+        assertThat(createdReply.getGroupNumber()).isEqualTo(setUpCommentId1);
+        assertThat(createdReply.getSpace().getId()).isEqualTo(setUpSpaceId1);
+    }
+
+    @Test
+    @DisplayName("유저가 댓글 기능이 비활성화된 스페이스에 대댓글 작성을 실패한다.")
+    void createReply_UnauthorizedAccessException() {
+        //given
+        ReplyCreateRequest request = new ReplyCreateRequest(
+                setUpSpaceId2,
+                setUpCommentId2,
+                setUpMemberId1,
+                "댓글1에 대한 대댓글입니다.");
+
+        //when //then
+        assertThatThrownBy(() -> commentService.createReply(request))
+                .isInstanceOf(UnauthorizedAccessException.class);
+    }
+
+    @Test
+    @DisplayName("유저가 존재하지 않는 부모 댓글에 대댓글 작성을 실패한다.")
+    void createReply_DataNotFoundException() {
+        //given
+        ReplyCreateRequest request = new ReplyCreateRequest(
+                setUpSpaceId1,
+                999L,
+                setUpMemberId1,
+                "존재하지 않는 댓글999에 대한 대댓글입니다.");
+
+        //when //then
+        assertThatThrownBy(() -> commentService.createReply(request))
+                .isInstanceOf(DataNotFoundException.class);
     }
 
     private void setUpTestData(){

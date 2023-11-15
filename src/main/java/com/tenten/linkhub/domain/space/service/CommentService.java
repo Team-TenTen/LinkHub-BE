@@ -62,7 +62,7 @@ public class CommentService {
 
         Long groupNumber = parentComment.getGroupNumber();
 
-        if (groupNumber == null) {
+        if (parentComment.isRootComment()) {
             groupNumber = parentComment.getId();
         }
 
@@ -103,6 +103,7 @@ public class CommentService {
         return commentId;
     }
 
+    @Transactional(readOnly = true)
     public RepliesFindResponses findReplies(Long spaceId, Long commentId, Pageable pageable) {
         Space space = spaceRepository.getById(spaceId);
 

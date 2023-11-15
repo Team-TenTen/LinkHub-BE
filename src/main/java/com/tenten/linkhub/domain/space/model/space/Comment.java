@@ -77,4 +77,8 @@ public class Comment extends BaseEntity {
             throw new UnauthorizedAccessException("댓글을 삭제 할 권한이 없습니다.");
         }
     }
+
+    public boolean isRootComment() {
+        return this.groupNumber == null;
+    }
 }
