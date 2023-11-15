@@ -361,7 +361,7 @@ public class SpaceController {
             summary = "대댓글 페이징 조회 API", description = "대댓글 페이징 조회 API 입니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "조회가 성공적으로 완료 되었습니다."),
-                    @ApiResponse(responseCode = "404", description = "존재하지 않는 스페이스 / 댓글을 막아놓은 스페이스 ",
+                    @ApiResponse(responseCode = "404", description = "존재하지 않는 스페이스 / 댓글을 막아놓은 스페이스 / 삭제된 루트 댓글 ",
                             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @GetMapping(

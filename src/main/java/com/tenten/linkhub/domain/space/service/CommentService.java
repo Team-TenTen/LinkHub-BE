@@ -5,8 +5,8 @@ import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.comment.CommentRepository;
 import com.tenten.linkhub.domain.space.repository.comment.dto.CommentAndChildCommentCount;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
-import com.tenten.linkhub.domain.space.service.dto.comment.CommentUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.CommentAndChildCountResponses;
+import com.tenten.linkhub.domain.space.service.dto.comment.CommentUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.RepliesFindResponses;
 import com.tenten.linkhub.domain.space.service.dto.comment.ReplyCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
@@ -93,8 +93,15 @@ public class CommentService {
         Space space = spaceRepository.getById(spaceId);
         space.validateCommentAvailability();
 
+        validateRootComment(commentId);
+
+
         Slice<Comment> responses = commentRepository.findRepliesById(commentId, pageable);
 
         return RepliesFindResponses.from(responses);
+    }
+
+    private void validateRootComment(Long commentId) {
+        commentRepository.getById(commentId);
     }
 }
