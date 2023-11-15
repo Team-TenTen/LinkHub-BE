@@ -224,7 +224,7 @@ public class SpaceController {
      * 스페이스 필터 조회 API
      */
     @Operation(
-            summary = "스페이스 필터 조회 API", description = "메인 페이지용 스페이스 필터 조회이며 pageNumber, pageSize, sort, filter를 받아 검색합니다.\n\n " +
+            summary = "스페이스 필터 조회 API", description = "메인 페이지용 스페이스 필터 조회이며 pageNumber, pageSize, sort, filter를 받아 검색합니다. (sort, filter조건 없이 사용 가능합니다.)\n\n " +
             "sort: {created_at, updated_at, favorite_count, view_count}\n\n " +
             "filter: {ENTER_ART, LIFE_KNOWHOW_SHOPPING, HOBBY_LEISURE_TRAVEL, KNOWLEDGE_ISSUE_CAREER, ETC}",
             responses = {
