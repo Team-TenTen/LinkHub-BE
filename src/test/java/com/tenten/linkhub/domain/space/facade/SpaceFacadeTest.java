@@ -10,7 +10,6 @@ import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeReques
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceMemberDetailInfo;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
-import com.tenten.linkhub.domain.space.handler.SpaceEventHandler;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.space.Favorite;
 import com.tenten.linkhub.domain.space.model.space.Role;
@@ -22,12 +21,6 @@ import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,6 +31,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
