@@ -249,10 +249,6 @@ class CommentFacadeTest {
         );
 
         commentJpaRepository.save(childComment2OfChildComment1);
-
-
-
-
     }
 
 }
