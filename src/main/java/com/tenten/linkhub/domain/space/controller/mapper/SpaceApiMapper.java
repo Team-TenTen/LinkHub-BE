@@ -5,6 +5,7 @@ import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiReques
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceTagsGetApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindWithFilterApiRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
@@ -24,6 +25,8 @@ import java.util.List;
 public interface SpaceApiMapper {
 
     SpacesFindByQueryRequest toSpacesFindByQueryRequest(SpacesFindByQueryApiRequest request, Pageable pageable);
+
+    SpacesFindByQueryRequest toSpacesFindByQueryRequest(SpacesFindWithFilterApiRequest request, Pageable pageable);
 
     SpaceCreateFacadeRequest toSpaceCreateFacadeRequest(SpaceCreateApiRequest request, MultipartFile file, Long memberId);
 
