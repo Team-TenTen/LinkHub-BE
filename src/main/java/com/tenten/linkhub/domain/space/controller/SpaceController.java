@@ -86,7 +86,9 @@ public class SpaceController {
      * 스페이스 검색 API
      */
     @Operation(
-            summary = "스페이스 검색 API", description = "keyWord, pageNumber, pageSize, sort, filter를 받아 검색합니다.",
+            summary = "스페이스 검색 API", description = "keyWord, pageNumber, pageSize, sort, filter를 받아 검색합니다.(keyWord, sort, filter 조건 없이 사용 가능합니다.)\n\n" +
+            "sort: {created_at, updated_at, favorite_count, view_count}\n\n" +
+            "filter: {ENTER_ART, LIFE_KNOWHOW_SHOPPING, HOBBY_LEISURE_TRAVEL, KNOWLEDGE_ISSUE_CAREER, ETC}",
             responses = {
                     @ApiResponse(responseCode = "200", description = "검색이 성공적으로 완료 되었습니다."),
             })
@@ -219,7 +221,7 @@ public class SpaceController {
     }
 
     /**
-     *  스페이스 필터 조회 API
+     * 스페이스 필터 조회 API
      */
     @Operation(
             summary = "스페이스 필터 조회 API", description = "메인 페이지용 스페이스 필터 조회이며 pageNumber, pageSize, sort, filter를 받아 검색합니다.\n\n " +
@@ -231,7 +233,7 @@ public class SpaceController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SpaceFindWithFilterApiResponses> findSpacesWithFilter(
             @ModelAttribute SpacesFindWithFilterApiRequest request
-    ){
+    ) {
         PageRequest pageRequest = PageRequest.of(
                 request.pageNumber(),
                 request.pageSize(),
@@ -250,8 +252,10 @@ public class SpaceController {
      * !필터에 해당 API 추가해야 함!
      */
     @Operation(
-            summary = "내 스페이스 검색 API", description = "나의 스페이스를 keyWord, pageNumber, pageSize, filter를 통해 검색합니다.\n" +
-            "해당 API는 keyWord, filter 없이 사용 가능한 페이징 조회입니다.",
+            summary = "내 스페이스 검색 API", description = "나의 스페이스를 keyWord, pageNumber, pageSize, filter를 통해 검색합니다. (keyWord, sort, filter 조건 없이 사용 가능합니다.)\n\n" +
+            "해당 API는 keyWord, filter 없이도 사용 가능한 페이징 조회입니다.\n\n" +
+            "sort: {created_at, updated_at, favorite_count, view_count}\n\n" +
+            "filter: {ENTER_ART, LIFE_KNOWHOW_SHOPPING, HOBBY_LEISURE_TRAVEL, KNOWLEDGE_ISSUE_CAREER, ETC}",
             responses = {
                     @ApiResponse(responseCode = "200", description = "검색이 성공적으로 완료 되었습니다."),
             })
@@ -345,7 +349,7 @@ public class SpaceController {
     }
 
     /**
-     *  스페이스 즐겨찾기 추가 API
+     * 스페이스 즐겨찾기 추가 API
      */
     @Operation(
             summary = "스페이스 즐겨찾기 추가 API", description = "스페이스 즐겨찾기 추가 API 입니다.",
@@ -355,12 +359,12 @@ public class SpaceController {
                             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @PostMapping(value = "{spaceId}/favorites",
-    consumes = MediaType.APPLICATION_JSON_VALUE,
-    produces = MediaType.APPLICATION_JSON_VALUE)
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SpaceRegisterInFavoriteApiResponse> registerSpaceInFavorite(
             @AuthenticationPrincipal MemberDetails memberDetails,
             @PathVariable Long spaceId
-    ){
+    ) {
         SpaceRegisterInFavoriteResponse response = favoriteService.createFavorite(spaceId, memberDetails.memberId());
         SpaceRegisterInFavoriteApiResponse apiResponse = SpaceRegisterInFavoriteApiResponse.from(response);
 
