@@ -1,6 +1,7 @@
 package com.tenten.linkhub.domain.space.handler;
 
 import com.tenten.linkhub.domain.space.handler.dto.SpaceImagesDeleteDto;
+import com.tenten.linkhub.domain.space.handler.dto.SpaceIncreaseFavoriteCountDto;
 import com.tenten.linkhub.domain.space.handler.dto.SpaceIncreaseViewCountDto;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
@@ -35,6 +36,13 @@ public class SpaceEventHandler {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void deleteImageFiles(SpaceImagesDeleteDto imagesDeleteDto) {
         s3Uploader.deleteImages(imagesDeleteDto.spaceImageNames());
+    }
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void increaseSpaceFavoriteCount(SpaceIncreaseFavoriteCountDto increaseFavoriteCountDto){
+        spaceRepository.getById(increaseFavoriteCountDto.spaceId())
+                .increaseFavoriteCount();
     }
 
 }
