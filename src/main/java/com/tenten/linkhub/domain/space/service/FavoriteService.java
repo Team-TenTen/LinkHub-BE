@@ -7,6 +7,7 @@ import com.tenten.linkhub.domain.space.repository.favorite.FavoriteRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.service.dto.favorite.SpaceRegisterInFavoriteResponse;
 import com.tenten.linkhub.domain.space.service.mapper.FavoriteMapper;
+import com.tenten.linkhub.global.exception.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -23,14 +24,21 @@ public class FavoriteService {
 
     @Transactional
     public SpaceRegisterInFavoriteResponse createFavorite(Long spaceId, Long memberId) {
+        checkSpaceExistenceOrThrowException(spaceId);
+        eventPublisher.publishEvent(new SpaceIncreaseFavoriteCountDto(spaceId));
+
         Space space = spaceRepository.getById(spaceId);
 
         Favorite favorite = mapper.toFavorite(space, memberId);
         Favorite savedFavorite = favoriteRepository.save(favorite);
 
-        eventPublisher.publishEvent(new SpaceIncreaseFavoriteCountDto(spaceId));
-
         return SpaceRegisterInFavoriteResponse.of(savedFavorite.getId(), spaceId);
+    }
+
+    private void checkSpaceExistenceOrThrowException(Long spaceId) {
+        if (!spaceRepository.existsById(spaceId)){
+            throw new DataNotFoundException("해당 space를 찾을 수 없습니다.");
+        }
     }
 
 }

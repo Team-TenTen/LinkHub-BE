@@ -38,8 +38,8 @@ public class SpaceEventHandler {
         s3Uploader.deleteImages(imagesDeleteDto.spaceImageNames());
     }
 
-    @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void increaseSpaceFavoriteCount(SpaceIncreaseFavoriteCountDto increaseFavoriteCountDto){
         spaceRepository.getById(increaseFavoriteCountDto.spaceId())
                 .increaseFavoriteCount();

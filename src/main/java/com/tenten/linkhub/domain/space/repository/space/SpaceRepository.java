@@ -16,4 +16,6 @@ public interface SpaceRepository {
     Space getSpaceJoinSpaceMemberById(Long spaceId);
 
     Slice<Space> findMySpacesJoinSpaceImageByQuery(MySpacesFindQueryCondition mySpacesFindQueryCondition);
+
+    Boolean existsById(Long spaceId);
 }

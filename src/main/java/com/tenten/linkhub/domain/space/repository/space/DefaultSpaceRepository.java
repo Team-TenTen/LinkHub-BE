@@ -46,4 +46,9 @@ public class DefaultSpaceRepository implements SpaceRepository {
         return spaceQueryRepository.findMySpacesJoinSpaceImageByCondition(queryCondition);
     }
 
+    @Override
+    public Boolean existsById(Long spaceId) {
+        return spaceJpaRepository.existsByIdAndIsDeletedFalse(spaceId);
+    }
+
 }
