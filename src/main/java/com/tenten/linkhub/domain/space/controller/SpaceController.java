@@ -289,7 +289,10 @@ public class SpaceController {
                     @ApiResponse(responseCode = "404", description = "존재하지 않는 스페이스 / 대댓글을 달 수 없는 스페이스 / 존재하지 않는 부모 댓글",
                             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
-    @PostMapping("/{spaceId}/comments/{commentId}/replies")
+    @PostMapping(value = "/{spaceId}/comments/{commentId}/replies",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
     public ResponseEntity<ReplyCreateApiResponse> createReply(
             @AuthenticationPrincipal MemberDetails memberDetails,
             @PathVariable Long spaceId,
@@ -367,7 +370,7 @@ public class SpaceController {
     public ResponseEntity<RepliesFindApiResponses> findReplies(
             @PathVariable Long spaceId,
             @PathVariable Long commentId,
-            @RequestBody @Valid RepliesFindApiRequest request
+            @ModelAttribute RepliesFindApiRequest request
     ) {
         PageRequest pageRequest = PageRequest.of(request.pageNumber(), request.pageSize());
         RepliesAndMemberInfoResponses responses = commentFacade.findReplies(spaceId, commentId, pageRequest);

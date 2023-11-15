@@ -10,6 +10,8 @@ public record RepliesFindApiResponse(
         Long memberId,
         String nickname,
         String aboutMe,
-        String profileImagePath
+        String profileImagePath,
+        Long groupNumber,
+        Long parentCommentId
 ) {
 }

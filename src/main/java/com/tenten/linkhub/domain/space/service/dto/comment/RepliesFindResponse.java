@@ -7,6 +7,8 @@ public record RepliesFindResponse(
         String content,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        Long memberId
+        Long memberId,
+        Long groupNumber,
+        Long parentCommentId
 ) {
 }

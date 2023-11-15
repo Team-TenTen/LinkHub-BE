@@ -53,6 +53,7 @@ class CommentFacadeTest {
     private Long setUpSpaceId2;
     private Long setUpMemberId;
     private Comment savedComment1;
+    private Comment childComment1;
     private Comment childComment1OfChildComment1;
     private Comment childComment2OfChildComment1;
 
@@ -114,18 +115,26 @@ class CommentFacadeTest {
         assertThat(content.get(0).content()).isEqualTo("첫번째 루트 댓글의 대댓글1");
         assertThat(content.get(0).nickname()).isEqualTo("테스트 유저");
         assertThat(content.get(0).profileImagePath()).isEqualTo("https://testprofileimage1");
+        assertThat(content.get(0).groupNumber()).isEqualTo(savedComment1.getId());
+        assertThat(content.get(0).parentCommentId()).isEqualTo(savedComment1.getId());
 
         assertThat(content.get(1).content()).isEqualTo("첫번째 루트 댓글의 대댓글1의 대댓글1");
         assertThat(content.get(1).nickname()).isEqualTo("테스트 유저");
         assertThat(content.get(1).profileImagePath()).isEqualTo("https://testprofileimage1");
+        assertThat(content.get(1).groupNumber()).isEqualTo(savedComment1.getId());
+        assertThat(content.get(1).parentCommentId()).isEqualTo(childComment1.getId());
 
         assertThat(content.get(2).content()).isEqualTo("첫번째 루트 댓글의 대댓글2");
         assertThat(content.get(2).nickname()).isEqualTo("잠자는 사자의 콧털");
         assertThat(content.get(2).profileImagePath()).isEqualTo("https://testprofileimage");
+        assertThat(content.get(2).groupNumber()).isEqualTo(savedComment1.getId());
+        assertThat(content.get(2).parentCommentId()).isEqualTo(savedComment1.getId());
 
         assertThat(content.get(3).content()).isEqualTo("첫번째 루트 댓글의 대댓글1의 대댓글2");
         assertThat(content.get(3).nickname()).isEqualTo("테스트 유저");
         assertThat(content.get(3).profileImagePath()).isEqualTo("https://testprofileimage1");
+        assertThat(content.get(3).groupNumber()).isEqualTo(savedComment1.getId());
+        assertThat(content.get(3).parentCommentId()).isEqualTo(childComment1.getId());
     }
 
     private void setUpTestData() {
@@ -203,7 +212,7 @@ class CommentFacadeTest {
         savedComment1 = commentJpaRepository.save(comment1);
         Comment savedComment2 = commentJpaRepository.save(comment2);
 
-        Comment childComment1 = new Comment(
+        childComment1 = new Comment(
                 savedComment1,
                 savedComment1.getId(),
                 "첫번째 루트 댓글의 대댓글1",

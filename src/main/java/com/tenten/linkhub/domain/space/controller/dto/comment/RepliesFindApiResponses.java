@@ -20,7 +20,9 @@ public record RepliesFindApiResponses(
                         r.memberId(),
                         r.nickname(),
                         r.aboutMe(),
-                        r.profileImagePath()
+                        r.profileImagePath(),
+                        r.groupNumber(),
+                        r.parentCommentId()
                 ));
 
         PageMetaData pageMetaData = new PageMetaData(

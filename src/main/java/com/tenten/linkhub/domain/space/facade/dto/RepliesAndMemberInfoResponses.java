@@ -25,7 +25,9 @@ public record RepliesAndMemberInfoResponses(Slice<RepliesAndMemberInfo> response
                             c.memberId(),
                             Objects.isNull(memberInfo) ? null : memberInfo.nickname(),
                             Objects.isNull(memberInfo) ? null : memberInfo.aboutMe(),
-                            Objects.isNull(memberInfo) ? null : memberInfo.path()
+                            Objects.isNull(memberInfo) ? null : memberInfo.path(),
+                            c.groupNumber(),
+                            c.parentCommentId()
                     );
                 });
 
