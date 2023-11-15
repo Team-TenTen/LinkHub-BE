@@ -1,6 +1,5 @@
 package com.tenten.linkhub.domain.space.service;
 
-import com.tenten.linkhub.domain.space.handler.dto.SpaceIncreaseFavoriteCountDto;
 import com.tenten.linkhub.domain.space.model.space.Favorite;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.favorite.FavoriteRepository;
@@ -19,26 +18,21 @@ public class FavoriteService {
 
     private final FavoriteRepository favoriteRepository;
     private final SpaceRepository spaceRepository;
-    private final ApplicationEventPublisher eventPublisher;
     private final FavoriteMapper mapper;
 
     @Transactional
     public SpaceRegisterInFavoriteResponse createFavorite(Long spaceId, Long memberId) {
-        checkSpaceExistenceOrThrowException(spaceId);
-        eventPublisher.publishEvent(new SpaceIncreaseFavoriteCountDto(spaceId));
-
         Space space = spaceRepository.getById(spaceId);
+        space.validateVisibilityAndMembership(memberId);
 
-        Favorite favorite = mapper.toFavorite(space, memberId);
+        Favorite favorite = mapper.toFavorite(spaceId, memberId);
         Favorite savedFavorite = favoriteRepository.save(favorite);
 
-        return SpaceRegisterInFavoriteResponse.of(savedFavorite.getId(), spaceId);
-    }
+        spaceRepository.increaseFavoriteCount(spaceId);
 
-    private void checkSpaceExistenceOrThrowException(Long spaceId) {
-        if (!spaceRepository.existsById(spaceId)){
-            throw new DataNotFoundException("해당 space를 찾을 수 없습니다.");
-        }
+        return SpaceRegisterInFavoriteResponse.of(
+                savedFavorite.getId(),
+                space.getFavoriteCount() + 1);
     }
 
 }

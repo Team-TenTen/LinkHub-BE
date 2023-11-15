@@ -7,6 +7,7 @@ import com.tenten.linkhub.domain.space.repository.space.query.SpaceQueryReposito
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class DefaultSpaceRepository implements SpaceRepository {
@@ -47,8 +48,9 @@ public class DefaultSpaceRepository implements SpaceRepository {
     }
 
     @Override
-    public Boolean existsById(Long spaceId) {
-        return spaceJpaRepository.existsByIdAndIsDeletedFalse(spaceId);
+    @Transactional
+    public void increaseFavoriteCount(Long spaceId) {
+        spaceJpaRepository.increaseFavoriteCount(spaceId);
     }
 
 }

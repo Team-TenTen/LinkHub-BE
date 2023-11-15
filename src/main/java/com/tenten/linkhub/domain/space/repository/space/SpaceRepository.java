@@ -17,5 +17,6 @@ public interface SpaceRepository {
 
     Slice<Space> findMySpacesJoinSpaceImageByQuery(MySpacesFindQueryCondition mySpacesFindQueryCondition);
 
-    Boolean existsById(Long spaceId);
+    void increaseFavoriteCount(Long spaceId);
+
 }
