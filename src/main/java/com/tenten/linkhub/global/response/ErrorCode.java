@@ -14,7 +14,10 @@ public enum ErrorCode {
     FAIL_TO_DELETE_IMAGE("S002", "이미지를 삭제할 수 없습니다."),
 
     //member
-    DUPLICATE_NEWS_EMAIL("M001", "중복된 이메일입니다.");
+    DUPLICATE_NEWS_EMAIL("M001", "중복된 이메일입니다."),
+
+    //favorite
+    DUPLICATE_FAVORITE("F001", "중복된 즐겨찾기 등록입니다.");
 
     private final String code;
     private final String message;
