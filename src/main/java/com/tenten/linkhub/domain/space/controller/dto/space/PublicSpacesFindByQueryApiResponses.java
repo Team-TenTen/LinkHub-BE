@@ -6,13 +6,13 @@ import org.springframework.data.domain.Slice;
 
 import java.util.List;
 
-public record MySpacesFindApiResponses(
-        List<MySpacesFindApiResponse> responses,
+public record PublicSpacesFindByQueryApiResponses(
+        List<PublicSpacesFindByQueryApiResponse> responses,
         PageMetaData metaData
 ) {
-    public static MySpacesFindApiResponses from(PublicSpacesFindByQueryResponses responses){
-        Slice<MySpacesFindApiResponse> mapResponses = responses.responses()
-                .map(r -> new MySpacesFindApiResponse(
+    public static PublicSpacesFindByQueryApiResponses from(PublicSpacesFindByQueryResponses responses) {
+        Slice<PublicSpacesFindByQueryApiResponse> mapResponses = responses.responses()
+                .map(r -> new PublicSpacesFindByQueryApiResponse(
                         r.spaceId(),
                         r.spaceName(),
                         r.description(),
@@ -27,7 +27,7 @@ public record MySpacesFindApiResponses(
                 mapResponses.getSize(),
                 mapResponses.getNumber());
 
-        return new MySpacesFindApiResponses(
+        return new PublicSpacesFindByQueryApiResponses(
                 mapResponses.getContent(),
                 pageMetaData);
     }

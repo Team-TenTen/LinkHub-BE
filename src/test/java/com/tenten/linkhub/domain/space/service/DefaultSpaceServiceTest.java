@@ -16,9 +16,9 @@ import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagsGetResponse;
-import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponse;
-import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
+import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryResponses;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -67,12 +67,12 @@ class DefaultSpaceServiceTest {
                 10,
                 Sort.by("created_at").descending());
 
-        SpacesFindByQueryRequest request = new SpacesFindByQueryRequest(pageRequest,
+        PublicSpacesFindByQueryRequest request = new PublicSpacesFindByQueryRequest(pageRequest,
                 "첫번째",
                 Category.KNOWLEDGE_ISSUE_CAREER);
 
         //when
-        SpacesFindByQueryResponses responses = spaceService.findSpacesByQuery(request);
+        PublicSpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(request);
 
         //then
         List<SpacesFindByQueryResponse> content = responses.responses().getContent();
@@ -91,7 +91,7 @@ class DefaultSpaceServiceTest {
         MySpacesFindRequest mySpacesFindRequest = new MySpacesFindRequest(pageRequest, "", null, setUpMemberId);
 
         //when
-        SpacesFindByQueryResponses response = spaceService.findMySpacesByQuery(mySpacesFindRequest);
+        PublicSpacesFindByQueryResponses response = spaceService.findMySpacesByQuery(mySpacesFindRequest);
 
         //then
         List<SpacesFindByQueryResponse> content = response.responses().getContent();
@@ -112,7 +112,7 @@ class DefaultSpaceServiceTest {
         MySpacesFindRequest mySpacesFindRequest = new MySpacesFindRequest(pageRequest, "두번째", null, setUpMemberId);
 
         //when
-        SpacesFindByQueryResponses response = spaceService.findMySpacesByQuery(mySpacesFindRequest);
+        PublicSpacesFindByQueryResponses response = spaceService.findMySpacesByQuery(mySpacesFindRequest);
 
         //then
         List<SpacesFindByQueryResponse> content = response.responses().getContent();
@@ -130,7 +130,7 @@ class DefaultSpaceServiceTest {
         MySpacesFindRequest mySpacesFindRequest = new MySpacesFindRequest(pageRequest, "", Category.LIFE_KNOWHOW_SHOPPING, setUpMemberId);
 
         //when
-        SpacesFindByQueryResponses response = spaceService.findMySpacesByQuery(mySpacesFindRequest);
+        PublicSpacesFindByQueryResponses response = spaceService.findMySpacesByQuery(mySpacesFindRequest);
 
         //then
         List<SpacesFindByQueryResponse> content = response.responses().getContent();

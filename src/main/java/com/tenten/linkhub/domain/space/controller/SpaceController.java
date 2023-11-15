@@ -14,14 +14,16 @@ import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentsFindAp
 import com.tenten.linkhub.domain.space.controller.dto.favorite.SpaceRegisterInFavoriteApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiResponses;
+import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpaceFindWithFilterApiResponses;
+import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindByQueryApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindByQueryApiResponses;
+import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindWithFilterApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceDetailGetByIdApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceTagsGetApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiResponse;
-import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiRequest;
-import com.tenten.linkhub.domain.space.controller.dto.space.SpacesFindByQueryApiResponses;
 import com.tenten.linkhub.domain.space.controller.mapper.CommentApiMapper;
 import com.tenten.linkhub.domain.space.controller.mapper.SpaceApiMapper;
 import com.tenten.linkhub.domain.space.facade.CommentFacade;
@@ -37,8 +39,9 @@ import com.tenten.linkhub.domain.space.service.dto.comment.CommentUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.ReplyCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.favorite.SpaceRegisterInFavoriteResponse;
+import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagsGetResponse;
-import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.util.SpaceViewList;
 import com.tenten.linkhub.global.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -93,14 +96,16 @@ public class SpaceController {
      * 스페이스 검색 API
      */
     @Operation(
-            summary = "스페이스 검색 API", description = "keyWord, pageNumber, pageSize, sort, filter를 받아 검색합니다.",
+            summary = "스페이스 검색 API", description = "keyWord, pageNumber, pageSize, sort, filter를 받아 검색합니다.(keyWord, sort, filter 조건 없이 사용 가능합니다.)\n\n" +
+            "sort: {created_at, updated_at, favorite_count, view_count}\n\n" +
+            "filter: {ENTER_ART, LIFE_KNOWHOW_SHOPPING, HOBBY_LEISURE_TRAVEL, KNOWLEDGE_ISSUE_CAREER, ETC}",
             responses = {
                     @ApiResponse(responseCode = "200", description = "검색이 성공적으로 완료 되었습니다."),
             })
     @GetMapping(value = "/search",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SpacesFindByQueryApiResponses> findSpacesByQuery(
-            @ModelAttribute SpacesFindByQueryApiRequest request
+    public ResponseEntity<PublicSpacesFindByQueryApiResponses> findPublicSpacesByQuery(
+            @ModelAttribute PublicSpacesFindByQueryApiRequest request
     ) {
         PageRequest pageRequest = PageRequest.of(
                 request.pageNumber(),
@@ -108,11 +113,11 @@ public class SpaceController {
                 request.sort() != null ? Sort.by(request.sort()) : Sort.unsorted()
         );
 
-        SpacesFindByQueryResponses responses = spaceService.findSpacesByQuery(
-                spaceMapper.toSpacesFindByQueryRequest(request, pageRequest)
+        PublicSpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(
+                spaceMapper.toPublicSpacesFindByQueryRequest(request, pageRequest)
         );
 
-        SpacesFindByQueryApiResponses apiResponses = SpacesFindByQueryApiResponses.from(responses);
+        PublicSpacesFindByQueryApiResponses apiResponses = PublicSpacesFindByQueryApiResponses.from(responses);
         return ResponseEntity.ok(apiResponses);
     }
 
@@ -226,12 +231,41 @@ public class SpaceController {
     }
 
     /**
+     * 스페이스 필터 조회 API
+     */
+    @Operation(
+            summary = "스페이스 필터 조회 API", description = "메인 페이지용 스페이스 필터 조회이며 pageNumber, pageSize, sort, filter를 받아 검색합니다. (sort, filter조건 없이 사용 가능합니다.)\n\n " +
+            "sort: {created_at, updated_at, favorite_count, view_count}\n\n " +
+            "filter: {ENTER_ART, LIFE_KNOWHOW_SHOPPING, HOBBY_LEISURE_TRAVEL, KNOWLEDGE_ISSUE_CAREER, ETC}",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "검색이 성공적으로 완료 되었습니다."),
+            })
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PublicSpaceFindWithFilterApiResponses> findPublicSpacesWithFilter(
+            @ModelAttribute PublicSpacesFindWithFilterApiRequest request
+    ) {
+        PageRequest pageRequest = PageRequest.of(
+                request.pageNumber(),
+                request.pageSize(),
+                request.sort() != null ? Sort.by(request.sort()) : Sort.unsorted());
+
+        PublicSpacesFindByQueryRequest serviceRequest = spaceMapper.toPublicSpacesFindByQueryRequest(request, pageRequest);
+        PublicSpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(serviceRequest);
+
+        PublicSpaceFindWithFilterApiResponses apiResponses = PublicSpaceFindWithFilterApiResponses.from(responses);
+
+        return ResponseEntity.ok(apiResponses);
+    }
+
+    /**
      * 내 스페이스 검색 API
      * !필터에 해당 API 추가해야 함!
      */
     @Operation(
-            summary = "내 스페이스 검색 API", description = "나의 스페이스를 keyWord, pageNumber, pageSize, filter를 통해 검색합니다.\n" +
-            "해당 API는 keyWord, filter 없이 사용 가능한 페이징 조회입니다.",
+            summary = "내 스페이스 검색 API", description = "나의 스페이스를 keyWord, pageNumber, pageSize, filter를 통해 검색합니다. (keyWord, sort, filter 조건 없이 사용 가능합니다.)\n\n" +
+            "해당 API는 keyWord, filter 없이도 사용 가능한 페이징 조회입니다.\n\n" +
+            "sort: {created_at, updated_at, favorite_count, view_count}\n\n" +
+            "filter: {ENTER_ART, LIFE_KNOWHOW_SHOPPING, HOBBY_LEISURE_TRAVEL, KNOWLEDGE_ISSUE_CAREER, ETC}",
             responses = {
                     @ApiResponse(responseCode = "200", description = "검색이 성공적으로 완료 되었습니다."),
             })
@@ -243,7 +277,7 @@ public class SpaceController {
     ) {
         PageRequest pageRequest = PageRequest.of(request.pageNumber(), request.pageSize());
 
-        SpacesFindByQueryResponses responses = spaceService.findMySpacesByQuery(
+        PublicSpacesFindByQueryResponses responses = spaceService.findMySpacesByQuery(
                 spaceMapper.toMySpacesFindRequest(pageRequest, request, memberDetails.memberId())
         );
 

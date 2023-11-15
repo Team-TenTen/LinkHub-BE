@@ -5,9 +5,9 @@ import org.springframework.data.domain.Slice;
 
 import java.util.Objects;
 
-public record SpacesFindByQueryResponses(Slice<SpacesFindByQueryResponse> responses) {
+public record PublicSpacesFindByQueryResponses(Slice<SpacesFindByQueryResponse> responses) {
 
-    public static SpacesFindByQueryResponses from(Slice<Space> spaces){
+    public static PublicSpacesFindByQueryResponses from(Slice<Space> spaces){
         Slice<SpacesFindByQueryResponse> mapResponses = spaces.map(s -> new SpacesFindByQueryResponse(
                 s.getId(),
                 s.getSpaceName(),
@@ -23,7 +23,7 @@ public record SpacesFindByQueryResponses(Slice<SpacesFindByQueryResponse> respon
                 s.getSpaceImages().isEmpty() ? null : s.getSpaceImages().get(0).getPath()
         ));
 
-        return new SpacesFindByQueryResponses(mapResponses);
+        return new PublicSpacesFindByQueryResponses(mapResponses);
     }
 
 }
