@@ -9,21 +9,18 @@ import com.tenten.linkhub.domain.space.service.dto.comment.CommentAndChildCountD
 import com.tenten.linkhub.domain.space.service.dto.comment.CommentAndChildCountResponses;
 import com.tenten.linkhub.domain.space.service.dto.comment.RepliesFindResponse;
 import com.tenten.linkhub.domain.space.service.dto.comment.RepliesFindResponses;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class CommentFacade {
 
     private final CommentService commentService;
     private final MemberService memberService;
-
-    public CommentFacade(CommentService commentService, MemberService memberService) {
-        this.commentService = commentService;
-        this.memberService = memberService;
-    }
 
     public CommentAndChildCountAndMemberInfoResponses findRootComments(Long spaceId, Pageable pageable) {
         CommentAndChildCountResponses commentAndChildCount = commentService.findRootComments(spaceId, pageable);

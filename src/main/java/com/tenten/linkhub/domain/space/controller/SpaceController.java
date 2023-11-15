@@ -11,6 +11,7 @@ import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateA
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentFindApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentsFindApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.favorite.SpaceRegisterInFavoriteApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
@@ -30,10 +31,12 @@ import com.tenten.linkhub.domain.space.facade.dto.RepliesAndMemberInfoResponses;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
 import com.tenten.linkhub.domain.space.service.CommentService;
+import com.tenten.linkhub.domain.space.service.FavoriteService;
 import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.comment.CommentUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.ReplyCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
+import com.tenten.linkhub.domain.space.service.dto.favorite.SpaceRegisterInFavoriteResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagsGetResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.util.SpaceViewList;
@@ -47,6 +50,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
@@ -70,6 +74,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Tag(name = "spaces", description = "space 템플릿 API Document")
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/spaces")
 public class SpaceController {
@@ -80,17 +85,9 @@ public class SpaceController {
     private final SpaceService spaceService;
     private final CommentFacade commentFacade;
     private final CommentService commentService;
+    private final FavoriteService favoriteService;
     private final SpaceApiMapper spaceMapper;
     private final CommentApiMapper commentMapper;
-
-    public SpaceController(SpaceFacade spaceFacade, SpaceService spaceService, CommentFacade commentFacade, CommentService commentService, SpaceApiMapper spaceMapper, CommentApiMapper commentMapper) {
-        this.spaceFacade = spaceFacade;
-        this.spaceService = spaceService;
-        this.commentFacade = commentFacade;
-        this.commentService = commentService;
-        this.spaceMapper = spaceMapper;
-        this.commentMapper = commentMapper;
-    }
 
     /**
      * 스페이스 검색 API
@@ -127,7 +124,9 @@ public class SpaceController {
             responses = {
                     @ApiResponse(responseCode = "201", description = "스페이스가 성공적으로 생성되었습니다.")
             })
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SpaceCreateApiResponse> createSpace(
             @AuthenticationPrincipal MemberDetails memberDetails,
             @Parameter(
@@ -186,7 +185,9 @@ public class SpaceController {
                     @ApiResponse(responseCode = "404", description = "권한이 없는 유저가 스페이스를 수정하려고 합니다.",
                             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
-    @PatchMapping(value = "/{spaceId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value = "/{spaceId}",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SpaceUpdateApiResponse> updateSpace(
             @AuthenticationPrincipal MemberDetails memberDetails,
             @PathVariable Long spaceId,
@@ -234,7 +235,8 @@ public class SpaceController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "검색이 성공적으로 완료 되었습니다."),
             })
-    @GetMapping("/search/me")
+    @GetMapping(value = "/search/me",
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MySpacesFindApiResponses> findMySpaces(
             @AuthenticationPrincipal MemberDetails memberDetails,
             @ModelAttribute MySpacesFindApiRequest request
@@ -259,7 +261,9 @@ public class SpaceController {
                     @ApiResponse(responseCode = "404", description = "댓글을 달 수 없는 스페이스에 댓글을 생성하려고 합니다.",
                             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
-    @PostMapping("/{spaceId}/comments")
+    @PostMapping(value = "/{spaceId}/comments",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RootCommentCreateApiResponse> createRootComment(
             @AuthenticationPrincipal MemberDetails memberDetails,
             @PathVariable Long spaceId,
@@ -415,6 +419,29 @@ public class SpaceController {
         return ResponseEntity
                 .noContent()
                 .build();
+    }
+
+    /**
+     * 스페이스 즐겨찾기 추가 API
+     */
+    @Operation(
+            summary = "스페이스 즐겨찾기 추가 API", description = "스페이스 즐겨찾기 추가 API 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "스페이스가 성공적으로 즐겨찾기 등록 되었습니다."),
+                    @ApiResponse(responseCode = "404", description = "존재하지 않는 스페이스를 즐겨찾기 등록하려고 합니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @PostMapping(value = "{spaceId}/favorites",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SpaceRegisterInFavoriteApiResponse> registerSpaceInFavorite(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long spaceId
+    ) {
+        SpaceRegisterInFavoriteResponse response = favoriteService.createFavorite(spaceId, memberDetails.memberId());
+        SpaceRegisterInFavoriteApiResponse apiResponse = SpaceRegisterInFavoriteApiResponse.from(response);
+
+        return ResponseEntity.ok(apiResponse);
     }
 
     private void setSpaceViewCookie(HttpServletResponse servletResponse, List<Long> spaceViews) {

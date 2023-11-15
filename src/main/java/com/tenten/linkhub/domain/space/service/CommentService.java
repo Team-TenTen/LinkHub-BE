@@ -11,23 +11,19 @@ import com.tenten.linkhub.domain.space.service.dto.comment.RepliesFindResponses;
 import com.tenten.linkhub.domain.space.service.dto.comment.ReplyCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
 import com.tenten.linkhub.domain.space.service.mapper.CommentMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@RequiredArgsConstructor
 @Service
 public class CommentService {
 
     private final CommentRepository commentRepository;
     private final SpaceRepository spaceRepository;
     private final CommentMapper mapper;
-
-    public CommentService(CommentRepository commentRepository, SpaceRepository spaceRepository, CommentMapper commentMapper) {
-        this.commentRepository = commentRepository;
-        this.spaceRepository = spaceRepository;
-        this.mapper = commentMapper;
-    }
 
     @Transactional
     public Long createComment(RootCommentCreateRequest request) {
