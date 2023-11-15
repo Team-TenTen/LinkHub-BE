@@ -141,10 +141,6 @@ public class Space extends BaseEntity {
         viewCount++;
     }
 
-    public void increaseFavoriteCount() {
-        favoriteCount++;
-    }
-
     public Boolean isOwner(Long memberId) {
         return Objects.equals(this.memberId, memberId);
     }
