@@ -7,6 +7,8 @@ import com.tenten.linkhub.domain.member.model.Provider;
 import com.tenten.linkhub.domain.member.repository.member.MemberJpaRepository;
 import com.tenten.linkhub.domain.space.facade.dto.CommentAndChildCountAndMemberInfo;
 import com.tenten.linkhub.domain.space.facade.dto.CommentAndChildCountAndMemberInfoResponses;
+import com.tenten.linkhub.domain.space.facade.dto.RepliesAndMemberInfo;
+import com.tenten.linkhub.domain.space.facade.dto.RepliesAndMemberInfoResponses;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.space.Comment;
 import com.tenten.linkhub.domain.space.model.space.Role;
@@ -50,6 +52,10 @@ class CommentFacadeTest {
     private Long setUpSpaceId1;
     private Long setUpSpaceId2;
     private Long setUpMemberId;
+    private Comment savedComment1;
+    private Comment childComment1;
+    private Comment childComment1OfChildComment1;
+    private Comment childComment2OfChildComment1;
 
     @BeforeEach
     void setUp() {
@@ -87,6 +93,48 @@ class CommentFacadeTest {
         //when//then
         assertThatThrownBy(() -> commentFacade.findRootComments(setUpSpaceId2, pageRequest))
                 .isInstanceOf(UnauthorizedAccessException.class);
+    }
+
+    @Test
+    @DisplayName("유저는 대댓글을 페이징 조회할 수 있다.")
+    void findReplies() {
+        //given
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        //when
+        RepliesAndMemberInfoResponses facadeResponses = commentFacade.findReplies(
+                setUpSpaceId1,
+                savedComment1.getId(),
+                pageRequest);
+
+        //then
+        List<RepliesAndMemberInfo> content = facadeResponses.responses().getContent();
+
+        assertThat(content.size()).isEqualTo(4);
+
+        assertThat(content.get(0).content()).isEqualTo("첫번째 루트 댓글의 대댓글1");
+        assertThat(content.get(0).nickname()).isEqualTo("테스트 유저");
+        assertThat(content.get(0).profileImagePath()).isEqualTo("https://testprofileimage1");
+        assertThat(content.get(0).groupNumber()).isEqualTo(savedComment1.getId());
+        assertThat(content.get(0).parentCommentId()).isEqualTo(savedComment1.getId());
+
+        assertThat(content.get(1).content()).isEqualTo("첫번째 루트 댓글의 대댓글1의 대댓글1");
+        assertThat(content.get(1).nickname()).isEqualTo("테스트 유저");
+        assertThat(content.get(1).profileImagePath()).isEqualTo("https://testprofileimage1");
+        assertThat(content.get(1).groupNumber()).isEqualTo(savedComment1.getId());
+        assertThat(content.get(1).parentCommentId()).isEqualTo(childComment1.getId());
+
+        assertThat(content.get(2).content()).isEqualTo("첫번째 루트 댓글의 대댓글2");
+        assertThat(content.get(2).nickname()).isEqualTo("잠자는 사자의 콧털");
+        assertThat(content.get(2).profileImagePath()).isEqualTo("https://testprofileimage");
+        assertThat(content.get(2).groupNumber()).isEqualTo(savedComment1.getId());
+        assertThat(content.get(2).parentCommentId()).isEqualTo(savedComment1.getId());
+
+        assertThat(content.get(3).content()).isEqualTo("첫번째 루트 댓글의 대댓글1의 대댓글2");
+        assertThat(content.get(3).nickname()).isEqualTo("테스트 유저");
+        assertThat(content.get(3).profileImagePath()).isEqualTo("https://testprofileimage1");
+        assertThat(content.get(3).groupNumber()).isEqualTo(savedComment1.getId());
+        assertThat(content.get(3).parentCommentId()).isEqualTo(childComment1.getId());
     }
 
     private void setUpTestData() {
@@ -161,13 +209,21 @@ class CommentFacadeTest {
                 space1
         );
 
-        Comment savedComment1 = commentJpaRepository.save(comment1);
+        savedComment1 = commentJpaRepository.save(comment1);
         Comment savedComment2 = commentJpaRepository.save(comment2);
 
-        Comment childComment1 = new Comment(
+        childComment1 = new Comment(
                 savedComment1,
                 savedComment1.getId(),
                 "첫번째 루트 댓글의 대댓글1",
+                setUpMemberId1,
+                space1
+        );
+
+        childComment1OfChildComment1 = new Comment(
+                childComment1,
+                savedComment1.getId(),
+                "첫번째 루트 댓글의 대댓글1의 대댓글1",
                 setUpMemberId1,
                 space1
         );
@@ -189,9 +245,19 @@ class CommentFacadeTest {
         );
 
         commentJpaRepository.save(childComment1);
+        commentJpaRepository.save(childComment1OfChildComment1);
         commentJpaRepository.save(childComment2);
         commentJpaRepository.save(childComment3);
 
+        childComment2OfChildComment1 = new Comment(
+                childComment1,
+                savedComment1.getId(),
+                "첫번째 루트 댓글의 대댓글1의 대댓글2",
+                setUpMemberId1,
+                space1
+        );
+
+        commentJpaRepository.save(childComment2OfChildComment1);
     }
 
 }
