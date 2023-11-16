@@ -109,13 +109,15 @@ class FavoriteServiceTest {
     @Transactional
     void cancelFavoriteSpace() {
         //given
-        Favorite favorite = new Favorite(setUpSpaceId, setUpMemberId);
-        favoriteJpaRepository.save(favorite);
+        favoriteService.createFavorite(setUpSpaceId, setUpMemberId);
 
         //when
         Long deletedFavoriteId = favoriteService.cancelFavoriteSpace(setUpSpaceId, setUpMemberId);
 
         //then
+        Space space = spaceJpaRepository.findById(setUpSpaceId).get();
+
+        assertThat(space.getFavoriteCount()).isEqualTo(0L);
         assertThatThrownBy(() -> {
             favoriteJpaRepository.findById(deletedFavoriteId)
                     .orElseThrow(() -> new DataNotFoundException("해당 Favorite은 존재하지 않습니다."));

@@ -53,4 +53,10 @@ public class DefaultSpaceRepository implements SpaceRepository {
         spaceJpaRepository.increaseFavoriteCount(spaceId);
     }
 
+    @Override
+    @Transactional
+    public void decreaseFavoriteCount(Long spaceId) {
+        spaceJpaRepository.decreaseFavoriteCount(spaceId);
+    }
+
 }

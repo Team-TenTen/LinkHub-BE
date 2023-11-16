@@ -42,7 +42,11 @@ public class FavoriteService {
         Favorite favorite = favoriteRepository.getBySpaceIdAndMemberId(spaceId, memberId);
         favorite.validateOwnership(memberId);
 
-        return favoriteRepository.deleteById(favorite.getId());
+        Long deletedFavoriteId = favoriteRepository.deleteById(favorite.getId());
+
+        spaceRepository.decreaseFavoriteCount(spaceId);
+
+        return deletedFavoriteId;
     }
 
     private void checkDuplicateFavorite(Long spaceId, Long memberId) {
