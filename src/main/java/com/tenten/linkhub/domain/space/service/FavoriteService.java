@@ -37,6 +37,14 @@ public class FavoriteService {
                 space.getFavoriteCount() + 1);
     }
 
+    @Transactional
+    public void cancelFavoriteSpace(Long spaceId, Long memberId) {
+        Favorite favorite = favoriteRepository.getBySpaceIdAndMemberId(spaceId, memberId);
+        favorite.validateOwnership(memberId);
+
+        favoriteRepository.deleteById(favorite.getId());
+    }
+
     private void checkDuplicateFavorite(Long spaceId, Long memberId) {
         if (favoriteRepository.isExist(memberId, spaceId)){
             throw new DataDuplicateException(ErrorCode.DUPLICATE_FAVORITE);

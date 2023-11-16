@@ -358,7 +358,7 @@ public class SpaceController {
                     @ApiResponse(responseCode = "404", description = "존재하지 않는 스페이스를 즐겨찾기 등록하려고 합니다.",
                             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
-    @PostMapping(value = "{spaceId}/favorites",
+    @PostMapping(value = "/{spaceId}/favorites",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SpaceRegisterInFavoriteApiResponse> registerSpaceInFavorite(
             @AuthenticationPrincipal MemberDetails memberDetails,
@@ -368,6 +368,19 @@ public class SpaceController {
         SpaceRegisterInFavoriteApiResponse apiResponse = SpaceRegisterInFavoriteApiResponse.from(response.favoriteCount());
 
         return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
+     *  스페이스 즐겨찾기 취소 API
+     */
+    @DeleteMapping(value = "/{spaceId}/favorites")
+    public ResponseEntity<Void> cancelFavoriteSpace(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long spaceId
+    ) {
+        favoriteService.cancelFavoriteSpace(spaceId, memberDetails.memberId());
+
+        return ResponseEntity.noContent().build();
     }
 
     private void setSpaceViewCookie(HttpServletResponse servletResponse, List<Long> spaceViews) {
