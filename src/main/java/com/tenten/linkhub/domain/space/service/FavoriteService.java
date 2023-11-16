@@ -6,6 +6,8 @@ import com.tenten.linkhub.domain.space.repository.favorite.FavoriteRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.service.dto.favorite.SpaceRegisterInFavoriteResponse;
 import com.tenten.linkhub.domain.space.service.mapper.FavoriteMapper;
+import com.tenten.linkhub.global.exception.DataDuplicateException;
+import com.tenten.linkhub.global.response.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,11 +23,24 @@ public class FavoriteService {
     @Transactional
     public SpaceRegisterInFavoriteResponse createFavorite(Long spaceId, Long memberId) {
         Space space = spaceRepository.getById(spaceId);
+        space.validateVisibilityAndMembership(memberId);
 
-        Favorite favorite = mapper.toFavorite(space, memberId);
+        checkDuplicateFavorite(spaceId, memberId);
+
+        Favorite favorite = mapper.toFavorite(spaceId, memberId);
         Favorite savedFavorite = favoriteRepository.save(favorite);
 
-        return SpaceRegisterInFavoriteResponse.of(savedFavorite.getId(), spaceId);
+        spaceRepository.increaseFavoriteCount(spaceId);
+
+        return SpaceRegisterInFavoriteResponse.of(
+                savedFavorite.getId(),
+                space.getFavoriteCount() + 1);
+    }
+
+    private void checkDuplicateFavorite(Long spaceId, Long memberId) {
+        if (favoriteRepository.isExist(memberId, spaceId)){
+            throw new DataDuplicateException(ErrorCode.DUPLICATE_FAVORITE);
+        }
     }
 
 }

@@ -155,13 +155,13 @@ public class Space extends BaseEntity {
         }
     }
 
-    public void validateVisibilityAndMembership(Long memberId){
-        if (this.isVisible){
+    public void validateVisibilityAndMembership(Long memberId) {
+        if (this.isVisible) {
             return;
         }
 
         List<Long> spaceMemberIds = this.spaceMembers.getSpaceMemberIds();
-        if (!spaceMemberIds.contains(memberId)){
+        if (!spaceMemberIds.contains(memberId)) {
             throw new UnauthorizedAccessException("이 스페이스는 권한이 없으면 볼 수 없는 스페이스입니다.");
         }
     }

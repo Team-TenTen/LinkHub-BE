@@ -21,6 +21,11 @@ import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -40,8 +45,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 
+@ActiveProfiles("test")
 @Transactional
-@TestPropertySource(locations = "classpath:/application-test.yml")
 @SpringBootTest
 class SpaceFacadeTest {
 
@@ -231,7 +236,7 @@ class SpaceFacadeTest {
         Space savedSpace = spaceJpaRepository.save(space);
         setUpSpaceId = savedSpace.getId();
 
-        Favorite favorite = new Favorite(savedSpace, setUpMemberId);
+        Favorite favorite = new Favorite(setUpSpaceId, setUpMemberId);
         favoriteJpaRepository.save(favorite);
     }
 

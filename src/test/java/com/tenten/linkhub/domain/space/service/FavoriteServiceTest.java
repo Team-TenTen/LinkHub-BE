@@ -19,13 +19,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Transactional
-@TestPropertySource(locations = "classpath:/application-test.yml")
+@ActiveProfiles("test")
 @SpringBootTest
 class FavoriteServiceTest {
 
@@ -49,6 +52,7 @@ class FavoriteServiceTest {
         setUpTestData();
     }
 
+    @Transactional
     @Test
     @DisplayName("유저는 스페이스를 즐겨찾기에 등록할 수 있다.")
     void createFavorite() {
@@ -57,9 +61,38 @@ class FavoriteServiceTest {
 
         //then
         Favorite savedFavorite = favoriteJpaRepository.findById(response.favoriteId()).get();
+        Space space = spaceJpaRepository.findById(setUpSpaceId).get();
 
         assertThat(savedFavorite.getMemberId()).isEqualTo(setUpMemberId);
-        assertThat(savedFavorite.getSpace().getSpaceName()).isEqualTo("첫번째 스페이스");
+        assertThat(space.getSpaceName()).isEqualTo("첫번째 스페이스");
+        assertThat(space.getFavoriteCount()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("다수의 유저가 동시에 즐겨찾기 등록을 진행해도 Space의 viewCount의 정합성을 보장한다.")
+    void createFavorite_concurrencyTest() throws InterruptedException {
+        //given
+        int threadCount = 100;
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        CountDownLatch latch = new CountDownLatch(threadCount);
+
+        //when
+        for (int i = 0; i < threadCount; i++){
+            int memberAddNumber = i;
+            executorService.submit(() -> {
+                try {
+                    SpaceRegisterInFavoriteResponse response = favoriteService.createFavorite(setUpSpaceId, setUpMemberId + memberAddNumber);
+                    favoriteJpaRepository.findById(response.favoriteId());
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+        latch.await();
+
+        //then
+        Space space = spaceJpaRepository.findById(setUpSpaceId).get();
+        assertThat(space.getFavoriteCount()).isEqualTo(100L);
     }
 
     private void setUpTestData() {

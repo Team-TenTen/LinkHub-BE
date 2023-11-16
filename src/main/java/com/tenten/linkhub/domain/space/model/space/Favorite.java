@@ -33,15 +33,14 @@ public class Favorite extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "space_id", referencedColumnName = "id", nullable = false)
-    private Space space;
+    @Column(name = "space_id", nullable = false)
+    private Long spaceId;
 
     @Column(name = "member_id", nullable = false)
     private Long memberId;
 
-    public Favorite(Space space, Long memberId) {
-        this.space = space;
+    public Favorite(Long spaceId, Long memberId) {
+        this.spaceId = spaceId;
         this.memberId = memberId;
     }
 
