@@ -9,7 +9,7 @@ import com.tenten.linkhub.domain.space.facade.dto.SpaceCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagsGetResponse;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
@@ -33,5 +33,5 @@ public interface SpaceApiMapper {
 
     MySpacesFindRequest toMySpacesFindRequest(Pageable pageable, MySpacesFindApiRequest request, Long memberId);
 
-    SpaceTagsGetApiResponse toSpaceTagsGetApiResponse(SpaceTagsGetResponse response);
+    SpaceTagsGetApiResponse toSpaceTagsGetApiResponse(SpaceTagGetResponses response);
 }

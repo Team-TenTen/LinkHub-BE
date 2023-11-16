@@ -6,10 +6,12 @@ import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberRepository;
 import com.tenten.linkhub.domain.space.repository.tag.TagRepository;
+import com.tenten.linkhub.domain.space.repository.tag.dto.TagInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
 import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagsGetResponse;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponse;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
@@ -106,9 +108,14 @@ public class DefaultSpaceService implements SpaceService {
     }
 
     @Override
-    public SpaceTagsGetResponse getTagsBySpaceId(Long spaceId) {
-        List<String> tagNames = tagRepository.findBySpaceIdAndGroupBySpaceName(spaceId);
-        return SpaceTagsGetResponse.from(tagNames);
+    public SpaceTagGetResponses getTagsBySpaceId(Long spaceId) {
+        List<TagInfo> tagInfos = tagRepository.findBySpaceIdAndGroupBySpaceName(spaceId);
+        List<SpaceTagGetResponse> tagResponses = tagInfos
+                .stream()
+                .map(t -> new SpaceTagGetResponse(t.name(), t.color().getValue()))
+                .toList();
+
+        return SpaceTagGetResponses.from(tagResponses);
     }
 
 }
