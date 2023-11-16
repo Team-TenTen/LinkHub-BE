@@ -30,8 +30,9 @@ public class DefaultFavoriteRepository implements FavoriteRepository{
     }
 
     @Override
-    public void deleteById(Long favoriteId) {
+    public Long deleteById(Long favoriteId) {
         favoriteJpaRepository.deleteById(favoriteId);
+        return favoriteId;
     }
 
 }

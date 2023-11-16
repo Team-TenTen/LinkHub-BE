@@ -38,11 +38,11 @@ public class FavoriteService {
     }
 
     @Transactional
-    public void cancelFavoriteSpace(Long spaceId, Long memberId) {
+    public Long cancelFavoriteSpace(Long spaceId, Long memberId) {
         Favorite favorite = favoriteRepository.getBySpaceIdAndMemberId(spaceId, memberId);
         favorite.validateOwnership(memberId);
 
-        favoriteRepository.deleteById(favorite.getId());
+        return favoriteRepository.deleteById(favorite.getId());
     }
 
     private void checkDuplicateFavorite(Long spaceId, Long memberId) {

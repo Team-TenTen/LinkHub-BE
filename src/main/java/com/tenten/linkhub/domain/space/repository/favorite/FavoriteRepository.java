@@ -10,5 +10,5 @@ public interface FavoriteRepository {
 
     Favorite getBySpaceIdAndMemberId(Long spaceId, Long memberId);
 
-    void deleteById(Long favoriteId);
+    Long deleteById(Long favoriteId);
 }

@@ -14,6 +14,9 @@ import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.favorite.FavoriteJpaRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.service.dto.favorite.SpaceRegisterInFavoriteResponse;
+import com.tenten.linkhub.global.exception.DataNotFoundException;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +30,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -48,13 +52,18 @@ class FavoriteServiceTest {
     private Long setUpSpaceId;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         setUpTestData();
     }
 
-    @Transactional
+    @AfterEach
+    void tearDown(){
+        favoriteJpaRepository.deleteAll();
+    }
+
     @Test
     @DisplayName("유저는 스페이스를 즐겨찾기에 등록할 수 있다.")
+    @Transactional
     void createFavorite() {
         //when
         SpaceRegisterInFavoriteResponse response = favoriteService.createFavorite(setUpSpaceId, setUpMemberId);
@@ -77,7 +86,7 @@ class FavoriteServiceTest {
         CountDownLatch latch = new CountDownLatch(threadCount);
 
         //when
-        for (int i = 0; i < threadCount; i++){
+        for (int i = 0; i < threadCount; i++) {
             int memberAddNumber = i;
             executorService.submit(() -> {
                 try {
@@ -93,6 +102,25 @@ class FavoriteServiceTest {
         //then
         Space space = spaceJpaRepository.findById(setUpSpaceId).get();
         assertThat(space.getFavoriteCount()).isEqualTo(100L);
+    }
+
+    @Test
+    @DisplayName("유저는 스페이스 즐겨찾기를 취소할 수 있다.")
+    @Transactional
+    void cancelFavoriteSpace() {
+        //given
+        Favorite favorite = new Favorite(setUpSpaceId, setUpMemberId);
+        favoriteJpaRepository.save(favorite);
+
+        //when
+        Long deletedFavoriteId = favoriteService.cancelFavoriteSpace(setUpSpaceId, setUpMemberId);
+
+        //then
+        assertThatThrownBy(() -> {
+            favoriteJpaRepository.findById(deletedFavoriteId)
+                    .orElseThrow(() -> new DataNotFoundException("해당 Favorite은 존재하지 않습니다."));
+        })
+                .isInstanceOf(DataNotFoundException.class);
     }
 
     private void setUpTestData() {
