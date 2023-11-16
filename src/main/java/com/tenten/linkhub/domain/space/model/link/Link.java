@@ -15,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -56,6 +57,9 @@ public class Link extends BaseEntity {
 
     @Column(nullable = false)
     private Long likeCount;
+
+    @Version
+    private int version;
 
     public void addTag(Tag tag) {
         tags.add(tag);
@@ -110,5 +114,12 @@ public class Link extends BaseEntity {
     private void deleteTag() {
         this.tags.forEach(Tag::deleteTag);
         this.tags.clear();
+    }
+    public void increaseLikeCount() {
+        likeCount++;
+    }
+
+    public void decreaseLikeCount() {
+        likeCount--;
     }
 }

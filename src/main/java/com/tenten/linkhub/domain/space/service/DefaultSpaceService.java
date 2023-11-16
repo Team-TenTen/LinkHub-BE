@@ -3,21 +3,23 @@ package com.tenten.linkhub.domain.space.service;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
+import com.tenten.linkhub.domain.space.repository.favorite.FavoriteRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberRepository;
 import com.tenten.linkhub.domain.space.repository.tag.TagRepository;
 import com.tenten.linkhub.domain.space.repository.tag.dto.TagInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
 import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
-import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
+import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.mapper.SpaceMapper;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,30 +28,22 @@ import java.util.List;
 
 import static com.tenten.linkhub.domain.space.model.space.Role.OWNER;
 
+@RequiredArgsConstructor
 @Service
 public class DefaultSpaceService implements SpaceService {
 
     private final SpaceRepository spaceRepository;
-    private final SpaceMapper mapper;
     private final SpaceMemberRepository spaceMemberRepository;
+    private final FavoriteRepository favoriteRepository;
     private final TagRepository tagRepository;
-
-    public DefaultSpaceService(SpaceRepository spaceRepository,
-                               SpaceMapper mapper,
-                               SpaceMemberRepository spaceMemberRepository,
-                               TagRepository tagRepository) {
-        this.spaceRepository = spaceRepository;
-        this.mapper = mapper;
-        this.spaceMemberRepository = spaceMemberRepository;
-        this.tagRepository = tagRepository;
-    }
+    private final SpaceMapper mapper;
 
     @Override
     @Transactional(readOnly = true)
-    public SpacesFindByQueryResponses findSpacesByQuery(SpacesFindByQueryRequest request) {
-        Slice<Space> spaces = spaceRepository.findSpacesJoinSpaceImageByQuery(mapper.toQueryCond(request));
+    public PublicSpacesFindByQueryResponses findPublicSpacesByQuery(PublicSpacesFindByQueryRequest request) {
+        Slice<Space> spaces = spaceRepository.findPublicSpacesJoinSpaceImageByQuery(mapper.toQueryCond(request));
 
-        return SpacesFindByQueryResponses.from(spaces);
+        return PublicSpacesFindByQueryResponses.from(spaces);
     }
 
     @Override
@@ -71,7 +65,11 @@ public class DefaultSpaceService implements SpaceService {
         space.validateVisibilityAndMembership(memberId);
 
         Boolean isOwner = space.isOwner(memberId);
-        return SpaceWithSpaceImageAndSpaceMemberInfo.of(space, isOwner);
+        Boolean isCanEdit = space.isCanEdit(memberId);
+
+        Boolean hasFavorite = favoriteRepository.isExist(memberId, spaceId);
+
+        return SpaceWithSpaceImageAndSpaceMemberInfo.of(space, isOwner, isCanEdit, hasFavorite);
     }
 
     @Override
@@ -101,10 +99,10 @@ public class DefaultSpaceService implements SpaceService {
 
     @Override
     @Transactional(readOnly = true)
-    public SpacesFindByQueryResponses findMySpacesByQuery(MySpacesFindRequest request) {
+    public PublicSpacesFindByQueryResponses findMySpacesByQuery(MySpacesFindRequest request) {
         Slice<Space> spaces = spaceRepository.findMySpacesJoinSpaceImageByQuery(mapper.toMySpacesFindQueryCondition(request));
 
-        return SpacesFindByQueryResponses.from(spaces);
+        return PublicSpacesFindByQueryResponses.from(spaces);
     }
 
     @Override

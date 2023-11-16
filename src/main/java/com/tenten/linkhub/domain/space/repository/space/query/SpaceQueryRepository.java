@@ -24,12 +24,13 @@ public class SpaceQueryRepository {
         this.dynamicQueryFactory = new DynamicQueryFactory();
     }
 
-    public Slice<Space> findSpacesJoinSpaceImageByCondition(QueryCondition condition) {
+    public Slice<Space> findPublicSpacesJoinSpaceImageByCondition(QueryCondition condition) {
         List<Space> spaces = queryFactory
                 .select(space)
                 .from(space)
                 .join(space.spaceImages.spaceImageList).fetchJoin()
                 .where(space.isDeleted.eq(false),
+                        space.isVisible.eq(true),
                         dynamicQueryFactory.eqSpaceName(condition.keyWord()),
                         dynamicQueryFactory.eqCategory(condition.filter())
                 )

@@ -4,7 +4,6 @@ import com.tenten.linkhub.domain.member.service.dto.MemberInfo;
 import com.tenten.linkhub.domain.member.service.dto.MemberInfos;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
-import jakarta.servlet.http.Cookie;
 
 import java.util.List;
 import java.util.Map;
@@ -25,6 +24,8 @@ public record SpaceDetailGetByIdFacadeResponse(
         String spaceImagePath,
         List<SpaceMemberDetailInfo> memberDetailInfos,
         Boolean isOwner,
+        Boolean isCanEdit,
+        Boolean hasFavorite,
         List<Long> spaceViews
 ) {
     public static SpaceDetailGetByIdFacadeResponse of(
@@ -63,6 +64,8 @@ public record SpaceDetailGetByIdFacadeResponse(
                 response.spaceImagePath(),
                 spaceMemberDetailInfos,
                 response.isOwner(),
+                response.isCanEdit(),
+                response.hasFavorite(),
                 spaceViews
         );
     }

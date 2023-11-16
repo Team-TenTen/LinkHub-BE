@@ -9,12 +9,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "likes")
+@Table(name = "likes", uniqueConstraints = {
+        @UniqueConstraint(
+                name = "like_unique",
+                columnNames = {"memberId", "link_id"})
+})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Like {
@@ -29,5 +34,10 @@ public class Like {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "link_id", nullable = false)
     private Link link;
+
+    public Like(Link link, Long memberId) {
+        this.link = link;
+        this.memberId = memberId;
+    }
 
 }
