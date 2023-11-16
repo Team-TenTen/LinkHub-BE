@@ -1,38 +1,47 @@
 package com.tenten.linkhub.domain.space.controller;
 
 import com.tenten.linkhub.domain.auth.MemberDetails;
-import com.tenten.linkhub.domain.space.controller.dto.favorite.SpaceRegisterInFavoriteApiResponse;
-import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.comment.CommentUpdateApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.comment.CommentUpdateApiResponse;
+import com.tenten.linkhub.domain.space.controller.dto.comment.RepliesFindApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.comment.RepliesFindApiResponses;
+import com.tenten.linkhub.domain.space.controller.dto.comment.ReplyCreateApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.comment.ReplyCreateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentFindApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentsFindApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.favorite.SpaceRegisterInFavoriteApiResponse;
+import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiResponses;
+import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpaceFindWithFilterApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindByQueryApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindByQueryApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindWithFilterApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceDetailGetByIdApiResponse;
-import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpaceFindWithFilterApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceTagsGetApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiResponse;
-import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindByQueryApiResponses;
 import com.tenten.linkhub.domain.space.controller.mapper.CommentApiMapper;
 import com.tenten.linkhub.domain.space.controller.mapper.SpaceApiMapper;
 import com.tenten.linkhub.domain.space.facade.CommentFacade;
 import com.tenten.linkhub.domain.space.facade.SpaceFacade;
 import com.tenten.linkhub.domain.space.facade.dto.CommentAndChildCountAndMemberInfoResponses;
+import com.tenten.linkhub.domain.space.facade.dto.RepliesAndMemberInfoResponses;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
 import com.tenten.linkhub.domain.space.service.CommentService;
 import com.tenten.linkhub.domain.space.service.FavoriteService;
 import com.tenten.linkhub.domain.space.service.SpaceService;
+import com.tenten.linkhub.domain.space.service.dto.comment.CommentUpdateRequest;
+import com.tenten.linkhub.domain.space.service.dto.comment.ReplyCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.favorite.SpaceRegisterInFavoriteResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagsGetResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryResponses;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagsGetResponse;
 import com.tenten.linkhub.domain.space.util.SpaceViewList;
 import com.tenten.linkhub.global.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -56,6 +65,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -304,6 +314,36 @@ public class SpaceController {
     }
 
     /**
+     * 대댓글 생성 API
+     */
+    @Operation(
+            summary = "대댓글 생성 API", description = "대댓글 댓글 생성 API 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "대댓글이 성공적으로 생성되었습니다."),
+                    @ApiResponse(responseCode = "404", description = "존재하지 않는 스페이스 / 대댓글을 달 수 없는 스페이스 / 존재하지 않는 부모 댓글",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @PostMapping(value = "/{spaceId}/comments/{commentId}/replies",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<ReplyCreateApiResponse> createReply(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long spaceId,
+            @PathVariable Long commentId,
+            @RequestBody @Valid ReplyCreateApiRequest request
+    ) {
+        ReplyCreateRequest apiRequest = commentMapper.toReplyCreateRequest(spaceId, commentId, memberDetails.memberId(), request.content());
+        Long savedCommentId = commentService.createReply(apiRequest);
+
+        ReplyCreateApiResponse apiResponse = ReplyCreateApiResponse.from(savedCommentId);
+
+        return ResponseEntity
+                .created(URI.create(SPACE_LOCATION_PRE_FIX + "/commments/" + savedCommentId))
+                .body(apiResponse);
+    }
+
+    /**
      * 스페이스에서 사용된 태그 목록 조회 API
      */
     @Operation(
@@ -346,6 +386,76 @@ public class SpaceController {
         RootCommentFindApiResponses apiResponses = RootCommentFindApiResponses.from(responses);
 
         return ResponseEntity.ok(apiResponses);
+    }
+
+    /**
+     * 대댓글 페이징 조회 API
+     */
+    @Operation(
+            summary = "대댓글 페이징 조회 API", description = "대댓글 페이징 조회 API 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "조회가 성공적으로 완료 되었습니다."),
+                    @ApiResponse(responseCode = "404", description = "존재하지 않는 스페이스 / 댓글을 막아놓은 스페이스 / 삭제된 루트 댓글 ",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @GetMapping(
+            value = "/{spaceId}/comments/{commentId}/replies",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<RepliesFindApiResponses> findReplies(
+            @PathVariable Long spaceId,
+            @PathVariable Long commentId,
+            @ModelAttribute RepliesFindApiRequest request
+    ) {
+        PageRequest pageRequest = PageRequest.of(request.pageNumber(), request.pageSize());
+        RepliesAndMemberInfoResponses responses = commentFacade.findReplies(spaceId, commentId, pageRequest);
+
+        RepliesFindApiResponses apiResponses = RepliesFindApiResponses.from(responses);
+
+        return ResponseEntity.ok(apiResponses);
+    }
+
+    @Operation(
+            summary = "댓글 수정 API", description = "댓글 수정 API 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "댓글이 성공적으로 수정되었습니다."),
+                    @ApiResponse(responseCode = "404", description = "존재하지 않는 스페이스 / 댓글을 달 수 없는 스페이스 / 존재하지 않는 댓글 / 수정 권한 없음",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @PutMapping("/{spaceId}/comments/{commentId}")
+    public ResponseEntity<CommentUpdateApiResponse> updateComment(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long spaceId,
+            @PathVariable Long commentId,
+            @RequestBody @Valid CommentUpdateApiRequest request
+    ) {
+        CommentUpdateRequest apiRequest = commentMapper.toCommentUpdateRequest(spaceId, commentId, memberDetails.memberId(), request.content());
+        Long updatedCommentId = commentService.updateComment(apiRequest);
+
+        CommentUpdateApiResponse apiResponse = CommentUpdateApiResponse.from(updatedCommentId);
+
+        return ResponseEntity
+                .created(URI.create(SPACE_LOCATION_PRE_FIX + "/commments/" + updatedCommentId))
+                .body(apiResponse);
+    }
+
+    @Operation(
+            summary = "댓글 삭제 API", description = "댓글 삭제 API 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "댓글이 성공적으로 삭제되었습니다."),
+                    @ApiResponse(responseCode = "404", description = "존재하지 않는 스페이스 / 댓글을 달 수 없는 스페이스 / 존재하지 않는 댓글 / 삭제 권한 없음",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @DeleteMapping("/{spaceId}/comments/{commentId}")
+    public ResponseEntity<Void> deleteComment(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long spaceId,
+            @PathVariable Long commentId
+    ) {
+        commentService.deleteComment(spaceId, commentId, memberDetails.memberId());
+
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 
     /**

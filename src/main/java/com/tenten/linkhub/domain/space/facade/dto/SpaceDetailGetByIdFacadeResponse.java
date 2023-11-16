@@ -4,7 +4,6 @@ import com.tenten.linkhub.domain.member.service.dto.MemberInfo;
 import com.tenten.linkhub.domain.member.service.dto.MemberInfos;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
-import jakarta.servlet.http.Cookie;
 
 import java.util.List;
 import java.util.Map;
