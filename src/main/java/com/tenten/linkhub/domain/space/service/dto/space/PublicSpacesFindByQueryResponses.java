@@ -1,26 +1,27 @@
 package com.tenten.linkhub.domain.space.service.dto.space;
 
-import com.tenten.linkhub.domain.space.model.space.Space;
+import com.tenten.linkhub.domain.space.repository.space.dto.SpaceAndOwnerNickName;
 import org.springframework.data.domain.Slice;
 
 import java.util.Objects;
 
 public record PublicSpacesFindByQueryResponses(Slice<SpacesFindByQueryResponse> responses) {
 
-    public static PublicSpacesFindByQueryResponses from(Slice<Space> spaces){
-        Slice<SpacesFindByQueryResponse> mapResponses = spaces.map(s -> new SpacesFindByQueryResponse(
-                s.getId(),
-                s.getSpaceName(),
-                Objects.isNull(s.getDescription()) ? "" : s.getDescription(),
-                s.getCategory(),
-                s.getIsVisible(),
-                s.getIsComment(),
-                s.getIsLinkSummarizable(),
-                s.getIsReadMarkEnabled(),
-                s.getViewCount(),
-                s.getScrapCount(),
-                s.getFavoriteCount(),
-                s.getSpaceImages().isEmpty() ? null : s.getSpaceImages().get(0).getPath()
+    public static PublicSpacesFindByQueryResponses from(Slice<SpaceAndOwnerNickName> response){
+        Slice<SpacesFindByQueryResponse> mapResponses = response.map(s -> new SpacesFindByQueryResponse(
+                s.space().getId(),
+                s.space().getSpaceName(),
+                Objects.isNull(s.space().getDescription()) ? "" : s.space().getDescription(),
+                s.space().getCategory(),
+                s.space().getIsVisible(),
+                s.space().getIsComment(),
+                s.space().getIsLinkSummarizable(),
+                s.space().getIsReadMarkEnabled(),
+                s.space().getViewCount(),
+                s.space().getScrapCount(),
+                s.space().getFavoriteCount(),
+                s.space().getSpaceImages().isEmpty() ? null : s.space().getSpaceImages().get(0).getPath(),
+                s.ownerNickName()
         ));
 
         return new PublicSpacesFindByQueryResponses(mapResponses);

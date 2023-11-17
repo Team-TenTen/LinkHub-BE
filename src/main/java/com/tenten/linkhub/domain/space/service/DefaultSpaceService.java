@@ -5,6 +5,8 @@ import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.favorite.FavoriteRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
+import com.tenten.linkhub.domain.space.repository.space.dto.MySpacesFindQueryCondition;
+import com.tenten.linkhub.domain.space.repository.space.dto.SpaceAndOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberRepository;
 import com.tenten.linkhub.domain.space.repository.tag.TagRepository;
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
@@ -39,9 +41,9 @@ public class DefaultSpaceService implements SpaceService {
     @Override
     @Transactional(readOnly = true)
     public PublicSpacesFindByQueryResponses findPublicSpacesByQuery(PublicSpacesFindByQueryRequest request) {
-        Slice<Space> spaces = spaceRepository.findPublicSpacesJoinSpaceImageByQuery(mapper.toQueryCond(request));
+        Slice<SpaceAndOwnerNickName> spaceAndOwnerNickNames = spaceRepository.findPublicSpacesJoinSpaceImageByQuery(mapper.toQueryCond(request));
 
-        return PublicSpacesFindByQueryResponses.from(spaces);
+        return PublicSpacesFindByQueryResponses.from(spaceAndOwnerNickNames);
     }
 
     @Override
@@ -99,9 +101,10 @@ public class DefaultSpaceService implements SpaceService {
     @Override
     @Transactional(readOnly = true)
     public PublicSpacesFindByQueryResponses findMySpacesByQuery(MySpacesFindRequest request) {
-        Slice<Space> spaces = spaceRepository.findMySpacesJoinSpaceImageByQuery(mapper.toMySpacesFindQueryCondition(request));
+        MySpacesFindQueryCondition queryCondition = mapper.toMySpacesFindQueryCondition(request);
+        Slice<SpaceAndOwnerNickName> spaceAndOwnerNickNames = spaceRepository.findMySpacesJoinSpaceImageByQuery(queryCondition);
 
-        return PublicSpacesFindByQueryResponses.from(spaces);
+        return PublicSpacesFindByQueryResponses.from(spaceAndOwnerNickNames);
     }
 
     @Override
