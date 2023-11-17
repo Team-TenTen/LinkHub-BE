@@ -1,6 +1,5 @@
 package com.tenten.linkhub.global.exception;
 
-import com.tenten.linkhub.domain.space.exception.LinkViewHistoryException;
 import com.tenten.linkhub.global.response.ErrorResponse;
 import com.tenten.linkhub.global.response.ErrorWithDetailCodeResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -77,14 +76,6 @@ public class GlobalApiExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(errorResponse);
-    }
-
-    @ExceptionHandler(LinkViewHistoryException.class)
-    public ResponseEntity<Void> handleLinkViewHistoryException(HttpServletRequest request,
-                                                               LinkViewHistoryException e) {
-        return ResponseEntity
-                .ok()
-                .body(null);
     }
 
     @ExceptionHandler(Exception.class)
