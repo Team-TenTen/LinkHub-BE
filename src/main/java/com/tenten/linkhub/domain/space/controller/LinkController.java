@@ -9,8 +9,8 @@ import com.tenten.linkhub.domain.space.controller.dto.link.LinkUpdateApiResponse
 import com.tenten.linkhub.domain.space.controller.mapper.LinkApiMapper;
 import com.tenten.linkhub.domain.space.facade.LinkFacade;
 import com.tenten.linkhub.domain.space.facade.dto.LinkCreateFacadeRequest;
-import com.tenten.linkhub.global.response.ErrorResponse;
 import com.tenten.linkhub.domain.space.facade.dto.LinkUpdateFacadeRequest;
+import com.tenten.linkhub.global.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -145,4 +145,21 @@ public class LinkController {
 
         return ResponseEntity.noContent().build();
     }
+
+    /**
+     * 링크에 접속시 접속 정보를 저장하는 API
+     */
+    @PostMapping(value = "/spaces/{spaceId}/links/{linkId}/view")
+    public ResponseEntity<Void> addLinkViewHistory(
+            @PathVariable Long spaceId,
+            @PathVariable Long linkId,
+            @AuthenticationPrincipal MemberDetails memberDetails
+    ) {
+        linkFacade.addLinkViewHistory(spaceId, linkId, memberDetails.memberId());
+
+        return ResponseEntity
+                .noContent()
+                .build();
+    }
+
 }

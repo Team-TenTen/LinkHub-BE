@@ -73,4 +73,9 @@ public class LinkFacade {
                 new LinkDecreaseLikeCountDto(linkId)
         );
     }
+
+    public void addLinkViewHistory(Long spaceId, Long linkId, Long memberId) {
+        spaceService.checkLinkViewHistory(spaceId, memberId);
+        linkService.addLinkViewHistory(spaceId, linkId, memberId);
+    }
 }

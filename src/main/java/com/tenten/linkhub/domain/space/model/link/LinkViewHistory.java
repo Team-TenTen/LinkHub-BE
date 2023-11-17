@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.space.model.link;
 
+import com.tenten.linkhub.global.entity.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "link_view_histories")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-public class LinkViewHistory {
+public class LinkViewHistory extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,4 +31,12 @@ public class LinkViewHistory {
     @JoinColumn(name = "link_id", nullable = false)
     private Link link;
 
+    private LinkViewHistory(Long memberId, Link link) {
+        this.memberId = memberId;
+        this.link = link;
+    }
+
+    public static LinkViewHistory toLinkViewHistory(Long memberId, Link link) {
+        return new LinkViewHistory(memberId, link);
+    }
 }

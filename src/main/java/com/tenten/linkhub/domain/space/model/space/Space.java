@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.space.model.space;
 
+import com.tenten.linkhub.domain.space.exception.LinkViewHistoryException;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.space.dto.SpaceUpdateDto;
 import com.tenten.linkhub.domain.space.model.space.vo.SpaceImages;
@@ -15,13 +16,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
-import java.util.List;
-import java.util.Objects;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
+import java.util.Objects;
 
 import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
 import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
@@ -155,13 +155,13 @@ public class Space extends BaseEntity {
         }
     }
 
-    public void validateVisibilityAndMembership(Long memberId){
-        if (this.isVisible){
+    public void validateVisibilityAndMembership(Long memberId) {
+        if (this.isVisible) {
             return;
         }
 
         List<Long> spaceMemberIds = this.spaceMembers.getSpaceMemberIds();
-        if (!spaceMemberIds.contains(memberId)){
+        if (!spaceMemberIds.contains(memberId)) {
             throw new UnauthorizedAccessException("이 스페이스는 권한이 없으면 볼 수 없는 스페이스입니다.");
         }
     }
@@ -207,4 +207,12 @@ public class Space extends BaseEntity {
         return spaceImages.getAllSpaceImages();
     }
 
+
+    public void checkLinkViewHistoryEnabled(Long memberId) {
+        boolean isContainMember = spaceMembers.containMember(memberId);
+
+        if(!isContainMember || isReadMarkEnabled.equals(Boolean.FALSE)){
+            throw new LinkViewHistoryException("링크의 접속정보를 저장할 수 없습니다.");
+        }
+    }
 }

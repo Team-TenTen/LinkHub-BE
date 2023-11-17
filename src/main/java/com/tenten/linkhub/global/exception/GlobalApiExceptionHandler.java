@@ -1,5 +1,6 @@
 package com.tenten.linkhub.global.exception;
 
+import com.tenten.linkhub.domain.space.exception.LinkViewHistoryException;
 import com.tenten.linkhub.global.response.ErrorResponse;
 import com.tenten.linkhub.global.response.ErrorWithDetailCodeResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -66,8 +67,8 @@ public class GlobalApiExceptionHandler {
     }
 
     @ExceptionHandler(DataDuplicateException.class)
-    public ResponseEntity<ErrorWithDetailCodeResponse> handleDataDuplicateException(HttpServletRequest request,
-                                                                                    DataDuplicateException e) {
+    public ResponseEntity<ErrorWithDetailCodeResponse> handleDataDuplspace_imagesicateException(HttpServletRequest request,
+                                                                                                DataDuplicateException e) {
         ErrorWithDetailCodeResponse errorResponse = ErrorWithDetailCodeResponse.of(
                 e.getErrorCode(),
                 request.getRequestURI()
@@ -76,6 +77,14 @@ public class GlobalApiExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(errorResponse);
+    }
+
+    @ExceptionHandler(LinkViewHistoryException.class)
+    public ResponseEntity<Void> handleLinkViewHistoryException(HttpServletRequest request,
+                                                               LinkViewHistoryException e) {
+        return ResponseEntity
+                .ok()
+                .body(null);
     }
 
     @ExceptionHandler(Exception.class)
