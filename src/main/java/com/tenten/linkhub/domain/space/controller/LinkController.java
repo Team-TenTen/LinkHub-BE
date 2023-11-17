@@ -149,6 +149,14 @@ public class LinkController {
     /**
      * 링크에 접속시 접속 정보를 저장하는 API
      */
+    @Operation(
+            summary = "링크 접속 정보 저장 API",
+            description = "[JWT 필요] 링크 접속 시 접속 정보를 저장하는 API입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "링크 접속 이력 요청을 성공적으로 처리했습니다."),
+                    @ApiResponse(responseCode = "404", description = "스페이스 정보를 찾을 수 없습니다."),
+                    @ApiResponse(responseCode = "404", description = "링크 정보를 찾을 수 없습니다.")
+            })
     @PostMapping(value = "/spaces/{spaceId}/links/{linkId}/view")
     public ResponseEntity<Void> addLinkViewHistory(
             @PathVariable Long spaceId,
