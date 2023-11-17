@@ -15,6 +15,7 @@ public enum ErrorCode {
 
     //member
     DUPLICATE_NEWS_EMAIL("M001", "중복된 이메일입니다."),
+    DUPLICATE_FOLLOWING("M002", "중복된 팔로잉입니다."),
 
     //favorite
     DUPLICATE_FAVORITE("F001", "중복된 즐겨찾기 등록입니다.");

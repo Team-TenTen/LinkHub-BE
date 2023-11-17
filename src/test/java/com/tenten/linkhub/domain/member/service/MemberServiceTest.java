@@ -2,6 +2,9 @@ package com.tenten.linkhub.domain.member.service;
 
 import com.tenten.linkhub.domain.auth.JwtProvider;
 import com.tenten.linkhub.domain.auth.MemberDetails;
+import com.tenten.linkhub.domain.member.model.FavoriteCategory;
+import com.tenten.linkhub.domain.member.model.Member;
+import com.tenten.linkhub.domain.member.model.ProfileImage;
 import com.tenten.linkhub.domain.member.model.Provider;
 import com.tenten.linkhub.domain.member.repository.MemberEmailRedisRepository;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationRequest;
@@ -10,11 +13,17 @@ import com.tenten.linkhub.domain.member.service.dto.MemberJoinRequest;
 import com.tenten.linkhub.domain.member.service.dto.MemberJoinResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberProfileResponse;
 import com.tenten.linkhub.domain.space.model.category.Category;
+import com.tenten.linkhub.domain.space.model.space.Favorite;
+import com.tenten.linkhub.domain.space.model.space.Role;
+import com.tenten.linkhub.domain.space.model.space.Space;
+import com.tenten.linkhub.domain.space.model.space.SpaceImage;
+import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -46,6 +55,11 @@ class MemberServiceTest {
 
     @Autowired
     private JwtProvider jwtProvider;
+
+    @BeforeEach
+    void setUp() {
+        setUpData();
+    }
 
     @AfterEach
     void tearDown() {
@@ -121,19 +135,6 @@ class MemberServiceTest {
                 .hasMessageContaining("이미 가입한 회원입니다.");
     }
 
-    private MemberJoinRequest createMemberJoinRequest(MockMultipartFile requestFile) {
-        return new MemberJoinRequest(
-                "32342341232",
-                Provider.kakao,
-                "백둥이",
-                "만나서 반갑습니다.",
-                "baekdoong@gmail.com",
-                Category.KNOWLEDGE_ISSUE_CAREER,
-                true,
-                requestFile
-        );
-    }
-
     @Test
     @DisplayName("사용자는 멤버를 조회할 수 있다.")
     void getProfile_MemberProfileRequest_Success() {
@@ -149,7 +150,7 @@ class MemberServiceTest {
         MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
 
         //when
-        MemberProfileResponse response = memberService.getProfile(memberDetails.memberId());
+        MemberProfileResponse response = memberService.getProfile(memberDetails.memberId(), null);
 
         //then
         assertThat(response.memberId()).isEqualTo(memberDetails.memberId());
@@ -171,9 +172,22 @@ class MemberServiceTest {
         BDDMockito.given(mockS3Uploader.saveImage(any())).willReturn(imageInfo);
 
         //when & then
-        assertThatThrownBy(() -> memberService.getProfile(1L))
+        assertThatThrownBy(() -> memberService.getProfile(1L, null))
                 .isInstanceOf(UnauthorizedAccessException.class)
                 .hasMessageContaining("존재하지 않는 회원입니다.");
+    }
+
+    private MemberJoinRequest createMemberJoinRequest(MockMultipartFile requestFile) {
+        return new MemberJoinRequest(
+                "32342341232",
+                Provider.kakao,
+                "백둥이",
+                "만나서 반갑습니다.",
+                "baekdoong@gmail.com",
+                Category.KNOWLEDGE_ISSUE_CAREER,
+                true,
+                requestFile
+        );
     }
 
 }

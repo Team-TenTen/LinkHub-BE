@@ -32,9 +32,7 @@ public class Follow {
     @JoinColumn(name = "follower_id")
     private Member follower;
 
-    @Builder
-    public Follow(Long id, Member following, Member follower) {
-        this.id = id;
+    public Follow(Member following, Member follower) {
         this.following = following;
         this.follower = follower;
     }
