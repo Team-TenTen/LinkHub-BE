@@ -1,6 +1,5 @@
 package com.tenten.linkhub.domain.space.service;
 
-import com.tenten.linkhub.domain.space.exception.LinkViewHistoryException;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
@@ -118,7 +117,7 @@ public class DefaultSpaceService implements SpaceService {
     }
 
     @Override
-    public void checkLinkViewHistory(Long memberId, Long spaceId) {
+    public void checkLinkViewHistory(Long spaceId, Long memberId) {
         Space space = spaceRepository.getSpaceJoinSpaceMemberById(spaceId);
 
         space.checkLinkViewHistoryEnabled(memberId);
