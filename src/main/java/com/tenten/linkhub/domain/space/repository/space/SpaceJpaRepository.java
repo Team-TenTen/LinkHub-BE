@@ -21,4 +21,8 @@ public interface SpaceJpaRepository extends JpaRepository<Space, Long> {
     @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE spaces SET favorite_count = favorite_count + 1 WHERE id = :spaceId AND is_deleted = false ", nativeQuery = true)
     void increaseFavoriteCount(Long spaceId);
+
+    @Modifying(clearAutomatically = true)
+    @Query(value = "UPDATE spaces SET favorite_count = favorite_count - 1 WHERE id = :spaceId AND is_deleted = false ", nativeQuery = true)
+    void decreaseFavoriteCount(Long spaceId);
 }
