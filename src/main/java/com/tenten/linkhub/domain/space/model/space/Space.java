@@ -119,6 +119,10 @@ public class Space extends BaseEntity {
         return spaceMembers.getSpaceMemberList();
     }
 
+    public List<SpaceMember> getSortedSpaceMember() {
+        return spaceMembers.getSortedSpaceMemberList();
+    }
+
     public void changeSpaceImage(SpaceImage spaceImage) {
         this.spaceImages.changeSpaceImage(spaceImage);
     }

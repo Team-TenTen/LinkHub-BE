@@ -64,10 +64,11 @@ public class DefaultSpaceService implements SpaceService {
 
         Boolean isOwner = space.isOwner(memberId);
         Boolean isCanEdit = space.isCanEdit(memberId);
+        List<SpaceMember> sortedSpaceMember = space.getSortedSpaceMember();
 
         Boolean hasFavorite = favoriteRepository.isExist(memberId, spaceId);
 
-        return SpaceWithSpaceImageAndSpaceMemberInfo.of(space, isOwner, isCanEdit, hasFavorite);
+        return SpaceWithSpaceImageAndSpaceMemberInfo.of(space, sortedSpaceMember, isOwner, isCanEdit, hasFavorite);
     }
 
     @Override
