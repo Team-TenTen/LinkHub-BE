@@ -414,6 +414,9 @@ public class SpaceController {
         return ResponseEntity.ok(apiResponses);
     }
 
+    /**
+     * 댓글 수정 API
+     */
     @Operation(
             summary = "댓글 수정 API", description = "댓글 수정 API 입니다.",
             responses = {
@@ -438,6 +441,9 @@ public class SpaceController {
                 .body(apiResponse);
     }
 
+    /**
+     * 댓글 삭제 API
+     */
     @Operation(
             summary = "댓글 삭제 API", description = "댓글 삭제 API 입니다.",
             responses = {
