@@ -290,7 +290,7 @@ class SpaceFacadeTest {
         Space savedSpace = spaceJpaRepository.save(space);
         setUpSpaceId = savedSpace.getId();
 
-        Favorite favorite = new Favorite(setUpSpaceId, setUpMemberId);
+        Favorite favorite = new Favorite(savedSpace, setUpMemberId);
         favoriteJpaRepository.save(favorite);
     }
 

@@ -27,7 +27,7 @@ public class FavoriteService {
 
         checkDuplicateFavorite(spaceId, memberId);
 
-        Favorite favorite = mapper.toFavorite(spaceId, memberId);
+        Favorite favorite = mapper.toFavorite(space, memberId);
         Favorite savedFavorite = favoriteRepository.save(favorite);
 
         spaceRepository.increaseFavoriteCount(spaceId);
