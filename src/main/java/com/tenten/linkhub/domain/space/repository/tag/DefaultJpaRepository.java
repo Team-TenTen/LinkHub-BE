@@ -1,5 +1,7 @@
 package com.tenten.linkhub.domain.space.repository.tag;
 
+import com.tenten.linkhub.domain.space.repository.tag.dto.TagInfo;
+import com.tenten.linkhub.domain.space.repository.tag.query.TagQueryRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -7,14 +9,15 @@ import java.util.List;
 @Repository
 public class DefaultJpaRepository implements TagRepository {
 
-    private final TagJpaRepository tagJpaRepository;
+    private final TagQueryRepository tagQueryRepository;
 
-    public DefaultJpaRepository(TagJpaRepository tagJpaRepository) {
-        this.tagJpaRepository = tagJpaRepository;
+    public DefaultJpaRepository(TagQueryRepository tagQueryRepository) {
+        this.tagQueryRepository = tagQueryRepository;
     }
 
     @Override
-    public List<String> findBySpaceIdAndGroupBySpaceName(Long spaceId) {
-        return tagJpaRepository.findBySpaceIdAndGroupBySpaceName(spaceId);
+    public List<TagInfo> findBySpaceIdAndGroupBySpaceName(Long spaceId) {
+        return tagQueryRepository.findTagBySpaceIdAndGroupBySpaceName(spaceId);
     }
+
 }
