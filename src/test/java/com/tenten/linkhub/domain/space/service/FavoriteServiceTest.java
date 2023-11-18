@@ -63,7 +63,7 @@ class FavoriteServiceTest {
     void createFavorite() throws InterruptedException {
         //when
         SpaceRegisterInFavoriteResponse response = favoriteService.createFavorite(setUpSpaceId, setUpMemberId);
-        Thread.sleep(1000);
+        Thread.sleep(100);
 
         //then
         Favorite savedFavorite = favoriteJpaRepository.findById(response.favoriteId()).get();
@@ -107,10 +107,11 @@ class FavoriteServiceTest {
     void cancelFavoriteSpace() throws InterruptedException {
         //given
         favoriteService.createFavorite(setUpSpaceId, setUpMemberId);
-        Thread.sleep(1000);
+        Thread.sleep(100);
 
         //when
         Long deletedFavoriteId = favoriteService.cancelFavoriteSpace(setUpSpaceId, setUpMemberId);
+        Thread.sleep(100);
 
         //then
         Space space = spaceJpaRepository.findById(setUpSpaceId).get();
