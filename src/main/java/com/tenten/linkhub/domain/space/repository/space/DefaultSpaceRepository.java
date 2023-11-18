@@ -3,6 +3,7 @@ package com.tenten.linkhub.domain.space.repository.space;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.space.dto.MySpacesFindQueryCondition;
 import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
+import com.tenten.linkhub.domain.space.repository.space.dto.SpaceAndOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.space.query.SpaceQueryRepository;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import org.springframework.data.domain.Slice;
@@ -21,7 +22,7 @@ public class DefaultSpaceRepository implements SpaceRepository {
     }
 
     @Override
-    public Slice<Space> findPublicSpacesJoinSpaceImageByQuery(QueryCondition queryCondition) {
+    public Slice<SpaceAndOwnerNickName> findPublicSpacesJoinSpaceImageByQuery(QueryCondition queryCondition) {
         return spaceQueryRepository.findPublicSpacesJoinSpaceImageByCondition(queryCondition);
     }
 
@@ -43,7 +44,7 @@ public class DefaultSpaceRepository implements SpaceRepository {
     }
 
     @Override
-    public Slice<Space> findMySpacesJoinSpaceImageByQuery(MySpacesFindQueryCondition queryCondition) {
+    public Slice<SpaceAndOwnerNickName> findMySpacesJoinSpaceImageByQuery(MySpacesFindQueryCondition queryCondition) {
         return spaceQueryRepository.findMySpacesJoinSpaceImageByCondition(queryCondition);
     }
 

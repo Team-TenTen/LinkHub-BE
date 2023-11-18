@@ -10,6 +10,7 @@ public record PublicSpacesFindByQueryApiResponse(
         Long viewCount,
         Long scrapCount,
         Long favoriteCount,
-        String spaceImagePath
+        String spaceImagePath,
+        String ownerNickName
 ) {
 }

@@ -60,6 +60,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -111,8 +112,7 @@ public class SpaceController {
         PageRequest pageRequest = PageRequest.of(
                 request.pageNumber(),
                 request.pageSize(),
-                request.sort() != null ? Sort.by(request.sort()) : Sort.unsorted()
-        );
+                StringUtils.hasText(request.sort()) ? Sort.by(request.sort()) : Sort.unsorted());
 
         PublicSpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(
                 spaceMapper.toPublicSpacesFindByQueryRequest(request, pageRequest)
@@ -248,7 +248,7 @@ public class SpaceController {
         PageRequest pageRequest = PageRequest.of(
                 request.pageNumber(),
                 request.pageSize(),
-                request.sort() != null ? Sort.by(request.sort()) : Sort.unsorted());
+                StringUtils.hasText(request.sort()) ? Sort.by(request.sort()) : Sort.unsorted());
 
         PublicSpacesFindByQueryRequest serviceRequest = spaceMapper.toPublicSpacesFindByQueryRequest(request, pageRequest);
         PublicSpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(serviceRequest);
