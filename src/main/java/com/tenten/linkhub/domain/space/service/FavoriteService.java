@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.space.service;
 
+import com.tenten.linkhub.domain.space.handler.dto.SpaceIncreaseFavoriteCountEvent;
 import com.tenten.linkhub.domain.space.model.space.Favorite;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.favorite.FavoriteRepository;
@@ -9,6 +10,7 @@ import com.tenten.linkhub.domain.space.service.mapper.FavoriteMapper;
 import com.tenten.linkhub.global.exception.DataDuplicateException;
 import com.tenten.linkhub.global.response.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +21,7 @@ public class FavoriteService {
     private final FavoriteRepository favoriteRepository;
     private final SpaceRepository spaceRepository;
     private final FavoriteMapper mapper;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public SpaceRegisterInFavoriteResponse createFavorite(Long spaceId, Long memberId) {
@@ -30,7 +33,7 @@ public class FavoriteService {
         Favorite favorite = mapper.toFavorite(space, memberId);
         Favorite savedFavorite = favoriteRepository.save(favorite);
 
-        spaceRepository.increaseFavoriteCount(spaceId);
+        eventPublisher.publishEvent(new SpaceIncreaseFavoriteCountEvent(spaceId));
 
         return SpaceRegisterInFavoriteResponse.of(
                 savedFavorite.getId(),

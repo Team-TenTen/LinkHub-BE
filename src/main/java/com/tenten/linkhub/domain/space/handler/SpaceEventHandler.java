@@ -1,7 +1,8 @@
 package com.tenten.linkhub.domain.space.handler;
 
-import com.tenten.linkhub.domain.space.handler.dto.SpaceImagesDeleteDto;
-import com.tenten.linkhub.domain.space.handler.dto.SpaceIncreaseViewCountDto;
+import com.tenten.linkhub.domain.space.handler.dto.SpaceImagesDeleteEvent;
+import com.tenten.linkhub.domain.space.handler.dto.SpaceIncreaseFavoriteCountEvent;
+import com.tenten.linkhub.domain.space.handler.dto.SpaceIncreaseViewCountEvent;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
 import org.springframework.context.event.EventListener;
@@ -26,15 +27,22 @@ public class SpaceEventHandler {
     @Async
     @EventListener
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void increaseSpaceViewCount(SpaceIncreaseViewCountDto increaseViewCountDto){
-        spaceRepository.getById(increaseViewCountDto.spaceId())
+    public void increaseSpaceViewCount(SpaceIncreaseViewCountEvent event){
+        spaceRepository.getById(event.spaceId())
                 .increaseViewCount();
     }
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void deleteImageFiles(SpaceImagesDeleteDto imagesDeleteDto) {
-        s3Uploader.deleteImages(imagesDeleteDto.spaceImageNames());
+    public void deleteImageFiles(SpaceImagesDeleteEvent event) {
+        s3Uploader.deleteImages(event.spaceImageNames());
+    }
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void increaseFavoriteCount (SpaceIncreaseFavoriteCountEvent event) {
+        spaceRepository.increaseFavoriteCount(event.spaceId());
     }
 
 }
