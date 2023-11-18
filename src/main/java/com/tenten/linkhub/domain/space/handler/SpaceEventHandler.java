@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.space.handler;
 
+import com.tenten.linkhub.domain.space.handler.dto.SpaceDecreaseFavoriteCountEvent;
 import com.tenten.linkhub.domain.space.handler.dto.SpaceImagesDeleteEvent;
 import com.tenten.linkhub.domain.space.handler.dto.SpaceIncreaseFavoriteCountEvent;
 import com.tenten.linkhub.domain.space.handler.dto.SpaceIncreaseViewCountEvent;
@@ -43,6 +44,13 @@ public class SpaceEventHandler {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void increaseFavoriteCount (SpaceIncreaseFavoriteCountEvent event) {
         spaceRepository.increaseFavoriteCount(event.spaceId());
+    }
+
+    @Async
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void decreaseFavoriteCount (SpaceDecreaseFavoriteCountEvent event) {
+        spaceRepository.decreaseFavoriteCount(event.spaceId());
     }
 
 }
