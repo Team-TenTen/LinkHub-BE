@@ -5,6 +5,7 @@ import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.ProfileImage;
 import com.tenten.linkhub.domain.member.model.Provider;
 import com.tenten.linkhub.domain.member.repository.member.MemberJpaRepository;
+import com.tenten.linkhub.domain.space.exception.LinkViewHistoryException;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.link.Color;
 import com.tenten.linkhub.domain.space.model.link.Link;
@@ -17,6 +18,7 @@ import com.tenten.linkhub.domain.space.repository.link.LinkJpaRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkUpdateRequest;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -100,6 +102,17 @@ class DefaultLinkServiceTest {
         assertThat(savedLink.getTags().get(0).getName()).isEqualTo("바꾼 태그");
     }
 
+    @Test
+    @DisplayName("이미 링크 접속 이력이 있을 경우 데이터를 저장할 수 없다.")
+    void addLinkViewHistory_MemberIdAndSpaceIdAndLinkId_ThrowsException() {
+        //given
+        linkService.addLinkViewHistory(spaceId, linkId, memberId1);
+
+        //when & then
+        Assertions.assertThatThrownBy(() -> linkService.addLinkViewHistory(spaceId, linkId, memberId1))
+                .isInstanceOf(LinkViewHistoryException.class);
+    }
+
     private void setUpTestData() {
         Member member1 = new Member(
                 "123456",
@@ -135,4 +148,6 @@ class DefaultLinkServiceTest {
         Link link = Link.toLink(space, memberId1, "링크의 제목", new Url("https://www.naver.com"));
         linkId = linkJpaRepository.save(link).getId();
     }
+
 }
+

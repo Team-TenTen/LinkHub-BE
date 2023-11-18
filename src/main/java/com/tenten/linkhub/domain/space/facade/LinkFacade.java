@@ -10,6 +10,7 @@ import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkUpdateRequest;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -72,5 +73,11 @@ public class LinkFacade {
         eventPublisher.publishEvent(
                 new LinkDecreaseLikeCountDto(linkId)
         );
+    }
+
+    @Async
+    public void addLinkViewHistory(Long spaceId, Long linkId, Long memberId) {
+        spaceService.checkLinkViewHistory(spaceId, memberId);
+        linkService.addLinkViewHistory(spaceId, linkId, memberId);
     }
 }
