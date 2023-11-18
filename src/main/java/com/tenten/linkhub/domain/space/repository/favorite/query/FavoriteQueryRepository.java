@@ -1,13 +1,11 @@
-package com.tenten.linkhub.domain.space.repository.favorite;
+package com.tenten.linkhub.domain.space.repository.favorite.query;
 
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.favorite.dto.MyFavoriteSpacesQueryCondition;
 import com.tenten.linkhub.domain.space.repository.space.dto.QSpaceAndOwnerNickName;
-import com.tenten.linkhub.domain.space.repository.space.query.DynamicQueryFactory;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
@@ -27,7 +25,6 @@ public class FavoriteQueryRepository {
     public FavoriteQueryRepository(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
-
 
     public Slice<SpaceAndOwnerNickName> findMyFavoriteSpacesByQuery(MyFavoriteSpacesQueryCondition condition) {
         List<SpaceAndOwnerNickName> spaceAndOwnerNickNames = queryFactory

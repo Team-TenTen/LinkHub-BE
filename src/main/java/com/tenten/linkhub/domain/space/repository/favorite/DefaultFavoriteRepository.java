@@ -3,6 +3,7 @@ package com.tenten.linkhub.domain.space.repository.favorite;
 import com.tenten.linkhub.domain.space.model.space.Favorite;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.favorite.dto.MyFavoriteSpacesQueryCondition;
+import com.tenten.linkhub.domain.space.repository.favorite.query.FavoriteQueryRepository;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
