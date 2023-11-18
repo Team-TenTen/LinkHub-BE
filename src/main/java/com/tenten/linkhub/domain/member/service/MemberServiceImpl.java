@@ -197,7 +197,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Long deleteFollow(Long memberId, Long myMemberId) {
         Follow follow = followRepository.findByMemberIdAndMyMemberId(memberId, myMemberId)
-                .orElseThrow(() -> new DataNotFoundException("이미 삭제된 팔로우입니다."));
+                .orElseThrow(() -> new DataNotFoundException("존재하지 않는 팔로우 또는 유저입니다."));
 
         followRepository.delete(follow);
 

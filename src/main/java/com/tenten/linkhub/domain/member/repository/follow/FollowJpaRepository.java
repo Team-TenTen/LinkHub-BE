@@ -24,7 +24,7 @@ public interface FollowJpaRepository extends JpaRepository<Follow, Long> {
     @Query("SELECT f FROM Follow f WHERE f.follower.id = :memberId AND f.following.id = :myMemberId")
     Optional<Follow> findByMemberIdAndMyMemberId(Long memberId, Long myMemberId);
 
-    @Query("SELECT f FROM Follow f JOIN Member m WHERE f.following.id = :memberId")
+    @Query("SELECT f FROM Follow f JOIN Member m WHERE f.following.id = :memberId ORDER BY f.createdAt ASC")
     Slice<Follow> findByFollowingId(Long memberId, PageRequest pageRequest);
 
     @Query("SELECT f FROM Follow f JOIN Member m WHERE f.follower.id = :memberId")

@@ -12,11 +12,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Entity
 @Getter
@@ -76,13 +75,15 @@ public class Member extends BaseEntity {
         this.role = role;
     }
 
-    public Member(String socialId, Provider provider, Role role, String nickname, String aboutMe, String newsEmail) {
+    public Member(String socialId, Provider provider, Role role, String nickname, String aboutMe, String newsEmail,
+            Boolean isSubscribed) {
         this.socialId = socialId;
         this.provider = provider;
         this.role = role;
         this.nickname = nickname;
         this.aboutMe = aboutMe;
         this.newsEmail = newsEmail;
+        this.isSubscribed = isSubscribed;
     }
 
     public void addProfileImage(ProfileImage profileImage) {

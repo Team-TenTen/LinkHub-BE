@@ -194,7 +194,7 @@ public class MemberController {
             summary = "유저 언팔로우 API", description = "헤더에 JWT 토큰과 Path Variable로 memberId를 받으며, 요청 Body는 없습니다.",
             responses = {
                     @ApiResponse(responseCode = "204", description = "언팔로우가 성공적으로 완료되었습니다."),
-                    @ApiResponse(responseCode = "404", description = "이미 삭제된 팔로우입니다.",
+                    @ApiResponse(responseCode = "404", description = "존재하지 않는 팔로우 또는 유저입니다.",
                             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @DeleteMapping("/{memberId}/follow")
@@ -216,8 +216,8 @@ public class MemberController {
             summary = "팔로잉 목록 페이징 조회 API", description = "헤더에 JWT를 옵션으로 받고 Path Variable로 memberId를 받으며, 요청 Body는 없습니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "팔로잉 조회를 완료하였습니다."),
-                    @ApiResponse(responseCode = "404", description = "존재하지 않는 유저입니다.",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+//                    @ApiResponse(responseCode = "404", description = "존재하지 않는 유저입니다.",
+//                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @GetMapping(value = "/{memberId}/following", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MemberFollowingsFindApiResponses> getFollowings(
@@ -244,8 +244,8 @@ public class MemberController {
             summary = "팔로워 목록 페이징 조회 API", description = "헤더에 JWT를 옵션으로 받고 토큰 Path Variable로 memberId를 받으며, 요청 Body는 없습니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "팔로워 조회를 완료하였습니다."),
-                    @ApiResponse(responseCode = "404", description = "존재하지 않은 유저입니다.",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+//                    @ApiResponse(responseCode = "404", description = "존재하지 않은 유저입니다.",
+//                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @GetMapping(value = "/{memberId}/followers", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MemberFollowersFindApiResponses> getFollowers(
