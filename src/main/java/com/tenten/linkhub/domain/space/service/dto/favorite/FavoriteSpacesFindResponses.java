@@ -1,14 +1,14 @@
-package com.tenten.linkhub.domain.space.service.dto.space;
+package com.tenten.linkhub.domain.space.service.dto.favorite;
 
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
 import org.springframework.data.domain.Slice;
 
 import java.util.Objects;
 
-public record PublicSpacesFindByQueryResponses(Slice<SpacesFindByQueryResponse> responses) {
+public record FavoriteSpacesFindResponses(Slice<FavoriteSpacesFindResponse> responses) {
 
-    public static PublicSpacesFindByQueryResponses from(Slice<SpaceAndOwnerNickName> response){
-        Slice<SpacesFindByQueryResponse> mapResponses = response.map(s -> new SpacesFindByQueryResponse(
+    public static FavoriteSpacesFindResponses from(Slice<SpaceAndOwnerNickName> response){
+        Slice<FavoriteSpacesFindResponse> mapResponses = response.map(s -> new FavoriteSpacesFindResponse(
                 s.space().getId(),
                 s.space().getSpaceName(),
                 Objects.isNull(s.space().getDescription()) ? "" : s.space().getDescription(),
@@ -24,7 +24,7 @@ public record PublicSpacesFindByQueryResponses(Slice<SpacesFindByQueryResponse> 
                 s.ownerNickName()
         ));
 
-        return new PublicSpacesFindByQueryResponses(mapResponses);
+        return new FavoriteSpacesFindResponses(mapResponses);
     }
 
 }

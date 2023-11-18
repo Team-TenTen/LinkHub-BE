@@ -1,17 +1,19 @@
 package com.tenten.linkhub.domain.space.repository.favorite;
 
 import com.tenten.linkhub.domain.space.model.space.Favorite;
+import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
+import com.tenten.linkhub.domain.space.repository.favorite.dto.MyFavoriteSpacesQueryCondition;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
+@RequiredArgsConstructor
 @Repository
-public class DefaultFavoriteRepository implements FavoriteRepository{
+public class DefaultFavoriteRepository implements FavoriteRepository {
 
     private final FavoriteJpaRepository favoriteJpaRepository;
-
-    public DefaultFavoriteRepository(FavoriteJpaRepository favoriteJpaRepository) {
-        this.favoriteJpaRepository = favoriteJpaRepository;
-    }
+    private final FavoriteQueryRepository favoriteQueryRepository;
 
     @Override
     public Boolean isExist(Long memberId, Long spaceId) {
@@ -33,6 +35,11 @@ public class DefaultFavoriteRepository implements FavoriteRepository{
     public Long deleteById(Long favoriteId) {
         favoriteJpaRepository.deleteById(favoriteId);
         return favoriteId;
+    }
+
+    @Override
+    public Slice<SpaceAndOwnerNickName> findMyFavoriteSpacesByQuery(MyFavoriteSpacesQueryCondition queryCondition) {
+        return favoriteQueryRepository.findMyFavoriteSpacesByQuery(queryCondition);
     }
 
 }

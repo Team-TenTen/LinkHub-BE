@@ -11,6 +11,8 @@ import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateA
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentFindApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentsFindApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.favorite.MyFavoriteSpacesFindApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.favorite.MyFavoriteSpacesFindApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.favorite.SpaceRegisterInFavoriteApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiResponses;
@@ -25,6 +27,7 @@ import com.tenten.linkhub.domain.space.controller.dto.space.SpaceTagsGetApiRespo
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiResponse;
 import com.tenten.linkhub.domain.space.controller.mapper.CommentApiMapper;
+import com.tenten.linkhub.domain.space.controller.mapper.FavoriteApiMapper;
 import com.tenten.linkhub.domain.space.controller.mapper.SpaceApiMapper;
 import com.tenten.linkhub.domain.space.facade.CommentFacade;
 import com.tenten.linkhub.domain.space.facade.SpaceFacade;
@@ -38,6 +41,8 @@ import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.comment.CommentUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.ReplyCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
+import com.tenten.linkhub.domain.space.service.dto.favorite.FavoriteSpacesFindResponses;
+import com.tenten.linkhub.domain.space.service.dto.favorite.MyFavoriteSpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.service.dto.favorite.SpaceRegisterInFavoriteResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
@@ -93,6 +98,7 @@ public class SpaceController {
     private final FavoriteService favoriteService;
     private final SpaceApiMapper spaceMapper;
     private final CommentApiMapper commentMapper;
+    private final FavoriteApiMapper favoriteMapper;
 
     /**
      * 스페이스 검색 API
@@ -503,6 +509,23 @@ public class SpaceController {
         favoriteService.cancelFavoriteSpace(spaceId, memberDetails.memberId());
 
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     *  즐겨찾기한 스페이스 검색 API
+     */
+    @GetMapping(value = "/favorites")
+    public ResponseEntity<MyFavoriteSpacesFindApiResponses> findMyFavoriteSpaces(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @ModelAttribute MyFavoriteSpacesFindApiRequest request
+    ){
+        PageRequest pageRequest = PageRequest.of(request.pageNumber(), request.pageSize());
+        FavoriteSpacesFindResponses responses = favoriteService.findMyFavoriteSpaces(
+                favoriteMapper.toMyFavoriteSpacesFindRequest(pageRequest, request, memberDetails.memberId())
+        );
+
+        MyFavoriteSpacesFindApiResponses apiResponses = MyFavoriteSpacesFindApiResponses.from(responses);
+        return ResponseEntity.ok(apiResponses);
     }
 
     private void setSpaceViewCookie(HttpServletResponse servletResponse, List<Long> spaceViews) {
