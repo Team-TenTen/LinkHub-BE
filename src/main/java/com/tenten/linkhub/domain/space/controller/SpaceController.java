@@ -44,6 +44,7 @@ import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQuery
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.util.SpaceViewList;
 import com.tenten.linkhub.global.response.ErrorResponse;
+import com.tenten.linkhub.global.response.ErrorWithDetailCodeResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -59,6 +60,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -110,8 +112,7 @@ public class SpaceController {
         PageRequest pageRequest = PageRequest.of(
                 request.pageNumber(),
                 request.pageSize(),
-                request.sort() != null ? Sort.by(request.sort()) : Sort.unsorted()
-        );
+                StringUtils.hasText(request.sort()) ? Sort.by(request.sort()) : Sort.unsorted());
 
         PublicSpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(
                 spaceMapper.toPublicSpacesFindByQueryRequest(request, pageRequest)
@@ -247,7 +248,7 @@ public class SpaceController {
         PageRequest pageRequest = PageRequest.of(
                 request.pageNumber(),
                 request.pageSize(),
-                request.sort() != null ? Sort.by(request.sort()) : Sort.unsorted());
+                StringUtils.hasText(request.sort()) ? Sort.by(request.sort()) : Sort.unsorted());
 
         PublicSpacesFindByQueryRequest serviceRequest = spaceMapper.toPublicSpacesFindByQueryRequest(request, pageRequest);
         PublicSpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(serviceRequest);
@@ -465,20 +466,43 @@ public class SpaceController {
             summary = "스페이스 즐겨찾기 추가 API", description = "스페이스 즐겨찾기 추가 API 입니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "스페이스가 성공적으로 즐겨찾기 등록 되었습니다."),
-                    @ApiResponse(responseCode = "404", description = "존재하지 않는 스페이스를 즐겨찾기 등록하려고 합니다.",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                    @ApiResponse(responseCode = "404",
+                            description = "존재하지 않는 스페이스를 즐겨찾기 등록하려고 합니다,\n\n " +
+                                    "권한이 없는 스페이스를 즐겨찾기에 등록하려고 합니다. (두 예외 응답에 대한 응답값은 Schema를 눌러 확인해주세요!!)",
+                            content = @Content(schema = @Schema(oneOf = { ErrorResponse.class, ErrorWithDetailCodeResponse.class })))
             })
-    @PostMapping(value = "{spaceId}/favorites",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
+    @PostMapping(value = "/{spaceId}/favorites",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SpaceRegisterInFavoriteApiResponse> registerSpaceInFavorite(
             @AuthenticationPrincipal MemberDetails memberDetails,
             @PathVariable Long spaceId
     ) {
         SpaceRegisterInFavoriteResponse response = favoriteService.createFavorite(spaceId, memberDetails.memberId());
-        SpaceRegisterInFavoriteApiResponse apiResponse = SpaceRegisterInFavoriteApiResponse.from(response);
+        SpaceRegisterInFavoriteApiResponse apiResponse = SpaceRegisterInFavoriteApiResponse.from(response.favoriteCount());
 
         return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
+     *  스페이스 즐겨찾기 취소 API
+     */
+    @Operation(
+            summary = "스페이스 즐겨찾기 취소 API", description = "스페이스 즐겨찾기 취소 API 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "스페이스가 성공적으로 즐겨찾기 등록 되었습니다."),
+                    @ApiResponse(responseCode = "404",
+                            description = "존재하지 않는 즐겨찾기를 취소하려고 합니다,\n\n " +
+                                    "즐겨찾기를 등록한 유저가 아닌 다른 유저가 즐겨찾기를 취소하려고 합니다. (두 예외 응답에 대한 응답값은 Schema를 눌러 확인해주세요!!)",
+                            content = @Content(schema = @Schema(oneOf = { ErrorResponse.class, ErrorWithDetailCodeResponse.class })))
+            })
+    @DeleteMapping(value = "/{spaceId}/favorites")
+    public ResponseEntity<Void> cancelFavoriteSpace(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long spaceId
+    ) {
+        favoriteService.cancelFavoriteSpace(spaceId, memberDetails.memberId());
+
+        return ResponseEntity.noContent().build();
     }
 
     private void setSpaceViewCookie(HttpServletResponse servletResponse, List<Long> spaceViews) {

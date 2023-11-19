@@ -14,18 +14,25 @@ import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.favorite.FavoriteJpaRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.service.dto.favorite.SpaceRegisterInFavoriteResponse;
+import com.tenten.linkhub.global.exception.DataNotFoundException;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-@Transactional
-@TestPropertySource(locations = "classpath:/application-test.yml")
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+@ActiveProfiles("test")
 @SpringBootTest
 class FavoriteServiceTest {
 
@@ -45,21 +52,77 @@ class FavoriteServiceTest {
     private Long setUpSpaceId;
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         setUpTestData();
+    }
+
+    @AfterEach
+    void tearDown(){
+        favoriteJpaRepository.deleteAll();
     }
 
     @Test
     @DisplayName("유저는 스페이스를 즐겨찾기에 등록할 수 있다.")
+    @Transactional
     void createFavorite() {
         //when
         SpaceRegisterInFavoriteResponse response = favoriteService.createFavorite(setUpSpaceId, setUpMemberId);
 
         //then
         Favorite savedFavorite = favoriteJpaRepository.findById(response.favoriteId()).get();
+        Space space = spaceJpaRepository.findById(setUpSpaceId).get();
 
         assertThat(savedFavorite.getMemberId()).isEqualTo(setUpMemberId);
-        assertThat(savedFavorite.getSpace().getSpaceName()).isEqualTo("첫번째 스페이스");
+        assertThat(space.getSpaceName()).isEqualTo("첫번째 스페이스");
+        assertThat(space.getFavoriteCount()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("다수의 유저가 동시에 즐겨찾기 등록을 진행해도 Space의 viewCount의 정합성을 보장한다.")
+    void createFavorite_concurrencyTest() throws InterruptedException {
+        //given
+        int threadCount = 100;
+        ExecutorService executorService = Executors.newFixedThreadPool(32);
+        CountDownLatch latch = new CountDownLatch(threadCount);
+
+        //when
+        for (int i = 0; i < threadCount; i++) {
+            int memberAddNumber = i;
+            executorService.submit(() -> {
+                try {
+                    SpaceRegisterInFavoriteResponse response = favoriteService.createFavorite(setUpSpaceId, setUpMemberId + memberAddNumber);
+                    favoriteJpaRepository.findById(response.favoriteId());
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+        latch.await();
+
+        //then
+        Space space = spaceJpaRepository.findById(setUpSpaceId).get();
+        assertThat(space.getFavoriteCount()).isEqualTo(100L);
+    }
+
+    @Test
+    @DisplayName("유저는 스페이스 즐겨찾기를 취소할 수 있다.")
+    @Transactional
+    void cancelFavoriteSpace() {
+        //given
+        favoriteService.createFavorite(setUpSpaceId, setUpMemberId);
+
+        //when
+        Long deletedFavoriteId = favoriteService.cancelFavoriteSpace(setUpSpaceId, setUpMemberId);
+
+        //then
+        Space space = spaceJpaRepository.findById(setUpSpaceId).get();
+
+        assertThat(space.getFavoriteCount()).isEqualTo(0L);
+        assertThatThrownBy(() -> {
+            favoriteJpaRepository.findById(deletedFavoriteId)
+                    .orElseThrow(() -> new DataNotFoundException("해당 Favorite은 존재하지 않습니다."));
+        })
+                .isInstanceOf(DataNotFoundException.class);
     }
 
     private void setUpTestData() {

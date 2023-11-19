@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -41,6 +42,13 @@ public class SpaceMembers {
         return spaceMemberList.stream()
                 .filter(spaceMember -> !spaceMember.getIsDeleted())
                 .collect(Collectors.toList());
+    }
+
+    public List<SpaceMember> getSortedSpaceMemberList() {
+        return getSpaceMemberList()
+                .stream()
+                .sorted(Comparator.comparing(spaceMember -> spaceMember.getRole().ordinal()))
+                .toList();
     }
 
     public List<Long> getSpaceMemberIds() {

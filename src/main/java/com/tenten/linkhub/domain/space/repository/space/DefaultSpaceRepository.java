@@ -3,10 +3,12 @@ package com.tenten.linkhub.domain.space.repository.space;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.space.dto.MySpacesFindQueryCondition;
 import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
+import com.tenten.linkhub.domain.space.repository.space.dto.SpaceAndOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.space.query.SpaceQueryRepository;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class DefaultSpaceRepository implements SpaceRepository {
@@ -20,7 +22,7 @@ public class DefaultSpaceRepository implements SpaceRepository {
     }
 
     @Override
-    public Slice<Space> findPublicSpacesJoinSpaceImageByQuery(QueryCondition queryCondition) {
+    public Slice<SpaceAndOwnerNickName> findPublicSpacesJoinSpaceImageByQuery(QueryCondition queryCondition) {
         return spaceQueryRepository.findPublicSpacesJoinSpaceImageByCondition(queryCondition);
     }
 
@@ -42,8 +44,20 @@ public class DefaultSpaceRepository implements SpaceRepository {
     }
 
     @Override
-    public Slice<Space> findMySpacesJoinSpaceImageByQuery(MySpacesFindQueryCondition queryCondition) {
+    public Slice<SpaceAndOwnerNickName> findMySpacesJoinSpaceImageByQuery(MySpacesFindQueryCondition queryCondition) {
         return spaceQueryRepository.findMySpacesJoinSpaceImageByCondition(queryCondition);
+    }
+
+    @Override
+    @Transactional
+    public void increaseFavoriteCount(Long spaceId) {
+        spaceJpaRepository.increaseFavoriteCount(spaceId);
+    }
+
+    @Override
+    @Transactional
+    public void decreaseFavoriteCount(Long spaceId) {
+        spaceJpaRepository.decreaseFavoriteCount(spaceId);
     }
 
 }

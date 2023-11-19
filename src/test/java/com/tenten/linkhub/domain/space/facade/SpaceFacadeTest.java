@@ -21,6 +21,11 @@ import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.s3.S3Uploader;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -40,8 +45,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 
+@ActiveProfiles("test")
 @Transactional
-@TestPropertySource(locations = "classpath:/application-test.yml")
 @SpringBootTest
 class SpaceFacadeTest {
 
@@ -145,6 +150,31 @@ class SpaceFacadeTest {
     }
 
     @Test
+    @DisplayName("스페이스 상세 정보 조회 시 스페이스 멤버들의 정보는 정렬되어 반환 받는다.")
+    void getSpaceDetailById_orderTest() {
+        //given
+        SpaceDetailGetByIdFacadeRequest request = new SpaceDetailGetByIdFacadeRequest(
+                setUpSpaceId,
+                setUpMemberId,
+                new ArrayList<>());
+
+        //when
+        SpaceDetailGetByIdFacadeResponse response = spaceFacade.getSpaceDetailById(request);
+
+        //then
+        List<SpaceMemberDetailInfo> spaceMemberDetailInfos = response.memberDetailInfos();
+
+        assertThat(response.spaceId()).isEqualTo(setUpSpaceId);
+        assertThat(response.spaceName()).isEqualTo("첫번째 스페이스");
+        assertThat(spaceMemberDetailInfos.get(0).nickname()).isEqualTo("잠자는 사자의 콧털");
+        assertThat(spaceMemberDetailInfos.get(0).SpaceMemberRole()).isEqualTo(Role.OWNER);
+        assertThat(spaceMemberDetailInfos.get(1).nickname()).isEqualTo("백둥이");
+        assertThat(spaceMemberDetailInfos.get(1).SpaceMemberRole()).isEqualTo(Role.CAN_EDIT);
+        assertThat(spaceMemberDetailInfos.get(2).nickname()).isEqualTo("프롱이");
+        assertThat(spaceMemberDetailInfos.get(2).SpaceMemberRole()).isEqualTo(Role.CAN_VIEW);
+    }
+
+    @Test
     @DisplayName("유저는 스페이스의 정보들을 변경할 수 있다.")
     void updateSpace() {
         //given
@@ -201,7 +231,7 @@ class SpaceFacadeTest {
     }
 
     private void setUpData() {
-        Member member = new Member(
+        Member member1 = new Member(
                 "testSocialId",
                 Provider.kakao,
                 com.tenten.linkhub.domain.member.model.Role.USER,
@@ -213,7 +243,33 @@ class SpaceFacadeTest {
                 new FavoriteCategory(Category.KNOWLEDGE_ISSUE_CAREER)
         );
 
-        setUpMemberId = memberJpaRepository.save(member).getId();
+        Member member2 = new Member(
+                "testSocialId",
+                Provider.kakao,
+                com.tenten.linkhub.domain.member.model.Role.USER,
+                "프롱이",
+                "프롱이 소개글",
+                "abc@gmail.com",
+                true,
+                new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지"),
+                new FavoriteCategory(Category.KNOWLEDGE_ISSUE_CAREER)
+        );
+
+        Member member3 = new Member(
+                "testSocialId",
+                Provider.kakao,
+                com.tenten.linkhub.domain.member.model.Role.USER,
+                "백둥이",
+                "백둥이 소개글",
+                "abc@gmail.com",
+                true,
+                new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지"),
+                new FavoriteCategory(Category.KNOWLEDGE_ISSUE_CAREER)
+        );
+
+        setUpMemberId = memberJpaRepository.save(member1).getId();
+        Long setUpMemberId2 = memberJpaRepository.save(member2).getId();
+        Long setUpMemberId3 = memberJpaRepository.save(member3).getId();
 
         Space space = new Space(
                 setUpMemberId,
@@ -228,10 +284,13 @@ class SpaceFacadeTest {
                 true
         );
 
+        space.addSpaceMember(new SpaceMember(setUpMemberId2, Role.CAN_VIEW));
+        space.addSpaceMember(new SpaceMember(setUpMemberId3, Role.CAN_EDIT));
+
         Space savedSpace = spaceJpaRepository.save(space);
         setUpSpaceId = savedSpace.getId();
 
-        Favorite favorite = new Favorite(savedSpace, setUpMemberId);
+        Favorite favorite = new Favorite(setUpSpaceId, setUpMemberId);
         favoriteJpaRepository.save(favorite);
     }
 

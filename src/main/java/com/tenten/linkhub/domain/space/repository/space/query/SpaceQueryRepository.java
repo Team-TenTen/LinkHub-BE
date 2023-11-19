@@ -3,13 +3,16 @@ package com.tenten.linkhub.domain.space.repository.space.query;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.space.dto.MySpacesFindQueryCondition;
+import com.tenten.linkhub.domain.space.repository.space.dto.QSpaceAndOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
+import com.tenten.linkhub.domain.space.repository.space.dto.SpaceAndOwnerNickName;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.tenten.linkhub.domain.member.model.QMember.member;
 import static com.tenten.linkhub.domain.space.model.space.QSpace.space;
 import static com.tenten.linkhub.domain.space.model.space.QSpaceMember.spaceMember;
 
@@ -24,11 +27,15 @@ public class SpaceQueryRepository {
         this.dynamicQueryFactory = new DynamicQueryFactory();
     }
 
-    public Slice<Space> findPublicSpacesJoinSpaceImageByCondition(QueryCondition condition) {
-        List<Space> spaces = queryFactory
-                .select(space)
+    public Slice<SpaceAndOwnerNickName> findPublicSpacesJoinSpaceImageByCondition(QueryCondition condition) {
+        List<SpaceAndOwnerNickName> spaceAndOwnerNickNames = queryFactory
+                .select(new QSpaceAndOwnerNickName(
+                        space,
+                        member.nickname
+                ))
                 .from(space)
                 .join(space.spaceImages.spaceImageList).fetchJoin()
+                .join(member).on(space.memberId.eq(member.id))
                 .where(space.isDeleted.eq(false),
                         space.isVisible.eq(true),
                         dynamicQueryFactory.eqSpaceName(condition.keyWord()),
@@ -41,20 +48,24 @@ public class SpaceQueryRepository {
 
         boolean hasNext = false;
 
-        if (spaces.size() > condition.pageable().getPageSize()) {
-            spaces.remove(condition.pageable().getPageSize());
+        if (spaceAndOwnerNickNames.size() > condition.pageable().getPageSize()) {
+            spaceAndOwnerNickNames.remove(condition.pageable().getPageSize());
             hasNext = true;
         }
 
-        return new SliceImpl<>(spaces, condition.pageable(), hasNext);
+        return new SliceImpl<>(spaceAndOwnerNickNames, condition.pageable(), hasNext);
     }
 
-    public Slice<Space> findMySpacesJoinSpaceImageByCondition(MySpacesFindQueryCondition condition) {
-        List<Space> spaces = queryFactory
-                .select(space)
+    public Slice<SpaceAndOwnerNickName> findMySpacesJoinSpaceImageByCondition(MySpacesFindQueryCondition condition) {
+        List<SpaceAndOwnerNickName> spaceAndOwnerNickNames = queryFactory
+                .select(new QSpaceAndOwnerNickName(
+                        space,
+                        member.nickname
+                ))
                 .from(space)
-                .join(space.spaceMembers.spaceMemberList, spaceMember)
                 .leftJoin(space.spaceImages.spaceImageList).fetchJoin()
+                .join(space.spaceMembers.spaceMemberList, spaceMember)
+                .join(member).on(space.memberId.eq(member.id))
                 .where(spaceMember.memberId.eq(condition.memberId()),
                         space.isDeleted.eq(false),
                         dynamicQueryFactory.eqSpaceName(condition.keyWord()),
@@ -66,12 +77,12 @@ public class SpaceQueryRepository {
 
         boolean hasNext = false;
 
-        if (spaces.size() > condition.pageable().getPageSize()) {
-            spaces.remove(condition.pageable().getPageSize());
+        if (spaceAndOwnerNickNames.size() > condition.pageable().getPageSize()) {
+            spaceAndOwnerNickNames.remove(condition.pageable().getPageSize());
             hasNext = true;
         }
 
-        return new SliceImpl<>(spaces, condition.pageable(), hasNext);
+        return new SliceImpl<>(spaceAndOwnerNickNames, condition.pageable(), hasNext);
     }
 
 }
