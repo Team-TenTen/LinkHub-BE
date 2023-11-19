@@ -40,7 +40,7 @@ public class Link extends BaseEntity {
     @JoinColumn(name = "space_id", nullable = false)
     private Space space;
 
-    @OneToMany(mappedBy = "link", cascade = CascadeType.PERSIST, orphanRemoval = true)
+    @OneToMany(mappedBy = "link", cascade = CascadeType.PERSIST)
     private List<Tag> tags = new ArrayList<>();
 
     @Column(nullable = false)
@@ -51,9 +51,6 @@ public class Link extends BaseEntity {
 
     @Embedded
     private Url url;
-
-    @Column(nullable = false)
-    private Long viewCount;
 
     @Column(nullable = false)
     private Long likeCount;
@@ -91,7 +88,6 @@ public class Link extends BaseEntity {
         this.title = title;
         this.url = url;
         this.likeCount = 0L;
-        this.viewCount = 0L;
     }
 
     public void updateLink(Url url, String title, Optional<Tag> tag) {
@@ -115,11 +111,17 @@ public class Link extends BaseEntity {
         this.tags.forEach(Tag::deleteTag);
         this.tags.clear();
     }
+
     public void increaseLikeCount() {
         likeCount++;
     }
 
     public void decreaseLikeCount() {
         likeCount--;
+    }
+
+    public void deleteLink() {
+        this.isDeleted = true;
+
     }
 }
