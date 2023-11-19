@@ -475,7 +475,7 @@ public class SpaceController {
                     @ApiResponse(responseCode = "404",
                             description = "존재하지 않는 스페이스를 즐겨찾기 등록하려고 합니다,\n\n " +
                                     "권한이 없는 스페이스를 즐겨찾기에 등록하려고 합니다. (두 예외 응답에 대한 응답값은 Schema를 눌러 확인해주세요!!)",
-                            content = @Content(schema = @Schema(oneOf = { ErrorResponse.class, ErrorWithDetailCodeResponse.class })))
+                            content = @Content(schema = @Schema(oneOf = {ErrorResponse.class, ErrorWithDetailCodeResponse.class})))
             })
     @PostMapping(value = "/{spaceId}/favorites",
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -490,7 +490,7 @@ public class SpaceController {
     }
 
     /**
-     *  스페이스 즐겨찾기 취소 API
+     * 스페이스 즐겨찾기 취소 API
      */
     @Operation(
             summary = "스페이스 즐겨찾기 취소 API", description = "스페이스 즐겨찾기 취소 API 입니다.",
@@ -499,7 +499,7 @@ public class SpaceController {
                     @ApiResponse(responseCode = "404",
                             description = "존재하지 않는 즐겨찾기를 취소하려고 합니다,\n\n " +
                                     "즐겨찾기를 등록한 유저가 아닌 다른 유저가 즐겨찾기를 취소하려고 합니다. (두 예외 응답에 대한 응답값은 Schema를 눌러 확인해주세요!!)",
-                            content = @Content(schema = @Schema(oneOf = { ErrorResponse.class, ErrorWithDetailCodeResponse.class })))
+                            content = @Content(schema = @Schema(oneOf = {ErrorResponse.class, ErrorWithDetailCodeResponse.class})))
             })
     @DeleteMapping(value = "/{spaceId}/favorites")
     public ResponseEntity<Void> cancelFavoriteSpace(
@@ -512,13 +512,21 @@ public class SpaceController {
     }
 
     /**
-     *  즐겨찾기한 스페이스 검색 API
+     * 나의 즐겨찾기 스페이스 검색 API
      */
-    @GetMapping(value = "/favorites")
+    @Operation(
+            summary = "나의 즐겨찾기 스페이스 검색 API", description = "내가 즐겨찾기한 스페이스를 keyWord, pageNumber, pageSize, filter를 통해 검색합니다. (keyWord, filter 조건 없이 사용 가능합니다.)\n\n" +
+            "해당 API는 keyWord, filter 없이도 사용 가능한 페이징 조회입니다.\n\n" +
+            "filter: {ENTER_ART, LIFE_KNOWHOW_SHOPPING, HOBBY_LEISURE_TRAVEL, KNOWLEDGE_ISSUE_CAREER, ETC}",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "검색이 성공적으로 완료 되었습니다."),
+            })
+    @GetMapping(value = "/favorites/me",
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MyFavoriteSpacesFindApiResponses> findMyFavoriteSpaces(
             @AuthenticationPrincipal MemberDetails memberDetails,
             @ModelAttribute MyFavoriteSpacesFindApiRequest request
-    ){
+    ) {
         PageRequest pageRequest = PageRequest.of(request.pageNumber(), request.pageSize());
         FavoriteSpacesFindResponses responses = favoriteService.findMyFavoriteSpaces(
                 favoriteMapper.toMyFavoriteSpacesFindRequest(pageRequest, request, memberDetails.memberId())
