@@ -1,11 +1,10 @@
 package com.tenten.linkhub.domain.space.repository.space.query;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.tenten.linkhub.domain.space.model.space.Space;
-import com.tenten.linkhub.domain.space.repository.space.dto.MySpacesFindQueryCondition;
-import com.tenten.linkhub.domain.space.repository.space.dto.QSpaceAndOwnerNickName;
+import com.tenten.linkhub.domain.space.repository.common.dto.QSpaceAndOwnerNickName;
+import com.tenten.linkhub.domain.space.repository.space.dto.MySpacesQueryCondition;
 import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
-import com.tenten.linkhub.domain.space.repository.space.dto.SpaceAndOwnerNickName;
+import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
@@ -56,7 +55,7 @@ public class SpaceQueryRepository {
         return new SliceImpl<>(spaceAndOwnerNickNames, condition.pageable(), hasNext);
     }
 
-    public Slice<SpaceAndOwnerNickName> findMySpacesJoinSpaceImageByCondition(MySpacesFindQueryCondition condition) {
+    public Slice<SpaceAndOwnerNickName> findMySpacesJoinSpaceImageByCondition(MySpacesQueryCondition condition) {
         List<SpaceAndOwnerNickName> spaceAndOwnerNickNames = queryFactory
                 .select(new QSpaceAndOwnerNickName(
                         space,
