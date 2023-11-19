@@ -113,6 +113,17 @@ class DefaultLinkServiceTest {
                 .isInstanceOf(LinkViewHistoryException.class);
     }
 
+    @Test
+    @DisplayName("사용자는 링크를 삭제할 수 있다.")
+    void deleteLink_LinkId_Success() {
+        //when
+        linkService.deleteLink(linkId);
+
+        //then
+        int linkCount = (int) linkJpaRepository.findById(linkId).stream().count();
+        assertThat(linkCount).isEqualTo(0);
+    }
+
     private void setUpTestData() {
         Member member1 = new Member(
                 "123456",
