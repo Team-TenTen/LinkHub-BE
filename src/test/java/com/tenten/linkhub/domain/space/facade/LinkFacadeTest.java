@@ -184,6 +184,14 @@ class LinkFacadeTest {
         assertThat(like).isEmpty();
     }
 
+    @Test
+    @DisplayName("사용자는 CAN_EDIT이나 OWNER 권한이 아닌 경우 링크를 삭제할 수 없다.")
+    void deleteLink_request_ThrowsUnauthorizedAccessException() {
+        //when & then
+        Assertions.assertThatThrownBy(() -> linkFacade.deleteLink(spaceId, linkId, memberId2))
+                .isInstanceOf(UnauthorizedAccessException.class);
+    }
+
     private void setUpTestData() {
         Member member1 = new Member(
                 "123456",
