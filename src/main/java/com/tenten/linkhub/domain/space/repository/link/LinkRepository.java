@@ -10,6 +10,5 @@ public interface LinkRepository {
 
     Link getById(Long linkId);
 
-
     Optional<Link> findById(Long linkId);
 }

@@ -80,4 +80,9 @@ public class LinkFacade {
         spaceService.checkLinkViewHistory(spaceId, memberId);
         linkService.addLinkViewHistory(spaceId, linkId, memberId);
     }
+
+    public void deleteLink(Long spaceId, Long linkId, Long memberId) {
+        spaceService.checkMemberEditLink(memberId, spaceId);
+        linkService.deleteLink(linkId);
+    }
 }

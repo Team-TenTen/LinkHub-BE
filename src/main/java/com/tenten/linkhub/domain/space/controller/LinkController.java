@@ -170,4 +170,20 @@ public class LinkController {
                 .build();
     }
 
+    /**
+     * 링크 삭제 API
+     */
+    @DeleteMapping(value = "/spaces/{spaceId}/links/{linkId}")
+    public ResponseEntity<Void> deleteLink(
+            @PathVariable Long spaceId,
+            @PathVariable Long linkId,
+            @AuthenticationPrincipal MemberDetails memberDetails
+    ) {
+        linkFacade.deleteLink(spaceId, linkId, memberDetails.memberId());
+
+        return ResponseEntity
+                .noContent()
+                .build();
+    }
+
 }

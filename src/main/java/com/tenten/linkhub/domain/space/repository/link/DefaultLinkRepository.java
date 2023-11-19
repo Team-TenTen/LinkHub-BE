@@ -30,4 +30,5 @@ public class DefaultLinkRepository implements LinkRepository {
     public Optional<Link> findById(Long linkId) {
         return linkJpaRepository.findById(linkId);
     }
+
 }

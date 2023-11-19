@@ -112,4 +112,13 @@ public class DefaultLinkService implements LinkService {
         LinkViewHistory linkViewHistory = LinkViewHistory.toLinkViewHistory(memberId, link);
         linkViewRepository.save(linkViewHistory);
     }
+
+    @Override
+    @Transactional
+    public void deleteLink(Long linkId) {
+        Link link = linkRepository.getById(linkId);
+
+        link.deleteLink();
+        linkViewRepository.deleteLinkViewHistory(linkId);
+    }
 }
