@@ -173,6 +173,15 @@ public class LinkController {
     /**
      * 링크 삭제 API
      */
+    @Operation(
+            summary = "링크 삭제 API",
+            description = "[JWT 필요] 스페이스 내에서 링크를 삭제하는 API 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "링크가 성공적으로 삭제된 경우"),
+                    @ApiResponse(responseCode = "404", description = "링크 삭제 권한이 없습니다."),
+                    @ApiResponse(responseCode = "404", description = "요청한 spaceId에 해당하는 스페이스를 찾을 수 없습니다."),
+                    @ApiResponse(responseCode = "404", description = "요청한 linkId에 해당하는 스페이스를 찾을 수 없습니다.")
+            })
     @DeleteMapping(value = "/spaces/{spaceId}/links/{linkId}")
     public ResponseEntity<Void> deleteLink(
             @PathVariable Long spaceId,
