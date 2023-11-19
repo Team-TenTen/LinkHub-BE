@@ -1,7 +1,7 @@
 package com.tenten.linkhub.domain.space.handler;
 
-import com.tenten.linkhub.domain.space.handler.dto.LinkDecreaseLikeCountDto;
-import com.tenten.linkhub.domain.space.handler.dto.LinkIncreaseLikeCountDto;
+import com.tenten.linkhub.domain.space.handler.dto.LinkDecreaseLikeCountEvent;
+import com.tenten.linkhub.domain.space.handler.dto.LinkIncreaseLikeCountEvent;
 import com.tenten.linkhub.domain.space.model.link.Link;
 import com.tenten.linkhub.domain.space.repository.link.LinkRepository;
 import jakarta.persistence.OptimisticLockException;
@@ -30,8 +30,8 @@ public class LinkEventHandler {
             maxAttempts = 3,
             backoff = @Backoff(delay = 100)
     )
-    public void increaseLikeCount(LinkIncreaseLikeCountDto linkIncreaseLikeCountDto) {
-        linkRepository.findById(linkIncreaseLikeCountDto.linkId())
+    public void increaseLikeCount(LinkIncreaseLikeCountEvent linkIncreaseLikeCountEvent) {
+        linkRepository.findById(linkIncreaseLikeCountEvent.linkId())
                 .ifPresent(Link::increaseLikeCount);
     }
 
@@ -43,8 +43,8 @@ public class LinkEventHandler {
             maxAttempts = 3,
             backoff = @Backoff(delay = 100)
     )
-    public void decreaseLikeCount(LinkDecreaseLikeCountDto linkDecreaseLikeCountDto) {
-        linkRepository.findById(linkDecreaseLikeCountDto.linkId())
+    public void decreaseLikeCount(LinkDecreaseLikeCountEvent linkDecreaseLikeCountEvent) {
+        linkRepository.findById(linkDecreaseLikeCountEvent.linkId())
                 .ifPresent(Link::decreaseLikeCount);
     }
 

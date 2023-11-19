@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class FavoriteMapper {
 
-    public Favorite toFavorite(Long spaceId, Long memberId) {
-        return new Favorite(spaceId, memberId);
+    public Favorite toFavorite(Space space, Long memberId) {
+        return new Favorite(space, memberId);
     }
 }

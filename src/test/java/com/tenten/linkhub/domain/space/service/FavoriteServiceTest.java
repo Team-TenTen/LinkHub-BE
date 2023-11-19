@@ -15,7 +15,6 @@ import com.tenten.linkhub.domain.space.repository.favorite.FavoriteJpaRepository
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.service.dto.favorite.SpaceRegisterInFavoriteResponse;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -57,16 +55,16 @@ class FavoriteServiceTest {
     }
 
     @AfterEach
-    void tearDown(){
+    void tearDown() {
         favoriteJpaRepository.deleteAll();
     }
 
     @Test
     @DisplayName("유저는 스페이스를 즐겨찾기에 등록할 수 있다.")
-    @Transactional
-    void createFavorite() {
+    void createFavorite() throws InterruptedException {
         //when
         SpaceRegisterInFavoriteResponse response = favoriteService.createFavorite(setUpSpaceId, setUpMemberId);
+        Thread.sleep(100);
 
         //then
         Favorite savedFavorite = favoriteJpaRepository.findById(response.favoriteId()).get();
@@ -98,6 +96,7 @@ class FavoriteServiceTest {
             });
         }
         latch.await();
+        Thread.sleep(1000);
 
         //then
         Space space = spaceJpaRepository.findById(setUpSpaceId).get();
@@ -106,13 +105,14 @@ class FavoriteServiceTest {
 
     @Test
     @DisplayName("유저는 스페이스 즐겨찾기를 취소할 수 있다.")
-    @Transactional
-    void cancelFavoriteSpace() {
+    void cancelFavoriteSpace() throws InterruptedException {
         //given
         favoriteService.createFavorite(setUpSpaceId, setUpMemberId);
+        Thread.sleep(100);
 
         //when
         Long deletedFavoriteId = favoriteService.cancelFavoriteSpace(setUpSpaceId, setUpMemberId);
+        Thread.sleep(100);
 
         //then
         Space space = spaceJpaRepository.findById(setUpSpaceId).get();
@@ -153,7 +153,7 @@ class FavoriteServiceTest {
                 true
         );
 
-        spaceJpaRepository.save(space);
         setUpSpaceId = spaceJpaRepository.save(space).getId();
     }
+
 }
