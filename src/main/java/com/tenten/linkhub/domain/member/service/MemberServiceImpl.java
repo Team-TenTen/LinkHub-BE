@@ -32,9 +32,9 @@ import com.tenten.linkhub.global.infrastructure.ses.AwsSesService;
 import com.tenten.linkhub.global.response.ErrorCode;
 import com.tenten.linkhub.global.util.email.EmailDto;
 import com.tenten.linkhub.global.util.email.VerificationCodeCreator;
-import java.util.Map;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
@@ -42,9 +42,6 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -181,7 +178,7 @@ public class MemberServiceImpl implements MemberService {
     @Transactional
     @Override
     public MemberFollowCreateResponse createFollow(Long memberId, Long myMemberId) {
-        if (followRepository.existsByMemberIdAndMyMemberId(memberId, myMemberId)) {
+        if (Boolean.TRUE.equals(followRepository.existsByMemberIdAndMyMemberId(memberId, myMemberId))) {
             throw new DataDuplicateException(ErrorCode.DUPLICATE_FOLLOWING);
         }
 

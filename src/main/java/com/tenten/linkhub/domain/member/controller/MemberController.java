@@ -258,9 +258,7 @@ public class MemberController {
         MemberFollowersFindResponses memberFollowersFindResponses = memberService.getFollowers(memberId,
                 memberDetails.memberId(), pageRequest);
 
-        MemberFollowersFindApiResponses memberFollowersFindApiResponses = mapper.toMemberFollowersFindApiResponses(
-                memberFollowersFindResponses);
-
-        return ResponseEntity.ok(memberFollowersFindApiResponses);
+        return ResponseEntity.ok(MemberFollowersFindApiResponses.from(
+                memberFollowersFindResponses));
     }
 }

@@ -2,11 +2,10 @@ package com.tenten.linkhub.domain.member.repository.member;
 
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.Provider;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 public interface MemberJpaRepository extends JpaRepository<Member, Long> {
 
@@ -33,7 +32,7 @@ public interface MemberJpaRepository extends JpaRepository<Member, Long> {
     @Query("SELECT m FROM Member m " +
             "LEFT JOIN FETCH m.profileImages pi " +
             "LEFT JOIN FETCH m.favoriteCategories fc " +
-            "WHERE m.id IN :memberId")
+            "WHERE m.id IN :memberIds")
     List<Member> findMembersWithProfileImageAndCategoryByMemberIds(List<Long> memberIds);
 
 }

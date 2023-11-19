@@ -157,7 +157,6 @@ class MemberServiceTest {
         assertThat(response.newsEmail()).isEqualTo(memberJoinRequest.newsEmail());
         assertThat(response.followerCount()).isNotNegative();
         assertThat(response.followingCount()).isNotNegative();
-        assertThat(response.profileImagePath()).isEqualTo("https://testimage");
         assertThat(response.favoriteCategory()).isEqualTo(memberJoinRequest.favoriteCategory());
     }
 
@@ -247,16 +246,14 @@ class MemberServiceTest {
         //then
         assertThat(responses.responses().getContent().get(0).memberId()).isEqualTo(
                 memberFollowedByTargetMemberAndMyMemberId);
-        assertThat(responses.responses().getContent().get(0).nickname()).isEqualTo("타겟 유저가 팔로우하고 나도 팔로우한 유저");
-        assertThat(responses.responses().getContent().get(0).profileImagePath()).isEqualTo("https://testimage");
+        assertThat(responses.responses().getContent().get(0).aboutMe()).isEqualTo("타겟 유저가 팔로우하고 나도 팔로우한 유저");
         assertThat(responses.responses().getContent().get(0).favoriteCategory()).isEqualTo(
                 Category.KNOWLEDGE_ISSUE_CAREER);
         assertThat(responses.responses().getContent().get(0).isFollowing()).isTrue();
 
         assertThat(responses.responses().getContent().get(1).memberId()).isEqualTo(
                 memberFollowedByTargetMemberButNotByMyMemberId);
-        assertThat(responses.responses().getContent().get(1).nickname()).isEqualTo("타겟 유저가 팔로우했지만 나는 안한 유저");
-        assertThat(responses.responses().getContent().get(1).profileImagePath()).isEqualTo("https://testimage");
+        assertThat(responses.responses().getContent().get(1).aboutMe()).isEqualTo("타겟 유저가 팔로우했지만 나는 안한 유저");
         assertThat(responses.responses().getContent().get(1).favoriteCategory()).isEqualTo(
                 Category.KNOWLEDGE_ISSUE_CAREER);
         assertThat(responses.responses().getContent().get(1).isFollowing()).isFalse();
@@ -278,16 +275,14 @@ class MemberServiceTest {
         //then
         assertThat(responses.responses().getContent().get(0).memberId()).isEqualTo(
                 memberFollowingTargetMemberButNotFollowedByMyMemberId);
-        assertThat(responses.responses().getContent().get(0).nickname()).isEqualTo("내가 팔로우하지 않는 타겟 유저를 팔로우한 유저");
-        assertThat(responses.responses().getContent().get(0).profileImagePath()).isEqualTo("https://testimage");
+        assertThat(responses.responses().getContent().get(0).aboutMe()).isEqualTo("내가 팔로우하지 않는 타겟 유저를 팔로우한 유저");
         assertThat(responses.responses().getContent().get(0).favoriteCategory()).isEqualTo(
                 Category.KNOWLEDGE_ISSUE_CAREER);
         assertThat(responses.responses().getContent().get(0).isFollowing()).isFalse();
 
         assertThat(responses.responses().getContent().get(1).memberId()).isEqualTo(
                 memberFollowingTargetMemberAndFollowedByMyMemberId);
-        assertThat(responses.responses().getContent().get(1).nickname()).isEqualTo("내가 팔로우하는 타겟 유저를 팔로우한 유저");
-        assertThat(responses.responses().getContent().get(1).profileImagePath()).isEqualTo("https://testimage");
+        assertThat(responses.responses().getContent().get(1).aboutMe()).isEqualTo("내가 팔로우하는 타겟 유저를 팔로우한 유저");
         assertThat(responses.responses().getContent().get(1).favoriteCategory()).isEqualTo(
                 Category.KNOWLEDGE_ISSUE_CAREER);
         assertThat(responses.responses().getContent().get(1).isFollowing()).isTrue();
@@ -295,7 +290,7 @@ class MemberServiceTest {
 
     private MemberJoinRequest createMemberJoinRequest(MockMultipartFile requestFile) {
         return new MemberJoinRequest(
-                "32342341232",
+                "32342341912",
                 Provider.kakao,
                 "백둥이",
                 "만나서 반갑습니다.",
@@ -314,7 +309,7 @@ class MemberServiceTest {
         MemberJoinRequest myMemberRequest = new MemberJoinRequest(
                 "32342341231",
                 Provider.kakao,
-                "내 유저",
+                "멤버1",
                 "내 유저",
                 "linkhub@link-hub.site",
                 Category.KNOWLEDGE_ISSUE_CAREER,
@@ -325,7 +320,7 @@ class MemberServiceTest {
         MemberJoinRequest targetMemberRequest = new MemberJoinRequest(
                 "32342341232",
                 Provider.kakao,
-                "타겟 유저",
+                "멤버2",
                 "타겟 유저",
                 "linkhub@link-hub.site",
                 Category.KNOWLEDGE_ISSUE_CAREER,
@@ -336,7 +331,7 @@ class MemberServiceTest {
         MemberJoinRequest memberFollowedByTargetMemberButNotByMyMemberRequest = new MemberJoinRequest(
                 "32342341233",
                 Provider.kakao,
-                "타겟 유저가 팔로우했지만 나는 안한 유저",
+                "멤버3",
                 "타겟 유저가 팔로우했지만 나는 안한 유저",
                 "linkhub@link-hub.site",
                 Category.KNOWLEDGE_ISSUE_CAREER,
@@ -347,7 +342,7 @@ class MemberServiceTest {
         MemberJoinRequest memberFollowedByTargetMemberAndMyMemberRequest = new MemberJoinRequest(
                 "32342341234",
                 Provider.kakao,
-                "타겟 유저가 팔로우하고 나도 팔로우한 유저",
+                "멤버4",
                 "타겟 유저가 팔로우하고 나도 팔로우한 유저",
                 "linkhub@link-hub.site",
                 Category.KNOWLEDGE_ISSUE_CAREER,
@@ -358,7 +353,7 @@ class MemberServiceTest {
         MemberJoinRequest memberFollowingTargetMemberAndFollowedByMyMemberRequest = new MemberJoinRequest(
                 "32342341235",
                 Provider.kakao,
-                "내가 팔로우하는 타겟 유저를 팔로우한 유저",
+                "멤버5",
                 "내가 팔로우하는 타겟 유저를 팔로우한 유저",
                 "linkhub@link-hub.site",
                 Category.KNOWLEDGE_ISSUE_CAREER,
@@ -369,7 +364,7 @@ class MemberServiceTest {
         MemberJoinRequest memberFollowingTargetMemberButNotFollowedByMyMemberRequest = new MemberJoinRequest(
                 "32342341236",
                 Provider.kakao,
-                "내가 팔로우하지 않는 타겟 유저를 팔로우한 유저",
+                "멤버6",
                 "내가 팔로우하지 않는 타겟 유저를 팔로우한 유저",
                 "linkhub@link-hub.site",
                 Category.KNOWLEDGE_ISSUE_CAREER,
