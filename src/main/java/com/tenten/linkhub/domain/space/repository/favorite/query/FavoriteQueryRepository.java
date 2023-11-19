@@ -3,9 +3,9 @@ package com.tenten.linkhub.domain.space.repository.favorite.query;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tenten.linkhub.domain.space.model.category.Category;
+import com.tenten.linkhub.domain.space.repository.common.dto.QSpaceAndOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.favorite.dto.MyFavoriteSpacesQueryCondition;
-import com.tenten.linkhub.domain.space.repository.space.dto.QSpaceAndOwnerNickName;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
@@ -33,9 +33,9 @@ public class FavoriteQueryRepository {
                         member.nickname
                 ))
                 .from(favorite)
-                .join(favorite.space).fetchJoin()
+                .join(favorite.space)
                 .leftJoin(favorite.space.spaceImages.spaceImageList).fetchJoin()
-                .join(member).on(favorite.memberId.eq(member.id))
+                .leftJoin(member).on(favorite.space.memberId.eq(member.id))
                 .where(favorite.memberId.eq(condition.memberId()),
                         favorite.space.isDeleted.eq(false),
                         eqSpaceName(condition.keyWord()),

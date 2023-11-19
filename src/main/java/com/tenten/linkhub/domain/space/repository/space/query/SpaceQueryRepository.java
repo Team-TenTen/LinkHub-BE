@@ -1,8 +1,8 @@
 package com.tenten.linkhub.domain.space.repository.space.query;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.tenten.linkhub.domain.space.repository.common.dto.QSpaceAndOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.space.dto.MySpacesQueryCondition;
-import com.tenten.linkhub.domain.space.repository.space.dto.QSpaceAndOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
 import org.springframework.data.domain.Slice;
