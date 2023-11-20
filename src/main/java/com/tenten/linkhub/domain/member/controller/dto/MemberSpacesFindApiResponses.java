@@ -1,18 +1,18 @@
-package com.tenten.linkhub.domain.space.controller.dto.space;
+package com.tenten.linkhub.domain.member.controller.dto;
 
-import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryResponses;
+import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.global.util.PageMetaData;
 import org.springframework.data.domain.Slice;
 
 import java.util.List;
 
-public record MySpacesFindApiResponses(
-        List<MySpacesFindApiResponse> responses,
+public record MemberSpacesFindApiResponses(
+        List<MemberSpacesFindApiResponse> responses,
         PageMetaData metaData
 ) {
-    public static MySpacesFindApiResponses from(PublicSpacesFindByQueryResponses responses){
-        Slice<MySpacesFindApiResponse> mapResponses = responses.responses()
-                .map(r -> new MySpacesFindApiResponse(
+    public static MemberSpacesFindApiResponses from(SpacesFindByQueryResponses responses){
+        Slice<MemberSpacesFindApiResponse> mapResponses = responses.responses()
+                .map(r -> new MemberSpacesFindApiResponse(
                         r.spaceId(),
                         r.spaceName(),
                         r.description(),
@@ -28,7 +28,7 @@ public record MySpacesFindApiResponses(
                 mapResponses.getSize(),
                 mapResponses.getNumber());
 
-        return new MySpacesFindApiResponses(
+        return new MemberSpacesFindApiResponses(
                 mapResponses.getContent(),
                 pageMetaData);
     }

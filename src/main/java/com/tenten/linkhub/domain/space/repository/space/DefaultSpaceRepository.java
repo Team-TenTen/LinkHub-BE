@@ -1,7 +1,7 @@
 package com.tenten.linkhub.domain.space.repository.space;
 
 import com.tenten.linkhub.domain.space.model.space.Space;
-import com.tenten.linkhub.domain.space.repository.space.dto.MySpacesQueryCondition;
+import com.tenten.linkhub.domain.space.repository.space.dto.MemberSpacesQueryCondition;
 import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.space.query.SpaceQueryRepository;
@@ -44,8 +44,8 @@ public class DefaultSpaceRepository implements SpaceRepository {
     }
 
     @Override
-    public Slice<SpaceAndOwnerNickName> findMySpacesJoinSpaceImageByQuery(MySpacesQueryCondition queryCondition) {
-        return spaceQueryRepository.findMySpacesJoinSpaceImageByCondition(queryCondition);
+    public Slice<SpaceAndOwnerNickName> findMemberSpacesJoinSpaceImageByQuery(MemberSpacesQueryCondition queryCondition) {
+        return spaceQueryRepository.findMemberSpacesJoinSpaceImageByCondition(queryCondition);
     }
 
     @Override

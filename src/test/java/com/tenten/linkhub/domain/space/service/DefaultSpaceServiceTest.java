@@ -15,9 +15,9 @@ import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
-import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.MemberSpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryResponses;
+import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponse;
@@ -76,7 +76,7 @@ class DefaultSpaceServiceTest {
                 Category.KNOWLEDGE_ISSUE_CAREER);
 
         //when
-        PublicSpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(request);
+        SpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(request);
 
         //then
         List<SpacesFindByQueryResponse> content = responses.responses().getContent();
@@ -93,10 +93,10 @@ class DefaultSpaceServiceTest {
     void findMySpacesByQuery_emptyKeyWord_emptyFilter() {
         //given
         PageRequest pageRequest = PageRequest.of(0, 10);
-        MySpacesFindRequest mySpacesFindRequest = new MySpacesFindRequest(pageRequest, "", null, setUpMemberId);
+        MemberSpacesFindRequest memberSpacesFindRequest = new MemberSpacesFindRequest(pageRequest, "", null, setUpMemberId);
 
         //when
-        PublicSpacesFindByQueryResponses response = spaceService.findMySpacesByQuery(mySpacesFindRequest);
+        SpacesFindByQueryResponses response = spaceService.findMemberSpacesByQuery(memberSpacesFindRequest);
 
         //then
         List<SpacesFindByQueryResponse> content = response.responses().getContent();
@@ -116,10 +116,10 @@ class DefaultSpaceServiceTest {
     void findMySpacesByQuery_keyWord_emptyFilter() {
         //given
         PageRequest pageRequest = PageRequest.of(0, 10);
-        MySpacesFindRequest mySpacesFindRequest = new MySpacesFindRequest(pageRequest, "두번째", null, setUpMemberId);
+        MemberSpacesFindRequest memberSpacesFindRequest = new MemberSpacesFindRequest(pageRequest, "두번째", null, setUpMemberId);
 
         //when
-        PublicSpacesFindByQueryResponses response = spaceService.findMySpacesByQuery(mySpacesFindRequest);
+        SpacesFindByQueryResponses response = spaceService.findMemberSpacesByQuery(memberSpacesFindRequest);
 
         //then
         List<SpacesFindByQueryResponse> content = response.responses().getContent();
@@ -135,10 +135,10 @@ class DefaultSpaceServiceTest {
     void findMySpacesByQuery_emptyKeyWord_filter() {
         //given
         PageRequest pageRequest = PageRequest.of(0, 10);
-        MySpacesFindRequest mySpacesFindRequest = new MySpacesFindRequest(pageRequest, "", Category.LIFE_KNOWHOW_SHOPPING, setUpMemberId);
+        MemberSpacesFindRequest memberSpacesFindRequest = new MemberSpacesFindRequest(pageRequest, "", Category.LIFE_KNOWHOW_SHOPPING, setUpMemberId);
 
         //when
-        PublicSpacesFindByQueryResponses response = spaceService.findMySpacesByQuery(mySpacesFindRequest);
+        SpacesFindByQueryResponses response = spaceService.findMemberSpacesByQuery(memberSpacesFindRequest);
 
         //then
         List<SpacesFindByQueryResponse> content = response.responses().getContent();

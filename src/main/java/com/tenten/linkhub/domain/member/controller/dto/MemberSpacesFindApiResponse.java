@@ -1,8 +1,8 @@
-package com.tenten.linkhub.domain.space.controller.dto.space;
+package com.tenten.linkhub.domain.member.controller.dto;
 
 import com.tenten.linkhub.domain.space.model.category.Category;
 
-public record MySpacesFindApiResponse(
+public record MemberSpacesFindApiResponse(
         Long spaceId,
         String spaceName,
         String description,
