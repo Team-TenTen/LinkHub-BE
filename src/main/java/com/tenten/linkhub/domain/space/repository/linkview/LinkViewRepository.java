@@ -8,4 +8,5 @@ public interface LinkViewRepository {
 
     LinkViewHistory save(LinkViewHistory linkViewHistory);
 
+    void deleteLinkViewHistory(Long linkId);
 }

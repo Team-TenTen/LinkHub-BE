@@ -14,4 +14,6 @@ public interface LinkService {
     void cancelLike(Long linkId, Long memberId);
 
     void addLinkViewHistory(Long spaceId, Long linkId, Long memberId);
+
+    void deleteLink(Long linkId);
 }
