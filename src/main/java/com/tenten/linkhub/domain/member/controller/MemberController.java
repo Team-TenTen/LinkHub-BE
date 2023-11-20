@@ -40,6 +40,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Objects;
+
 @Tag(name = "members", description = "member API Document")
 @RestController
 @RequestMapping("/members")
@@ -167,9 +169,10 @@ public class MemberController {
             @ModelAttribute MemberSpacesFindApiRequest request
     ) {
         PageRequest pageRequest = PageRequest.of(request.pageNumber(), request.pageSize());
+        Long requestMemberId = Objects.isNull(memberDetails) ? null : memberDetails.memberId();
 
         SpacesFindByQueryResponses responses = spaceService.findMemberSpacesByQuery(
-                mapper.toMemberSpacesFindRequest(pageRequest, request, memberDetails.memberId(), memberId)
+                mapper.toMemberSpacesFindRequest(pageRequest, request, requestMemberId, memberId)
         );
 
         MemberSpacesFindApiResponses apiResponses = MemberSpacesFindApiResponses.from(responses);
