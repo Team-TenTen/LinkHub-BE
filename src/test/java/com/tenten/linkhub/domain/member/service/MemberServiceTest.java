@@ -11,7 +11,7 @@ import com.tenten.linkhub.domain.member.service.dto.MemberJoinResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberProfileResponse;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
-import com.tenten.linkhub.global.aws.s3.S3Uploader;
+import com.tenten.linkhub.global.aws.s3.ImageFileUploader;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
@@ -42,7 +42,7 @@ class MemberServiceTest {
     private MemberEmailRedisRepository redisRepository;
 
     @MockBean
-    private S3Uploader mockS3Uploader;
+    private ImageFileUploader mockImageFileUploader;
 
     @Autowired
     private JwtProvider jwtProvider;
@@ -93,7 +93,7 @@ class MemberServiceTest {
         //given
         MockMultipartFile requestFile = new MockMultipartFile("테스트 이미지", (byte[]) null);
         ImageInfo imageInfo = ImageInfo.of("https://testimage", requestFile.getName());
-        BDDMockito.given(mockS3Uploader.saveImage(any())).willReturn(imageInfo);
+        BDDMockito.given(mockImageFileUploader.saveImage(any())).willReturn(imageInfo);
 
         //when
         MemberJoinResponse response = memberService.join(createMemberJoinRequest(requestFile));
@@ -111,7 +111,7 @@ class MemberServiceTest {
         //given
         MockMultipartFile requestFile = new MockMultipartFile("테스트 이미지", (byte[]) null);
         ImageInfo imageInfo = ImageInfo.of("https://testimage", requestFile.getName());
-        BDDMockito.given(mockS3Uploader.saveImage(any())).willReturn(imageInfo);
+        BDDMockito.given(mockImageFileUploader.saveImage(any())).willReturn(imageInfo);
 
         MemberJoinResponse response = memberService.join(createMemberJoinRequest(requestFile));
 
@@ -140,7 +140,7 @@ class MemberServiceTest {
         //given
         MockMultipartFile requestFile = new MockMultipartFile("테스트 이미지", (byte[]) null);
         ImageInfo imageInfo = ImageInfo.of("https://testimage", requestFile.getName());
-        BDDMockito.given(mockS3Uploader.saveImage(any())).willReturn(imageInfo);
+        BDDMockito.given(mockImageFileUploader.saveImage(any())).willReturn(imageInfo);
 
         MemberJoinRequest memberJoinRequest = createMemberJoinRequest(requestFile);
         MemberJoinResponse memberJoinResponse = memberService.join(memberJoinRequest);
@@ -168,7 +168,7 @@ class MemberServiceTest {
         //given
         MockMultipartFile requestFile = new MockMultipartFile("테스트 이미지", (byte[]) null);
         ImageInfo imageInfo = ImageInfo.of("https://testimage", requestFile.getName());
-        BDDMockito.given(mockS3Uploader.saveImage(any())).willReturn(imageInfo);
+        BDDMockito.given(mockImageFileUploader.saveImage(any())).willReturn(imageInfo);
 
         //when & then
         assertThatThrownBy(() -> memberService.getProfile(1L))
