@@ -1,5 +1,5 @@
 package com.tenten.linkhub.domain.member.controller.dto;
 
-public record MemberFollowCreateApiResponse(Long followerId) {
+public record MemberFollowCreateApiResponse(Long followedId) {
 
 }
