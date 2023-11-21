@@ -8,7 +8,6 @@ import com.tenten.linkhub.domain.member.repository.member.MemberJpaRepository;
 import com.tenten.linkhub.domain.space.facade.dto.LinkCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.LinkUpdateFacadeRequest;
 import com.tenten.linkhub.domain.space.model.category.Category;
-import com.tenten.linkhub.domain.space.model.link.Color;
 import com.tenten.linkhub.domain.space.model.link.Like;
 import com.tenten.linkhub.domain.space.model.link.Link;
 import com.tenten.linkhub.domain.space.model.link.vo.Url;
@@ -74,7 +73,7 @@ class LinkFacadeTest {
                 "https://naver.com",
                 "링크의 제목",
                 "태그의 이름",
-                Color.RED
+                "red"
         );
 
         //when
@@ -84,7 +83,7 @@ class LinkFacadeTest {
         Link link = linkJpaRepository.findById(linkId).get();
         assertThat(link.getUrl().getUrl()).isEqualTo("https://naver.com");
         assertThat(link.getTitle()).isEqualTo("링크의 제목");
-        assertThat(link.getTags().get(0).getName()).isEqualTo("태그의 이름");
+        assertThat(link.getLinkTags().get(0).getTag().getName()).isEqualTo("태그의 이름");
     }
 
     @Test
@@ -95,7 +94,7 @@ class LinkFacadeTest {
                 "https://naver.com",
                 "링크의 제목",
                 "태그의 이름",
-                Color.EMERALD
+                "emerald"
         );
 
         //when
@@ -111,7 +110,7 @@ class LinkFacadeTest {
                 "https://naver2.com",
                 "수정할 링크의 제목",
                 "수정할 태그의 이름",
-                Color.GRAY
+                "gray"
         );
 
         //when
@@ -121,7 +120,7 @@ class LinkFacadeTest {
         Link link = linkJpaRepository.findById(linkId).get();
         assertThat(link.getUrl().getUrl()).isEqualTo("https://naver2.com");
         assertThat(link.getTitle()).isEqualTo("수정할 링크의 제목");
-        assertThat(link.getTags().get(0).getName()).isEqualTo("수정할 태그의 이름");
+        assertThat(link.getLinkTags().get(0).getTag().getName()).isEqualTo("수정할 태그의 이름");
     }
 
     @Test
@@ -132,7 +131,7 @@ class LinkFacadeTest {
                 "https://naver2.com",
                 "수정할 링크의 제목",
                 "수정할 태그의 이름",
-                Color.BLUE
+                "blue"
         );
 
         //when
