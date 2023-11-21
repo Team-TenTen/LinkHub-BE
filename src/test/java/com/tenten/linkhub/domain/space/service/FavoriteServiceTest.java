@@ -180,10 +180,11 @@ class FavoriteServiceTest {
 
     @Test
     @DisplayName("유저는 자신이 즐겨찾기 등록한 스페이스를 키워드, 필터 조건 없이 조회할 수 있다.")
-    void findMyFavoriteSpaces_emptyKeyWord_emptyFilter() {
+    void findMyFavoriteSpaces_emptyKeyWord_emptyFilter() throws InterruptedException {
         //given
         favoriteService.createFavorite(setUpSpaceId1, setUpMemberId1);
         favoriteService.createFavorite(setUpSpaceId2, setUpMemberId1);
+        Thread.sleep(10);
 
         PageRequest pageRequest = PageRequest.of(0, 10);
         MyFavoriteSpacesFindRequest request = new MyFavoriteSpacesFindRequest(pageRequest, null, null, setUpMemberId1);

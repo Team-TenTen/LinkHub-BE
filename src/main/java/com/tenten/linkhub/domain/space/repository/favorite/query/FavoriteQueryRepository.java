@@ -3,8 +3,11 @@ package com.tenten.linkhub.domain.space.repository.favorite.query;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tenten.linkhub.domain.space.model.category.Category;
+import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.repository.common.dto.QSpaceAndOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
+import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
+import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickNames;
 import com.tenten.linkhub.domain.space.repository.favorite.dto.MyFavoriteSpacesQueryCondition;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -16,6 +19,7 @@ import java.util.Objects;
 
 import static com.tenten.linkhub.domain.member.model.QMember.member;
 import static com.tenten.linkhub.domain.space.model.space.QFavorite.favorite;
+import static com.tenten.linkhub.domain.space.model.space.QSpaceImage.spaceImage;
 
 @Repository
 public class FavoriteQueryRepository {
@@ -26,7 +30,7 @@ public class FavoriteQueryRepository {
         this.queryFactory = queryFactory;
     }
 
-    public Slice<SpaceAndOwnerNickName> findMyFavoriteSpacesByQuery(MyFavoriteSpacesQueryCondition condition) {
+    public Slice<SpaceAndSpaceImageOwnerNickName> findMyFavoriteSpacesByQuery(MyFavoriteSpacesQueryCondition condition) {
         List<SpaceAndOwnerNickName> spaceAndOwnerNickNames = queryFactory
                 .select(new QSpaceAndOwnerNickName(
                         favorite.space,
@@ -34,7 +38,6 @@ public class FavoriteQueryRepository {
                 ))
                 .from(favorite)
                 .join(favorite.space)
-                .leftJoin(favorite.space.spaceImages.spaceImageList).fetchJoin()
                 .leftJoin(member).on(favorite.space.memberId.eq(member.id))
                 .where(favorite.memberId.eq(condition.memberId()),
                         favorite.space.isDeleted.eq(false),
@@ -45,14 +48,20 @@ public class FavoriteQueryRepository {
                 .limit(condition.pageable().getPageSize() + 1)
                 .fetch();
 
+        List<Long> spaceIds = getSpaceIds(spaceAndOwnerNickNames);
+        List<SpaceImage> spaceImages = findSpaceImagesBySpaceIds(spaceIds);
+
+        SpaceAndSpaceImageOwnerNickNames spaceAndSpaceImageOwnerNickNames = SpaceAndSpaceImageOwnerNickNames.of(spaceAndOwnerNickNames, spaceImages);
+
+        List<SpaceAndSpaceImageOwnerNickName> contents = spaceAndSpaceImageOwnerNickNames.contents();
         boolean hasNext = false;
 
-        if (spaceAndOwnerNickNames.size() > condition.pageable().getPageSize()) {
-            spaceAndOwnerNickNames.remove(condition.pageable().getPageSize());
+        if (contents.size() > condition.pageable().getPageSize()) {
+            contents.remove(condition.pageable().getPageSize());
             hasNext = true;
         }
 
-        return new SliceImpl<>(spaceAndOwnerNickNames, condition.pageable(), hasNext);
+        return new SliceImpl<>(contents, condition.pageable(), hasNext);
     }
 
     private BooleanExpression eqCategory(Category filter) {
@@ -69,6 +78,21 @@ public class FavoriteQueryRepository {
         }
 
         return null;
+    }
+
+    private List<SpaceImage> findSpaceImagesBySpaceIds(List<Long> spaceIds) {
+        return queryFactory
+                .selectFrom(spaceImage)
+                .where(spaceImage.space.id.in(spaceIds),
+                        spaceImage.isDeleted.eq(false))
+                .fetch();
+    }
+
+    private static List<Long> getSpaceIds(List<SpaceAndOwnerNickName> spaceAndOwnerNickNames) {
+        return spaceAndOwnerNickNames
+                .stream()
+                .map(s -> s.space().getId())
+                .toList();
     }
 
 }

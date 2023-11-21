@@ -2,6 +2,7 @@ package com.tenten.linkhub.domain.space.repository.favorite;
 
 import com.tenten.linkhub.domain.space.model.space.Favorite;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
+import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.favorite.dto.MyFavoriteSpacesQueryCondition;
 import com.tenten.linkhub.domain.space.repository.favorite.query.FavoriteQueryRepository;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
@@ -39,7 +40,7 @@ public class DefaultFavoriteRepository implements FavoriteRepository {
     }
 
     @Override
-    public Slice<SpaceAndOwnerNickName> findMyFavoriteSpacesByQuery(MyFavoriteSpacesQueryCondition queryCondition) {
+    public Slice<SpaceAndSpaceImageOwnerNickName> findMyFavoriteSpacesByQuery(MyFavoriteSpacesQueryCondition queryCondition) {
         return favoriteQueryRepository.findMyFavoriteSpacesByQuery(queryCondition);
     }
 
