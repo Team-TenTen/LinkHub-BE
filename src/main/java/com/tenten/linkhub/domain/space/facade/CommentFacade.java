@@ -9,11 +9,10 @@ import com.tenten.linkhub.domain.space.service.dto.comment.CommentAndChildCountD
 import com.tenten.linkhub.domain.space.service.dto.comment.CommentAndChildCountResponses;
 import com.tenten.linkhub.domain.space.service.dto.comment.RepliesFindResponse;
 import com.tenten.linkhub.domain.space.service.dto.comment.RepliesFindResponses;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -39,14 +38,14 @@ public class CommentFacade {
                 .toList();
     }
 
-    public RepliesAndMemberInfoResponses findReplies(Long spaceId, Long commentId, Pageable pageable) {
+    public RepliesAndMemberInfoResponses findReplies(Long spaceId, Long commentId, Long myMemberId, Pageable pageable) {
         RepliesFindResponses repliesFindResponses = commentService.findReplies(spaceId, commentId, pageable);
 
         List<Long> memberIds = getMemberIdsFromReplies(repliesFindResponses);
 
         MemberInfos memberInfos = memberService.findMemberInfosByMemberIds(memberIds);
 
-        return RepliesAndMemberInfoResponses.of(repliesFindResponses, memberInfos);
+        return RepliesAndMemberInfoResponses.of(repliesFindResponses, memberInfos, myMemberId);
     }
 
     private List<Long> getMemberIdsFromReplies(RepliesFindResponses repliesFindResponses) {
