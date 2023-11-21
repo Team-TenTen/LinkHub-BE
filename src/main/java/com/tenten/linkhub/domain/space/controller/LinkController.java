@@ -135,6 +135,8 @@ public class LinkController {
             description = "[JWT 필요] 링크에 누른 좋아요를 취소하는 기능입니다.",
             responses = {
                     @ApiResponse(responseCode = "204", description = "좋아요 취소를 성공한 경우"),
+                    @ApiResponse(responseCode = "404", description = "이미 삭제하거나 존재하지 않는 좋아요인 경우",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
             })
     @DeleteMapping(value = "/links/{linkId}/like", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> cancelLike(
