@@ -81,6 +81,7 @@ class DefaultSpaceServiceTest {
         //then
         List<SpacesFindByQueryResponse> content = responses.responses().getContent();
 
+        assertThat(content.size()).isEqualTo(1);
         assertThat(content.get(0).spaceName()).isEqualTo("첫번째 스페이스");
         assertThat(content.get(0).description()).isEqualTo("첫번째 스페이스 소개글");
         assertThat(content.get(0).category()).isEqualTo(Category.KNOWLEDGE_ISSUE_CAREER);
@@ -208,6 +209,10 @@ class DefaultSpaceServiceTest {
                 true,
                 true,
                 false
+        );
+
+        space1.addSpaceImage(
+                new SpaceImage("https://testimage4", "테스트 이미지4")
         );
 
         Space space2 = new Space(
