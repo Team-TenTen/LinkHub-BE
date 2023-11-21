@@ -185,8 +185,11 @@ class MemberServiceTest {
     @Test
     @DisplayName("사용자는 멤버가 존재하지 않아 프로필 조회에 실패한다.")
     void getProfile_MemberProfileRequest_Fail() {
-        //given //when //then
-        assertThatThrownBy(() -> memberService.getProfile(1L, null))
+        //given
+        Long notExistingMemberId = 999L;
+
+        // when //then
+        assertThatThrownBy(() -> memberService.getProfile(notExistingMemberId, myMemberId))
                 .isInstanceOf(UnauthorizedAccessException.class)
                 .hasMessageContaining("존재하지 않는 회원입니다.");
     }
@@ -227,8 +230,11 @@ class MemberServiceTest {
     @Test
     @DisplayName("사용자는 존재하지 않은 유저의 팔로우를 실패한다.")
     void createFollow_TargetMemberIdAndMyMemberId_DataNotFoundException() {
-        //given //when //then
-        assertThatThrownBy(() -> memberService.createFollow(999L, myMemberId))
+        //given
+        Long notExistingMemberId = 999L;
+
+        // when //then
+        assertThatThrownBy(() -> memberService.createFollow(notExistingMemberId, myMemberId))
                 .isInstanceOf(DataNotFoundException.class)
                 .hasMessageContaining("존재하지 않는 유저입니다.");
     }
@@ -260,8 +266,11 @@ class MemberServiceTest {
     @Test
     @DisplayName("사용자는 존재하지 않는 유저의 언팔로우를 실패한다.")
     void deleteFollowForNotExistingUser_TargetMemberIdAndMyMemberId_UnauthorizedException() {
-        //given //when //then
-        assertThatThrownBy(() -> memberService.deleteFollow(999L, myMemberId))
+        //given
+        Long notExistingMemberId = 999L;
+
+        // when //then
+        assertThatThrownBy(() -> memberService.deleteFollow(notExistingMemberId, myMemberId))
                 .isInstanceOf(DataNotFoundException.class)
                 .hasMessageContaining("존재하지 않는 팔로우 또는 유저입니다.");
     }
