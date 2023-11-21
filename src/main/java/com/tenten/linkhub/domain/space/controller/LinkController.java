@@ -45,7 +45,7 @@ public class LinkController {
      */
     @Operation(
             summary = "링크 생성 API",
-            description = "[JWT 필요] 스페이스 내에서 링크를 생성하는 API 입니다. Tag는 필수로 포함되어야 하는 값은 아닙니다. \n - Tag를 포함하여 링크를 생성하는 경우: tag 필드 포함. 단, \"\" 나 \" \"를 허용하지 않습니다.\n - Tag를 포함하지 않고 링크를 생성하는 경우: 아예 tag 필드 없이 보내주세요",
+            description = "[JWT 필요] 스페이스 내에서 링크를 생성하는 API 입니다. TagName과 Color는 필수로 포함되어야 하는 값은 아닙니다. \n - TagName & Color를 포함하여 링크를 수정하는 경우: tagName & Color 필드 포함. 단, \"\" 나 \" \"를 허용하지 않습니다.\n - Tag를 포함하지 않고 링크를 생성하는 경우: 아예 tagName & Color 필드 없이 보내주세요",
             responses = {
                     @ApiResponse(responseCode = "201", description = "링크가 성공적으로 생성된 경우"),
                     @ApiResponse(responseCode = "404", description = "링크 생성 권한이 없습니다."),
@@ -76,7 +76,7 @@ public class LinkController {
      */
     @Operation(
             summary = "링크 수정 API",
-            description = "[JWT 필요] 스페이스 내에서 링크를 수정하는 API 입니다. Tag는 필수로 포함되어야 하는 값은 아닙니다. \n - Tag를 포함하여 링크를 수정하는 경우: tag 필드 포함. 단, \"\" 나 \" \"를 허용하지 않습니다.\n - Tag를 포함하지 않고 링크를 수하는 경우: 아예 tag 필드 없이 보내주세요",
+            description = "[JWT 필요] 스페이스 내에서 링크를 수정하는 API 입니다. TagName과 Color는 필수로 포함되어야 하는 값은 아닙니다. \n - TagName & Color를 포함하여 링크를 수정하는 경우: tagName & Color 필드 포함. 단, \"\" 나 \" \"를 허용하지 않습니다.\n - Tag를 포함하지 않고 링크를 수정하는 경우: 아예 tagName & Color 필드 없이 보내주세요",
             responses = {
                     @ApiResponse(responseCode = "200", description = "링크가 성공적으로 수정된 경우"),
                     @ApiResponse(responseCode = "404", description = "링크 수정 권한이 없습니다."),
@@ -195,4 +195,27 @@ public class LinkController {
                 .build();
     }
 
+//    /**
+//     * 링크 조회 API
+//     */
+//    @GetMapping(value = "/spaces/{spaceId}/links")
+//    public ResponseEntity<LinkGetWithFilterApiResponses> getLinks(
+//            @PathVariable Long spaceId,
+//            @ModelAttribute LinkGetWithFilterApiRequests request,
+//            @AuthenticationPrincipal MemberDetails memberDetails
+//    ) {
+//        PageRequest pageRequest = PageRequest.of(
+//                request.pageNumber(),
+//                request.pageSize(),
+//                StringUtils.hasText(request.sort()) ? Sort.by(request.sort()) : Sort.unsorted());
+//
+//        LinksGetByQueryRequest serviceRequest = mapper.toLinksGetByQueryRequest(request, pageRequest);
+//        LinkGetByQueryResponses facadeResponses = linkFacade.getLinks(serviceRequest);
+//        LinkGetWithFilterApiResponses response = mapper.toLinksGetWithFilterApiResponse(facadeResponses);
+//
+//        return ResponseEntity
+//                .ok()
+//                .body(response);
+//    }
+//
 }
