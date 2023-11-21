@@ -40,6 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -103,7 +104,6 @@ public class MemberServiceImpl implements MemberService {
         return MemberInfos.from(members);
     }
 
-    @Transactional
     @Override
     public MemberFindResponse findMember(String socialId, Provider provider) {
         Optional<Member> member = memberRepository.findBySocialIdAndProvider(socialId, provider);
@@ -140,7 +140,6 @@ public class MemberServiceImpl implements MemberService {
         return MemberJoinResponse.from(jwt);
     }
 
-
     private ImageInfo getNewImageInfoOrDefaultImageInfo(MultipartFile file) {
         if (file == null) {
             return ImageInfo.of(MEMBER_DEFAULT_IMAGE_PATH, "default-image");
@@ -158,9 +157,10 @@ public class MemberServiceImpl implements MemberService {
         Long followerCount = followRepository.countFollowers(memberId);
         Long followingCount = followRepository.countFollowing(memberId);
 
+        Boolean isModifiable = Objects.equals(memberId, myMemberId);
         Boolean isFollowing = followRepository.existsByMemberIdAndMyMemberId(memberId, myMemberId);
-
-        return MemberProfileResponse.from(member, followerCount, followingCount, isFollowing);
+        
+        return MemberProfileResponse.from(member, followerCount, followingCount, isModifiable, isFollowing);
     }
 
     @Override

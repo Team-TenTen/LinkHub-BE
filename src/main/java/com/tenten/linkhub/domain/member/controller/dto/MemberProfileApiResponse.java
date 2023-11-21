@@ -12,6 +12,7 @@ public record MemberProfileApiResponse(
         Category favoriteCategory,
         String profileImagePath,
         Boolean isSubscribed,
+        Boolean isModifiable,
         Boolean isFollowing
 ) {
 

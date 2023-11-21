@@ -13,6 +13,7 @@ import com.tenten.linkhub.domain.member.service.dto.MemberFollowersFindResponses
 import com.tenten.linkhub.domain.member.service.dto.MemberFollowingsFindResponses;
 import com.tenten.linkhub.domain.member.service.dto.MemberJoinRequest;
 import com.tenten.linkhub.domain.member.service.dto.MemberJoinResponse;
+import com.tenten.linkhub.domain.member.service.dto.MemberMyProfileResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberProfileResponse;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
@@ -69,6 +70,8 @@ class MemberServiceTest {
     Long memberIdFollowedByTargetMemberAndMyMemberId;
     Long memberIdFollowingTargetMemberAndFollowedByMyMemberId;
     Long memberIdFollowingTargetMemberButNotFollowedByMyMemberId;
+    MemberJoinRequest myMemberRequest;
+    MemberJoinRequest targetMemberRequest;
 
     @BeforeEach
     void setUp() {
@@ -141,8 +144,59 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("사용자는 멤버를 조회할 수 있다.")
-    void getProfile_MemberProfileRequest_Success() {
+    @DisplayName("사용자는 타인의 프로필 조회 및 팔로잉 유무를 전달 받는다.")
+    void getProfile_MemberIdAndMyMemberId_SuccessWithFollowingStatus() {
+        //given
+        memberService.createFollow(targetMemberId, myMemberId);
+
+        // when
+        MemberProfileResponse response = memberService.getProfile(targetMemberId, myMemberId);
+
+        //then
+        assertThat(response.memberId()).isEqualTo(targetMemberId);
+        assertThat(response.aboutMe()).isEqualTo(targetMemberRequest.aboutMe());
+        assertThat(response.nickname()).isEqualTo(targetMemberRequest.nickname());
+        assertThat(response.newsEmail()).isEqualTo(targetMemberRequest.newsEmail());
+        assertThat(response.followerCount()).isNotNegative();
+        assertThat(response.followingCount()).isNotNegative();
+        assertThat(response.favoriteCategory()).isEqualTo(targetMemberRequest.favoriteCategory());
+        assertThat(response.isFollowing()).isTrue();
+        assertThat(response.isModifiable()).isFalse();
+    }
+
+    @Test
+    @DisplayName("사용자는 자신의 프로필 조회 및 수정 권한을 전달 받는다.")
+    void getProfile_MemberIdAndMyMemberId_SuccessWithModificationStatus() {
+        //given //when
+        MemberProfileResponse response = memberService.getProfile(myMemberId, myMemberId);
+
+        //then
+        assertThat(response.memberId()).isEqualTo(myMemberId);
+        assertThat(response.aboutMe()).isEqualTo(myMemberRequest.aboutMe());
+        assertThat(response.nickname()).isEqualTo(myMemberRequest.nickname());
+        assertThat(response.newsEmail()).isEqualTo(myMemberRequest.newsEmail());
+        assertThat(response.followerCount()).isNotNegative();
+        assertThat(response.followingCount()).isNotNegative();
+        assertThat(response.favoriteCategory()).isEqualTo(myMemberRequest.favoriteCategory());
+        assertThat(response.isFollowing()).isFalse();
+        assertThat(response.isModifiable()).isTrue();
+    }
+
+    @Test
+    @DisplayName("사용자는 멤버가 존재하지 않아 프로필 조회에 실패한다.")
+    void getProfile_MemberProfileRequest_Fail() {
+        //given
+        Long notExistingMemberId = 999L;
+
+        // when //then
+        assertThatThrownBy(() -> memberService.getProfile(notExistingMemberId, myMemberId))
+                .isInstanceOf(UnauthorizedAccessException.class)
+                .hasMessageContaining("존재하지 않는 회원입니다.");
+    }
+
+    @Test
+    @DisplayName("사용자는 마이페이지 조회를 성공한다.")
+    void getMyProfile_MyMemberId_Success() {
         //given
         MemberJoinRequest memberJoinRequest = createMemberJoinRequest(requestFile);
         MemberJoinResponse memberJoinResponse = memberService.join(memberJoinRequest);
@@ -151,7 +205,7 @@ class MemberServiceTest {
         MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
 
         //when
-        MemberProfileResponse response = memberService.getProfile(memberDetails.memberId(), null);
+        MemberMyProfileResponse response = memberService.getMyProfile(memberDetails.memberId());
 
         //then
         assertThat(response.memberId()).isEqualTo(memberDetails.memberId());
@@ -161,15 +215,6 @@ class MemberServiceTest {
         assertThat(response.followerCount()).isNotNegative();
         assertThat(response.followingCount()).isNotNegative();
         assertThat(response.favoriteCategory()).isEqualTo(memberJoinRequest.favoriteCategory());
-    }
-
-    @Test
-    @DisplayName("사용자는 멤버가 존재하지 않아 프로필 조회에 실패한다.")
-    void getProfile_MemberProfileRequest_Fail() {
-        //given //when //then
-        assertThatThrownBy(() -> memberService.getProfile(1L, null))
-                .isInstanceOf(UnauthorizedAccessException.class)
-                .hasMessageContaining("존재하지 않는 회원입니다.");
     }
 
     @Test
@@ -185,8 +230,11 @@ class MemberServiceTest {
     @Test
     @DisplayName("사용자는 존재하지 않은 유저의 팔로우를 실패한다.")
     void createFollow_TargetMemberIdAndMyMemberId_DataNotFoundException() {
-        //given //when //then
-        assertThatThrownBy(() -> memberService.createFollow(999L, myMemberId))
+        //given
+        Long notExistingMemberId = 999L;
+
+        // when //then
+        assertThatThrownBy(() -> memberService.createFollow(notExistingMemberId, myMemberId))
                 .isInstanceOf(DataNotFoundException.class)
                 .hasMessageContaining("존재하지 않는 유저입니다.");
     }
@@ -218,8 +266,11 @@ class MemberServiceTest {
     @Test
     @DisplayName("사용자는 존재하지 않는 유저의 언팔로우를 실패한다.")
     void deleteFollowForNotExistingUser_TargetMemberIdAndMyMemberId_UnauthorizedException() {
-        //given //when //then
-        assertThatThrownBy(() -> memberService.deleteFollow(999L, myMemberId))
+        //given
+        Long notExistingMemberId = 999L;
+
+        // when //then
+        assertThatThrownBy(() -> memberService.deleteFollow(notExistingMemberId, myMemberId))
                 .isInstanceOf(DataNotFoundException.class)
                 .hasMessageContaining("존재하지 않는 팔로우 또는 유저입니다.");
     }
@@ -405,7 +456,7 @@ class MemberServiceTest {
         ImageInfo imageInfo = ImageInfo.of("https://testimage", requestFile.getName());
         BDDMockito.given(mockS3Uploader.saveImage(any())).willReturn(imageInfo);
 
-        MemberJoinRequest myMemberRequest = new MemberJoinRequest(
+        myMemberRequest = new MemberJoinRequest(
                 "32342341231",
                 Provider.kakao,
                 "멤버1",
@@ -416,7 +467,7 @@ class MemberServiceTest {
                 requestFile
         );
 
-        MemberJoinRequest targetMemberRequest = new MemberJoinRequest(
+        targetMemberRequest = new MemberJoinRequest(
                 "32342341232",
                 Provider.kakao,
                 "멤버2",

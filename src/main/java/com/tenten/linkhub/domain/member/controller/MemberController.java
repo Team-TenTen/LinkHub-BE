@@ -138,7 +138,9 @@ public class MemberController {
             @AuthenticationPrincipal MemberDetails memberDetails,
             @PathVariable Long memberId
     ) {
-        MemberProfileResponse memberProfileResponse = memberService.getProfile(memberId, memberDetails.memberId());
+        Long myMemberId = Objects.isNull(memberDetails) ? null : memberDetails.memberId();
+
+        MemberProfileResponse memberProfileResponse = memberService.getProfile(memberId, myMemberId);
 
         MemberProfileApiResponse memberProfileApiResponse = mapper.toMemberProfileApiResponse(memberProfileResponse);
 
