@@ -8,6 +8,7 @@ import com.tenten.linkhub.domain.member.model.ProfileImage;
 import com.tenten.linkhub.domain.member.model.Provider;
 import com.tenten.linkhub.domain.member.model.Role;
 import com.tenten.linkhub.domain.member.repository.MemberEmailRedisRepository;
+import com.tenten.linkhub.domain.member.repository.dto.FollowDTO;
 import com.tenten.linkhub.domain.member.repository.follow.FollowRepository;
 import com.tenten.linkhub.domain.member.repository.member.MemberRepository;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationRequest;
@@ -32,16 +33,14 @@ import com.tenten.linkhub.global.infrastructure.ses.AwsSesService;
 import com.tenten.linkhub.global.response.ErrorCode;
 import com.tenten.linkhub.global.util.email.EmailDto;
 import com.tenten.linkhub.global.util.email.VerificationCodeCreator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -203,53 +202,16 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberFollowingsFindResponses getFollowings(Long memberId, Long myMemberId, PageRequest pageRequest) {
+        Slice<FollowDTO> followDTOs = followRepository.findFollowingsOfTargetUserWithMyMemberFollowingStatus(memberId, myMemberId, pageRequest);
 
-        // 팔로잉 아이디를 고정하고 다수의 팔로워 아이디를 가지는 팔로우 리스트
-        Slice<Follow> follows = followRepository.findByFollowingId(memberId, pageRequest);
-
-        // 소프트 딜리트 되지 않은 팔로워 아이디 리스트를 Long 타입으로 건네 받음
-        List<Long> followedMemberIds = follows.getContent().stream()
-                .filter(follow -> !follow.getFollower().getIsDeleted())
-                .map(follow -> follow.getFollower().getId())
-                .collect(Collectors.toList());
-
-        // 내 멤버 아이디가 팔로우하는 다수의 팔로워 아이디 리스트
-        Set<Long> followedByMyMember = followRepository.findFollowedMemberIdsByFollowingId(myMemberId, followedMemberIds);
-
-        // 순차적으로 팔로워 아이디들을 팔로우하는지 판단
-        List<Boolean> isMyMemberFollowingList = followedMemberIds.stream()
-                .map(followedByMyMember::contains)
-                .toList();
-
-        // 유저가 팔로우 중인 소프트 딜리트 되지 않은 멤버 리스트 프로필 이미지와 카테고리와 함께 건네 받음
-        List<Member> followings = memberRepository.findMembersWithProfileImageAndCategoryByIds(followedMemberIds);
-
-        Slice<Member> followingsSlice = new SliceImpl<>(followings, follows.getPageable(), follows.hasNext());
-
-        return MemberFollowingsFindResponses.from(followingsSlice, isMyMemberFollowingList);
+        return MemberFollowingsFindResponses.from(followDTOs);
     }
 
     @Override
     public MemberFollowersFindResponses getFollowers(Long memberId, Long myMemberId, PageRequest pageRequest) {
+        Slice<FollowDTO> followDTOs = followRepository.findFollowersOfTargetUserWithMyMemberFollowingStatus(memberId, myMemberId, pageRequest);
 
-        Slice<Follow> follows = followRepository.findByFollowerId(memberId, pageRequest);
-
-        List<Long> followingMemberIds = follows.getContent().stream()
-                .filter(follow -> !follow.getFollowing().getIsDeleted())
-                .map(follow -> follow.getFollowing().getId())
-                .collect(Collectors.toList());
-
-        Set<Long> followedByMyMember = followRepository.findFollowedMemberIdsByFollowingId(myMemberId, followingMemberIds);
-
-        List<Boolean> isMyMemberFollowingList = followingMemberIds.stream()
-                .map(followedByMyMember::contains)
-                .toList();
-
-        List<Member> followers = memberRepository.findMembersWithProfileImageAndCategoryByIds(followingMemberIds);
-
-        Slice<Member> followersSlice = new SliceImpl<>(followers, follows.getPageable(), follows.hasNext());
-
-        return MemberFollowersFindResponses.from(followersSlice, isMyMemberFollowingList);
+        return MemberFollowersFindResponses.from(followDTOs);
     }
 
 }

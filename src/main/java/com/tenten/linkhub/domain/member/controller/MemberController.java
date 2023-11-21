@@ -46,6 +46,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Objects;
+
 @Tag(name = "members", description = "member API Document")
 @RestController
 @RequestMapping("/members")
@@ -228,9 +230,11 @@ public class MemberController {
     ) {
         PageRequest pageRequest = PageRequest.of(request.pageNumber(), request.pageSize());
 
+        Long myMemberId = Objects.isNull(memberDetails) ? null : memberDetails.memberId();
+
         MemberFollowingsFindResponses memberFollowingsFindResponses = memberService.getFollowings(
                 memberId,
-                memberDetails.memberId(),
+                myMemberId,
                 pageRequest
         );
 
@@ -255,8 +259,13 @@ public class MemberController {
     ) {
         PageRequest pageRequest = PageRequest.of(request.pageNumber(), request.pageSize());
 
-        MemberFollowersFindResponses memberFollowersFindResponses = memberService.getFollowers(memberId,
-                memberDetails.memberId(), pageRequest);
+        Long myMemberId = Objects.isNull(memberDetails) ? null : memberDetails.memberId();
+
+        MemberFollowersFindResponses memberFollowersFindResponses = memberService.getFollowers(
+                memberId,
+                myMemberId,
+                pageRequest
+        );
 
         return ResponseEntity.ok(MemberFollowersFindApiResponses.from(
                 memberFollowersFindResponses));

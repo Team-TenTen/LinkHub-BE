@@ -1,11 +1,11 @@
 package com.tenten.linkhub.domain.member.repository.follow;
 
 import com.tenten.linkhub.domain.member.model.Follow;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import com.tenten.linkhub.domain.member.repository.dto.FollowDTO;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
+
+import java.util.Optional;
 
 public interface FollowRepository {
 
@@ -21,9 +21,7 @@ public interface FollowRepository {
 
     void delete(Follow follow);
 
-    Slice<Follow> findByFollowingId(Long memberId, PageRequest pageRequest);
+    Slice<FollowDTO> findFollowingsOfTargetUserWithMyMemberFollowingStatus(Long memberId, Long myMemberId, PageRequest pageRequest);
 
-    Slice<Follow> findByFollowerId(Long memberId, PageRequest pageRequest);
-
-    Set<Long> findFollowedMemberIdsByFollowingId(Long myMemberId, List<Long> followedMemberIds);
+    Slice<FollowDTO> findFollowersOfTargetUserWithMyMemberFollowingStatus(Long memberId, Long myMemberId, PageRequest pageRequest);
 }

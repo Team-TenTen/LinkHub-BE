@@ -1,12 +1,12 @@
 package com.tenten.linkhub.domain.member.repository.follow;
 
 import com.tenten.linkhub.domain.member.model.Follow;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import com.tenten.linkhub.domain.member.repository.dto.FollowDTO;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
 
 @Repository
 public class DefaultFollowRepository implements FollowRepository {
@@ -48,18 +48,13 @@ public class DefaultFollowRepository implements FollowRepository {
     }
 
     @Override
-    public Slice<Follow> findByFollowingId(Long memberId, PageRequest pageRequest) {
-        return followJpaRepository.findByFollowingId(memberId, pageRequest);
+    public Slice<FollowDTO> findFollowingsOfTargetUserWithMyMemberFollowingStatus(Long memberId, Long myMemberId, PageRequest pageRequest) {
+        return followJpaRepository.findFollowingsOfTargetUserWithMyMemberFollowingStatus(memberId, myMemberId, pageRequest);
     }
 
     @Override
-    public Slice<Follow> findByFollowerId(Long memberId, PageRequest pageRequest) {
-        return followJpaRepository.findByFollowerId(memberId, pageRequest);
-    }
-
-    @Override
-    public Set<Long> findFollowedMemberIdsByFollowingId(Long myMemberId, List<Long> followedMemberIds) {
-        return followJpaRepository.findFollowedMemberIdsByFollowingId(myMemberId, followedMemberIds);
+    public Slice<FollowDTO> findFollowersOfTargetUserWithMyMemberFollowingStatus(Long memberId, Long myMemberId, PageRequest pageRequest) {
+        return followJpaRepository.findFollowersOfTargetUserWithMyMemberFollowingStatus(memberId, myMemberId, pageRequest);
     }
 
 }

@@ -12,10 +12,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -102,5 +103,9 @@ public class Member extends BaseEntity {
 
     public List<FavoriteCategory> retrieveFavoriteCategories() {
         return this.favoriteCategories.retrieveFavoriteCategories();
+    }
+
+    public void deleteMember() {
+        this.isDeleted = true;
     }
 }

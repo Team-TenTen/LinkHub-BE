@@ -1,31 +1,17 @@
 package com.tenten.linkhub.domain.member.service.dto;
 
-import com.tenten.linkhub.domain.member.model.Member;
-import java.util.Iterator;
-import java.util.List;
+import com.tenten.linkhub.domain.member.repository.dto.FollowDTO;
 import org.springframework.data.domain.Slice;
 
 public record MemberFollowingsFindResponses(Slice<MemberFollowingFindResponse> responses) {
 
-    public static MemberFollowingsFindResponses from(
-            Slice<Member> followingsSlice,
-            List<Boolean> isMyMemberFollowingList
-    ) {
-        Iterator<Boolean> followingIterator = isMyMemberFollowingList.iterator();
-
-        Slice<MemberFollowingFindResponse> memberFollowingFindResponses = followingsSlice.map(f -> {
-            Boolean isFollowing = followingIterator.hasNext() && followingIterator.next();
-
-            return new MemberFollowingFindResponse(
-                    f.getId(),
-                    f.getNickname(),
-                    f.getAboutMe(),
-                    f.retrieveProfileImages().isEmpty() ? null : f.retrieveProfileImages().get(0).getPath(),
-                    f.retrieveFavoriteCategories().isEmpty() ? null
-                            : f.retrieveFavoriteCategories().get(0).getCategory(),
-                    isFollowing
-            );
-        });
+    public static MemberFollowingsFindResponses from(Slice<FollowDTO> followDTOs) {
+        Slice<MemberFollowingFindResponse> memberFollowingFindResponses = followDTOs.map(f -> new MemberFollowingFindResponse(
+                f.follow().getFollower().getId(),
+                f.follow().getFollower().getNickname(),
+                f.follow().getFollower().retrieveProfileImages().isEmpty() ? null : f.follow().getFollower().retrieveProfileImages().get(0).getPath(),
+                f.isFollowing()
+        ));
 
         return new MemberFollowingsFindResponses(memberFollowingFindResponses);
     }

@@ -1,11 +1,8 @@
 package com.tenten.linkhub.domain.member.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-
 import com.tenten.linkhub.domain.auth.JwtProvider;
 import com.tenten.linkhub.domain.auth.MemberDetails;
+import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.Provider;
 import com.tenten.linkhub.domain.member.repository.MemberEmailRedisRepository;
 import com.tenten.linkhub.domain.member.repository.member.MemberJpaRepository;
@@ -38,6 +35,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+
 @SpringBootTest
 @Transactional
 @TestPropertySource(locations = "classpath:/application-test.yml")
@@ -62,10 +65,10 @@ class MemberServiceTest {
 
     Long myMemberId;
     Long targetMemberId;
-    Long memberFollowedByTargetMemberButNotByMyMemberId;
-    Long memberFollowedByTargetMemberAndMyMemberId;
-    Long memberFollowingTargetMemberAndFollowedByMyMemberId;
-    Long memberFollowingTargetMemberButNotFollowedByMyMemberId;
+    Long memberIdFollowedByTargetMemberButNotByMyMemberId;
+    Long memberIdFollowedByTargetMemberAndMyMemberId;
+    Long memberIdFollowingTargetMemberAndFollowedByMyMemberId;
+    Long memberIdFollowingTargetMemberButNotFollowedByMyMemberId;
 
     @BeforeEach
     void setUp() {
@@ -234,9 +237,9 @@ class MemberServiceTest {
     @DisplayName("사용자는 특정 유저가 팔로잉한 유저를 페이징 조회한다.")
     void getFollowings_TargetMemberIdAndMyMemberId_Success() {
         //given
-        memberService.createFollow(memberFollowedByTargetMemberAndMyMemberId, targetMemberId);
-        memberService.createFollow(memberFollowedByTargetMemberAndMyMemberId, myMemberId);
-        memberService.createFollow(memberFollowedByTargetMemberButNotByMyMemberId, targetMemberId);
+        memberService.createFollow(memberIdFollowedByTargetMemberAndMyMemberId, targetMemberId);
+        memberService.createFollow(memberIdFollowedByTargetMemberAndMyMemberId, myMemberId);
+        memberService.createFollow(memberIdFollowedByTargetMemberButNotByMyMemberId, targetMemberId);
 
         PageRequest pageRequest = PageRequest.of(0, 10);
 
@@ -245,17 +248,11 @@ class MemberServiceTest {
 
         //then
         assertThat(responses.responses().getContent().get(0).memberId()).isEqualTo(
-                memberFollowedByTargetMemberAndMyMemberId);
-        assertThat(responses.responses().getContent().get(0).aboutMe()).isEqualTo("타겟 유저가 팔로우하고 나도 팔로우한 유저");
-        assertThat(responses.responses().getContent().get(0).favoriteCategory()).isEqualTo(
-                Category.KNOWLEDGE_ISSUE_CAREER);
+                memberIdFollowedByTargetMemberAndMyMemberId);
         assertThat(responses.responses().getContent().get(0).isFollowing()).isTrue();
 
         assertThat(responses.responses().getContent().get(1).memberId()).isEqualTo(
-                memberFollowedByTargetMemberButNotByMyMemberId);
-        assertThat(responses.responses().getContent().get(1).aboutMe()).isEqualTo("타겟 유저가 팔로우했지만 나는 안한 유저");
-        assertThat(responses.responses().getContent().get(1).favoriteCategory()).isEqualTo(
-                Category.KNOWLEDGE_ISSUE_CAREER);
+                memberIdFollowedByTargetMemberButNotByMyMemberId);
         assertThat(responses.responses().getContent().get(1).isFollowing()).isFalse();
     }
 
@@ -263,9 +260,9 @@ class MemberServiceTest {
     @DisplayName("사용자는 특정 유저의 팔로워들을 페이징 조회한다.")
     void getFollowers_TargetMemberIdAndMyMemberId_Success() {
         //given
-        memberService.createFollow(targetMemberId, memberFollowingTargetMemberButNotFollowedByMyMemberId);
-        memberService.createFollow(targetMemberId, memberFollowingTargetMemberAndFollowedByMyMemberId);
-        memberService.createFollow(memberFollowingTargetMemberAndFollowedByMyMemberId, myMemberId);
+        memberService.createFollow(targetMemberId, memberIdFollowingTargetMemberButNotFollowedByMyMemberId);
+        memberService.createFollow(targetMemberId, memberIdFollowingTargetMemberAndFollowedByMyMemberId);
+        memberService.createFollow(memberIdFollowingTargetMemberAndFollowedByMyMemberId, myMemberId);
 
         PageRequest pageRequest = PageRequest.of(0, 10);
 
@@ -274,18 +271,120 @@ class MemberServiceTest {
 
         //then
         assertThat(responses.responses().getContent().get(0).memberId()).isEqualTo(
-                memberFollowingTargetMemberButNotFollowedByMyMemberId);
-        assertThat(responses.responses().getContent().get(0).aboutMe()).isEqualTo("내가 팔로우하지 않는 타겟 유저를 팔로우한 유저");
-        assertThat(responses.responses().getContent().get(0).favoriteCategory()).isEqualTo(
-                Category.KNOWLEDGE_ISSUE_CAREER);
+                memberIdFollowingTargetMemberButNotFollowedByMyMemberId);
         assertThat(responses.responses().getContent().get(0).isFollowing()).isFalse();
 
         assertThat(responses.responses().getContent().get(1).memberId()).isEqualTo(
-                memberFollowingTargetMemberAndFollowedByMyMemberId);
-        assertThat(responses.responses().getContent().get(1).aboutMe()).isEqualTo("내가 팔로우하는 타겟 유저를 팔로우한 유저");
-        assertThat(responses.responses().getContent().get(1).favoriteCategory()).isEqualTo(
-                Category.KNOWLEDGE_ISSUE_CAREER);
+                memberIdFollowingTargetMemberAndFollowedByMyMemberId);
         assertThat(responses.responses().getContent().get(1).isFollowing()).isTrue();
+    }
+
+    @Test
+    @DisplayName("사용자가 특정 유저의 팔로잉 목록이 전부 삭제된 유저인 경우 빈 리스트를 돌려 받는다.")
+    void getFollowingsOfDeletedUsers_TargetMemberIdAndMyMemberId_SuccessWithEmptyList() {
+        //given
+        memberService.createFollow(memberIdFollowedByTargetMemberAndMyMemberId, targetMemberId);
+        memberService.createFollow(memberIdFollowedByTargetMemberAndMyMemberId, myMemberId);
+        memberService.createFollow(memberIdFollowedByTargetMemberButNotByMyMemberId, targetMemberId);
+
+        Optional<Member> memberFollowedByTargetMemberAndMyMemberIdOptional = memberJpaRepository.findById(memberIdFollowedByTargetMemberAndMyMemberId);
+        Optional<Member> memberFollowedByTargetMemberButNotByMyMemberIdOptional = memberJpaRepository.findById(memberIdFollowedByTargetMemberButNotByMyMemberId);
+
+        Member memberFollowedByTargetMemberAndMyMemberId = memberFollowedByTargetMemberAndMyMemberIdOptional.get();
+        Member memberFollowedByTargetMemberButNotByMyMemberId = memberFollowedByTargetMemberButNotByMyMemberIdOptional.get();
+
+        memberFollowedByTargetMemberAndMyMemberId.deleteMember();
+        memberFollowedByTargetMemberButNotByMyMemberId.deleteMember();
+
+        memberJpaRepository.save(memberFollowedByTargetMemberAndMyMemberId);
+        memberJpaRepository.save(memberFollowedByTargetMemberButNotByMyMemberId);
+
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        //when
+        MemberFollowingsFindResponses responses = memberService.getFollowings(targetMemberId, myMemberId, pageRequest);
+
+        //then
+        assertThat(responses.responses().getContent()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("사용자가 특정 유저의 팔로워 목록이 전부 삭제된 유저인 경우 빈 리스트를 돌려 받는다.")
+    void getFollowersOfDeletedUsers_TargetMemberIdAndMyMemberId_SuccessWithEmptyList() {
+        //given
+        memberService.createFollow(targetMemberId, memberIdFollowingTargetMemberButNotFollowedByMyMemberId);
+        memberService.createFollow(targetMemberId, memberIdFollowingTargetMemberAndFollowedByMyMemberId);
+        memberService.createFollow(memberIdFollowingTargetMemberAndFollowedByMyMemberId, myMemberId);
+
+        Optional<Member> memberFollowingTargetMemberButNotFollowedByMyMemberIdOptional = memberJpaRepository.findById(memberIdFollowingTargetMemberButNotFollowedByMyMemberId);
+        Optional<Member> memberFollowingTargetMemberAndFollowedByMyMemberIdOptional = memberJpaRepository.findById(memberIdFollowingTargetMemberAndFollowedByMyMemberId);
+
+        Member memberFollowingTargetMemberButNotFollowedByMyMemberId = memberFollowingTargetMemberButNotFollowedByMyMemberIdOptional.get();
+        Member memberFollowingTargetMemberAndFollowedByMyMemberId = memberFollowingTargetMemberAndFollowedByMyMemberIdOptional.get();
+
+        memberFollowingTargetMemberButNotFollowedByMyMemberId.deleteMember();
+        memberFollowingTargetMemberAndFollowedByMyMemberId.deleteMember();
+
+        memberJpaRepository.save(memberFollowingTargetMemberButNotFollowedByMyMemberId);
+        memberJpaRepository.save(memberFollowingTargetMemberAndFollowedByMyMemberId);
+
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        //when
+        MemberFollowersFindResponses responses = memberService.getFollowers(targetMemberId, myMemberId, pageRequest);
+
+        //then
+        assertThat(responses.responses().getContent()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("요청 유저 Id가 null 인 경우 특정 유저의 팔로잉 목록 조회 시 팔로잉 유무에 전부 false를 내려준다.")
+    void getFollowings_TargetMemberIdAndNullMemberId_SuccessWithFollowingStatusAllFalse() {
+        //given
+        memberService.createFollow(memberIdFollowedByTargetMemberAndMyMemberId, targetMemberId);
+        memberService.createFollow(memberIdFollowedByTargetMemberAndMyMemberId, myMemberId);
+        memberService.createFollow(memberIdFollowedByTargetMemberButNotByMyMemberId, targetMemberId);
+
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        Long myMemberId = null;
+
+        //when
+        MemberFollowingsFindResponses responses = memberService.getFollowings(targetMemberId, myMemberId, pageRequest);
+
+        //then
+        assertThat(responses.responses().getContent().get(0).memberId()).isEqualTo(
+                memberIdFollowedByTargetMemberAndMyMemberId);
+        assertThat(responses.responses().getContent().get(0).isFollowing()).isFalse();
+
+        assertThat(responses.responses().getContent().get(1).memberId()).isEqualTo(
+                memberIdFollowedByTargetMemberButNotByMyMemberId);
+        assertThat(responses.responses().getContent().get(1).isFollowing()).isFalse();
+    }
+
+    @Test
+    @DisplayName("요청 유저 Id가 null 인 경우 특정 유저의 팔로워 목록 조회 시 팔로잉 유무에 전부 false를 내려준다.")
+    void getFollowers_TargetMemberIdAndNullMemberId_SuccessWithFollowingStatusAllFalse() {
+        //given
+        memberService.createFollow(targetMemberId, memberIdFollowingTargetMemberButNotFollowedByMyMemberId);
+        memberService.createFollow(targetMemberId, memberIdFollowingTargetMemberAndFollowedByMyMemberId);
+        memberService.createFollow(memberIdFollowingTargetMemberAndFollowedByMyMemberId, myMemberId);
+
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        Long myMemberId = null;
+
+        //when
+        MemberFollowersFindResponses responses = memberService.getFollowers(targetMemberId, myMemberId, pageRequest);
+
+        //then
+        assertThat(responses.responses().getContent().get(0).memberId()).isEqualTo(
+                memberIdFollowingTargetMemberButNotFollowedByMyMemberId);
+        assertThat(responses.responses().getContent().get(0).isFollowing()).isFalse();
+
+        assertThat(responses.responses().getContent().get(1).memberId()).isEqualTo(
+                memberIdFollowingTargetMemberAndFollowedByMyMemberId);
+        assertThat(responses.responses().getContent().get(1).isFollowing()).isFalse();
     }
 
     private MemberJoinRequest createMemberJoinRequest(MockMultipartFile requestFile) {
@@ -403,10 +502,10 @@ class MemberServiceTest {
 
         myMemberId = myMemberDetails.memberId();
         targetMemberId = targetMemberDetails.memberId();
-        memberFollowedByTargetMemberButNotByMyMemberId = memberFollowedByTargetMemberButNotByMyMemberDetails.memberId();
-        memberFollowedByTargetMemberAndMyMemberId = memberFollowedByTargetMemberAndMyMemberDetails.memberId();
-        memberFollowingTargetMemberAndFollowedByMyMemberId = memberFollowingTargetMemberAndFollowedByMyMemberDetails.memberId();
-        memberFollowingTargetMemberButNotFollowedByMyMemberId = memberFollowingTargetMemberButNotFollowedByMyMemberDetails.memberId();
+        memberIdFollowedByTargetMemberButNotByMyMemberId = memberFollowedByTargetMemberButNotByMyMemberDetails.memberId();
+        memberIdFollowedByTargetMemberAndMyMemberId = memberFollowedByTargetMemberAndMyMemberDetails.memberId();
+        memberIdFollowingTargetMemberAndFollowedByMyMemberId = memberFollowingTargetMemberAndFollowedByMyMemberDetails.memberId();
+        memberIdFollowingTargetMemberButNotFollowedByMyMemberId = memberFollowingTargetMemberButNotFollowedByMyMemberDetails.memberId();
     }
 
 }
