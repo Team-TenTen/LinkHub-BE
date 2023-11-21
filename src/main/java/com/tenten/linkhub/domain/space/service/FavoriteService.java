@@ -4,7 +4,7 @@ import com.tenten.linkhub.domain.space.handler.dto.SpaceDecreaseFavoriteCountEve
 import com.tenten.linkhub.domain.space.handler.dto.SpaceIncreaseFavoriteCountEvent;
 import com.tenten.linkhub.domain.space.model.space.Favorite;
 import com.tenten.linkhub.domain.space.model.space.Space;
-import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
+import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.favorite.FavoriteRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.repository.favorite.dto.MyFavoriteSpacesQueryCondition;
@@ -62,7 +62,7 @@ public class FavoriteService {
     public FavoriteSpacesFindResponses findMyFavoriteSpaces(MyFavoriteSpacesFindRequest request) {
         MyFavoriteSpacesQueryCondition queryCondition = mapper.toQueryCondition(request);
 
-        Slice<SpaceAndOwnerNickName> responses = favoriteRepository.findMyFavoriteSpacesByQuery(queryCondition);
+        Slice<SpaceAndSpaceImageOwnerNickName> responses = favoriteRepository.findMyFavoriteSpacesByQuery(queryCondition);
 
         return FavoriteSpacesFindResponses.from(responses);
     }

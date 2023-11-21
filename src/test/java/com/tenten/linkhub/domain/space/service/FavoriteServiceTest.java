@@ -13,7 +13,6 @@ import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.favorite.FavoriteJpaRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
-import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberJpaRepository;
 import com.tenten.linkhub.domain.space.service.dto.favorite.FavoriteSpacesFindResponse;
 import com.tenten.linkhub.domain.space.service.dto.favorite.FavoriteSpacesFindResponses;
 import com.tenten.linkhub.domain.space.service.dto.favorite.MyFavoriteSpacesFindRequest;
@@ -180,10 +179,11 @@ class FavoriteServiceTest {
 
     @Test
     @DisplayName("유저는 자신이 즐겨찾기 등록한 스페이스를 키워드, 필터 조건 없이 조회할 수 있다.")
-    void findMyFavoriteSpaces_emptyKeyWord_emptyFilter() {
+    void findMyFavoriteSpaces_emptyKeyWord_emptyFilter() throws InterruptedException {
         //given
         favoriteService.createFavorite(setUpSpaceId1, setUpMemberId1);
         favoriteService.createFavorite(setUpSpaceId2, setUpMemberId1);
+        Thread.sleep(10);
 
         PageRequest pageRequest = PageRequest.of(0, 10);
         MyFavoriteSpacesFindRequest request = new MyFavoriteSpacesFindRequest(pageRequest, null, null, setUpMemberId1);
@@ -244,6 +244,10 @@ class FavoriteServiceTest {
                 true,
                 true,
                 true
+        );
+
+        space1.addSpaceImage(
+                new SpaceImage("https://testimage2", "테스트 이미지2")
         );
 
         Space space2 = new Space(
