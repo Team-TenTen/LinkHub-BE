@@ -2,9 +2,8 @@ package com.tenten.linkhub.domain.space.controller.dto.comment;
 
 import com.tenten.linkhub.domain.space.facade.dto.CommentAndChildCountAndMemberInfoResponses;
 import com.tenten.linkhub.global.util.PageMetaData;
-import org.springframework.data.domain.Slice;
-
 import java.util.List;
+import org.springframework.data.domain.Slice;
 
 public record RootCommentFindApiResponses(
         List<RootCommentFindApiResponse> responses,
@@ -21,7 +20,8 @@ public record RootCommentFindApiResponses(
                         r.memberId(),
                         r.nickname(),
                         r.aboutMe(),
-                        r.profileImagePath()
+                        r.profileImagePath(),
+                        r.isModifiable()
                 ));
 
         PageMetaData pageMetaData = new PageMetaData(

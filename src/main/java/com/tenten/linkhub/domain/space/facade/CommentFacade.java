@@ -21,14 +21,15 @@ public class CommentFacade {
     private final CommentService commentService;
     private final MemberService memberService;
 
-    public CommentAndChildCountAndMemberInfoResponses findRootComments(Long spaceId, Pageable pageable) {
+    public CommentAndChildCountAndMemberInfoResponses findRootComments(Long spaceId, Long myMemberId,
+            Pageable pageable) {
         CommentAndChildCountResponses commentAndChildCount = commentService.findRootComments(spaceId, pageable);
 
         List<Long> memberIds = getMemberIds(commentAndChildCount);
 
         MemberInfos memberInfos = memberService.findMemberInfosByMemberIds(memberIds);
 
-        return CommentAndChildCountAndMemberInfoResponses.of(commentAndChildCount, memberInfos);
+        return CommentAndChildCountAndMemberInfoResponses.of(commentAndChildCount, memberInfos, myMemberId);
     }
 
     private List<Long> getMemberIds(CommentAndChildCountResponses rootCommentResponses) {

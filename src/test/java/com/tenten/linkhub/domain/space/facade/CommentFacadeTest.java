@@ -68,25 +68,29 @@ class CommentFacadeTest {
     }
 
     @Test
-    @DisplayName("유저는 루트 댓글들을 페이징 조회할 수 있다.")
+    @DisplayName("유저는 수정 유무를 포함한 루트 댓글들을 페이징 조회한다.")
     void findRootComments() {
         //given
         PageRequest pageRequest = PageRequest.of(0, 10);
 
         //when
-        CommentAndChildCountAndMemberInfoResponses facadeResponses = commentFacade.findRootComments(setUpSpaceId1, pageRequest);
+        CommentAndChildCountAndMemberInfoResponses facadeResponses = commentFacade.findRootComments(setUpSpaceId1, setUpMemberId1, pageRequest);
 
         //then
         List<CommentAndChildCountAndMemberInfo> content = facadeResponses.responses().getContent();
 
-        assertThat(content.size()).isEqualTo(2);
+        assertThat(content).hasSize(2);
+
         assertThat(content.get(0).content()).isEqualTo("첫번째 루트 댓글");
         assertThat(content.get(0).nickname()).isEqualTo("잠자는 사자의 콧털");
         assertThat(content.get(0).profileImagePath()).isEqualTo("https://testprofileimage");
         assertThat(content.get(0).childCount()).isEqualTo(2);
+        assertThat(content.get(0).isModifiable()).isTrue();
+
         assertThat(content.get(1).content()).isEqualTo("두번째 루트 댓글");
         assertThat(content.get(1).nickname()).isEqualTo("테스트 유저");
         assertThat(content.get(1).childCount()).isEqualTo(1);
+        assertThat(content.get(1).isModifiable()).isFalse();
     }
 
     @Test
@@ -96,12 +100,12 @@ class CommentFacadeTest {
         PageRequest pageRequest = PageRequest.of(0, 10);
 
         //when//then
-        assertThatThrownBy(() -> commentFacade.findRootComments(setUpSpaceId2, pageRequest))
+        assertThatThrownBy(() -> commentFacade.findRootComments(setUpSpaceId2, setUpMemberId1, pageRequest))
                 .isInstanceOf(UnauthorizedAccessException.class);
     }
 
     @Test
-    @DisplayName("유저는 대댓글을 페이징 조회를 하면서 수정 여부를 알 수 있다.")
+    @DisplayName("유저는 수정 여부를 포함한 대댓글들을 페이징 조회한다.")
     void findReplies() {
         //given
         PageRequest pageRequest = PageRequest.of(0, 10);
@@ -116,7 +120,7 @@ class CommentFacadeTest {
         //then
         List<RepliesAndMemberInfo> content = facadeResponses.responses().getContent();
 
-        assertThat(content.size()).isEqualTo(4);
+        assertThat(content).hasSize(4);
 
         assertThat(content.get(0).content()).isEqualTo("첫번째 루트 댓글의 대댓글1");
         assertThat(content.get(0).nickname()).isEqualTo("테스트 유저");
@@ -180,7 +184,7 @@ class CommentFacadeTest {
                 "첫번째 스페이스 소개글",
                 Category.KNOWLEDGE_ISSUE_CAREER,
                 new SpaceImage("https://testimage1", "테스트 이미지1"),
-                new SpaceMember(setUpMemberId, Role.OWNER),
+                new SpaceMember(setUpMemberId1, Role.OWNER),
                 true,
                 true,
                 true,

@@ -383,10 +383,15 @@ public class SpaceController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RootCommentFindApiResponses> findRootComments(
             @PathVariable Long spaceId,
+            @AuthenticationPrincipal MemberDetails memberDetails,
             @ModelAttribute RootCommentsFindApiRequest request
     ) {
         PageRequest pageRequest = PageRequest.of(request.pageNumber(), request.pageSize());
-        CommentAndChildCountAndMemberInfoResponses responses = commentFacade.findRootComments(spaceId, pageRequest);
+
+        Long myMemberId = Objects.isNull(memberDetails) ? null : memberDetails.memberId();
+
+        CommentAndChildCountAndMemberInfoResponses responses = commentFacade.findRootComments(spaceId, myMemberId,
+                pageRequest);
 
         RootCommentFindApiResponses apiResponses = RootCommentFindApiResponses.from(responses);
 
