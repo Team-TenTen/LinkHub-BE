@@ -59,6 +59,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(config ->
                         config
+                                .requestMatchers("/spaces/search/me").authenticated()
                                 .requestMatchers("/members/profile").authenticated()
                                 .requestMatchers(HttpMethod.GET).permitAll() // 임시로 풀어준 것 운영시에는 허용 주소 관리
                                 .requestMatchers("/members/join").permitAll()

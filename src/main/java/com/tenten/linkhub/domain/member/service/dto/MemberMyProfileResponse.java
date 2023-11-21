@@ -3,7 +3,7 @@ package com.tenten.linkhub.domain.member.service.dto;
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.space.model.category.Category;
 
-public record MemberProfileResponse(
+public record MemberMyProfileResponse(
         Long memberId,
         String nickname,
         String aboutMe,
@@ -12,12 +12,11 @@ public record MemberProfileResponse(
         Long followerCount,
         Category favoriteCategory,
         String profileImagePath,
-        Boolean isSubscribed,
-        Boolean isFollowing
+        Boolean isSubscribed
 ) {
 
-    public static MemberProfileResponse from(Member member, Long followerCount, Long followingCount, Boolean isFollowing) {
-        return new MemberProfileResponse(
+    public static MemberMyProfileResponse from(Member member, Long followerCount, Long followingCount) {
+        return new MemberMyProfileResponse(
                 member.getId(),
                 member.getNickname(),
                 member.getAboutMe(),
@@ -27,8 +26,7 @@ public record MemberProfileResponse(
                 member.retrieveFavoriteCategories().isEmpty() ? null
                         : member.retrieveFavoriteCategories().get(0).getCategory(),
                 member.retrieveProfileImages().isEmpty() ? null : member.retrieveProfileImages().get(0).getPath(),
-                member.getIsSubscribed(),
-                isFollowing
+                member.getIsSubscribed()
         );
     }
 }

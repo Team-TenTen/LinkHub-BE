@@ -2,7 +2,7 @@ package com.tenten.linkhub.domain.member.controller.dto;
 
 import com.tenten.linkhub.domain.space.model.category.Category;
 
-public record MemberProfileApiResponse(
+public record MemberMyProfileApiResponse(
         Long memberId,
         String nickname,
         String aboutMe,
@@ -11,8 +11,7 @@ public record MemberProfileApiResponse(
         Long followerCount,
         Category favoriteCategory,
         String profileImagePath,
-        Boolean isSubscribed,
-        Boolean isFollowing
+        Boolean isSubscribed
 ) {
 
 }
