@@ -13,7 +13,6 @@ import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.favorite.FavoriteJpaRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
-import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberJpaRepository;
 import com.tenten.linkhub.domain.space.service.dto.favorite.FavoriteSpacesFindResponse;
 import com.tenten.linkhub.domain.space.service.dto.favorite.FavoriteSpacesFindResponses;
 import com.tenten.linkhub.domain.space.service.dto.favorite.MyFavoriteSpacesFindRequest;
@@ -245,6 +244,10 @@ class FavoriteServiceTest {
                 true,
                 true,
                 true
+        );
+
+        space1.addSpaceImage(
+                new SpaceImage("https://testimage2", "테스트 이미지2")
         );
 
         Space space2 = new Space(
