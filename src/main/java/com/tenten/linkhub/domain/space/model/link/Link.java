@@ -22,7 +22,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 
@@ -41,7 +40,7 @@ public class Link extends BaseEntity {
     private Space space;
 
     @OneToMany(mappedBy = "link", cascade = CascadeType.PERSIST)
-    private List<Tag> tags = new ArrayList<>();
+    private List<LinkTag> linkTags = new ArrayList<>();
 
     @Column(nullable = false)
     private Long memberId;
@@ -58,9 +57,9 @@ public class Link extends BaseEntity {
     @Version
     private int version;
 
-    public void addTag(Tag tag) {
-        tags.add(tag);
-        tag.changeLink(this);
+    public void addLinkTag(LinkTag linkTag) {
+        linkTags.add(linkTag);
+        linkTag.changeLink(this);
     }
 
     public static Link toLink(Space space,
@@ -90,27 +89,27 @@ public class Link extends BaseEntity {
         this.likeCount = 0L;
     }
 
-    public void updateLink(Url url, String title, Optional<Tag> tag) {
-        validateNotNull(url, "url");
-        validateNotNull(title, "title");
-        this.url = url;
-        this.title = title;
+//    public void updateLink(Url url, String title, Optional<Tag> tag) {
+//        validateNotNull(url, "url");
+//        validateNotNull(title, "title");
+//        this.url = url;
+//        this.title = title;
+//
+//        if (hasTag()) {
+//            deleteTag();
+//        }
+//
+//        tag.ifPresent(value -> this.tags.add(value));
+//    }
 
-        if (hasTag()) {
-            deleteTag();
-        }
-
-        tag.ifPresent(value -> this.tags.add(value));
-    }
-
-    private boolean hasTag() {
-        return !tags.isEmpty();
-    }
-
-    private void deleteTag() {
-        this.tags.forEach(Tag::deleteTag);
-        this.tags.clear();
-    }
+//    private boolean hasTag() {
+//        return !tags.isEmpty();
+//    }
+//
+//    private void deleteTag() {
+//        this.tags.forEach(Tag::deleteTag);
+//        this.tags.clear();
+//    }
 
     public void increaseLikeCount() {
         likeCount++;

@@ -30,10 +30,6 @@ public class Tag {
     @JoinColumn(name = "space_id", nullable = false)
     private Space space;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "link_id", nullable = false)
-    private Link link;
-
     @Column(nullable = false)
     private String name;
 
@@ -41,23 +37,13 @@ public class Tag {
     private Color color;
 
     public static Tag toTag(Space space,
-                            Link link,
                             String name,
                             Color color) {
-        return new Tag(space, link, name, color);
+        return new Tag(space, name, color);
     }
 
-    public void changeLink(Link link) {
-        this.link = link;
-    }
-
-    public void deleteTag() {
-        this.link = null;
-    }
-
-    private Tag(Space space, Link link, String name, Color color) {
+    private Tag(Space space, String name, Color color) {
         this.space = space;
-        this.link = link;
         this.name = name;
         this.color = color;
     }
