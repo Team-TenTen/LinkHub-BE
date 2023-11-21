@@ -13,8 +13,8 @@ import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentFindApi
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentsFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.favorite.MyFavoriteSpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.favorite.MyFavoriteSpacesFindApiResponses;
-import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.favorite.SpaceRegisterInFavoriteApiResponse;
+import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpaceFindWithFilterApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindByQueryApiRequest;
@@ -42,11 +42,10 @@ import com.tenten.linkhub.domain.space.service.dto.comment.CommentUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.ReplyCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.favorite.FavoriteSpacesFindResponses;
-import com.tenten.linkhub.domain.space.service.dto.favorite.MyFavoriteSpacesFindRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.service.dto.favorite.SpaceRegisterInFavoriteResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryResponses;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.util.SpaceViewList;
 import com.tenten.linkhub.global.response.ErrorResponse;
 import com.tenten.linkhub.global.response.ErrorWithDetailCodeResponse;
@@ -59,6 +58,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import java.net.URI;
+import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -78,10 +80,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.net.URI;
-import java.util.List;
-import java.util.Objects;
 
 @Tag(name = "spaces", description = "space 템플릿 API Document")
 @RequiredArgsConstructor
@@ -385,10 +383,15 @@ public class SpaceController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<RootCommentFindApiResponses> findRootComments(
             @PathVariable Long spaceId,
+            @AuthenticationPrincipal MemberDetails memberDetails,
             @ModelAttribute RootCommentsFindApiRequest request
     ) {
         PageRequest pageRequest = PageRequest.of(request.pageNumber(), request.pageSize());
-        CommentAndChildCountAndMemberInfoResponses responses = commentFacade.findRootComments(spaceId, pageRequest);
+
+        Long myMemberId = Objects.isNull(memberDetails) ? null : memberDetails.memberId();
+
+        CommentAndChildCountAndMemberInfoResponses responses = commentFacade.findRootComments(spaceId, myMemberId,
+                pageRequest);
 
         RootCommentFindApiResponses apiResponses = RootCommentFindApiResponses.from(responses);
 
@@ -411,10 +414,15 @@ public class SpaceController {
     public ResponseEntity<RepliesFindApiResponses> findReplies(
             @PathVariable Long spaceId,
             @PathVariable Long commentId,
+            @AuthenticationPrincipal MemberDetails memberDetails,
             @ModelAttribute RepliesFindApiRequest request
     ) {
         PageRequest pageRequest = PageRequest.of(request.pageNumber(), request.pageSize());
-        RepliesAndMemberInfoResponses responses = commentFacade.findReplies(spaceId, commentId, pageRequest);
+
+        Long myMemberId = Objects.isNull(memberDetails) ? null : memberDetails.memberId();
+
+        RepliesAndMemberInfoResponses responses = commentFacade.findReplies(spaceId, commentId, myMemberId,
+                pageRequest);
 
         RepliesFindApiResponses apiResponses = RepliesFindApiResponses.from(responses);
 
