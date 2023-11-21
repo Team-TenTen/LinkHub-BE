@@ -22,11 +22,11 @@ public class TagQueryRepository {
         return jpaQueryFactory
                 .select(new QTagInfo(
                         tag.name,
-                        tag.color
+                        tag.color,
+                        tag.id
                 ))
                 .from(tag)
                 .where(tag.space.id.eq(spaceId))
-                .groupBy(tag.name, tag.color)
                 .fetch();
     }
 

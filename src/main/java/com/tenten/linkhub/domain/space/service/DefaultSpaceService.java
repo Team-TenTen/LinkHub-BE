@@ -3,10 +3,10 @@ package com.tenten.linkhub.domain.space.service;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
+import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.favorite.FavoriteRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.repository.space.dto.MySpacesQueryCondition;
-import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberRepository;
 import com.tenten.linkhub.domain.space.repository.tag.TagRepository;
 import com.tenten.linkhub.domain.space.repository.tag.dto.TagInfo;
@@ -114,7 +114,7 @@ public class DefaultSpaceService implements SpaceService {
         List<TagInfo> tagInfos = tagRepository.findBySpaceIdAndGroupBySpaceName(spaceId);
         List<SpaceTagGetResponse> tagResponses = tagInfos
                 .stream()
-                .map(t -> new SpaceTagGetResponse(t.name(), t.color().getValue()))
+                .map(t -> new SpaceTagGetResponse(t.name(), t.color().getValue(), t.tagId()))
                 .toList();
 
         return SpaceTagGetResponses.from(tagResponses);
