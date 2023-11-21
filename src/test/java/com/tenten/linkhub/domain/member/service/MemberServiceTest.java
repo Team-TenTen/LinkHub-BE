@@ -13,6 +13,7 @@ import com.tenten.linkhub.domain.member.service.dto.MemberFollowersFindResponses
 import com.tenten.linkhub.domain.member.service.dto.MemberFollowingsFindResponses;
 import com.tenten.linkhub.domain.member.service.dto.MemberJoinRequest;
 import com.tenten.linkhub.domain.member.service.dto.MemberJoinResponse;
+import com.tenten.linkhub.domain.member.service.dto.MemberMyProfileResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberProfileResponse;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
@@ -69,6 +70,8 @@ class MemberServiceTest {
     Long memberIdFollowedByTargetMemberAndMyMemberId;
     Long memberIdFollowingTargetMemberAndFollowedByMyMemberId;
     Long memberIdFollowingTargetMemberButNotFollowedByMyMemberId;
+    MemberJoinRequest myMemberRequest;
+    MemberJoinRequest targetMemberRequest;
 
     @BeforeEach
     void setUp() {
@@ -141,26 +144,42 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("사용자는 멤버를 조회할 수 있다.")
-    void getProfile_MemberProfileRequest_Success() {
+    @DisplayName("사용자는 타인의 프로필 조회 및 팔로잉 유무를 전달 받는다.")
+    void getProfile_MemberIdAndMyMemberId_SuccessWithFollowingStatus() {
         //given
-        MemberJoinRequest memberJoinRequest = createMemberJoinRequest(requestFile);
-        MemberJoinResponse memberJoinResponse = memberService.join(memberJoinRequest);
+        memberService.createFollow(targetMemberId, myMemberId);
 
-        Authentication authentication = jwtProvider.getAuthentication(memberJoinResponse.jwt());
-        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
-
-        //when
-        MemberProfileResponse response = memberService.getProfile(memberDetails.memberId(), null);
+        // when
+        MemberProfileResponse response = memberService.getProfile(targetMemberId, myMemberId);
 
         //then
-        assertThat(response.memberId()).isEqualTo(memberDetails.memberId());
-        assertThat(response.aboutMe()).isEqualTo(memberJoinRequest.aboutMe());
-        assertThat(response.nickname()).isEqualTo(memberJoinRequest.nickname());
-        assertThat(response.newsEmail()).isEqualTo(memberJoinRequest.newsEmail());
+        assertThat(response.memberId()).isEqualTo(targetMemberId);
+        assertThat(response.aboutMe()).isEqualTo(targetMemberRequest.aboutMe());
+        assertThat(response.nickname()).isEqualTo(targetMemberRequest.nickname());
+        assertThat(response.newsEmail()).isEqualTo(targetMemberRequest.newsEmail());
         assertThat(response.followerCount()).isNotNegative();
         assertThat(response.followingCount()).isNotNegative();
-        assertThat(response.favoriteCategory()).isEqualTo(memberJoinRequest.favoriteCategory());
+        assertThat(response.favoriteCategory()).isEqualTo(targetMemberRequest.favoriteCategory());
+        assertThat(response.isFollowing()).isTrue();
+        assertThat(response.isModifiable()).isFalse();
+    }
+
+    @Test
+    @DisplayName("사용자는 자신의 프로필 조회 및 수정 권한을 전달 받는다.")
+    void getProfile_MemberIdAndMyMemberId_SuccessWithModificationStatus() {
+        //given //when
+        MemberProfileResponse response = memberService.getProfile(myMemberId, myMemberId);
+
+        //then
+        assertThat(response.memberId()).isEqualTo(myMemberId);
+        assertThat(response.aboutMe()).isEqualTo(myMemberRequest.aboutMe());
+        assertThat(response.nickname()).isEqualTo(myMemberRequest.nickname());
+        assertThat(response.newsEmail()).isEqualTo(myMemberRequest.newsEmail());
+        assertThat(response.followerCount()).isNotNegative();
+        assertThat(response.followingCount()).isNotNegative();
+        assertThat(response.favoriteCategory()).isEqualTo(myMemberRequest.favoriteCategory());
+        assertThat(response.isFollowing()).isFalse();
+        assertThat(response.isModifiable()).isTrue();
     }
 
     @Test
@@ -170,6 +189,29 @@ class MemberServiceTest {
         assertThatThrownBy(() -> memberService.getProfile(1L, null))
                 .isInstanceOf(UnauthorizedAccessException.class)
                 .hasMessageContaining("존재하지 않는 회원입니다.");
+    }
+
+    @Test
+    @DisplayName("사용자는 마이페이지 조회를 성공한다.")
+    void getMyProfile_MyMemberId_Success() {
+        //given
+        MemberJoinRequest memberJoinRequest = createMemberJoinRequest(requestFile);
+        MemberJoinResponse memberJoinResponse = memberService.join(memberJoinRequest);
+
+        Authentication authentication = jwtProvider.getAuthentication(memberJoinResponse.jwt());
+        MemberDetails memberDetails = (MemberDetails) authentication.getPrincipal();
+
+        //when
+        MemberMyProfileResponse response = memberService.getMyProfile(memberDetails.memberId());
+
+        //then
+        assertThat(response.memberId()).isEqualTo(memberDetails.memberId());
+        assertThat(response.aboutMe()).isEqualTo(memberJoinRequest.aboutMe());
+        assertThat(response.nickname()).isEqualTo(memberJoinRequest.nickname());
+        assertThat(response.newsEmail()).isEqualTo(memberJoinRequest.newsEmail());
+        assertThat(response.followerCount()).isNotNegative();
+        assertThat(response.followingCount()).isNotNegative();
+        assertThat(response.favoriteCategory()).isEqualTo(memberJoinRequest.favoriteCategory());
     }
 
     @Test
@@ -405,7 +447,7 @@ class MemberServiceTest {
         ImageInfo imageInfo = ImageInfo.of("https://testimage", requestFile.getName());
         BDDMockito.given(mockS3Uploader.saveImage(any())).willReturn(imageInfo);
 
-        MemberJoinRequest myMemberRequest = new MemberJoinRequest(
+        myMemberRequest = new MemberJoinRequest(
                 "32342341231",
                 Provider.kakao,
                 "멤버1",
@@ -416,7 +458,7 @@ class MemberServiceTest {
                 requestFile
         );
 
-        MemberJoinRequest targetMemberRequest = new MemberJoinRequest(
+        targetMemberRequest = new MemberJoinRequest(
                 "32342341232",
                 Provider.kakao,
                 "멤버2",
