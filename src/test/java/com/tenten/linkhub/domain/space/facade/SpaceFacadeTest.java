@@ -175,8 +175,45 @@ class SpaceFacadeTest {
     }
 
     @Test
-    @DisplayName("유저는 스페이스의 정보들을 변경할 수 있다.")
+    @DisplayName("유저는 스페이스 이미지를 포함한 스페이스의 정보들을 변경할 수 있다.")
     void updateSpace() {
+        //given
+        MockMultipartFile requestFile = new MockMultipartFile("업데이트된 이미지 파일 이름", (byte[]) null);
+        ImageInfo imageInfo = ImageInfo.of("https://updateimage", requestFile.getName());
+        BDDMockito.given(mockS3Uploader.saveImage(any())).willReturn(imageInfo);
+
+        SpaceUpdateFacadeRequest request = new SpaceUpdateFacadeRequest(
+                setUpSpaceId,
+                "업데이트 스페이스 네임",
+                "업데이트 스페이스 소개글",
+                Category.HOBBY_LEISURE_TRAVEL,
+                false,
+                false,
+                false,
+                false,
+                setUpMemberId,
+                requestFile
+        );
+
+        //when
+        Long updatedSpaceId = spaceFacade.updateSpace(request);
+
+        //then
+        Space space = spaceJpaRepository.findById(updatedSpaceId).get();
+
+        assertThat(space.getSpaceName()).isEqualTo("업데이트 스페이스 네임");
+        assertThat(space.getDescription()).isEqualTo("업데이트 스페이스 소개글");
+        assertThat(space.getCategory()).isEqualTo(Category.HOBBY_LEISURE_TRAVEL);
+        assertThat(space.getIsVisible()).isEqualTo(false);
+        assertThat(space.getIsComment()).isEqualTo(false);
+        assertThat(space.getIsLinkSummarizable()).isEqualTo(false);
+        assertThat(space.getIsReadMarkEnabled()).isEqualTo(false);
+        assertThat(space.getSpaceImages().get(0).getPath()).isEqualTo("https://updateimage");
+    }
+
+    @Test
+    @DisplayName("유저는 스페이스 이미지를 제외한 스페이스의 정보를 변경할 수 있다.")
+    void updateSpace_emptySpaceImage() {
         //given
         ImageInfo imageInfo = ImageInfo.of("https://testimage3", "테스트 이미지 파일 이름");
         BDDMockito.given(mockS3Uploader.saveImage(any())).willReturn(imageInfo);
