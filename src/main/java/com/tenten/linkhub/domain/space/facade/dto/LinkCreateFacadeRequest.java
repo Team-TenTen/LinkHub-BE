@@ -15,7 +15,7 @@ public record LinkCreateFacadeRequest(
         String title,
 
         @Pattern(regexp = "^(?!\\s*$).+", message = "태그는 비어있거나 공백만 있을 수 없습니다.")
-        String tag,
+        String tagName,
 
         @NotNull(message = "링크 tag의 색은 빈 값이 들어올 수 없습니다.")
         Color color

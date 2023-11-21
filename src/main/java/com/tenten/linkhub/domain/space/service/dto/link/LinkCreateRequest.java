@@ -6,7 +6,7 @@ public record LinkCreateRequest(
         Long spaceId,
         String url,
         String title,
-        String tag,
+        String tagName,
         Long memberId,
         Color color
 ) {
