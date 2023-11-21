@@ -53,15 +53,16 @@ public class DefaultLinkService implements LinkService {
                 request.title(),
                 new Url(request.url()));
 
-        Optional<Tag> tag = tagRepository.findBySpaceIdAndSpaceName(request.spaceId(), request.tagName());
-        Tag newTag = Tag.toTag(space, request.tagName(), request.color());
-        if (tag.isEmpty()) {
-            tagRepository.save(newTag);
+        if (request.hasCreateTagInfo()) { //태그 정보를 포함하여 링크를 생성할 경우
+            Optional<Tag> tag = tagRepository.findBySpaceIdAndSpaceName(request.spaceId(), request.tagName());
+            Tag newTag = Tag.toTag(space, request.tagName(), Color.toColor(request.color()));
+            if (tag.isEmpty()) {
+                tagRepository.save(newTag);
+            }
+
+            LinkTag linkTag = LinkTag.toLinkTag(link, tag.orElse(newTag));
+            link.addLinkTag(linkTag);
         }
-
-        LinkTag linkTag = LinkTag.toLinkTag(link, tag.orElse(newTag));
-        link.addLinkTag(linkTag);
-
         return linkRepository.save(link).getId();
     }
 

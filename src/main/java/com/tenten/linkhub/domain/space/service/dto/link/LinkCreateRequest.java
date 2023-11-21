@@ -1,6 +1,6 @@
 package com.tenten.linkhub.domain.space.service.dto.link;
 
-import com.tenten.linkhub.domain.space.model.link.Color;
+import java.util.Objects;
 
 public record LinkCreateRequest(
         Long spaceId,
@@ -8,6 +8,9 @@ public record LinkCreateRequest(
         String title,
         String tagName,
         Long memberId,
-        Color color
+        String color
 ) {
+    public boolean hasCreateTagInfo() {
+        return Objects.nonNull(tagName) && Objects.nonNull(color);
+    }
 }
