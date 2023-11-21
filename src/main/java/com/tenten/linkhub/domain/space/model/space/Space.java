@@ -125,6 +125,7 @@ public class Space extends BaseEntity {
 
     public void changeSpaceImage(SpaceImage spaceImage) {
         this.spaceImages.changeSpaceImage(spaceImage);
+        spaceImage.changeSpace(this);
     }
 
     /**
