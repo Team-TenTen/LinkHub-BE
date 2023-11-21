@@ -1,4 +1,4 @@
 package com.tenten.linkhub.domain.space.handler.dto;
 
-public record SpaceIncreaseViewCountDto(Long spaceId) {
+public record LinkIncreaseLikeCountEvent(Long linkId) {
 }

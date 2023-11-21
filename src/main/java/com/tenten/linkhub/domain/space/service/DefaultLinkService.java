@@ -1,13 +1,16 @@
 package com.tenten.linkhub.domain.space.service;
 
+import com.tenten.linkhub.domain.space.exception.LinkViewHistoryException;
 import com.tenten.linkhub.domain.space.model.link.Color;
 import com.tenten.linkhub.domain.space.model.link.Like;
 import com.tenten.linkhub.domain.space.model.link.Link;
+import com.tenten.linkhub.domain.space.model.link.LinkViewHistory;
 import com.tenten.linkhub.domain.space.model.link.Tag;
 import com.tenten.linkhub.domain.space.model.link.vo.Url;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.like.LikeRepository;
 import com.tenten.linkhub.domain.space.repository.link.LinkRepository;
+import com.tenten.linkhub.domain.space.repository.linkview.LinkViewRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.repository.tag.TagRepository;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkCreateRequest;
@@ -27,12 +30,14 @@ public class DefaultLinkService implements LinkService {
     private final TagRepository tagRepository;
     private final SpaceRepository spaceRepository;
     private final LikeRepository likeRepository;
+    private final LinkViewRepository linkViewRepository;
 
-    public DefaultLinkService(LinkRepository linkRepository, TagRepository tagRepository, SpaceRepository spaceRepository, LikeRepository likeRepository) {
+    public DefaultLinkService(LinkRepository linkRepository, TagRepository tagRepository, SpaceRepository spaceRepository, LikeRepository likeRepository, LinkViewRepository linkViewRepository) {
         this.linkRepository = linkRepository;
         this.tagRepository = tagRepository;
         this.spaceRepository = spaceRepository;
         this.likeRepository = likeRepository;
+        this.linkViewRepository = linkViewRepository;
     }
 
     @Override
@@ -94,5 +99,26 @@ public class DefaultLinkService implements LinkService {
         Optional<Like> like = likeRepository.findByLinkIdAndMemberId(linkId, memberId);
 
         like.ifPresent(likeRepository::delete);
+    }
+
+    @Override
+    @Transactional
+    public void addLinkViewHistory(Long spaceId, Long linkId, Long memberId) {
+        if (linkViewRepository.existsLinkView(linkId, memberId)) {
+            throw new LinkViewHistoryException("이미 존재하는 접속 기록 데이터입니다.");
+        }
+
+        Link link = linkRepository.getById(linkId);
+        LinkViewHistory linkViewHistory = LinkViewHistory.toLinkViewHistory(memberId, link);
+        linkViewRepository.save(linkViewHistory);
+    }
+
+    @Override
+    @Transactional
+    public void deleteLink(Long linkId) {
+        Link link = linkRepository.getById(linkId);
+
+        link.deleteLink();
+        linkViewRepository.deleteLinkViewHistory(linkId);
     }
 }

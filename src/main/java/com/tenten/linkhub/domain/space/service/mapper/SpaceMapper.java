@@ -5,7 +5,7 @@ import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.model.space.dto.SpaceUpdateDto;
-import com.tenten.linkhub.domain.space.repository.space.dto.MySpacesFindQueryCondition;
+import com.tenten.linkhub.domain.space.repository.space.dto.MySpacesQueryCondition;
 import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
 import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
@@ -52,8 +52,8 @@ public class SpaceMapper {
                 imageInfo.name());
     }
 
-    public MySpacesFindQueryCondition toMySpacesFindQueryCondition(MySpacesFindRequest request) {
-        return new MySpacesFindQueryCondition(
+    public MySpacesQueryCondition toMySpacesFindQueryCondition(MySpacesFindRequest request) {
+        return new MySpacesQueryCondition(
                 request.pageable(),
                 request.keyWord(),
                 request.filter(),

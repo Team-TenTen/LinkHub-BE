@@ -2,6 +2,7 @@ package com.tenten.linkhub.domain.space.service.dto.space;
 
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.space.Space;
+import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 
 import java.util.List;
 
@@ -24,8 +25,8 @@ public record SpaceWithSpaceImageAndSpaceMemberInfo(
         Boolean hasFavorite,
         List<SpaceMemberInfo> spaceMemberInfos
 ) {
-    public static SpaceWithSpaceImageAndSpaceMemberInfo of(Space space, Boolean isOwner, Boolean isCanEdit, Boolean hasFavorite) {
-        List<SpaceMemberInfo> spaceMemberInfos = space.getSpaceMembers().stream()
+    public static SpaceWithSpaceImageAndSpaceMemberInfo of(Space space, List<SpaceMember> sortedSpaceMember, Boolean isOwner, Boolean isCanEdit, Boolean hasFavorite) {
+        List<SpaceMemberInfo> spaceMemberInfos = sortedSpaceMember.stream()
                 .map(sm -> new SpaceMemberInfo(sm.getMemberId(), sm.getRole()))
                 .toList();
 

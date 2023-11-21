@@ -1,20 +1,19 @@
 package com.tenten.linkhub.domain.space.model.space.vo;
 
-import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 
@@ -45,6 +44,13 @@ public class SpaceMembers {
                 .collect(Collectors.toList());
     }
 
+    public List<SpaceMember> getSortedSpaceMemberList() {
+        return getSpaceMemberList()
+                .stream()
+                .sorted(Comparator.comparing(spaceMember -> spaceMember.getRole().ordinal()))
+                .toList();
+    }
+
     public List<Long> getSpaceMemberIds() {
         return getSpaceMemberList()
                 .stream()
@@ -62,11 +68,16 @@ public class SpaceMembers {
                 .filter(sm -> Objects.equals(sm.getMemberId(), memberId))
                 .findFirst();
 
-        if (spaceMember.isEmpty()){
+        if (spaceMember.isEmpty()) {
             return false;
         }
 
         return spaceMember.get().hasHigherRoleCanView();
     }
 
+    public boolean containMember(Long memberId) {
+        return spaceMemberList.
+                stream()
+                .anyMatch(m -> Objects.equals(m.getMemberId(), memberId));
+    }
 }

@@ -9,8 +9,8 @@ import com.tenten.linkhub.domain.space.controller.dto.link.LinkUpdateApiResponse
 import com.tenten.linkhub.domain.space.controller.mapper.LinkApiMapper;
 import com.tenten.linkhub.domain.space.facade.LinkFacade;
 import com.tenten.linkhub.domain.space.facade.dto.LinkCreateFacadeRequest;
-import com.tenten.linkhub.global.response.ErrorResponse;
 import com.tenten.linkhub.domain.space.facade.dto.LinkUpdateFacadeRequest;
+import com.tenten.linkhub.global.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -145,4 +145,54 @@ public class LinkController {
 
         return ResponseEntity.noContent().build();
     }
+
+    /**
+     * 링크에 접속시 접속 정보를 저장하는 API
+     */
+    @Operation(
+            summary = "링크 접속 정보 저장 API",
+            description = "[JWT 필요] 링크 접속 시 접속 정보를 저장하는 API입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "링크 접속 이력 요청을 성공적으로 처리했습니다."),
+                    @ApiResponse(responseCode = "404", description = "스페이스 정보를 찾을 수 없습니다."),
+                    @ApiResponse(responseCode = "404", description = "링크 정보를 찾을 수 없습니다.")
+            })
+    @PostMapping(value = "/spaces/{spaceId}/links/{linkId}/view")
+    public ResponseEntity<Void> addLinkViewHistory(
+            @PathVariable Long spaceId,
+            @PathVariable Long linkId,
+            @AuthenticationPrincipal MemberDetails memberDetails
+    ) {
+        linkFacade.addLinkViewHistory(spaceId, linkId, memberDetails.memberId());
+
+        return ResponseEntity
+                .noContent()
+                .build();
+    }
+
+    /**
+     * 링크 삭제 API
+     */
+    @Operation(
+            summary = "링크 삭제 API",
+            description = "[JWT 필요] 스페이스 내에서 링크를 삭제하는 API 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "링크가 성공적으로 삭제된 경우"),
+                    @ApiResponse(responseCode = "404", description = "링크 삭제 권한이 없습니다."),
+                    @ApiResponse(responseCode = "404", description = "요청한 spaceId에 해당하는 스페이스를 찾을 수 없습니다."),
+                    @ApiResponse(responseCode = "404", description = "요청한 linkId에 해당하는 스페이스를 찾을 수 없습니다.")
+            })
+    @DeleteMapping(value = "/spaces/{spaceId}/links/{linkId}")
+    public ResponseEntity<Void> deleteLink(
+            @PathVariable Long spaceId,
+            @PathVariable Long linkId,
+            @AuthenticationPrincipal MemberDetails memberDetails
+    ) {
+        linkFacade.deleteLink(spaceId, linkId, memberDetails.memberId());
+
+        return ResponseEntity
+                .noContent()
+                .build();
+    }
+
 }

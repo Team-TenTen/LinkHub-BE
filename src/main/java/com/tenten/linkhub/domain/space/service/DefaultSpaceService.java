@@ -5,16 +5,20 @@ import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.favorite.FavoriteRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
+import com.tenten.linkhub.domain.space.repository.space.dto.MySpacesQueryCondition;
+import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberRepository;
 import com.tenten.linkhub.domain.space.repository.tag.TagRepository;
+import com.tenten.linkhub.domain.space.repository.tag.dto.TagInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
 import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagsGetResponse;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponse;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
-import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.mapper.SpaceMapper;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import lombok.RequiredArgsConstructor;
@@ -39,9 +43,9 @@ public class DefaultSpaceService implements SpaceService {
     @Override
     @Transactional(readOnly = true)
     public PublicSpacesFindByQueryResponses findPublicSpacesByQuery(PublicSpacesFindByQueryRequest request) {
-        Slice<Space> spaces = spaceRepository.findPublicSpacesJoinSpaceImageByQuery(mapper.toQueryCond(request));
+        Slice<SpaceAndOwnerNickName> spaceAndOwnerNickNames = spaceRepository.findPublicSpacesJoinSpaceImageByQuery(mapper.toQueryCond(request));
 
-        return PublicSpacesFindByQueryResponses.from(spaces);
+        return PublicSpacesFindByQueryResponses.from(spaceAndOwnerNickNames);
     }
 
     @Override
@@ -64,10 +68,11 @@ public class DefaultSpaceService implements SpaceService {
 
         Boolean isOwner = space.isOwner(memberId);
         Boolean isCanEdit = space.isCanEdit(memberId);
+        List<SpaceMember> sortedSpaceMember = space.getSortedSpaceMember();
 
         Boolean hasFavorite = favoriteRepository.isExist(memberId, spaceId);
 
-        return SpaceWithSpaceImageAndSpaceMemberInfo.of(space, isOwner, isCanEdit, hasFavorite);
+        return SpaceWithSpaceImageAndSpaceMemberInfo.of(space, sortedSpaceMember, isOwner, isCanEdit, hasFavorite);
     }
 
     @Override
@@ -98,15 +103,28 @@ public class DefaultSpaceService implements SpaceService {
     @Override
     @Transactional(readOnly = true)
     public PublicSpacesFindByQueryResponses findMySpacesByQuery(MySpacesFindRequest request) {
-        Slice<Space> spaces = spaceRepository.findMySpacesJoinSpaceImageByQuery(mapper.toMySpacesFindQueryCondition(request));
+        MySpacesQueryCondition queryCondition = mapper.toMySpacesFindQueryCondition(request);
+        Slice<SpaceAndOwnerNickName> spaceAndOwnerNickNames = spaceRepository.findMySpacesJoinSpaceImageByQuery(queryCondition);
 
-        return PublicSpacesFindByQueryResponses.from(spaces);
+        return PublicSpacesFindByQueryResponses.from(spaceAndOwnerNickNames);
     }
 
     @Override
-    public SpaceTagsGetResponse getTagsBySpaceId(Long spaceId) {
-        List<String> tagNames = tagRepository.findBySpaceIdAndGroupBySpaceName(spaceId);
-        return SpaceTagsGetResponse.from(tagNames);
+    public SpaceTagGetResponses getTagsBySpaceId(Long spaceId) {
+        List<TagInfo> tagInfos = tagRepository.findBySpaceIdAndGroupBySpaceName(spaceId);
+        List<SpaceTagGetResponse> tagResponses = tagInfos
+                .stream()
+                .map(t -> new SpaceTagGetResponse(t.name(), t.color().getValue()))
+                .toList();
+
+        return SpaceTagGetResponses.from(tagResponses);
+    }
+
+    @Override
+    public void checkLinkViewHistory(Long spaceId, Long memberId) {
+        Space space = spaceRepository.getSpaceJoinSpaceMemberById(spaceId);
+
+        space.checkLinkViewHistoryEnabled(memberId);
     }
 
 }

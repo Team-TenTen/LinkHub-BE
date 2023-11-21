@@ -5,6 +5,7 @@ import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.ProfileImage;
 import com.tenten.linkhub.domain.member.model.Provider;
 import com.tenten.linkhub.domain.member.repository.member.MemberJpaRepository;
+import com.tenten.linkhub.domain.space.exception.LinkViewHistoryException;
 import com.tenten.linkhub.domain.space.facade.LinkFacade;
 import com.tenten.linkhub.domain.space.facade.dto.LinkCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.model.category.Category;
@@ -15,10 +16,12 @@ import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagsGetResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryResponses;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponse;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
+import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponse;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -52,6 +55,7 @@ class DefaultSpaceServiceTest {
 
     private Long setUpMemberId;
     private Long spaceId1;
+    private Long spaceId3;
 
     @BeforeEach
     void setUp() {
@@ -81,6 +85,7 @@ class DefaultSpaceServiceTest {
         assertThat(content.get(0).description()).isEqualTo("첫번째 스페이스 소개글");
         assertThat(content.get(0).category()).isEqualTo(Category.KNOWLEDGE_ISSUE_CAREER);
         assertThat(content.get(0).spaceImagePath()).isEqualTo("https://testimage1");
+        assertThat(content.get(0).ownerNickName()).isEqualTo("잠자는 사자의 콧털");
     }
 
     @Test
@@ -101,7 +106,9 @@ class DefaultSpaceServiceTest {
         assertThat(content.get(0).description()).isEqualTo("첫번째 스페이스 소개글");
         assertThat(content.get(0).category()).isEqualTo(Category.KNOWLEDGE_ISSUE_CAREER);
         assertThat(content.get(0).spaceImagePath()).isEqualTo("https://testimage1");
+        assertThat(content.get(0).ownerNickName()).isEqualTo("잠자는 사자의 콧털");
         assertThat(content.get(1).spaceName()).isEqualTo("두번째 스페이스");
+        assertThat(content.get(1).ownerNickName()).isEqualTo("잠자는 사자의 콧털");
     }
 
     @Test
@@ -120,6 +127,7 @@ class DefaultSpaceServiceTest {
         assertThat(content.size()).isEqualTo(1);
         assertThat(content.get(0).spaceName()).isEqualTo("두번째 스페이스");
         assertThat(content.get(0).spaceImagePath()).isEqualTo("https://testimage2");
+        assertThat(content.get(0).ownerNickName()).isEqualTo("잠자는 사자의 콧털");
     }
 
     @Test
@@ -138,6 +146,7 @@ class DefaultSpaceServiceTest {
         assertThat(content.size()).isEqualTo(1);
         assertThat(content.get(0).spaceName()).isEqualTo("두번째 스페이스");
         assertThat(content.get(0).spaceImagePath()).isEqualTo("https://testimage2");
+        assertThat(content.get(0).ownerNickName()).isEqualTo("잠자는 사자의 콧털");
     }
 
     @Test
@@ -145,16 +154,32 @@ class DefaultSpaceServiceTest {
     void getTagsBySpaceId_spaceId_Success() {
         //given - 링크 생성 3개 생성 그 중 2개는 태그명이 같다.
         Space space = spaceJpaRepository.findById(spaceId1).get();
-        linkFacade.createLink(spaceId1, setUpMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목A", "태그1", Color.BLUE));
+        linkFacade.createLink(spaceId1, setUpMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목A", "태그1", Color.GRAY));
         linkFacade.createLink(spaceId1, setUpMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목B", "태그1", Color.GRAY));
         linkFacade.createLink(spaceId1, setUpMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목C", "태그2", Color.RED));
 
         //when
-        SpaceTagsGetResponse response = spaceService.getTagsBySpaceId(spaceId1);
+        SpaceTagGetResponses response = spaceService.getTagsBySpaceId(spaceId1);
 
         //then
-        assertThat(response.tagNames()).hasSize(2);
-        assertThat(response.tagNames()).containsExactlyInAnyOrderElementsOf(List.of("태그1", "태그2"));
+        assertThat(response.tags()).hasSize(2);
+        assertThat(response.tags()).containsExactlyInAnyOrderElementsOf(List.of(new SpaceTagGetResponse("태그1", "gray"), new SpaceTagGetResponse("태그2", "red")));
+    }
+
+    @Test
+    @DisplayName("스페이스에서 읽음 처리 기능을 활성화하지 않았다면 이력을 저장할 수 없다.")
+    void checkLinkViewHistory_MemberIdAndSpaceId_ThrowsException() {
+        //when & then
+        Assertions.assertThatThrownBy(() -> spaceService.checkLinkViewHistory(spaceId1, setUpMemberId))
+                .isInstanceOf(LinkViewHistoryException.class);
+    }
+
+    @Test
+    @DisplayName("스페이스의 멤버가 아니라면 읽음 처리 기능이 활성화 되어있더라도 이력을 저장할 수 없다.")
+    void checkLinkViewHistory_MemberIdAndSpaceId2_ThrowsException() {
+        //when & then
+        Assertions.assertThatThrownBy(() -> spaceService.checkLinkViewHistory(spaceId3, setUpMemberId))
+                .isInstanceOf(LinkViewHistoryException.class);
     }
 
     private void setupData() {
@@ -182,7 +207,7 @@ class DefaultSpaceServiceTest {
                 true,
                 true,
                 true,
-                true
+                false
         );
 
         Space space2 = new Space(
@@ -216,6 +241,7 @@ class DefaultSpaceServiceTest {
         spaceJpaRepository.save(space3);
 
         spaceId1 = space1.getId();
+        spaceId3 = space3.getId();
     }
 
 }

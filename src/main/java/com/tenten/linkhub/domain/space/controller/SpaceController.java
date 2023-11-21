@@ -11,8 +11,10 @@ import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateA
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentCreateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentFindApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentsFindApiRequest;
-import com.tenten.linkhub.domain.space.controller.dto.favorite.SpaceRegisterInFavoriteApiResponse;
+import com.tenten.linkhub.domain.space.controller.dto.favorite.MyFavoriteSpacesFindApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.favorite.MyFavoriteSpacesFindApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.favorite.SpaceRegisterInFavoriteApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpaceFindWithFilterApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindByQueryApiRequest;
@@ -25,6 +27,7 @@ import com.tenten.linkhub.domain.space.controller.dto.space.SpaceTagsGetApiRespo
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiResponse;
 import com.tenten.linkhub.domain.space.controller.mapper.CommentApiMapper;
+import com.tenten.linkhub.domain.space.controller.mapper.FavoriteApiMapper;
 import com.tenten.linkhub.domain.space.controller.mapper.SpaceApiMapper;
 import com.tenten.linkhub.domain.space.facade.CommentFacade;
 import com.tenten.linkhub.domain.space.facade.SpaceFacade;
@@ -38,12 +41,15 @@ import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.comment.CommentUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.ReplyCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
+import com.tenten.linkhub.domain.space.service.dto.favorite.FavoriteSpacesFindResponses;
+import com.tenten.linkhub.domain.space.service.dto.favorite.MyFavoriteSpacesFindRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.service.dto.favorite.SpaceRegisterInFavoriteResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryResponses;
-import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagsGetResponse;
 import com.tenten.linkhub.domain.space.util.SpaceViewList;
 import com.tenten.linkhub.global.response.ErrorResponse;
+import com.tenten.linkhub.global.response.ErrorWithDetailCodeResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -59,6 +65,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -91,6 +98,7 @@ public class SpaceController {
     private final FavoriteService favoriteService;
     private final SpaceApiMapper spaceMapper;
     private final CommentApiMapper commentMapper;
+    private final FavoriteApiMapper favoriteMapper;
 
     /**
      * 스페이스 검색 API
@@ -110,8 +118,7 @@ public class SpaceController {
         PageRequest pageRequest = PageRequest.of(
                 request.pageNumber(),
                 request.pageSize(),
-                request.sort() != null ? Sort.by(request.sort()) : Sort.unsorted()
-        );
+                StringUtils.hasText(request.sort()) ? Sort.by(request.sort()) : Sort.unsorted());
 
         PublicSpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(
                 spaceMapper.toPublicSpacesFindByQueryRequest(request, pageRequest)
@@ -247,7 +254,7 @@ public class SpaceController {
         PageRequest pageRequest = PageRequest.of(
                 request.pageNumber(),
                 request.pageSize(),
-                request.sort() != null ? Sort.by(request.sort()) : Sort.unsorted());
+                StringUtils.hasText(request.sort()) ? Sort.by(request.sort()) : Sort.unsorted());
 
         PublicSpacesFindByQueryRequest serviceRequest = spaceMapper.toPublicSpacesFindByQueryRequest(request, pageRequest);
         PublicSpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(serviceRequest);
@@ -356,7 +363,7 @@ public class SpaceController {
             @AuthenticationPrincipal MemberDetails memberDetails,
             @PathVariable Long spaceId
     ) {
-        SpaceTagsGetResponse response = spaceService.getTagsBySpaceId(spaceId);
+        SpaceTagGetResponses response = spaceService.getTagsBySpaceId(spaceId);
         SpaceTagsGetApiResponse apiResponse = spaceMapper.toSpaceTagsGetApiResponse(response);
         return ResponseEntity
                 .ok()
@@ -471,10 +478,12 @@ public class SpaceController {
             summary = "스페이스 즐겨찾기 추가 API", description = "스페이스 즐겨찾기 추가 API 입니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "스페이스가 성공적으로 즐겨찾기 등록 되었습니다."),
-                    @ApiResponse(responseCode = "404", description = "존재하지 않는 스페이스를 즐겨찾기 등록하려고 합니다.",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                    @ApiResponse(responseCode = "404",
+                            description = "존재하지 않는 스페이스를 즐겨찾기 등록하려고 합니다,\n\n " +
+                                    "권한이 없는 스페이스를 즐겨찾기에 등록하려고 합니다. (두 예외 응답에 대한 응답값은 Schema를 눌러 확인해주세요!!)",
+                            content = @Content(schema = @Schema(oneOf = {ErrorResponse.class, ErrorWithDetailCodeResponse.class})))
             })
-    @PostMapping(value = "{spaceId}/favorites",
+    @PostMapping(value = "/{spaceId}/favorites",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SpaceRegisterInFavoriteApiResponse> registerSpaceInFavorite(
             @AuthenticationPrincipal MemberDetails memberDetails,
@@ -484,6 +493,53 @@ public class SpaceController {
         SpaceRegisterInFavoriteApiResponse apiResponse = SpaceRegisterInFavoriteApiResponse.from(response.favoriteCount());
 
         return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
+     * 스페이스 즐겨찾기 취소 API
+     */
+    @Operation(
+            summary = "스페이스 즐겨찾기 취소 API", description = "스페이스 즐겨찾기 취소 API 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "스페이스가 성공적으로 즐겨찾기 등록 되었습니다."),
+                    @ApiResponse(responseCode = "404",
+                            description = "존재하지 않는 즐겨찾기를 취소하려고 합니다,\n\n " +
+                                    "즐겨찾기를 등록한 유저가 아닌 다른 유저가 즐겨찾기를 취소하려고 합니다. (두 예외 응답에 대한 응답값은 Schema를 눌러 확인해주세요!!)",
+                            content = @Content(schema = @Schema(oneOf = {ErrorResponse.class, ErrorWithDetailCodeResponse.class})))
+            })
+    @DeleteMapping(value = "/{spaceId}/favorites")
+    public ResponseEntity<Void> cancelFavoriteSpace(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long spaceId
+    ) {
+        favoriteService.cancelFavoriteSpace(spaceId, memberDetails.memberId());
+
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 나의 즐겨찾기 스페이스 검색 API
+     */
+    @Operation(
+            summary = "나의 즐겨찾기 스페이스 검색 API", description = "내가 즐겨찾기한 스페이스를 keyWord, pageNumber, pageSize, filter를 통해 검색합니다. (keyWord, filter 조건 없이 사용 가능합니다.)\n\n" +
+            "해당 API는 keyWord, filter 없이도 사용 가능한 페이징 조회입니다.\n\n" +
+            "filter: {ENTER_ART, LIFE_KNOWHOW_SHOPPING, HOBBY_LEISURE_TRAVEL, KNOWLEDGE_ISSUE_CAREER, ETC}",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "검색이 성공적으로 완료 되었습니다."),
+            })
+    @GetMapping(value = "/favorites/me",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MyFavoriteSpacesFindApiResponses> findMyFavoriteSpaces(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @ModelAttribute MyFavoriteSpacesFindApiRequest request
+    ) {
+        PageRequest pageRequest = PageRequest.of(request.pageNumber(), request.pageSize());
+        FavoriteSpacesFindResponses responses = favoriteService.findMyFavoriteSpaces(
+                favoriteMapper.toMyFavoriteSpacesFindRequest(pageRequest, request, memberDetails.memberId())
+        );
+
+        MyFavoriteSpacesFindApiResponses apiResponses = MyFavoriteSpacesFindApiResponses.from(responses);
+        return ResponseEntity.ok(apiResponses);
     }
 
     private void setSpaceViewCookie(HttpServletResponse servletResponse, List<Long> spaceViews) {
