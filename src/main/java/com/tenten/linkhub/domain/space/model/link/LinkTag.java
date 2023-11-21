@@ -39,6 +39,10 @@ public class LinkTag extends BaseEntity {
         return new LinkTag(link, tag);
     }
 
+    public void deleteLink() {
+        this.isDeleted = true;
+    }
+
     private LinkTag(Link link, Tag tag) {
         this.link = link;
         this.tag = tag;

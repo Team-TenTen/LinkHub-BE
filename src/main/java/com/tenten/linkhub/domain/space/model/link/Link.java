@@ -89,27 +89,38 @@ public class Link extends BaseEntity {
         this.likeCount = 0L;
     }
 
-//    public void updateLink(Url url, String title, Optional<Tag> tag) {
-//        validateNotNull(url, "url");
-//        validateNotNull(title, "title");
-//        this.url = url;
-//        this.title = title;
-//
-//        if (hasTag()) {
-//            deleteTag();
-//        }
-//
-//        tag.ifPresent(value -> this.tags.add(value));
-//    }
+    public void updateLink(Url url, String title, LinkTag linkTag) {
+        validateNotNull(url, "url");
+        validateNotNull(title, "title");
+        this.url = url;
+        this.title = title;
 
-//    private boolean hasTag() {
-//        return !tags.isEmpty();
-//    }
-//
-//    private void deleteTag() {
-//        this.tags.forEach(Tag::deleteTag);
-//        this.tags.clear();
-//    }
+        if (hasLinkTag()) { //기존에 태그를 사용하는 링크였다면 삭제 처리
+            deleteLinkTag();
+        }
+
+        this.linkTags.add(linkTag);
+    }
+
+    public void updateLink(Url url, String title) {
+        validateNotNull(url, "url");
+        validateNotNull(title, "title");
+        this.url = url;
+        this.title = title;
+
+        if (hasLinkTag()) { //기존에 태그를 사용하는 링크였다면 삭제 처리
+            deleteLinkTag();
+        }
+    }
+
+    private boolean hasLinkTag() {
+        return !linkTags.isEmpty();
+    }
+
+    private void deleteLinkTag() {
+        this.linkTags.forEach(LinkTag::deleteLink);
+        this.linkTags.clear();
+    }
 
     public void increaseLikeCount() {
         likeCount++;
@@ -121,6 +132,5 @@ public class Link extends BaseEntity {
 
     public void deleteLink() {
         this.isDeleted = true;
-
     }
 }

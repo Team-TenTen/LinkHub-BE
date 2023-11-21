@@ -1,6 +1,7 @@
 package com.tenten.linkhub.domain.space.service;
 
 import com.tenten.linkhub.domain.space.exception.LinkViewHistoryException;
+import com.tenten.linkhub.domain.space.model.link.Color;
 import com.tenten.linkhub.domain.space.model.link.Like;
 import com.tenten.linkhub.domain.space.model.link.Link;
 import com.tenten.linkhub.domain.space.model.link.LinkTag;
@@ -14,6 +15,7 @@ import com.tenten.linkhub.domain.space.repository.linkview.LinkViewRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.repository.tag.TagRepository;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkCreateRequest;
+import com.tenten.linkhub.domain.space.service.dto.link.LinkUpdateRequest;
 import com.tenten.linkhub.domain.space.service.mapper.LinkMapper;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
@@ -63,24 +65,31 @@ public class DefaultLinkService implements LinkService {
         return linkRepository.save(link).getId();
     }
 
-//    @Override
-//    @Transactional
-//    public Long updateLink(LinkUpdateRequest request) {
-//        Space space = spaceRepository.getById(request.spaceId());
-//        Link link = linkRepository.getById(request.linkId());
-//        Optional<Tag> tag = toTag(space, link, request.tag(), request.color());
-//
-//        link.updateLink(new Url(request.url()), request.title(), tag);
-//
-//        return link.getId();
-//    }
-//
-//    private Optional<Tag> toTag(Space space, Link link, String tagName, Color color) {
-//        if (Objects.nonNull(tagName)) {
-//            return Optional.of(Tag.toTag(space, link, tagName, color));
-//        }
-//        return Optional.empty();
-//    }
+    @Override
+    @Transactional
+    public Long updateLink(LinkUpdateRequest request) {
+        Space space = spaceRepository.getById(request.spaceId());
+        Link link = linkRepository.getById(request.linkId());
+
+        if (request.hasUpdateTagInfo()) { //태그 정보를 포함하여 링크를 수정할 경우
+            Optional<Tag> tag = tagRepository.findBySpaceIdAndSpaceName(request.spaceId(), request.tagName());
+            Tag newTag = Tag.toTag(space, request.tagName(), Color.toColor(request.color()));
+
+            if (tag.isEmpty()) {
+                tagRepository.save(newTag);
+            }
+
+            link.updateLink(
+                    new Url(request.url()),
+                    request.title(),
+                    LinkTag.toLinkTag(link, tag.orElse(newTag))
+            );
+        } else {
+            link.updateLink(new Url(request.url()), request.title());
+        }
+
+        return link.getId();
+    }
 
     @Override
     @Transactional
