@@ -26,15 +26,6 @@ public interface FollowJpaRepository extends JpaRepository<Follow, Long> {
     @Query("SELECT f FROM Follow f WHERE f.follower.id = :memberId AND f.following.id = :myMemberId")
     Optional<Follow> findByMemberIdAndMyMemberId(Long memberId, Long myMemberId);
 
-    @Query("SELECT f FROM Follow f JOIN Member m ON m.id = f.following.id WHERE f.following.id = :memberId ORDER BY f.createdAt ASC")
-    Slice<Follow> findByFollowingId(Long memberId, PageRequest pageRequest);
-
-    @Query("SELECT f FROM Follow f JOIN Member m ON m.id = f.follower.id WHERE f.follower.id = :memberId ORDER BY f.createdAt ASC")
-    Slice<Follow> findByFollowerId(Long memberId, PageRequest pageRequest);
-
-    @Query("SELECT f.follower.id FROM Follow f WHERE f.following.id = :followingId AND f.follower.id IN :followedMemberIds")
-    Set<Long> findFollowedMemberIdsByFollowingId(@Param("followingId") Long myMemberId, List<Long> followedMemberIds);
-
     @Query("SELECT new com.tenten.linkhub.domain.member.repository.dto.FollowDTO(f, CASE WHEN fMy.following.id IS NOT NULL THEN true ELSE false END) " +
             "FROM Follow f " +
             "LEFT JOIN Follow fMy ON f.follower = fMy.follower AND fMy.following.id = :myMemberId " +
