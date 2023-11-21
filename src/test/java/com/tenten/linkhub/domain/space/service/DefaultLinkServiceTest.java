@@ -7,7 +7,6 @@ import com.tenten.linkhub.domain.member.model.Provider;
 import com.tenten.linkhub.domain.member.repository.member.MemberJpaRepository;
 import com.tenten.linkhub.domain.space.exception.LinkViewHistoryException;
 import com.tenten.linkhub.domain.space.model.category.Category;
-import com.tenten.linkhub.domain.space.model.link.Color;
 import com.tenten.linkhub.domain.space.model.link.Link;
 import com.tenten.linkhub.domain.space.model.link.vo.Url;
 import com.tenten.linkhub.domain.space.model.space.Role;
@@ -63,7 +62,7 @@ class DefaultLinkServiceTest {
                 "개발 블로그 1",
                 "백엔드",
                 memberId1,
-                Color.BLUE
+                "blue"
         );
 
         //when
@@ -74,7 +73,7 @@ class DefaultLinkServiceTest {
 
         assertThat(savedLink.getUrl()).usingRecursiveComparison().isEqualTo(new Url("https://mideveloperni.tistory.com/"));
         assertThat(savedLink.getTitle()).isEqualTo("개발 블로그 1");
-        assertThat(savedLink.getTags().get(0).getName()).isEqualTo("백엔드");
+        assertThat(savedLink.getLinkTags().get(0).getTag().getName()).isEqualTo("백엔드");
     }
 
     @Test
@@ -88,7 +87,7 @@ class DefaultLinkServiceTest {
                 "바꾼 태그",
                 memberId1,
                 linkId,
-                Color.GRAY
+                "gray"
         );
 
         //when
@@ -99,7 +98,7 @@ class DefaultLinkServiceTest {
 
         assertThat(savedLink.getUrl()).usingRecursiveComparison().isEqualTo(new Url("https://mideveloperni2.tistory.com/"));
         assertThat(savedLink.getTitle()).isEqualTo("바꾼 타이틀");
-        assertThat(savedLink.getTags().get(0).getName()).isEqualTo("바꾼 태그");
+        assertThat(savedLink.getLinkTags().get(0).getTag().getName()).isEqualTo("바꾼 태그");
     }
 
     @Test
