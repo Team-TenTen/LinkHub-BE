@@ -2,9 +2,8 @@ package com.tenten.linkhub.domain.member.controller.dto;
 
 import com.tenten.linkhub.domain.member.service.dto.MemberFollowingsFindResponses;
 import com.tenten.linkhub.global.util.PageMetaData;
-import org.springframework.data.domain.Slice;
-
 import java.util.List;
+import org.springframework.data.domain.Slice;
 
 public record MemberFollowingsFindApiResponses(
         List<MemberFollowingsFindApiResponse> responses,
@@ -16,6 +15,7 @@ public record MemberFollowingsFindApiResponses(
                 .map(r -> new MemberFollowingsFindApiResponse(
                         r.memberId(),
                         r.nickname(),
+                        r.aboutMe(),
                         r.profileImagePath(),
                         r.isFollowing()));
 

@@ -9,7 +9,9 @@ public record MemberFollowersFindResponses(Slice<MemberFollowersFindResponse> re
         Slice<MemberFollowersFindResponse> memberFollowersFindResponses = followDTOs.map(f -> new MemberFollowersFindResponse(
                 f.follow().getFollowing().getId(),
                 f.follow().getFollowing().getNickname(),
-                f.follow().getFollowing().retrieveProfileImages().isEmpty() ? null : f.follow().getFollowing().retrieveProfileImages().get(0).getPath(),
+                f.follow().getFollowing().getAboutMe(),
+                f.follow().getFollowing().retrieveProfileImages().isEmpty() ? null
+                        : f.follow().getFollowing().retrieveProfileImages().get(0).getPath(),
                 f.isFollowing()
         ));
 
