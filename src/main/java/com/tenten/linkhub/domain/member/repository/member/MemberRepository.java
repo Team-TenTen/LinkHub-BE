@@ -18,4 +18,7 @@ public interface MemberRepository {
 
     Optional<Member> findByIdWithImageAndCategory(Long memberId);
 
+    Member getById(Long memberId);
+
+    List<Member> findMembersWithProfileImageAndCategoryByIds(List<Long> memberIds);
 }

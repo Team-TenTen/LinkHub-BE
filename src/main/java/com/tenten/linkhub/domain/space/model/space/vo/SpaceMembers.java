@@ -26,7 +26,7 @@ public class SpaceMembers {
     private List<SpaceMember> spaceMemberList = new ArrayList<>();
 
     public void addSpaceMember(SpaceMember spaceMember) {
-        validateNotNull(spaceMember, "spaceImage");
+        validateNotNull(spaceMember, "spaceImages");
 
         this.spaceMemberList.add(spaceMember);
     }

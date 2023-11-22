@@ -11,7 +11,9 @@ public record MemberProfileApiResponse(
         Long followerCount,
         Category favoriteCategory,
         String profileImagePath,
-        Boolean isSubscribed
+        Boolean isSubscribed,
+        Boolean isModifiable,
+        Boolean isFollowing
 ) {
 
 }

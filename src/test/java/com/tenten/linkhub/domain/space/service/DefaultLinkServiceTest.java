@@ -24,10 +24,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ActiveProfiles("test")
 @SpringBootTest
 @Transactional
 class DefaultLinkServiceTest {
@@ -111,6 +113,17 @@ class DefaultLinkServiceTest {
         //when & then
         Assertions.assertThatThrownBy(() -> linkService.addLinkViewHistory(spaceId, linkId, memberId1))
                 .isInstanceOf(LinkViewHistoryException.class);
+    }
+
+    @Test
+    @DisplayName("사용자는 링크를 삭제할 수 있다.")
+    void deleteLink_LinkId_Success() {
+        //when
+        linkService.deleteLink(linkId);
+
+        //then
+        int linkCount = (int) linkJpaRepository.findById(linkId).stream().count();
+        assertThat(linkCount).isEqualTo(0);
     }
 
     private void setUpTestData() {

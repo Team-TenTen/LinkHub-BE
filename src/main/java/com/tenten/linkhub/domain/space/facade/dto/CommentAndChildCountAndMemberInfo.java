@@ -11,6 +11,7 @@ public record CommentAndChildCountAndMemberInfo(
         Long memberId,
         String nickname,
         String aboutMe,
-        String profileImagePath
+        String profileImagePath,
+        Boolean isModifiable
 ) {
 }

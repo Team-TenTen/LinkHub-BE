@@ -2,6 +2,7 @@ package com.tenten.linkhub.domain.space.repository.favorite;
 
 import com.tenten.linkhub.domain.space.model.space.Favorite;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
+import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.favorite.dto.MyFavoriteSpacesQueryCondition;
 import org.springframework.data.domain.Slice;
 
@@ -15,5 +16,5 @@ public interface FavoriteRepository {
 
     Long deleteById(Long favoriteId);
 
-    Slice<SpaceAndOwnerNickName> findMyFavoriteSpacesByQuery(MyFavoriteSpacesQueryCondition queryCondition);
+    Slice<SpaceAndSpaceImageOwnerNickName> findMyFavoriteSpacesByQuery(MyFavoriteSpacesQueryCondition queryCondition);
 }

@@ -52,13 +52,13 @@ public class SpaceMapper {
                 imageInfo.name());
     }
 
-    public MemberSpacesQueryCondition toMemberSpacesQueryCondition(MemberSpacesFindRequest request, Boolean isSelfSpace) {
+    public MemberSpacesQueryCondition toMemberSpacesQueryCondition(MemberSpacesFindRequest request, Boolean isMySpace) {
         return new MemberSpacesQueryCondition(
                 request.pageable(),
                 request.keyWord(),
                 request.filter(),
                 request.targetMemberId(),
-                isSelfSpace);
+                isMySpace);
     }
 
     public SpaceUpdateDto toSpaceUpdateDto(SpaceUpdateRequest request) {

@@ -4,14 +4,23 @@ import com.tenten.linkhub.domain.auth.MemberDetails;
 import com.tenten.linkhub.domain.member.controller.dto.MailSendApiRequest;
 import com.tenten.linkhub.domain.member.controller.dto.MailVerificationApiRequest;
 import com.tenten.linkhub.domain.member.controller.dto.MailVerificationApiResponse;
+import com.tenten.linkhub.domain.member.controller.dto.MemberFollowCreateApiResponse;
+import com.tenten.linkhub.domain.member.controller.dto.MemberFollowFindApiRequest;
+import com.tenten.linkhub.domain.member.controller.dto.MemberFollowersFindApiResponses;
+import com.tenten.linkhub.domain.member.controller.dto.MemberFollowingsFindApiResponses;
 import com.tenten.linkhub.domain.member.controller.dto.MemberJoinApiRequest;
 import com.tenten.linkhub.domain.member.controller.dto.MemberJoinApiResponse;
+import com.tenten.linkhub.domain.member.controller.dto.MemberMyProfileApiResponse;
 import com.tenten.linkhub.domain.member.controller.dto.MemberProfileApiResponse;
 import com.tenten.linkhub.domain.member.controller.mapper.MemberApiMapper;
 import com.tenten.linkhub.domain.member.service.MemberService;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationRequest;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationResponse;
+import com.tenten.linkhub.domain.member.service.dto.MemberFollowCreateResponse;
+import com.tenten.linkhub.domain.member.service.dto.MemberFollowersFindResponses;
+import com.tenten.linkhub.domain.member.service.dto.MemberFollowingsFindResponses;
 import com.tenten.linkhub.domain.member.service.dto.MemberJoinResponse;
+import com.tenten.linkhub.domain.member.service.dto.MemberMyProfileResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberProfileResponse;
 import com.tenten.linkhub.domain.member.controller.dto.MemberSpacesFindApiRequest;
 import com.tenten.linkhub.domain.member.controller.dto.MemberSpacesFindApiResponses;
@@ -30,6 +39,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -118,6 +128,9 @@ public class MemberController {
         return ResponseEntity.ok(memberJoinApiResponse);
     }
 
+    /**
+     * 사용자 프로필 조회 API
+     */
     @Operation(
             summary = "사용자 프로필 조회 API", description = "멤버 아이디를 받아 프로필을 조회합니다.",
             responses = {
@@ -127,26 +140,139 @@ public class MemberController {
                     )
             })
     @GetMapping(value = "/{memberId}/profile", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MemberProfileApiResponse> getProfile(@PathVariable Long memberId) {
-        MemberProfileResponse memberProfileResponse = memberService.getProfile(memberId);
+    public ResponseEntity<MemberProfileApiResponse> getProfile(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long memberId
+    ) {
+        Long myMemberId = Objects.isNull(memberDetails) ? null : memberDetails.memberId();
+
+        MemberProfileResponse memberProfileResponse = memberService.getProfile(memberId, myMemberId);
 
         MemberProfileApiResponse memberProfileApiResponse = mapper.toMemberProfileApiResponse(memberProfileResponse);
 
         return ResponseEntity.ok(memberProfileApiResponse);
     }
 
+    /**
+     * 내 프로필 조회 API
+     */
     @Operation(
             summary = "내 프로필 조회 API", description = "JWT를 받아 자신의 프로필을 조회합니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "프로필 조회를 완료하였습니다."),
             })
     @GetMapping(value = "/profile", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MemberProfileApiResponse> getMyProfile(@AuthenticationPrincipal MemberDetails memberDetails) {
-        MemberProfileResponse memberProfileResponse = memberService.getProfile(memberDetails.memberId());
+    public ResponseEntity<MemberMyProfileApiResponse> getMyProfile(
+            @AuthenticationPrincipal MemberDetails memberDetails) {
+        MemberMyProfileResponse memberMyProfileResponse = memberService.getMyProfile(memberDetails.memberId());
 
-        MemberProfileApiResponse memberProfileApiResponse = mapper.toMemberProfileApiResponse(memberProfileResponse);
+        MemberMyProfileApiResponse memberMyProfileApiResponse = mapper.toMemberMyProfileApiResponse(
+                memberMyProfileResponse);
 
-        return ResponseEntity.ok(memberProfileApiResponse);
+        return ResponseEntity.ok(memberMyProfileApiResponse);
+    }
+
+    /**
+     * 유저 팔로우 API
+     */
+    @Operation(
+            summary = "유저 팔로우 API", description = "헤더에 JWT 토큰과 Path Variable로 memberId를 받으며, 요청 Body는 없습니다.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "팔로우가 성공적으로 완료되었습니다."),
+                    @ApiResponse(responseCode = "404", description = "존재하지 않는 유저입니다. / 이미 팔로우된 유저입니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    )
+            })
+    @PostMapping(value = "/{memberId}/follow", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MemberFollowCreateApiResponse> createFollow(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long memberId
+    ) {
+        MemberFollowCreateResponse memberFollowCreateResponse = memberService.createFollow(memberId,
+                memberDetails.memberId());
+
+        MemberFollowCreateApiResponse memberFollowCreateApiResponse = mapper.toMemberFollowCreateApiResponse(
+                memberFollowCreateResponse);
+
+        return ResponseEntity.ok(memberFollowCreateApiResponse);
+    }
+
+    /**
+     * 유저 언팔로우 API
+     */
+    @Operation(
+            summary = "유저 언팔로우 API", description = "헤더에 JWT 토큰과 Path Variable로 memberId를 받으며, 요청 Body는 없습니다.",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "언팔로우가 성공적으로 완료되었습니다."),
+                    @ApiResponse(responseCode = "404", description = "존재하지 않는 팔로우 또는 유저입니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @DeleteMapping("/{memberId}/follow")
+    public ResponseEntity<Void> deleteFollow(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long memberId
+    ) {
+        memberService.deleteFollow(memberId, memberDetails.memberId());
+
+        return ResponseEntity
+                .noContent()
+                .build();
+    }
+
+    /**
+     * 팔로잉 목록 페이징 조회 API
+     */
+    @Operation(
+            summary = "팔로잉 목록 페이징 조회 API", description = "헤더에 JWT를 옵션으로 받고 Path Variable로 memberId를 받으며, 요청 Body는 없습니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "팔로잉 조회를 완료하였습니다.")
+            })
+    @GetMapping(value = "/{memberId}/following", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MemberFollowingsFindApiResponses> getFollowings(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long memberId,
+            @ModelAttribute MemberFollowFindApiRequest request
+
+    ) {
+        PageRequest pageRequest = PageRequest.of(request.pageNumber(), request.pageSize());
+
+        Long myMemberId = Objects.isNull(memberDetails) ? null : memberDetails.memberId();
+
+        MemberFollowingsFindResponses memberFollowingsFindResponses = memberService.getFollowings(
+                memberId,
+                myMemberId,
+                pageRequest
+        );
+
+        return ResponseEntity.ok(MemberFollowingsFindApiResponses.from(memberFollowingsFindResponses));
+    }
+
+    /**
+     * 팔로워 목록 페이징 조회 API
+     */
+    @Operation(
+            summary = "팔로워 목록 페이징 조회 API", description = "헤더에 JWT를 옵션으로 받고 토큰 Path Variable로 memberId를 받으며, 요청 Body는 없습니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "팔로워 조회를 완료하였습니다.")
+            })
+    @GetMapping(value = "/{memberId}/followers", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MemberFollowersFindApiResponses> getFollowers(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long memberId,
+            @ModelAttribute MemberFollowFindApiRequest request
+    ) {
+        PageRequest pageRequest = PageRequest.of(request.pageNumber(), request.pageSize());
+
+        Long myMemberId = Objects.isNull(memberDetails) ? null : memberDetails.memberId();
+
+        MemberFollowersFindResponses memberFollowersFindResponses = memberService.getFollowers(
+                memberId,
+                myMemberId,
+                pageRequest
+        );
+
+        return ResponseEntity.ok(MemberFollowersFindApiResponses.from(
+                memberFollowersFindResponses));
     }
 
     /**

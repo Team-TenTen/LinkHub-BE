@@ -26,6 +26,11 @@ public class DefaultLinkViewRepository implements LinkViewRepository {
         return linkViewJpaRepository.save(linkViewHistory);
     }
 
+    @Override
+    public void deleteLinkViewHistory(Long linkId) {
+        linkViewJpaRepository.deleteByLinkId(linkId);
+    }
+
 }
 
 

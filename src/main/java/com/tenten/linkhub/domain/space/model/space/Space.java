@@ -80,7 +80,7 @@ public class Space extends BaseEntity {
         validateNotNull(category, "category");
         validateNotNull(spaceImage, "spaceImage");
         validateNotNull(spaceMember, "spaceMember");
-        validateNotNull(isVisible, "isSelfSpace");
+        validateNotNull(isVisible, "isMySpace");
         validateNotNull(isComment, "isComment");
         validateNotNull(isLinkSummarizable, "isLinkSummarizable");
         validateNotNull(isReadMarkEnabled, "isReadMarkEnabled");
@@ -125,6 +125,7 @@ public class Space extends BaseEntity {
 
     public void changeSpaceImage(SpaceImage spaceImage) {
         this.spaceImages.changeSpaceImage(spaceImage);
+        spaceImage.changeSpace(this);
     }
 
     /**
@@ -181,7 +182,7 @@ public class Space extends BaseEntity {
 
         validateMaxSize(updateDto.spaceName(), 255, "spaceName");
         validateNotNull(updateDto.category(), "category");
-        validateNotNull(updateDto.isVisible(), "isSelfSpace");
+        validateNotNull(updateDto.isVisible(), "isMySpace");
         validateNotNull(updateDto.isComment(), "isComment");
         validateNotNull(updateDto.isLinkSummarizable(), "isLinkSummarizable");
         validateNotNull(updateDto.isReadMarkEnabled(), "isReadMarkEnabled");

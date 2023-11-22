@@ -28,12 +28,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ActiveProfiles("test")
 @Transactional
 @SpringBootTest
 class LinkFacadeTest {
@@ -182,6 +184,14 @@ class LinkFacadeTest {
         //then
         Optional<Like> like = likeJpaRepository.findByLinkIdAndMemberId(linkId, memberId1);
         assertThat(like).isEmpty();
+    }
+
+    @Test
+    @DisplayName("사용자는 CAN_EDIT이나 OWNER 권한이 아닌 경우 링크를 삭제할 수 없다.")
+    void deleteLink_request_ThrowsUnauthorizedAccessException() {
+        //when & then
+        Assertions.assertThatThrownBy(() -> linkFacade.deleteLink(spaceId, linkId, memberId2))
+                .isInstanceOf(UnauthorizedAccessException.class);
     }
 
     private void setUpTestData() {

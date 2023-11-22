@@ -12,10 +12,12 @@ public record MemberProfileResponse(
         Long followerCount,
         Category favoriteCategory,
         String profileImagePath,
-        Boolean isSubscribed
+        Boolean isSubscribed,
+        Boolean isModifiable,
+        Boolean isFollowing
 ) {
 
-    public static MemberProfileResponse from(Member member, Long followerCount, Long followingCount) {
+    public static MemberProfileResponse from(Member member, Long followerCount, Long followingCount, Boolean isModifiable, Boolean isFollowing) {
         return new MemberProfileResponse(
                 member.getId(),
                 member.getNickname(),
@@ -26,7 +28,9 @@ public record MemberProfileResponse(
                 member.retrieveFavoriteCategories().isEmpty() ? null
                         : member.retrieveFavoriteCategories().get(0).getCategory(),
                 member.retrieveProfileImages().isEmpty() ? null : member.retrieveProfileImages().get(0).getPath(),
-                member.getIsSubscribed()
+                member.getIsSubscribed(),
+                isModifiable,
+                isFollowing
         );
     }
 }

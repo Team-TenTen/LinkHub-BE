@@ -8,6 +8,6 @@ public record MemberSpacesQueryCondition(
         String keyWord,
         Category filter,
         Long memberId,
-        Boolean isSelfSpace
+        Boolean isMySpace
 ) {
 }

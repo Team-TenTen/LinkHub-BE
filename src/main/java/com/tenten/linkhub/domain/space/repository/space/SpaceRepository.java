@@ -1,14 +1,14 @@
 package com.tenten.linkhub.domain.space.repository.space;
 
 import com.tenten.linkhub.domain.space.model.space.Space;
+import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.space.dto.MemberSpacesQueryCondition;
 import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
-import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
 import org.springframework.data.domain.Slice;
 
 public interface SpaceRepository {
 
-    Slice<SpaceAndOwnerNickName> findPublicSpacesJoinSpaceImageByQuery(QueryCondition queryCondition);
+    Slice<SpaceAndSpaceImageOwnerNickName> findPublicSpacesJoinSpaceImageByQuery(QueryCondition queryCondition);
 
     Space save(Space space);
 
@@ -16,7 +16,7 @@ public interface SpaceRepository {
 
     Space getSpaceJoinSpaceMemberById(Long spaceId);
 
-    Slice<SpaceAndOwnerNickName> findMemberSpacesJoinSpaceImageByQuery(MemberSpacesQueryCondition memberSpacesQueryCondition);
+    Slice<SpaceAndSpaceImageOwnerNickName> findMemberSpacesJoinSpaceImageByQuery(MemberSpacesQueryCondition queryCondition);
 
     void increaseFavoriteCount(Long spaceId);
 
