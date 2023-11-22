@@ -1,5 +1,9 @@
 package com.tenten.linkhub.domain.member.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+
 import com.tenten.linkhub.domain.auth.JwtProvider;
 import com.tenten.linkhub.domain.auth.MemberDetails;
 import com.tenten.linkhub.domain.member.model.Member;
@@ -21,6 +25,7 @@ import com.tenten.linkhub.global.aws.s3.ImageFileUploader;
 import com.tenten.linkhub.global.exception.DataDuplicateException;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
+import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,12 +40,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
 @Transactional
@@ -300,10 +299,14 @@ class MemberServiceTest {
         //then
         assertThat(responses.responses().getContent().get(0).memberId()).isEqualTo(
                 memberIdFollowedByTargetMemberAndMyMemberId);
+        assertThat(responses.responses().getContent().get(0).aboutMe()).isEqualTo(
+                "타겟 유저가 팔로우하고 나도 팔로우한 유저");
         assertThat(responses.responses().getContent().get(0).isFollowing()).isTrue();
 
         assertThat(responses.responses().getContent().get(1).memberId()).isEqualTo(
                 memberIdFollowedByTargetMemberButNotByMyMemberId);
+        assertThat(responses.responses().getContent().get(1).aboutMe()).isEqualTo(
+                "타겟 유저가 팔로우했지만 나는 안한 유저");
         assertThat(responses.responses().getContent().get(1).isFollowing()).isFalse();
     }
 
@@ -323,10 +326,14 @@ class MemberServiceTest {
         //then
         assertThat(responses.responses().getContent().get(0).memberId()).isEqualTo(
                 memberIdFollowingTargetMemberButNotFollowedByMyMemberId);
+        assertThat(responses.responses().getContent().get(0).aboutMe()).isEqualTo(
+                "내가 팔로우하지 않는 타겟 유저를 팔로우한 유저");
         assertThat(responses.responses().getContent().get(0).isFollowing()).isFalse();
 
         assertThat(responses.responses().getContent().get(1).memberId()).isEqualTo(
                 memberIdFollowingTargetMemberAndFollowedByMyMemberId);
+        assertThat(responses.responses().getContent().get(1).aboutMe()).isEqualTo(
+                "내가 팔로우하는 타겟 유저를 팔로우한 유저");
         assertThat(responses.responses().getContent().get(1).isFollowing()).isTrue();
     }
 
