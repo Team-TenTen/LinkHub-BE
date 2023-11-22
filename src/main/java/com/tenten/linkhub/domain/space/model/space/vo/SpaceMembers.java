@@ -1,6 +1,8 @@
 package com.tenten.linkhub.domain.space.model.space.vo;
 
+import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
+import com.tenten.linkhub.domain.space.model.space.dto.SpaceMemberRole;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
@@ -11,6 +13,7 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -80,4 +83,19 @@ public class SpaceMembers {
                 stream()
                 .anyMatch(m -> Objects.equals(m.getMemberId(), memberId));
     }
+
+    public void changeSpaceMembersRole(List<SpaceMemberRole> spaceMemberRoles) {
+        Map<Long, Role> spaceMemberRoleMap = spaceMemberRoles
+                .stream()
+                .collect(Collectors.toMap(
+                        SpaceMemberRole::memberId,
+                        SpaceMemberRole::role));
+
+        getSpaceMemberList()
+                .forEach(sm -> {
+                    Role role = spaceMemberRoleMap.get(sm.getMemberId());
+                    sm.changeRole(role);
+                });
+    }
+
 }

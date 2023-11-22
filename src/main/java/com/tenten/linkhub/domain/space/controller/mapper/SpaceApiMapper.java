@@ -1,17 +1,17 @@
 package com.tenten.linkhub.domain.space.controller.mapper;
 
-import com.tenten.linkhub.domain.member.controller.dto.MemberSpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindWithFilterApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceTagsGetApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindByQueryApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.spacemember.SpaceMemberRoleChangeApiRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.MemberSpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
+import com.tenten.linkhub.domain.space.service.dto.spacemember.SpaceMemberRoleChangeRequest;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +34,7 @@ public interface SpaceApiMapper {
 
     SpaceDetailGetByIdFacadeRequest toSpaceDetailGetByIdFacadeRequest(Long spaceId, Long memberId, List<Long> spaceViews);
 
-    MemberSpacesFindRequest toMySpacesFindRequest(Pageable pageable, MemberSpacesFindApiRequest request, Long memberId);
-
     SpaceTagsGetApiResponse toSpaceTagsGetApiResponse(SpaceTagGetResponses response);
+
+    SpaceMemberRoleChangeRequest toSpaceMemberRoleChangeRequest(Long spaceId, Long memberId, SpaceMemberRoleChangeApiRequest request);
 }

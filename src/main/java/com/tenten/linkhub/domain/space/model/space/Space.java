@@ -2,6 +2,7 @@ package com.tenten.linkhub.domain.space.model.space;
 
 import com.tenten.linkhub.domain.space.exception.LinkViewHistoryException;
 import com.tenten.linkhub.domain.space.model.category.Category;
+import com.tenten.linkhub.domain.space.model.space.dto.SpaceMemberRole;
 import com.tenten.linkhub.domain.space.model.space.dto.SpaceUpdateDto;
 import com.tenten.linkhub.domain.space.model.space.vo.SpaceImages;
 import com.tenten.linkhub.domain.space.model.space.vo.SpaceMembers;
@@ -198,6 +199,10 @@ public class Space extends BaseEntity {
                 .ifPresent(this::changeSpaceImage);
     }
 
+    public void changeSpaceMembersRole(List<SpaceMemberRole> spaceMemberRoles) {
+        spaceMembers.changeSpaceMembersRole(spaceMemberRoles);
+    }
+
     public Long deleteSpace(Long memberId) {
         validateOwnership(memberId);
 
@@ -220,4 +225,5 @@ public class Space extends BaseEntity {
             throw new LinkViewHistoryException("링크의 접속정보를 저장할 수 없습니다.");
         }
     }
+
 }

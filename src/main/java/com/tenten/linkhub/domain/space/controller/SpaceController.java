@@ -24,6 +24,8 @@ import com.tenten.linkhub.domain.space.controller.dto.space.SpaceDetailGetByIdAp
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceTagsGetApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiResponse;
+import com.tenten.linkhub.domain.space.controller.dto.spacemember.SpaceMemberRoleChangeApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.spacemember.SpaceMemberRoleChangeApiResponse;
 import com.tenten.linkhub.domain.space.controller.mapper.CommentApiMapper;
 import com.tenten.linkhub.domain.space.controller.mapper.FavoriteApiMapper;
 import com.tenten.linkhub.domain.space.controller.mapper.SpaceApiMapper;
@@ -210,6 +212,23 @@ public class SpaceController {
 
         SpaceUpdateApiResponse apiResponse = SpaceUpdateApiResponse.from(updatedSpaceId);
 
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
+     * 스페이스 멤버 권한 수정 API
+     */
+    @PatchMapping(value = "/{spaceId}/members/role")
+    public ResponseEntity<SpaceMemberRoleChangeApiResponse> changeSpaceMemberRole(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long spaceId,
+            @RequestBody SpaceMemberRoleChangeApiRequest request
+    ) {
+        Long responseSpaceId = spaceService.changeSpaceMembersRole(
+                spaceMapper.toSpaceMemberRoleChangeRequest(spaceId, memberDetails.memberId(), request)
+        );
+
+        SpaceMemberRoleChangeApiResponse apiResponse = SpaceMemberRoleChangeApiResponse.from(responseSpaceId);
         return ResponseEntity.ok(apiResponse);
     }
 
