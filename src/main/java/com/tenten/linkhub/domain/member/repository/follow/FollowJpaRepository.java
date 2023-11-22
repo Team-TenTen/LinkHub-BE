@@ -2,22 +2,18 @@ package com.tenten.linkhub.domain.member.repository.follow;
 
 import com.tenten.linkhub.domain.member.model.Follow;
 import com.tenten.linkhub.domain.member.repository.dto.FollowDTO;
+import java.util.Optional;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 public interface FollowJpaRepository extends JpaRepository<Follow, Long> {
 
-    @Query("SELECT COUNT(f) FROM Follow f WHERE f.following.id = :memberId")
+    @Query("SELECT COUNT(f) FROM Follow f WHERE f.follower.id = :memberId")
     Long countFollowers(Long memberId);
 
-    @Query("SELECT COUNT(f) FROM Follow f WHERE f.follower.id = :memberId")
+    @Query("SELECT COUNT(f) FROM Follow f WHERE f.following.id = :memberId")
     Long countFollowing(Long memberId);
 
     @Query("SELECT CASE WHEN COUNT(f) > 0 THEN true ELSE false END FROM Follow f WHERE f.follower.id = :memberId AND f.following.id = :myMemberId")
