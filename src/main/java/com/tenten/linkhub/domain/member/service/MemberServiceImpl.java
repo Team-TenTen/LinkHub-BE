@@ -25,7 +25,7 @@ import com.tenten.linkhub.domain.member.service.dto.MemberMyProfileResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberProfileResponse;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.dto.ImageSaveRequest;
-import com.tenten.linkhub.global.aws.s3.S3Uploader;
+import com.tenten.linkhub.global.aws.s3.ImageFileUploader;
 import com.tenten.linkhub.global.exception.DataDuplicateException;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
@@ -55,7 +55,7 @@ public class MemberServiceImpl implements MemberService {
     private final AwsSesService emailService;
     private final VerificationCodeCreator verificationCodeCreator;
     private final MemberEmailRedisRepository memberEmailRedisRepository;
-    private final S3Uploader s3Uploader;
+    private final ImageFileUploader imageFileUploader;
     private final JwtProvider jwtProvider;
 
     public MemberServiceImpl(
@@ -63,7 +63,7 @@ public class MemberServiceImpl implements MemberService {
             FollowRepository followRepository, AwsSesService emailService,
             VerificationCodeCreator verificationCodeCreator,
             MemberEmailRedisRepository memberEmailRedisRepository,
-            S3Uploader s3Uploader,
+            ImageFileUploader imageFileUploader,
             JwtProvider jwtProvider
     ) {
         this.followRepository = followRepository;
@@ -71,7 +71,7 @@ public class MemberServiceImpl implements MemberService {
         this.verificationCodeCreator = verificationCodeCreator;
         this.memberEmailRedisRepository = memberEmailRedisRepository;
         this.memberRepository = memberRepository;
-        this.s3Uploader = s3Uploader;
+        this.imageFileUploader = imageFileUploader;
         this.jwtProvider = jwtProvider;
     }
 
@@ -146,7 +146,7 @@ public class MemberServiceImpl implements MemberService {
         }
 
         ImageSaveRequest imageSaveRequest = ImageSaveRequest.of(file, MEMBER_IMAGE_FOLDER);
-        return s3Uploader.saveImage(imageSaveRequest);
+        return imageFileUploader.saveImage(imageSaveRequest);
     }
 
     @Override

@@ -19,7 +19,7 @@ import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.favorite.FavoriteJpaRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
-import com.tenten.linkhub.global.aws.s3.S3Uploader;
+import com.tenten.linkhub.global.aws.s3.ImageFileUploader;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 
 import java.util.ArrayList;
@@ -36,10 +36,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -63,7 +59,7 @@ class SpaceFacadeTest {
     private FavoriteJpaRepository favoriteJpaRepository;
 
     @MockBean
-    private S3Uploader mockS3Uploader;
+    private ImageFileUploader mockImageFileUploader;
 
     private Long setUpSpaceId;
     private Long setUpMemberId;
@@ -79,7 +75,7 @@ class SpaceFacadeTest {
         //given
         MockMultipartFile requestFile = new MockMultipartFile("테스트 이미지3", (byte[]) null);
         ImageInfo imageInfo = ImageInfo.of("https://testimage3", requestFile.getName());
-        BDDMockito.given(mockS3Uploader.saveImage(any())).willReturn(imageInfo);
+        BDDMockito.given(mockImageFileUploader.saveImage(any())).willReturn(imageInfo);
 
         SpaceCreateFacadeRequest spaceCreateFacadeRequest = new SpaceCreateFacadeRequest(
                 "테스트용 스페이스 이름",
@@ -180,7 +176,7 @@ class SpaceFacadeTest {
         //given
         MockMultipartFile requestFile = new MockMultipartFile("업데이트된 이미지 파일 이름", (byte[]) null);
         ImageInfo imageInfo = ImageInfo.of("https://updateimage", requestFile.getName());
-        BDDMockito.given(mockS3Uploader.saveImage(any())).willReturn(imageInfo);
+        BDDMockito.given(mockImageFileUploader.saveImage(any())).willReturn(imageInfo);
 
         SpaceUpdateFacadeRequest request = new SpaceUpdateFacadeRequest(
                 setUpSpaceId,
@@ -216,7 +212,7 @@ class SpaceFacadeTest {
     void updateSpace_emptySpaceImage() {
         //given
         ImageInfo imageInfo = ImageInfo.of("https://testimage3", "테스트 이미지 파일 이름");
-        BDDMockito.given(mockS3Uploader.saveImage(any())).willReturn(imageInfo);
+        BDDMockito.given(mockImageFileUploader.saveImage(any())).willReturn(imageInfo);
 
         SpaceUpdateFacadeRequest request = new SpaceUpdateFacadeRequest(
                 setUpSpaceId,

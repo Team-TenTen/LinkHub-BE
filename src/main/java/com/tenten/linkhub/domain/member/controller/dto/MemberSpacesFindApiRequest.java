@@ -1,9 +1,9 @@
-package com.tenten.linkhub.domain.space.controller.dto.space;
+package com.tenten.linkhub.domain.member.controller.dto;
 
 import com.tenten.linkhub.domain.space.model.category.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-public record MySpacesFindApiRequest(
+public record MemberSpacesFindApiRequest(
         @Schema(title = "페이지 번호", example = "0")
         Integer pageNumber,
 

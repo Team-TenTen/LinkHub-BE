@@ -14,8 +14,6 @@ import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentsFindAp
 import com.tenten.linkhub.domain.space.controller.dto.favorite.MyFavoriteSpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.favorite.MyFavoriteSpacesFindApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.favorite.SpaceRegisterInFavoriteApiResponse;
-import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiRequest;
-import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpaceFindWithFilterApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindByQueryApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindByQueryApiResponses;
@@ -44,7 +42,7 @@ import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequ
 import com.tenten.linkhub.domain.space.service.dto.favorite.FavoriteSpacesFindResponses;
 import com.tenten.linkhub.domain.space.service.dto.favorite.SpaceRegisterInFavoriteResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryResponses;
+import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.util.SpaceViewList;
 import com.tenten.linkhub.global.response.ErrorResponse;
@@ -118,7 +116,7 @@ public class SpaceController {
                 request.pageSize(),
                 StringUtils.hasText(request.sort()) ? Sort.by(request.sort()) : Sort.unsorted());
 
-        PublicSpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(
+        SpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(
                 spaceMapper.toPublicSpacesFindByQueryRequest(request, pageRequest)
         );
 
@@ -255,38 +253,10 @@ public class SpaceController {
                 StringUtils.hasText(request.sort()) ? Sort.by(request.sort()) : Sort.unsorted());
 
         PublicSpacesFindByQueryRequest serviceRequest = spaceMapper.toPublicSpacesFindByQueryRequest(request, pageRequest);
-        PublicSpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(serviceRequest);
+        SpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(serviceRequest);
 
         PublicSpaceFindWithFilterApiResponses apiResponses = PublicSpaceFindWithFilterApiResponses.from(responses);
 
-        return ResponseEntity.ok(apiResponses);
-    }
-
-    /**
-     * 내 스페이스 검색 API
-     * !필터에 해당 API 추가해야 함!
-     */
-    @Operation(
-            summary = "내 스페이스 검색 API", description = "나의 스페이스를 keyWord, pageNumber, pageSize, filter를 통해 검색합니다. (keyWord, sort, filter 조건 없이 사용 가능합니다.)\n\n" +
-            "해당 API는 keyWord, filter 없이도 사용 가능한 페이징 조회입니다.\n\n" +
-            "sort: {created_at, updated_at, favorite_count, view_count}\n\n" +
-            "filter: {ENTER_ART, LIFE_KNOWHOW_SHOPPING, HOBBY_LEISURE_TRAVEL, KNOWLEDGE_ISSUE_CAREER, ETC}",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "검색이 성공적으로 완료 되었습니다."),
-            })
-    @GetMapping(value = "/search/me",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MySpacesFindApiResponses> findMySpaces(
-            @AuthenticationPrincipal MemberDetails memberDetails,
-            @ModelAttribute MySpacesFindApiRequest request
-    ) {
-        PageRequest pageRequest = PageRequest.of(request.pageNumber(), request.pageSize());
-
-        PublicSpacesFindByQueryResponses responses = spaceService.findMySpacesByQuery(
-                spaceMapper.toMySpacesFindRequest(pageRequest, request, memberDetails.memberId())
-        );
-
-        MySpacesFindApiResponses apiResponses = MySpacesFindApiResponses.from(responses);
         return ResponseEntity.ok(apiResponses);
     }
 

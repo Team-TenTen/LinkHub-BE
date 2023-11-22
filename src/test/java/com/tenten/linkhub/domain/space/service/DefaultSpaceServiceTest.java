@@ -15,12 +15,12 @@ import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
-import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.MemberSpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponse;
+import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -53,9 +53,10 @@ class DefaultSpaceServiceTest {
     @Autowired
     private LinkFacade linkFacade;
 
-    private Long setUpMemberId;
-    private Long spaceId1;
-    private Long spaceId3;
+    private Long myMemberId;
+    private Long anotherMemberId;
+    private Long myFirstSpaceId;
+    private Long mySecondSpaceId;
 
     @BeforeEach
     void setUp() {
@@ -76,7 +77,7 @@ class DefaultSpaceServiceTest {
                 Category.KNOWLEDGE_ISSUE_CAREER);
 
         //when
-        PublicSpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(request);
+        SpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(request);
 
         //then
         List<SpacesFindByQueryResponse> content = responses.responses().getContent();
@@ -90,14 +91,33 @@ class DefaultSpaceServiceTest {
     }
 
     @Test
-    @DisplayName("유저는 키워드와 필터 조건 없이 자신의 Space를 검색할 수 있다.")
-    void findMySpacesByQuery_emptyKeyWord_emptyFilter() {
+    @DisplayName("유저는 키워드 필터 조건 없이 내가 아닌 특정 유저의 private을 제외한 public Space를 검색할 수 있다.")
+    void findMemberSpacesByQuery_emptyKeyWord_emptyFilter() {
         //given
         PageRequest pageRequest = PageRequest.of(0, 10);
-        MySpacesFindRequest mySpacesFindRequest = new MySpacesFindRequest(pageRequest, "", null, setUpMemberId);
+        MemberSpacesFindRequest memberSpacesFindRequest = new MemberSpacesFindRequest(pageRequest, null, null, myMemberId, anotherMemberId);
 
         //when
-        PublicSpacesFindByQueryResponses response = spaceService.findMySpacesByQuery(mySpacesFindRequest);
+        SpacesFindByQueryResponses response = spaceService.findMemberSpacesByQuery(memberSpacesFindRequest);
+
+        //then
+        List<SpacesFindByQueryResponse> content = response.responses().getContent();
+
+        assertThat(content.size()).isEqualTo(1);
+        assertThat(content.get(0).spaceName()).isEqualTo("세번째 스페이스");
+        assertThat(content.get(0).spaceImagePath()).isEqualTo("https://testimage3");
+        assertThat(content.get(0).ownerNickName()).isEqualTo("백둥이");
+    }
+
+    @Test
+    @DisplayName("유저는 키워드와 필터 조건 없이 자신의 Space를 검색할 수 있다.")
+    void findMemberSpacesByQuery_emptyKeyWord_emptyFilter_findMySpaces() {
+        //given
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        MemberSpacesFindRequest memberSpacesFindRequest = new MemberSpacesFindRequest(pageRequest, null, null, myMemberId, myMemberId);
+
+        //when
+        SpacesFindByQueryResponses response = spaceService.findMemberSpacesByQuery(memberSpacesFindRequest);
 
         //then
         List<SpacesFindByQueryResponse> content = response.responses().getContent();
@@ -114,13 +134,13 @@ class DefaultSpaceServiceTest {
 
     @Test
     @DisplayName("유저는 키워드를 통해 자신의 Space를 검색할 수 있다.")
-    void findMySpacesByQuery_keyWord_emptyFilter() {
+    void findMemberSpacesByQuery_keyWord_emptyFilter_findMySpaces() {
         //given
         PageRequest pageRequest = PageRequest.of(0, 10);
-        MySpacesFindRequest mySpacesFindRequest = new MySpacesFindRequest(pageRequest, "두번째", null, setUpMemberId);
+        MemberSpacesFindRequest memberSpacesFindRequest = new MemberSpacesFindRequest(pageRequest, "두번째", null, myMemberId, myMemberId);
 
         //when
-        PublicSpacesFindByQueryResponses response = spaceService.findMySpacesByQuery(mySpacesFindRequest);
+        SpacesFindByQueryResponses response = spaceService.findMemberSpacesByQuery(memberSpacesFindRequest);
 
         //then
         List<SpacesFindByQueryResponse> content = response.responses().getContent();
@@ -133,13 +153,13 @@ class DefaultSpaceServiceTest {
 
     @Test
     @DisplayName("유저는 필터 조건을 통해 자신의 Space를 검색할 수 있다.")
-    void findMySpacesByQuery_emptyKeyWord_filter() {
+    void findMemberSpacesByQuery_emptyKeyWord_filter_findMySpaces() {
         //given
         PageRequest pageRequest = PageRequest.of(0, 10);
-        MySpacesFindRequest mySpacesFindRequest = new MySpacesFindRequest(pageRequest, "", Category.LIFE_KNOWHOW_SHOPPING, setUpMemberId);
+        MemberSpacesFindRequest memberSpacesFindRequest = new MemberSpacesFindRequest(pageRequest, "", Category.LIFE_KNOWHOW_SHOPPING, myMemberId, myMemberId);
 
         //when
-        PublicSpacesFindByQueryResponses response = spaceService.findMySpacesByQuery(mySpacesFindRequest);
+        SpacesFindByQueryResponses response = spaceService.findMemberSpacesByQuery(memberSpacesFindRequest);
 
         //then
         List<SpacesFindByQueryResponse> content = response.responses().getContent();
@@ -154,13 +174,13 @@ class DefaultSpaceServiceTest {
     @DisplayName("유저는 스페이스에서 사용된 태그 목록을 확인할 수 있다. - 링크 생성")
     void getTagsBySpaceId_spaceId_Success() {
         //given - 링크 생성 3개 생성 그 중 2개는 태그명이 같다.
-        Space space = spaceJpaRepository.findById(spaceId1).get();
-        linkFacade.createLink(spaceId1, setUpMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목A", "태그1", Color.GRAY));
-        linkFacade.createLink(spaceId1, setUpMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목B", "태그1", Color.GRAY));
-        linkFacade.createLink(spaceId1, setUpMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목C", "태그2", Color.RED));
+        Space space = spaceJpaRepository.findById(myFirstSpaceId).get();
+        linkFacade.createLink(myFirstSpaceId, myMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목A", "태그1", Color.GRAY));
+        linkFacade.createLink(myFirstSpaceId, myMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목B", "태그1", Color.GRAY));
+        linkFacade.createLink(myFirstSpaceId, myMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목C", "태그2", Color.RED));
 
         //when
-        SpaceTagGetResponses response = spaceService.getTagsBySpaceId(spaceId1);
+        SpaceTagGetResponses response = spaceService.getTagsBySpaceId(myFirstSpaceId);
 
         //then
         assertThat(response.tags()).hasSize(2);
@@ -171,7 +191,7 @@ class DefaultSpaceServiceTest {
     @DisplayName("스페이스에서 읽음 처리 기능을 활성화하지 않았다면 이력을 저장할 수 없다.")
     void checkLinkViewHistory_MemberIdAndSpaceId_ThrowsException() {
         //when & then
-        Assertions.assertThatThrownBy(() -> spaceService.checkLinkViewHistory(spaceId1, setUpMemberId))
+        Assertions.assertThatThrownBy(() -> spaceService.checkLinkViewHistory(myFirstSpaceId, myMemberId))
                 .isInstanceOf(LinkViewHistoryException.class);
     }
 
@@ -179,7 +199,7 @@ class DefaultSpaceServiceTest {
     @DisplayName("스페이스의 멤버가 아니라면 읽음 처리 기능이 활성화 되어있더라도 이력을 저장할 수 없다.")
     void checkLinkViewHistory_MemberIdAndSpaceId2_ThrowsException() {
         //when & then
-        Assertions.assertThatThrownBy(() -> spaceService.checkLinkViewHistory(spaceId3, setUpMemberId))
+        Assertions.assertThatThrownBy(() -> spaceService.checkLinkViewHistory(mySecondSpaceId, myMemberId))
                 .isInstanceOf(LinkViewHistoryException.class);
     }
 
@@ -196,15 +216,28 @@ class DefaultSpaceServiceTest {
                 new FavoriteCategory(Category.KNOWLEDGE_ISSUE_CAREER)
         );
 
-        setUpMemberId = memberJpaRepository.save(member).getId();
+        Member member1 = new Member(
+                "testSocialId",
+                Provider.kakao,
+                com.tenten.linkhub.domain.member.model.Role.USER,
+                "백둥이",
+                "백둥이 테스트용 소개글",
+                "abc@gmail.com",
+                true,
+                new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지"),
+                new FavoriteCategory(Category.KNOWLEDGE_ISSUE_CAREER)
+        );
+
+        myMemberId = memberJpaRepository.save(member).getId();
+        anotherMemberId = memberJpaRepository.save(member1).getId();
 
         Space space1 = new Space(
-                setUpMemberId,
+                myMemberId,
                 "첫번째 스페이스",
                 "첫번째 스페이스 소개글",
                 Category.KNOWLEDGE_ISSUE_CAREER,
                 new SpaceImage("https://testimage1", "테스트 이미지1"),
-                new SpaceMember(setUpMemberId, Role.OWNER),
+                new SpaceMember(myMemberId, Role.OWNER),
                 true,
                 true,
                 true,
@@ -216,12 +249,12 @@ class DefaultSpaceServiceTest {
         );
 
         Space space2 = new Space(
-                setUpMemberId,
+                myMemberId,
                 "두번째 스페이스",
                 "두번째 스페이스 소개글",
                 Category.LIFE_KNOWHOW_SHOPPING,
                 new SpaceImage("https://testimage2", "테스트 이미지2"),
-                new SpaceMember(setUpMemberId, Role.OWNER),
+                new SpaceMember(myMemberId, Role.OWNER),
                 true,
                 true,
                 true,
@@ -229,24 +262,38 @@ class DefaultSpaceServiceTest {
         );
 
         Space space3 = new Space(
-                setUpMemberId + 1,
+                anotherMemberId,
                 "세번째 스페이스",
                 "세번째 스페이스 소개글",
                 Category.KNOWLEDGE_ISSUE_CAREER,
                 new SpaceImage("https://testimage3", "테스트 이미지3"),
-                new SpaceMember(setUpMemberId + 1, Role.OWNER),
+                new SpaceMember(anotherMemberId, Role.OWNER),
                 true,
                 true,
                 true,
                 true
         );
 
+        Space space4 = new Space(
+                anotherMemberId,
+                "네번째 스페이스",
+                "네번째 스페이스 소개글",
+                Category.KNOWLEDGE_ISSUE_CAREER,
+                new SpaceImage("https://testimage4", "테스트 이미지4"),
+                new SpaceMember(anotherMemberId, Role.OWNER),
+                false,
+                false,
+                false,
+                false
+        );
+
         spaceJpaRepository.save(space1);
         spaceJpaRepository.save(space2);
         spaceJpaRepository.save(space3);
+        spaceJpaRepository.save(space4);
 
-        spaceId1 = space1.getId();
-        spaceId3 = space3.getId();
+        myFirstSpaceId = space1.getId();
+        mySecondSpaceId = space3.getId();
     }
 
 }

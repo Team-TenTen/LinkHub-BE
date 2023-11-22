@@ -22,6 +22,10 @@ import com.tenten.linkhub.domain.member.service.dto.MemberFollowingsFindResponse
 import com.tenten.linkhub.domain.member.service.dto.MemberJoinResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberMyProfileResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberProfileResponse;
+import com.tenten.linkhub.domain.member.controller.dto.MemberSpacesFindApiRequest;
+import com.tenten.linkhub.domain.member.controller.dto.MemberSpacesFindApiResponses;
+import com.tenten.linkhub.domain.space.service.SpaceService;
+import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.global.response.ErrorResponse;
 import com.tenten.linkhub.global.util.email.EmailDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,10 +57,12 @@ import java.util.Objects;
 @RequestMapping("/members")
 public class MemberController {
     private final MemberService memberService;
+    private final SpaceService spaceService;
     private final MemberApiMapper mapper;
 
-    public MemberController(MemberService memberService, MemberApiMapper mapper) {
+    public MemberController(MemberService memberService, SpaceService spaceService, MemberApiMapper mapper) {
         this.memberService = memberService;
+        this.spaceService = spaceService;
         this.mapper = mapper;
     }
 
@@ -268,4 +274,35 @@ public class MemberController {
         return ResponseEntity.ok(MemberFollowersFindApiResponses.from(
                 memberFollowersFindResponses));
     }
+
+    /**
+     *  특정 멤버 스페이스 검색 API
+     */
+    @Operation(
+            summary = "특정 멤버 스페이스 검색 API", description = "특정 멤버의 스페이스를 keyWord, pageNumber, pageSize, filter를 통해 검색합니다. (keyWord, sort, filter 조건 없이 사용 가능합니다.)\n\n" +
+            "!!해당 API는 나의 스페이스 조회와 다른 유저의 스페이스 조회에 사용되며 나의 스페이스인지 여부는 토큰값과 member식별자를 통해 이루어 집니다.!!\n\n" +
+            "해당 API는 keyWord, filter 없이도 사용 가능한 페이징 조회입니다.\n\n" +
+            "sort: {created_at, updated_at, favorite_count, view_count}\n\n" +
+            "filter: {ENTER_ART, LIFE_KNOWHOW_SHOPPING, HOBBY_LEISURE_TRAVEL, KNOWLEDGE_ISSUE_CAREER, ETC}",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "검색이 성공적으로 완료 되었습니다."),
+            })
+    @GetMapping(value = "/{memberId}/spaces/search",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MemberSpacesFindApiResponses> findMySpaces(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long memberId,
+            @ModelAttribute MemberSpacesFindApiRequest request
+    ) {
+        PageRequest pageRequest = PageRequest.of(request.pageNumber(), request.pageSize());
+        Long requestMemberId = Objects.isNull(memberDetails) ? null : memberDetails.memberId();
+
+        SpacesFindByQueryResponses responses = spaceService.findMemberSpacesByQuery(
+                mapper.toMemberSpacesFindRequest(pageRequest, request, requestMemberId, memberId)
+        );
+
+        MemberSpacesFindApiResponses apiResponses = MemberSpacesFindApiResponses.from(responses);
+        return ResponseEntity.ok(apiResponses);
+    }
+
 }

@@ -17,7 +17,7 @@ import com.tenten.linkhub.domain.member.service.dto.MemberMyProfileResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberProfileResponse;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
-import com.tenten.linkhub.global.aws.s3.S3Uploader;
+import com.tenten.linkhub.global.aws.s3.ImageFileUploader;
 import com.tenten.linkhub.global.exception.DataDuplicateException;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
@@ -54,7 +54,7 @@ class MemberServiceTest {
     private MemberEmailRedisRepository redisRepository;
 
     @MockBean
-    private S3Uploader mockS3Uploader;
+    private ImageFileUploader mockImageFileUploader;
 
     @Autowired
     private JwtProvider jwtProvider;
@@ -224,7 +224,7 @@ class MemberServiceTest {
         MemberFollowCreateResponse response = memberService.createFollow(targetMemberId, myMemberId);
 
         //then
-        assertThat(response.followerId()).isEqualTo(targetMemberId);
+        assertThat(response.followedId()).isEqualTo(targetMemberId);
     }
 
     @Test
@@ -454,7 +454,7 @@ class MemberServiceTest {
     private void setUpData() {
         MockMultipartFile requestFile = new MockMultipartFile("테스트 이미지", (byte[]) null);
         ImageInfo imageInfo = ImageInfo.of("https://testimage", requestFile.getName());
-        BDDMockito.given(mockS3Uploader.saveImage(any())).willReturn(imageInfo);
+        BDDMockito.given(mockImageFileUploader.saveImage(any())).willReturn(imageInfo);
 
         myMemberRequest = new MemberJoinRequest(
                 "32342341231",

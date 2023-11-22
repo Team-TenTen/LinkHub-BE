@@ -5,7 +5,7 @@ import com.tenten.linkhub.domain.space.handler.dto.SpaceImagesDeleteEvent;
 import com.tenten.linkhub.domain.space.handler.dto.SpaceIncreaseFavoriteCountEvent;
 import com.tenten.linkhub.domain.space.handler.dto.SpaceIncreaseViewCountEvent;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
-import com.tenten.linkhub.global.aws.s3.S3Uploader;
+import com.tenten.linkhub.global.aws.s3.ImageFileUploader;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -18,11 +18,11 @@ import org.springframework.transaction.event.TransactionalEventListener;
 public class SpaceEventHandler {
 
     private final SpaceRepository spaceRepository;
-    private final S3Uploader s3Uploader;
+    private final ImageFileUploader imageFileUploader;
 
-    public SpaceEventHandler(SpaceRepository spaceRepository, S3Uploader s3Uploader) {
+    public SpaceEventHandler(SpaceRepository spaceRepository, ImageFileUploader imageFileUploader) {
         this.spaceRepository = spaceRepository;
-        this.s3Uploader = s3Uploader;
+        this.imageFileUploader = imageFileUploader;
     }
 
     @Async
@@ -36,7 +36,7 @@ public class SpaceEventHandler {
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void deleteImageFiles(SpaceImagesDeleteEvent event) {
-        s3Uploader.deleteImages(event.spaceImageNames());
+        imageFileUploader.deleteImages(event.spaceImageNames());
     }
 
     @Async

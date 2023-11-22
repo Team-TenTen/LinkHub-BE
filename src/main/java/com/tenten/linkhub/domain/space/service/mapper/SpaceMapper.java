@@ -5,9 +5,9 @@ import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.model.space.dto.SpaceUpdateDto;
-import com.tenten.linkhub.domain.space.repository.space.dto.MySpacesQueryCondition;
+import com.tenten.linkhub.domain.space.repository.space.dto.MemberSpacesQueryCondition;
 import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
-import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.MemberSpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
@@ -52,12 +52,13 @@ public class SpaceMapper {
                 imageInfo.name());
     }
 
-    public MySpacesQueryCondition toMySpacesFindQueryCondition(MySpacesFindRequest request) {
-        return new MySpacesQueryCondition(
+    public MemberSpacesQueryCondition toMemberSpacesQueryCondition(MemberSpacesFindRequest request, Boolean isMySpace) {
+        return new MemberSpacesQueryCondition(
                 request.pageable(),
                 request.keyWord(),
                 request.filter(),
-                request.memberId());
+                request.targetMemberId(),
+                isMySpace);
     }
 
     public SpaceUpdateDto toSpaceUpdateDto(SpaceUpdateRequest request) {

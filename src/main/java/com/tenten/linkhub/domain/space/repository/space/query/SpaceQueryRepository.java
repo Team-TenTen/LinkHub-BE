@@ -6,7 +6,7 @@ import com.tenten.linkhub.domain.space.repository.common.dto.QSpaceAndOwnerNickN
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickNames;
-import com.tenten.linkhub.domain.space.repository.space.dto.MySpacesQueryCondition;
+import com.tenten.linkhub.domain.space.repository.space.dto.MemberSpacesQueryCondition;
 import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -65,7 +65,7 @@ public class SpaceQueryRepository {
         return new SliceImpl<>(contents, condition.pageable(), hasNext);
     }
 
-    public Slice<SpaceAndSpaceImageOwnerNickName> findMySpacesJoinSpaceImageByCondition(MySpacesQueryCondition condition) {
+    public Slice<SpaceAndSpaceImageOwnerNickName> findMemberSpacesJoinSpaceImageByCondition(MemberSpacesQueryCondition condition) {
         List<SpaceAndOwnerNickName> spaceAndOwnerNickNames = queryFactory
                 .select(new QSpaceAndOwnerNickName(
                         space,
@@ -76,6 +76,7 @@ public class SpaceQueryRepository {
                 .join(member).on(space.memberId.eq(member.id))
                 .where(spaceMember.memberId.eq(condition.memberId()),
                         space.isDeleted.eq(false),
+                        dynamicQueryFactory.eqIsVisible(condition.isMySpace()),
                         dynamicQueryFactory.eqSpaceName(condition.keyWord()),
                         dynamicQueryFactory.eqCategory(condition.filter())
                 )

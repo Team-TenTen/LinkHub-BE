@@ -1,6 +1,6 @@
 package com.tenten.linkhub.domain.space.controller.mapper;
 
-import com.tenten.linkhub.domain.space.controller.dto.space.MySpacesFindApiRequest;
+import com.tenten.linkhub.domain.member.controller.dto.MemberSpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindWithFilterApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceTagsGetApiResponse;
@@ -9,7 +9,7 @@ import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindByQu
 import com.tenten.linkhub.domain.space.facade.dto.SpaceCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.MemberSpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
 import org.mapstruct.InjectionStrategy;
@@ -34,7 +34,7 @@ public interface SpaceApiMapper {
 
     SpaceDetailGetByIdFacadeRequest toSpaceDetailGetByIdFacadeRequest(Long spaceId, Long memberId, List<Long> spaceViews);
 
-    MySpacesFindRequest toMySpacesFindRequest(Pageable pageable, MySpacesFindApiRequest request, Long memberId);
+    MemberSpacesFindRequest toMySpacesFindRequest(Pageable pageable, MemberSpacesFindApiRequest request, Long memberId);
 
     SpaceTagsGetApiResponse toSpaceTagsGetApiResponse(SpaceTagGetResponses response);
 }
