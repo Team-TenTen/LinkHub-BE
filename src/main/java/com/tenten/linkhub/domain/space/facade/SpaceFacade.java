@@ -2,6 +2,7 @@ package com.tenten.linkhub.domain.space.facade;
 
 import com.tenten.linkhub.domain.member.service.MemberService;
 import com.tenten.linkhub.domain.member.service.dto.MemberInfos;
+import com.tenten.linkhub.domain.space.facade.dto.NewSpacesScrapFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
@@ -9,6 +10,7 @@ import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.mapper.SpaceFacadeMapper;
 import com.tenten.linkhub.domain.space.handler.dto.SpaceImagesDeleteEvent;
 import com.tenten.linkhub.domain.space.handler.dto.SpaceIncreaseViewCountEvent;
+import com.tenten.linkhub.domain.space.service.LinkService;
 import com.tenten.linkhub.domain.space.service.SpaceImageUploader;
 import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
@@ -31,6 +33,7 @@ public class SpaceFacade {
     private final SpaceService spaceService;
     private final MemberService memberService;
     private final SpaceImageUploader spaceImageUploader;
+    private final LinkService linkService;
     private final SpaceFacadeMapper mapper;
     private final ApplicationEventPublisher eventPublisher;
 
@@ -68,6 +71,13 @@ public class SpaceFacade {
         eventPublisher.publishEvent(
                 new SpaceImagesDeleteEvent(deletedSpaceImageNames.fileNames())
         );
+    }
+
+    public Long scrapAndCreateNewSpace(NewSpacesScrapFacadeRequest request) {
+        spaceService.validateScrapTargetSpace(request.targetSpaceId(), request.memberId());
+
+        createSpace(mapper.toSpaceCreateFacadeRequest(request));
+        linkService.
     }
 
     private List<Long> getMemberIds(SpaceWithSpaceImageAndSpaceMemberInfo response) {

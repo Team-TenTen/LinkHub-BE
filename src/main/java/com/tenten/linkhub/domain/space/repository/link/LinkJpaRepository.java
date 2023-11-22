@@ -11,4 +11,6 @@ public interface LinkJpaRepository extends JpaRepository<Link, Long> {
     @Query("SELECT l from Link l WHERE l.id = :linkId AND l.isDeleted = false")
     Optional<Link> findById(Long linkId);
 
+    Long countLinkBySpaceIdAndIsDeletedFalse(Long spaceId);
+
 }

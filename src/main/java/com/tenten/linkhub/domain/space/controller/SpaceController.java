@@ -14,6 +14,8 @@ import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentsFindAp
 import com.tenten.linkhub.domain.space.controller.dto.favorite.MyFavoriteSpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.favorite.MyFavoriteSpacesFindApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.favorite.SpaceRegisterInFavoriteApiResponse;
+import com.tenten.linkhub.domain.space.controller.dto.space.NewSpacesScrapApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.space.NewSpacesScrapApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpaceFindWithFilterApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindByQueryApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindByQueryApiResponses;
@@ -30,6 +32,7 @@ import com.tenten.linkhub.domain.space.controller.mapper.SpaceApiMapper;
 import com.tenten.linkhub.domain.space.facade.CommentFacade;
 import com.tenten.linkhub.domain.space.facade.SpaceFacade;
 import com.tenten.linkhub.domain.space.facade.dto.CommentAndChildCountAndMemberInfoResponses;
+import com.tenten.linkhub.domain.space.facade.dto.NewSpacesScrapFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.RepliesAndMemberInfoResponses;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
@@ -518,6 +521,20 @@ public class SpaceController {
 
         MyFavoriteSpacesFindApiResponses apiResponses = MyFavoriteSpacesFindApiResponses.from(responses);
         return ResponseEntity.ok(apiResponses);
+    }
+
+    /**
+     *  스페이스를 새로운 스페이스로 가져오기 API
+     */
+    @PostMapping(value = "/{spaceId}/scraps/new")
+    public ResponseEntity<NewSpacesScrapApiResponse> scrapAndCreateNewSpace(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long spaceId,
+            @RequestBody NewSpacesScrapApiRequest request,
+            @RequestPart(required = false) MultipartFile file
+    ) {
+        NewSpacesScrapFacadeRequest facadeRequest = spaceMapper.toNewSpacesScrapFacadeRequest(request, spaceId, memberDetails.memberId(), file);
+        Long responseSpaceId = spaceFacade.scrapAndCreateNewSpace(facadeRequest);
     }
 
     private void setSpaceViewCookie(HttpServletResponse servletResponse, List<Long> spaceViews) {

@@ -31,4 +31,9 @@ public class DefaultLinkRepository implements LinkRepository {
         return linkJpaRepository.findById(linkId);
     }
 
+    @Override
+    public Long countLinkBySpaceId(Long spaceId) {
+        return linkJpaRepository.countLinkBySpaceIdAndIsDeletedFalse(spaceId);
+    }
+
 }

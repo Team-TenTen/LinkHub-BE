@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.space.facade.mapper;
 
+import com.tenten.linkhub.domain.space.facade.dto.NewSpacesScrapFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
@@ -19,4 +20,5 @@ public interface SpaceFacadeMapper {
 
     SpaceUpdateRequest toSpaceUpdateRequest(SpaceUpdateFacadeRequest request, Optional<ImageInfo> imageInfo);
 
+    SpaceCreateFacadeRequest toSpaceCreateFacadeRequest(NewSpacesScrapFacadeRequest request);
 }

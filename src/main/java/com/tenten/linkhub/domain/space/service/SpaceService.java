@@ -28,4 +28,6 @@ public interface SpaceService {
     SpaceTagGetResponses getTagsBySpaceId(Long spaceId);
 
     void checkLinkViewHistory(Long spaceId, Long memberId);
+
+    void validateScrapTargetSpace(Long spaceId, Long memberId);
 }

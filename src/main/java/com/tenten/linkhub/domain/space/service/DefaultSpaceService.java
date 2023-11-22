@@ -5,6 +5,8 @@ import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.favorite.FavoriteRepository;
+import com.tenten.linkhub.domain.space.repository.link.LinkRepository;
+import com.tenten.linkhub.domain.space.repository.scrap.ScrapRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.repository.space.dto.MemberSpacesQueryCondition;
 import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberRepository;
@@ -38,6 +40,8 @@ public class DefaultSpaceService implements SpaceService {
     private final SpaceRepository spaceRepository;
     private final SpaceMemberRepository spaceMemberRepository;
     private final FavoriteRepository favoriteRepository;
+    private final LinkRepository linkRepository;
+    private final ScrapRepository scrapRepository;
     private final TagRepository tagRepository;
     private final SpaceMapper mapper;
 
@@ -128,6 +132,23 @@ public class DefaultSpaceService implements SpaceService {
         Space space = spaceRepository.getSpaceJoinSpaceMemberById(spaceId);
 
         space.checkLinkViewHistoryEnabled(memberId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void validateScrapTargetSpace(Long spaceId, Long memberId) {
+        if (scrapRepository.existsBySpaceIdAndMemberId(spaceId, memberId)) {
+            throw new IllegalStateException("한 스페이스에 대한 가져오기는 1회만 가능합니다.");
+        }
+
+        Long linkCount = linkRepository.countLinkBySpaceId(spaceId);
+
+        if (linkCount > 500){
+            throw new IllegalStateException("가져오기는 500개 이하의 Link를 가진 스페이스만 가능합니다.");
+        }
+
+        Space space = spaceRepository.getById(spaceId);
+        space.validateVisibilityAndMembership(memberId);
     }
 
 }
