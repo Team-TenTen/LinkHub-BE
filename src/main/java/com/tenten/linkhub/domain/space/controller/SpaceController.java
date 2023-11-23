@@ -221,7 +221,8 @@ public class SpaceController {
      * 스페이스 멤버 권한 수정 API
      */
     @Operation(
-            summary = "스페이스 멤버 권한 수정 API", description = "스페이스 멤버 권한 수정 API 입니다.",
+            summary = "스페이스 멤버 권한 수정 API", description = "스페이스 멤버 권한 수정 API 입니다.\n\n" +
+            "role: {OWNER, CAN_EDIT, CAN_VIEW}",
             responses = {
                     @ApiResponse(responseCode = "200", description = "스페이스 멤버의 권한 수정이 성공적으로 수정되었습니다."),
                     @ApiResponse(responseCode = "404", description = "권한이 없는 유저가 스페이스 멤버의 권한을 수정하려고 합니다.",
