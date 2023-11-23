@@ -28,7 +28,7 @@ public class ProfileImages {
     public void changeProfileImage(ProfileImage profileImage) {
         validateNotNull(profileImage, "profileImages");
 
-        List<ProfileImage> imageList = getProfileImageList();
+        List<ProfileImage> imageList = retrieveProfileImages();
 
         if (imageList.isEmpty()) {
             addProfileImage(profileImage);
