@@ -2,7 +2,6 @@ package com.tenten.linkhub.domain.space.model.space.vo;
 
 import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
-import com.tenten.linkhub.domain.space.model.space.dto.SpaceMemberRole;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
@@ -14,7 +13,6 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
