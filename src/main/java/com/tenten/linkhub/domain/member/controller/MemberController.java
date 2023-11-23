@@ -186,7 +186,7 @@ public class MemberController {
                             content = @Content(schema = @Schema(implementation = ErrorResponse.class))
                     )
             })
-    @PutMapping(value = "/profile/{memberId}",
+    @PutMapping(value = "/{memberId}/profile",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<MemberUpdateApiResponse> updateMember(
