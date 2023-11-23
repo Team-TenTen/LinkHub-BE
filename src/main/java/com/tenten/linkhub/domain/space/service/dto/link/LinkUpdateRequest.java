@@ -1,14 +1,17 @@
 package com.tenten.linkhub.domain.space.service.dto.link;
 
-import com.tenten.linkhub.domain.space.model.link.Color;
+import java.util.Objects;
 
 public record LinkUpdateRequest(
         Long spaceId,
         String url,
         String title,
-        String tag,
+        String tagName,
         Long memberId,
         Long linkId,
-        Color color
+        String color
 ) {
+    public boolean hasUpdateTagInfo() {
+        return Objects.nonNull(tagName) && Objects.nonNull(color);
+    }
 }

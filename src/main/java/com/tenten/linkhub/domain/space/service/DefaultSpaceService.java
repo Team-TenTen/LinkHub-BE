@@ -13,12 +13,12 @@ import com.tenten.linkhub.domain.space.repository.tag.dto.TagInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
 import com.tenten.linkhub.domain.space.service.dto.space.MemberSpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
+import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.spacemember.SpaceMemberRoleChangeRequest;
 import com.tenten.linkhub.domain.space.service.mapper.SpaceMapper;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
@@ -118,7 +118,7 @@ public class DefaultSpaceService implements SpaceService {
         List<TagInfo> tagInfos = tagRepository.findBySpaceIdAndGroupBySpaceName(spaceId);
         List<SpaceTagGetResponse> tagResponses = tagInfos
                 .stream()
-                .map(t -> new SpaceTagGetResponse(t.name(), t.color().getValue()))
+                .map(t -> new SpaceTagGetResponse(t.name(), t.color().getValue(), t.tagId()))
                 .toList();
 
         return SpaceTagGetResponses.from(tagResponses);
@@ -130,6 +130,13 @@ public class DefaultSpaceService implements SpaceService {
 
         space.checkLinkViewHistoryEnabled(memberId);
     }
+
+    @Override
+    public void checkMemberCanViewLink(Long memberId, Long spaceId) {
+        Space space = spaceRepository.getSpaceJoinSpaceMemberById(spaceId);
+        space.validateVisibilityAndMembership(memberId);
+    }
+
 
     @Override
     @Transactional

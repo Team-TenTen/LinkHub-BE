@@ -5,11 +5,13 @@ import com.tenten.linkhub.domain.space.model.link.Color;
 
 public record TagInfo(
         String name,
-        Color color
+        Color color,
+        Long tagId
 ) {
     @QueryProjection
-    public TagInfo(String name, Color color) {
+    public TagInfo(String name, Color color, Long tagId) {
         this.name = name;
         this.color = color;
+        this.tagId = tagId;
     }
 }

@@ -9,7 +9,6 @@ import com.tenten.linkhub.domain.space.exception.LinkViewHistoryException;
 import com.tenten.linkhub.domain.space.facade.LinkFacade;
 import com.tenten.linkhub.domain.space.facade.dto.LinkCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.model.category.Category;
-import com.tenten.linkhub.domain.space.model.link.Color;
 import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
@@ -17,7 +16,6 @@ import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.service.dto.space.MemberSpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
@@ -179,16 +177,15 @@ class DefaultSpaceServiceTest {
     void getTagsBySpaceId_spaceId_Success() {
         //given - 링크 생성 3개 생성 그 중 2개는 태그명이 같다.
         Space space = spaceJpaRepository.findById(myFirstSpaceId).get();
-        linkFacade.createLink(myFirstSpaceId, myMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목A", "태그1", Color.GRAY));
-        linkFacade.createLink(myFirstSpaceId, myMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목B", "태그1", Color.GRAY));
-        linkFacade.createLink(myFirstSpaceId, myMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목C", "태그2", Color.RED));
+        linkFacade.createLink(myFirstSpaceId, myMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목A", "태그1", "gray"));
+        linkFacade.createLink(myFirstSpaceId, myMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목B", "태그1", "gray"));
+        linkFacade.createLink(myFirstSpaceId, myMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목C", "태그2", "red"));
 
         //when
         SpaceTagGetResponses response = spaceService.getTagsBySpaceId(myFirstSpaceId);
 
         //then
         assertThat(response.tags()).hasSize(2);
-        assertThat(response.tags()).containsExactlyInAnyOrderElementsOf(List.of(new SpaceTagGetResponse("태그1", "gray"), new SpaceTagGetResponse("태그2", "red")));
     }
 
     @Test

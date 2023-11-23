@@ -30,5 +30,7 @@ public interface SpaceService {
 
     void checkLinkViewHistory(Long spaceId, Long memberId);
 
+    void checkMemberCanViewLink(Long memberId, Long spaceId);
+
     Long changeSpaceMembersRole(SpaceMemberRoleChangeRequest request);
 }
