@@ -1,6 +1,7 @@
 package com.tenten.linkhub.domain.member.service;
 
 import com.tenten.linkhub.domain.member.model.Provider;
+import com.tenten.linkhub.domain.member.service.dto.MailSendResponse;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationRequest;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberFindResponse;
@@ -20,7 +21,7 @@ import org.springframework.data.domain.PageRequest;
 
 public interface MemberService {
 
-    void sendVerificationEmail(EmailDto emailDto);
+    MailSendResponse sendVerificationEmail(EmailDto emailDto);
 
     MailVerificationResponse verificateEmail(MailVerificationRequest request);
 
