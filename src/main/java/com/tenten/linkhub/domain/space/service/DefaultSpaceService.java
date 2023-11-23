@@ -135,9 +135,9 @@ public class DefaultSpaceService implements SpaceService {
     @Transactional
     public Long changeSpaceMembersRole(SpaceMemberRoleChangeRequest request) {
         Space space = spaceRepository.getById(request.spaceId());
-        space.validateOwnership(request.memberId());
+        space.validateOwnership(request.myMemberId());
 
-        space.changeSpaceMembersRole(request.spaceMemberRoles());
+        space.changeSpaceMembersRole(request.targetMemberId(), request.role());
 
         return space.getId();
     }

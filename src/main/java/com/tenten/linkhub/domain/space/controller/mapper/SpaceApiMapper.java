@@ -36,5 +36,5 @@ public interface SpaceApiMapper {
 
     SpaceTagsGetApiResponse toSpaceTagsGetApiResponse(SpaceTagGetResponses response);
 
-    SpaceMemberRoleChangeRequest toSpaceMemberRoleChangeRequest(Long spaceId, Long memberId, SpaceMemberRoleChangeApiRequest request);
+    SpaceMemberRoleChangeRequest toSpaceMemberRoleChangeRequest(Long spaceId, Long myMemberId, SpaceMemberRoleChangeApiRequest request);
 }

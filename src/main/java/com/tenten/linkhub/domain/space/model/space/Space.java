@@ -199,8 +199,8 @@ public class Space extends BaseEntity {
                 .ifPresent(this::changeSpaceImage);
     }
 
-    public void changeSpaceMembersRole(List<SpaceMemberRole> spaceMemberRoles) {
-        spaceMembers.changeSpaceMembersRole(spaceMemberRoles);
+    public void changeSpaceMembersRole(Long targetMemberId, Role role) {
+        spaceMembers.changeSpaceMembersRole(targetMemberId, role);
     }
 
     public Long deleteSpace(Long memberId) {
