@@ -7,11 +7,9 @@ public record SpaceAndOwnerNickName(
         Space space,
         String ownerNickName
 ) {
-
     @QueryProjection
     public SpaceAndOwnerNickName(Space space, String ownerNickName) {
         this.space = space;
         this.ownerNickName = ownerNickName;
     }
-
 }

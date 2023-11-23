@@ -1,10 +1,13 @@
 package com.tenten.linkhub.domain.space.repository.space.query;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.repository.common.dto.QSpaceAndOwnerNickName;
-import com.tenten.linkhub.domain.space.repository.space.dto.MySpacesQueryCondition;
-import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
+import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
+import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickNames;
+import com.tenten.linkhub.domain.space.repository.space.dto.MemberSpacesQueryCondition;
+import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
@@ -13,6 +16,7 @@ import java.util.List;
 
 import static com.tenten.linkhub.domain.member.model.QMember.member;
 import static com.tenten.linkhub.domain.space.model.space.QSpace.space;
+import static com.tenten.linkhub.domain.space.model.space.QSpaceImage.spaceImage;
 import static com.tenten.linkhub.domain.space.model.space.QSpaceMember.spaceMember;
 
 @Repository
@@ -26,14 +30,13 @@ public class SpaceQueryRepository {
         this.dynamicQueryFactory = new DynamicQueryFactory();
     }
 
-    public Slice<SpaceAndOwnerNickName> findPublicSpacesJoinSpaceImageByCondition(QueryCondition condition) {
+    public Slice<SpaceAndSpaceImageOwnerNickName> findPublicSpacesJoinSpaceImageByCondition(QueryCondition condition) {
         List<SpaceAndOwnerNickName> spaceAndOwnerNickNames = queryFactory
                 .select(new QSpaceAndOwnerNickName(
                         space,
                         member.nickname
                 ))
                 .from(space)
-                .join(space.spaceImages.spaceImageList).fetchJoin()
                 .join(member).on(space.memberId.eq(member.id))
                 .where(space.isDeleted.eq(false),
                         space.isVisible.eq(true),
@@ -45,28 +48,35 @@ public class SpaceQueryRepository {
                 .limit(condition.pageable().getPageSize() + 1)
                 .fetch();
 
+        List<Long> spaceIds = getSpaceIds(spaceAndOwnerNickNames);
+
+        List<SpaceImage> spaceImages = findSpaceImagesBySpaceIds(spaceIds);
+
+        SpaceAndSpaceImageOwnerNickNames spaceAndSpaceImageOwnerNickNames = SpaceAndSpaceImageOwnerNickNames.of(spaceAndOwnerNickNames, spaceImages);
+
+        List<SpaceAndSpaceImageOwnerNickName> contents = spaceAndSpaceImageOwnerNickNames.contents();
         boolean hasNext = false;
 
-        if (spaceAndOwnerNickNames.size() > condition.pageable().getPageSize()) {
-            spaceAndOwnerNickNames.remove(condition.pageable().getPageSize());
+        if (contents.size() > condition.pageable().getPageSize()) {
+            contents.remove(condition.pageable().getPageSize());
             hasNext = true;
         }
 
-        return new SliceImpl<>(spaceAndOwnerNickNames, condition.pageable(), hasNext);
+        return new SliceImpl<>(contents, condition.pageable(), hasNext);
     }
 
-    public Slice<SpaceAndOwnerNickName> findMySpacesJoinSpaceImageByCondition(MySpacesQueryCondition condition) {
+    public Slice<SpaceAndSpaceImageOwnerNickName> findMemberSpacesJoinSpaceImageByCondition(MemberSpacesQueryCondition condition) {
         List<SpaceAndOwnerNickName> spaceAndOwnerNickNames = queryFactory
                 .select(new QSpaceAndOwnerNickName(
                         space,
                         member.nickname
                 ))
                 .from(space)
-                .leftJoin(space.spaceImages.spaceImageList).fetchJoin()
                 .join(space.spaceMembers.spaceMemberList, spaceMember)
                 .join(member).on(space.memberId.eq(member.id))
                 .where(spaceMember.memberId.eq(condition.memberId()),
                         space.isDeleted.eq(false),
+                        dynamicQueryFactory.eqIsVisible(condition.isMySpace()),
                         dynamicQueryFactory.eqSpaceName(condition.keyWord()),
                         dynamicQueryFactory.eqCategory(condition.filter())
                 )
@@ -74,14 +84,36 @@ public class SpaceQueryRepository {
                 .limit(condition.pageable().getPageSize() + 1)
                 .fetch();
 
+        List<Long> spaceIds = getSpaceIds(spaceAndOwnerNickNames);
+
+        List<SpaceImage> spaceImages = findSpaceImagesBySpaceIds(spaceIds);
+
+        SpaceAndSpaceImageOwnerNickNames spaceAndSpaceImageOwnerNickNames = SpaceAndSpaceImageOwnerNickNames.of(spaceAndOwnerNickNames, spaceImages);
+
+        List<SpaceAndSpaceImageOwnerNickName> contents = spaceAndSpaceImageOwnerNickNames.contents();
         boolean hasNext = false;
 
-        if (spaceAndOwnerNickNames.size() > condition.pageable().getPageSize()) {
-            spaceAndOwnerNickNames.remove(condition.pageable().getPageSize());
+        if (contents.size() > condition.pageable().getPageSize()) {
+            contents.remove(condition.pageable().getPageSize());
             hasNext = true;
         }
 
-        return new SliceImpl<>(spaceAndOwnerNickNames, condition.pageable(), hasNext);
+        return new SliceImpl<>(contents, condition.pageable(), hasNext);
+    }
+
+    private List<SpaceImage> findSpaceImagesBySpaceIds(List<Long> spaceIds) {
+        return queryFactory
+                .selectFrom(spaceImage)
+                .where(spaceImage.space.id.in(spaceIds),
+                        spaceImage.isDeleted.eq(false))
+                .fetch();
+    }
+
+    private static List<Long> getSpaceIds(List<SpaceAndOwnerNickName> spaceAndOwnerNickNames) {
+        return spaceAndOwnerNickNames
+                .stream()
+                .map(s -> s.space().getId())
+                .toList();
     }
 
 }

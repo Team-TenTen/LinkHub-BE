@@ -1,13 +1,13 @@
 package com.tenten.linkhub.domain.space.service.dto.space;
 
-import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
+import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
 import org.springframework.data.domain.Slice;
 
 import java.util.Objects;
 
-public record PublicSpacesFindByQueryResponses(Slice<SpacesFindByQueryResponse> responses) {
+public record SpacesFindByQueryResponses(Slice<SpacesFindByQueryResponse> responses) {
 
-    public static PublicSpacesFindByQueryResponses from(Slice<SpaceAndOwnerNickName> response){
+    public static SpacesFindByQueryResponses from(Slice<SpaceAndSpaceImageOwnerNickName> response){
         Slice<SpacesFindByQueryResponse> mapResponses = response.map(s -> new SpacesFindByQueryResponse(
                 s.space().getId(),
                 s.space().getSpaceName(),
@@ -20,11 +20,11 @@ public record PublicSpacesFindByQueryResponses(Slice<SpacesFindByQueryResponse> 
                 s.space().getViewCount(),
                 s.space().getScrapCount(),
                 s.space().getFavoriteCount(),
-                s.space().getSpaceImages().isEmpty() ? null : s.space().getSpaceImages().get(0).getPath(),
+                s.spaceImages().isEmpty() ? null : s.spaceImages().get(0).getPath(),
                 s.ownerNickName()
         ));
 
-        return new PublicSpacesFindByQueryResponses(mapResponses);
+        return new SpacesFindByQueryResponses(mapResponses);
     }
 
 }

@@ -26,7 +26,10 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 import java.util.Optional;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
@@ -117,7 +120,7 @@ public class DefaultLinkService implements LinkService {
     public void cancelLike(Long linkId, Long memberId) {
         Optional<Like> like = likeRepository.findByLinkIdAndMemberId(linkId, memberId);
 
-        like.ifPresent(likeRepository::delete);
+        likeRepository.delete(like.orElseThrow(() -> new DataNotFoundException("존재하지 않는 좋아요입니다.")));
     }
 
     @Override

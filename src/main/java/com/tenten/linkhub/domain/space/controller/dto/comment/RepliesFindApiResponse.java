@@ -12,6 +12,7 @@ public record RepliesFindApiResponse(
         String aboutMe,
         String profileImagePath,
         Long groupNumber,
-        Long parentCommentId
+        Long parentCommentId,
+        Boolean isModifiable
 ) {
 }

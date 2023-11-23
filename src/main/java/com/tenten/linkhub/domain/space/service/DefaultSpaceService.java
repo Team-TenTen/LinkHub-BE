@@ -3,22 +3,22 @@ package com.tenten.linkhub.domain.space.service;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
-import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
+import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.favorite.FavoriteRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
-import com.tenten.linkhub.domain.space.repository.space.dto.MySpacesQueryCondition;
+import com.tenten.linkhub.domain.space.repository.space.dto.MemberSpacesQueryCondition;
 import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberRepository;
 import com.tenten.linkhub.domain.space.repository.tag.TagRepository;
 import com.tenten.linkhub.domain.space.repository.tag.dto.TagInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
-import com.tenten.linkhub.domain.space.service.dto.space.MySpacesFindRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.MemberSpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
+import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.mapper.SpaceMapper;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.tenten.linkhub.domain.space.model.space.Role.OWNER;
 
@@ -42,10 +43,10 @@ public class DefaultSpaceService implements SpaceService {
 
     @Override
     @Transactional(readOnly = true)
-    public PublicSpacesFindByQueryResponses findPublicSpacesByQuery(PublicSpacesFindByQueryRequest request) {
-        Slice<SpaceAndOwnerNickName> spaceAndOwnerNickNames = spaceRepository.findPublicSpacesJoinSpaceImageByQuery(mapper.toQueryCond(request));
+    public SpacesFindByQueryResponses findPublicSpacesByQuery(PublicSpacesFindByQueryRequest request) {
+        Slice<SpaceAndSpaceImageOwnerNickName> spaceAndSpaceImageOwnerNickName = spaceRepository.findPublicSpacesJoinSpaceImageByQuery(mapper.toQueryCond(request));
 
-        return PublicSpacesFindByQueryResponses.from(spaceAndOwnerNickNames);
+        return SpacesFindByQueryResponses.from(spaceAndSpaceImageOwnerNickName);
     }
 
     @Override
@@ -102,11 +103,13 @@ public class DefaultSpaceService implements SpaceService {
 
     @Override
     @Transactional(readOnly = true)
-    public PublicSpacesFindByQueryResponses findMySpacesByQuery(MySpacesFindRequest request) {
-        MySpacesQueryCondition queryCondition = mapper.toMySpacesFindQueryCondition(request);
-        Slice<SpaceAndOwnerNickName> spaceAndOwnerNickNames = spaceRepository.findMySpacesJoinSpaceImageByQuery(queryCondition);
+    public SpacesFindByQueryResponses findMemberSpacesByQuery(MemberSpacesFindRequest request) {
+        Boolean isMySpace = Objects.equals(request.requestMemberId(), request.targetMemberId());
+        MemberSpacesQueryCondition queryCondition = mapper.toMemberSpacesQueryCondition(request, isMySpace);
 
-        return PublicSpacesFindByQueryResponses.from(spaceAndOwnerNickNames);
+        Slice<SpaceAndSpaceImageOwnerNickName> spaceAndSpaceImageOwnerNickName = spaceRepository.findMemberSpacesJoinSpaceImageByQuery(queryCondition);
+
+        return SpacesFindByQueryResponses.from(spaceAndSpaceImageOwnerNickName);
     }
 
     @Override

@@ -29,12 +29,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ActiveProfiles("test")
 @Transactional
 @SpringBootTest
 class LinkFacadeTest {
@@ -144,7 +146,7 @@ class LinkFacadeTest {
 
     @Test
     @DisplayName("좋아요에 성공한다.")
-    void createLike_request_Success() {
+    void createLike_LinkIdAndMemberId_Success() {
         //given & when
         linkFacade.createLike(linkId, memberId1);
 
@@ -155,7 +157,7 @@ class LinkFacadeTest {
 
     @Test
     @DisplayName("존재하지 않는 링크에 좋아요를 실패한다.")
-    void createLike_request_ThrowsDataNotFoundException() {
+    void createLike_LinkIdAndMemberId_ThrowsDataNotFoundException() {
         //given & when & then
         Assertions.assertThatThrownBy(() -> linkFacade.createLike(999L, memberId1))
                 .isInstanceOf(DataNotFoundException.class);
@@ -163,7 +165,7 @@ class LinkFacadeTest {
 
     @Test
     @DisplayName("이미 좋아요한 링크에 좋아요를 실패한다.")
-    void createLike_request_ThrowsUnauthorizedAccessException() {
+    void createLike_LinkIdAndMemberId_ThrowsUnauthorizedAccessException() {
         //given
         linkFacade.createLike(linkId, memberId1);
 
@@ -174,7 +176,7 @@ class LinkFacadeTest {
 
     @Test
     @DisplayName("좋아요 한 링크의 좋아요를 취소한다.")
-    void cancelLike_request_noContent() {
+    void cancelLike_LinkIdAndMemberId_noContent() {
         //given
         linkFacade.createLike(linkId, memberId1);
 
@@ -184,6 +186,14 @@ class LinkFacadeTest {
         //then
         Optional<Like> like = likeJpaRepository.findByLinkIdAndMemberId(linkId, memberId1);
         assertThat(like).isEmpty();
+    }
+
+    @Test
+    @DisplayName("좋아요하지 않은 좋아요를 취소하는데 실패한다.")
+    void cancelLike_LinkIdAndMemberId_DataNotFoundException() {
+        //given //when //then
+        Assertions.assertThatThrownBy(() -> linkFacade.cancelLike(linkId, memberId1))
+                .isInstanceOf(DataNotFoundException.class);
     }
 
     @Test

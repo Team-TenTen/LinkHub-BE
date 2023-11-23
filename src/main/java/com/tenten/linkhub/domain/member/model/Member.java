@@ -76,13 +76,15 @@ public class Member extends BaseEntity {
         this.role = role;
     }
 
-    public Member(String socialId, Provider provider, Role role, String nickname, String aboutMe, String newsEmail) {
+    public Member(String socialId, Provider provider, Role role, String nickname, String aboutMe, String newsEmail,
+            Boolean isSubscribed) {
         this.socialId = socialId;
         this.provider = provider;
         this.role = role;
         this.nickname = nickname;
         this.aboutMe = aboutMe;
         this.newsEmail = newsEmail;
+        this.isSubscribed = isSubscribed;
     }
 
     public void addProfileImage(ProfileImage profileImage) {
@@ -101,5 +103,9 @@ public class Member extends BaseEntity {
 
     public List<FavoriteCategory> retrieveFavoriteCategories() {
         return this.favoriteCategories.retrieveFavoriteCategories();
+    }
+
+    public void deleteMember() {
+        this.isDeleted = true;
     }
 }

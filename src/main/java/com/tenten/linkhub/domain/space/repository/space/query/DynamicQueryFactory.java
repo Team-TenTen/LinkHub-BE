@@ -3,6 +3,7 @@ package com.tenten.linkhub.domain.space.repository.space.query;
 import com.querydsl.core.types.NullExpression;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import lombok.NoArgsConstructor;
@@ -46,6 +47,14 @@ public class DynamicQueryFactory {
         }
 
         return null;
+    }
+
+    public BooleanExpression eqIsVisible(Boolean isSelfSpace) {
+        if (isSelfSpace) {
+            return null;
+        }
+
+        return space.isVisible.eq(true);
     }
 
 }

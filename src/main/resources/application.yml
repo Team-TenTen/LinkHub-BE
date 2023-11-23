@@ -58,6 +58,8 @@ spring:
   config:
     activate:
       on-profile: prod
+  jpa:
+    show-sql: false
 ---
 cloud:
   aws:

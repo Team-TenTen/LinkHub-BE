@@ -95,7 +95,6 @@ public class CommentService {
 
         validateRootComment(commentId);
 
-
         Slice<Comment> responses = commentRepository.findRepliesById(commentId, pageable);
 
         return RepliesFindResponses.from(responses);
