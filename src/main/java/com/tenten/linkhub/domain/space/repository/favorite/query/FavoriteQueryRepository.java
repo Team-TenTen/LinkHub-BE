@@ -44,6 +44,7 @@ public class FavoriteQueryRepository {
                         eqSpaceName(condition.keyWord()),
                         eqCategory(condition.filter())
                 )
+                .orderBy(favorite.createdAt.desc())
                 .offset(condition.pageable().getOffset())
                 .limit(condition.pageable().getPageSize() + 1)
                 .fetch();
