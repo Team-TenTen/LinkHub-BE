@@ -78,9 +78,9 @@ public class SpaceMembers {
     }
 
     public boolean containMember(Long memberId) {
-        return getSpaceMemberList()
+        return spaceMemberList
                 .stream()
-                .anyMatch(m -> Objects.equals(m.getMemberId(), memberId));
+                .anyMatch(sm -> Objects.equals(sm.getMemberId(), memberId) && !sm.getIsDeleted());
     }
 
     public void changeSpaceMembersRole(Long targetMemberId, Role role) {
