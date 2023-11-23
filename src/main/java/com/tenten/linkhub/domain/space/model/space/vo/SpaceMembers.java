@@ -78,8 +78,8 @@ public class SpaceMembers {
     }
 
     public boolean containMember(Long memberId) {
-        return spaceMemberList.
-                stream()
+        return getSpaceMemberList()
+                .stream()
                 .anyMatch(m -> Objects.equals(m.getMemberId(), memberId));
     }
 
