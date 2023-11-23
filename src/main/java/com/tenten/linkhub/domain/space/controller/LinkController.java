@@ -4,22 +4,31 @@ import com.tenten.linkhub.domain.auth.MemberDetails;
 import com.tenten.linkhub.domain.space.controller.dto.like.LikeCreateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.link.LinkCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.link.LinkCreateApiResponse;
+import com.tenten.linkhub.domain.space.controller.dto.link.LinksGetWithFilterApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.link.LinksGetWithFilterApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.link.LinkUpdateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.link.LinkUpdateApiResponse;
 import com.tenten.linkhub.domain.space.controller.mapper.LinkApiMapper;
 import com.tenten.linkhub.domain.space.facade.LinkFacade;
 import com.tenten.linkhub.domain.space.facade.dto.LinkCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.LinkUpdateFacadeRequest;
+import com.tenten.linkhub.domain.space.service.dto.link.LinkGetByQueryResponses;
+import com.tenten.linkhub.domain.space.service.dto.link.LinksGetByQueryRequest;
 import com.tenten.linkhub.global.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -27,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
+import java.util.Objects;
 
 @RestController
 public class LinkController {
@@ -195,27 +205,35 @@ public class LinkController {
                 .build();
     }
 
-//    /**
-//     * 링크 조회 API
-//     */
-//    @GetMapping(value = "/spaces/{spaceId}/links")
-//    public ResponseEntity<LinkGetWithFilterApiResponses> getLinks(
-//            @PathVariable Long spaceId,
-//            @ModelAttribute LinkGetWithFilterApiRequests request,
-//            @AuthenticationPrincipal MemberDetails memberDetails
-//    ) {
-//        PageRequest pageRequest = PageRequest.of(
-//                request.pageNumber(),
-//                request.pageSize(),
-//                StringUtils.hasText(request.sort()) ? Sort.by(request.sort()) : Sort.unsorted());
-//
-//        LinksGetByQueryRequest serviceRequest = mapper.toLinksGetByQueryRequest(request, pageRequest);
-//        LinkGetByQueryResponses facadeResponses = linkFacade.getLinks(serviceRequest);
-//        LinkGetWithFilterApiResponses response = mapper.toLinksGetWithFilterApiResponse(facadeResponses);
-//
-//        return ResponseEntity
-//                .ok()
-//                .body(response);
-//    }
-//
+    /**
+     * 링크 조회 API
+     */
+    @GetMapping(value = "/spaces/{spaceId}/links")
+    public ResponseEntity<LinksGetWithFilterApiResponses> getLinks(
+            @PathVariable Long spaceId,
+            @ModelAttribute LinksGetWithFilterApiRequest request,
+            @AuthenticationPrincipal MemberDetails memberDetails
+    ) {
+        Long memberId = Objects.isNull(memberDetails) ? null : memberDetails.memberId();
+
+        PageRequest pageRequest = PageRequest.of(
+                request.pageNumber(),
+                request.pageSize(),
+                StringUtils.hasText(request.sort()) ? Sort.by(request.sort()) : Sort.unsorted());
+
+        LinksGetByQueryRequest serviceRequest = mapper.toLinksGetByQueryRequest(
+                request,
+                pageRequest,
+                spaceId,
+                memberId
+        );
+
+        LinkGetByQueryResponses facadeResponses = linkFacade.getLinks(serviceRequest);
+        LinksGetWithFilterApiResponses response = LinksGetWithFilterApiResponses.from(facadeResponses);
+
+        return ResponseEntity
+                .ok()
+                .body(response);
+    }
+
 }

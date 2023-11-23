@@ -57,6 +57,9 @@ public class Link extends BaseEntity {
     @Version
     private int version;
 
+    @OneToMany(mappedBy = "link", cascade = CascadeType.PERSIST)
+    private List<LinkViewHistory> linkViewHistories = new ArrayList<>();
+
     public void addLinkTag(LinkTag linkTag) {
         linkTags.add(linkTag);
         linkTag.changeLink(this);

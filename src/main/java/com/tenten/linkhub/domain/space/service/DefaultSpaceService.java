@@ -127,4 +127,11 @@ public class DefaultSpaceService implements SpaceService {
         space.checkLinkViewHistoryEnabled(memberId);
     }
 
+    @Override
+    public void checkMemberCanViewLink(Long memberId, Long spaceId) {
+        Space space = spaceRepository.getSpaceJoinSpaceMemberById(spaceId);
+        space.validateVisibilityAndMembership(memberId);
+    }
+
+
 }
