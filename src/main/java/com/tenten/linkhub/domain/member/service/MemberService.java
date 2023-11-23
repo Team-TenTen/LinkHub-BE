@@ -13,10 +13,11 @@ import com.tenten.linkhub.domain.member.service.dto.MemberJoinRequest;
 import com.tenten.linkhub.domain.member.service.dto.MemberJoinResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberMyProfileResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberProfileResponse;
+import com.tenten.linkhub.domain.member.service.dto.MemberUpdateRequest;
+import com.tenten.linkhub.domain.member.service.dto.MemberUpdateResponse;
 import com.tenten.linkhub.global.util.email.EmailDto;
-import org.springframework.data.domain.PageRequest;
-
 import java.util.List;
+import org.springframework.data.domain.PageRequest;
 
 public interface MemberService {
 
@@ -41,4 +42,6 @@ public interface MemberService {
     MemberFollowingsFindResponses getFollowings(Long memberId, Long myMemberId, PageRequest pageRequest);
 
     MemberFollowersFindResponses getFollowers(Long memberId, Long myMemberId, PageRequest pageRequest);
+
+    MemberUpdateResponse updateProfile(MemberUpdateRequest memberUpdateRequest);
 }

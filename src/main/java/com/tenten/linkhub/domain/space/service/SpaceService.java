@@ -8,6 +8,7 @@ import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
+import com.tenten.linkhub.domain.space.service.dto.spacemember.SpaceMemberRoleChangeRequest;
 
 public interface SpaceService {
 
@@ -30,4 +31,6 @@ public interface SpaceService {
     void checkLinkViewHistory(Long spaceId, Long memberId);
 
     void checkMemberCanViewLink(Long memberId, Long spaceId);
+
+    Long changeSpaceMembersRole(SpaceMemberRoleChangeRequest request);
 }

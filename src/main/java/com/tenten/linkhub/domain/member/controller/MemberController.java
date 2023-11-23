@@ -15,6 +15,10 @@ import com.tenten.linkhub.domain.member.controller.dto.MemberMyProfileApiRespons
 import com.tenten.linkhub.domain.member.controller.dto.MemberProfileApiResponse;
 import com.tenten.linkhub.domain.member.controller.dto.MemberSpacesFindApiRequest;
 import com.tenten.linkhub.domain.member.controller.dto.MemberSpacesFindApiResponses;
+import com.tenten.linkhub.domain.member.controller.dto.MemberUpdateApiRequest;
+import com.tenten.linkhub.domain.member.controller.dto.MemberUpdateApiResponse;
+import com.tenten.linkhub.domain.member.controller.dto.MemberSpacesFindApiRequest;
+import com.tenten.linkhub.domain.member.controller.dto.MemberSpacesFindApiResponses;
 import com.tenten.linkhub.domain.member.controller.mapper.MemberApiMapper;
 import com.tenten.linkhub.domain.member.service.MemberService;
 import com.tenten.linkhub.domain.member.service.dto.MailSendResponse;
@@ -26,6 +30,7 @@ import com.tenten.linkhub.domain.member.service.dto.MemberFollowingsFindResponse
 import com.tenten.linkhub.domain.member.service.dto.MemberJoinResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberMyProfileResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberProfileResponse;
+import com.tenten.linkhub.domain.member.service.dto.MemberUpdateResponse;
 import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.global.response.ErrorResponse;
@@ -37,6 +42,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.Objects;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -46,13 +52,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Objects;
 
 @Tag(name = "members", description = "member API Document")
 @RestController
@@ -176,6 +181,37 @@ public class MemberController {
                 memberMyProfileResponse);
 
         return ResponseEntity.ok(memberMyProfileApiResponse);
+    }
+
+    /**
+     * 내 프로필 수정 API
+     */
+    @Operation(
+            summary = "내 프로필 수정 API", description = "멤버ID 및 JWT를 받아 자신의 프로필을 수정합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "프로필 수정을 완료하였습니다."),
+                    @ApiResponse(responseCode = "404", description = "변경 권한이 없습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+                    )
+            })
+    @PutMapping(value = "/{memberId}/profile",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MemberUpdateApiResponse> updateMember(
+            @Parameter(
+                    description = "프로필 사진 외의 데이터는 application/json 형식으로 받습니다."
+            )
+            @PathVariable Long memberId,
+            @RequestPart @Valid MemberUpdateApiRequest request,
+            @RequestPart(required = false) MultipartFile file,
+            @AuthenticationPrincipal MemberDetails memberDetails) {
+
+        MemberUpdateResponse memberUpdateResponse = memberService.updateProfile(
+                mapper.toMemberUpdateRequest(request, file, memberId, memberDetails.memberId()));
+
+        MemberUpdateApiResponse memberUpdateApiResponse = mapper.toMemberUpdateApiResponse(memberUpdateResponse);
+
+        return ResponseEntity.ok(memberUpdateApiResponse);
     }
 
     /**
