@@ -19,6 +19,7 @@ import com.tenten.linkhub.domain.space.repository.like.LikeJpaRepository;
 import com.tenten.linkhub.domain.space.repository.link.LinkJpaRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberJpaRepository;
+import com.tenten.linkhub.domain.space.service.dto.link.LinksGetByQueryRequest;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import org.assertj.core.api.Assertions;
@@ -27,6 +28,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -57,6 +59,7 @@ class LinkFacadeTest {
 
     private Long memberId1;
     private Long memberId2;
+    private Long memberId3;
     private Long spaceId;
     private Long linkId;
 
@@ -191,6 +194,22 @@ class LinkFacadeTest {
                 .isInstanceOf(UnauthorizedAccessException.class);
     }
 
+    @Test
+    @DisplayName("사용자는 스페이스 접근 권한이 없을 경우 링크를 조회할 수 없다.")
+    void getLinks_request_ThrowsUnauthorizedAccessException() {
+        //given
+        LinksGetByQueryRequest request = new LinksGetByQueryRequest(
+                PageRequest.of(0, 1),
+                spaceId,
+                memberId3,
+                null
+        );
+
+        //when & then
+        Assertions.assertThatThrownBy(() -> linkFacade.getLinks(request))
+                .isInstanceOf(UnauthorizedAccessException.class);
+    }
+
     private void setUpTestData() {
         Member member1 = new Member(
                 "123456",
@@ -216,9 +235,22 @@ class LinkFacadeTest {
                 new FavoriteCategory(Category.ENTER_ART)
         );
 
+        Member member3 = new Member(
+                "1234563",
+                Provider.kakao,
+                com.tenten.linkhub.domain.member.model.Role.USER,
+                "닉네임 데이터3",
+                "소개 데이터3",
+                "3333@gmail.com",
+                false,
+                new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지3"),
+                new FavoriteCategory(Category.ENTER_ART)
+        );
+
 
         memberId1 = memberJpaRepository.save(member1).getId();
         memberId2 = memberJpaRepository.save(member2).getId();
+        memberId3 = memberJpaRepository.save(member3).getId();
 
         //스페이스 생성 - member1
         Space space = new Space(
@@ -228,7 +260,7 @@ class LinkFacadeTest {
                 Category.ENTER_ART,
                 new SpaceImage("https://testimage1", "테스트 이미지1"),
                 new SpaceMember(memberId1, Role.OWNER),
-                true,
+                false,
                 true,
                 true,
                 true
