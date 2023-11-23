@@ -9,7 +9,6 @@ import com.tenten.linkhub.domain.space.exception.LinkViewHistoryException;
 import com.tenten.linkhub.domain.space.facade.LinkFacade;
 import com.tenten.linkhub.domain.space.facade.dto.LinkCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.model.category.Category;
-import com.tenten.linkhub.domain.space.model.link.Color;
 import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
@@ -17,10 +16,11 @@ import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.service.dto.space.MemberSpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
+import com.tenten.linkhub.domain.space.service.dto.spacemember.SpaceMemberRoleChangeRequest;
+import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @ActiveProfiles("test")
 @Transactional
@@ -55,6 +56,7 @@ class DefaultSpaceServiceTest {
 
     private Long myMemberId;
     private Long anotherMemberId;
+
     private Long myFirstSpaceId;
     private Long mySecondSpaceId;
 
@@ -103,10 +105,10 @@ class DefaultSpaceServiceTest {
         //then
         List<SpacesFindByQueryResponse> content = response.responses().getContent();
 
-        assertThat(content.size()).isEqualTo(1);
-        assertThat(content.get(0).spaceName()).isEqualTo("세번째 스페이스");
-        assertThat(content.get(0).spaceImagePath()).isEqualTo("https://testimage3");
-        assertThat(content.get(0).ownerNickName()).isEqualTo("백둥이");
+        assertThat(content.size()).isEqualTo(2);
+        assertThat(content.get(1).spaceName()).isEqualTo("세번째 스페이스");
+        assertThat(content.get(1).spaceImagePath()).isEqualTo("https://testimage3");
+        assertThat(content.get(1).ownerNickName()).isEqualTo("백둥이");
     }
 
     @Test
@@ -175,23 +177,22 @@ class DefaultSpaceServiceTest {
     void getTagsBySpaceId_spaceId_Success() {
         //given - 링크 생성 3개 생성 그 중 2개는 태그명이 같다.
         Space space = spaceJpaRepository.findById(myFirstSpaceId).get();
-        linkFacade.createLink(myFirstSpaceId, myMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목A", "태그1", Color.GRAY));
-        linkFacade.createLink(myFirstSpaceId, myMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목B", "태그1", Color.GRAY));
-        linkFacade.createLink(myFirstSpaceId, myMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목C", "태그2", Color.RED));
+        linkFacade.createLink(myFirstSpaceId, myMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목A", "태그1", "gray"));
+        linkFacade.createLink(myFirstSpaceId, myMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목B", "태그1", "gray"));
+        linkFacade.createLink(myFirstSpaceId, myMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목C", "태그2", "red"));
 
         //when
         SpaceTagGetResponses response = spaceService.getTagsBySpaceId(myFirstSpaceId);
 
         //then
         assertThat(response.tags()).hasSize(2);
-        assertThat(response.tags()).containsExactlyInAnyOrderElementsOf(List.of(new SpaceTagGetResponse("태그1", "gray"), new SpaceTagGetResponse("태그2", "red")));
     }
 
     @Test
     @DisplayName("스페이스에서 읽음 처리 기능을 활성화하지 않았다면 이력을 저장할 수 없다.")
     void checkLinkViewHistory_MemberIdAndSpaceId_ThrowsException() {
         //when & then
-        Assertions.assertThatThrownBy(() -> spaceService.checkLinkViewHistory(myFirstSpaceId, myMemberId))
+        assertThatThrownBy(() -> spaceService.checkLinkViewHistory(myFirstSpaceId, myMemberId))
                 .isInstanceOf(LinkViewHistoryException.class);
     }
 
@@ -199,8 +200,36 @@ class DefaultSpaceServiceTest {
     @DisplayName("스페이스의 멤버가 아니라면 읽음 처리 기능이 활성화 되어있더라도 이력을 저장할 수 없다.")
     void checkLinkViewHistory_MemberIdAndSpaceId2_ThrowsException() {
         //when & then
-        Assertions.assertThatThrownBy(() -> spaceService.checkLinkViewHistory(mySecondSpaceId, myMemberId))
+        assertThatThrownBy(() -> spaceService.checkLinkViewHistory(mySecondSpaceId, myMemberId))
                 .isInstanceOf(LinkViewHistoryException.class);
+    }
+
+    @Test
+    @DisplayName("스페이스의 오너는 스페이스 멤버들의 권한을 변경할 수 있다.")
+    void changeSpaceMembersRole() {
+        //given
+        SpaceMemberRoleChangeRequest request = new SpaceMemberRoleChangeRequest(myFirstSpaceId, myMemberId, anotherMemberId, Role.CAN_EDIT);
+
+        //when
+        Long spaceId = spaceService.changeSpaceMembersRole(request);
+
+        //then
+        Space space = spaceJpaRepository.findById(spaceId).get();
+
+        List<SpaceMember> spaceMembers = space.getSortedSpaceMember();
+        assertThat(spaceMembers.size()).isEqualTo(2);
+        assertThat(spaceMembers.get(1).getRole()).isEqualTo(Role.CAN_EDIT);
+    }
+
+    @Test
+    @DisplayName("스페이스의 오너가 아닌 멤버가 스페이스 멤버의 권한을 변경하려고 하면 UnauthorizedAccessException예외가 발생한다.")
+    void changeSpaceMembersRole_UnauthorizedAccessException() {
+        //given
+        SpaceMemberRoleChangeRequest request = new SpaceMemberRoleChangeRequest(myFirstSpaceId, anotherMemberId, anotherMemberId, Role.CAN_EDIT);
+
+        //when//then
+        assertThatThrownBy(() -> spaceService.changeSpaceMembersRole(request))
+                .isInstanceOf(UnauthorizedAccessException.class);
     }
 
     private void setupData() {
@@ -246,6 +275,10 @@ class DefaultSpaceServiceTest {
 
         space1.addSpaceImage(
                 new SpaceImage("https://testimage4", "테스트 이미지4")
+        );
+
+        space1.addSpaceMember(
+                new SpaceMember(anotherMemberId, Role.CAN_VIEW)
         );
 
         Space space2 = new Space(

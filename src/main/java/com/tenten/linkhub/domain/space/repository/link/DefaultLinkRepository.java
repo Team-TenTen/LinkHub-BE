@@ -1,7 +1,11 @@
 package com.tenten.linkhub.domain.space.repository.link;
 
 import com.tenten.linkhub.domain.space.model.link.Link;
+import com.tenten.linkhub.domain.space.repository.link.dto.LinkGetDto;
+import com.tenten.linkhub.domain.space.repository.link.dto.LinkGetQueryCondition;
+import com.tenten.linkhub.domain.space.repository.link.querydsl.LinkQueryDslRepository;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -9,9 +13,12 @@ import java.util.Optional;
 @Repository
 public class DefaultLinkRepository implements LinkRepository {
     private final LinkJpaRepository linkJpaRepository;
+    private final LinkQueryDslRepository linkQueryDslRepository;
 
-    public DefaultLinkRepository(LinkJpaRepository linkJpaRepository) {
+    public DefaultLinkRepository(LinkJpaRepository linkJpaRepository,
+                                 LinkQueryDslRepository linkQueryDslRepository) {
         this.linkJpaRepository = linkJpaRepository;
+        this.linkQueryDslRepository = linkQueryDslRepository;
     }
 
     @Override
@@ -29,6 +36,11 @@ public class DefaultLinkRepository implements LinkRepository {
     @Override
     public Optional<Link> findById(Long linkId) {
         return linkJpaRepository.findById(linkId);
+    }
+
+    @Override
+    public Slice<LinkGetDto> getLinksByCondition(LinkGetQueryCondition condition) {
+        return linkQueryDslRepository.getLinksByCondition(condition);
     }
 
     @Override

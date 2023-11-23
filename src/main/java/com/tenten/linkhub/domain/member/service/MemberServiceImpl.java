@@ -11,6 +11,7 @@ import com.tenten.linkhub.domain.member.repository.MemberEmailRedisRepository;
 import com.tenten.linkhub.domain.member.repository.dto.FollowDTO;
 import com.tenten.linkhub.domain.member.repository.follow.FollowRepository;
 import com.tenten.linkhub.domain.member.repository.member.MemberRepository;
+import com.tenten.linkhub.domain.member.service.dto.MailSendResponse;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationRequest;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberAuthInfo;
@@ -23,6 +24,8 @@ import com.tenten.linkhub.domain.member.service.dto.MemberJoinRequest;
 import com.tenten.linkhub.domain.member.service.dto.MemberJoinResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberMyProfileResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberProfileResponse;
+import com.tenten.linkhub.domain.member.service.dto.MemberUpdateRequest;
+import com.tenten.linkhub.domain.member.service.dto.MemberUpdateResponse;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.dto.ImageSaveRequest;
 import com.tenten.linkhub.global.aws.s3.ImageFileUploader;
@@ -33,15 +36,14 @@ import com.tenten.linkhub.global.infrastructure.ses.AwsSesService;
 import com.tenten.linkhub.global.response.ErrorCode;
 import com.tenten.linkhub.global.util.email.EmailDto;
 import com.tenten.linkhub.global.util.email.VerificationCodeCreator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -49,6 +51,7 @@ public class MemberServiceImpl implements MemberService {
 
     private static final String MEMBER_IMAGE_FOLDER = "member-image/";
     private static final String MEMBER_DEFAULT_IMAGE_PATH = "https://team-10-bucket.s3.ap-northeast-2.amazonaws.com/member-image/member-default.png";
+    private static final Long CODE_VALID_DURATION = 60 * 5L;
 
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
@@ -77,14 +80,16 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public void sendVerificationEmail(EmailDto emailDto) {
+    public MailSendResponse sendVerificationEmail(EmailDto emailDto) {
         if (memberRepository.existsMemberByNewsEmail(emailDto.getTo())) {
             throw new DataDuplicateException(ErrorCode.DUPLICATE_NEWS_EMAIL);
         }
 
         final String authKey = verificationCodeCreator.createVerificationCode();
         emailService.sendVerificationCodeEmail(emailDto, authKey);
-        memberEmailRedisRepository.saveExpire(authKey, emailDto.getTo(), 60 * 3L);
+        memberEmailRedisRepository.saveExpire(authKey, emailDto.getTo(), CODE_VALID_DURATION);
+
+        return new MailSendResponse(CODE_VALID_DURATION);
     }
 
     @Override
@@ -140,6 +145,15 @@ public class MemberServiceImpl implements MemberService {
         return MemberJoinResponse.from(jwt);
     }
 
+    public Optional<ImageInfo> getNewImageInfoOrEmptyImageInfo(MultipartFile file) {
+        if (file == null) {
+            return Optional.empty();
+        }
+
+        ImageSaveRequest imageSaveRequest = ImageSaveRequest.of(file, MEMBER_IMAGE_FOLDER);
+        return Optional.ofNullable(imageFileUploader.saveImage(imageSaveRequest));
+    }
+
     private ImageInfo getNewImageInfoOrDefaultImageInfo(MultipartFile file) {
         if (file == null) {
             return ImageInfo.of(MEMBER_DEFAULT_IMAGE_PATH, "default-image");
@@ -159,7 +173,7 @@ public class MemberServiceImpl implements MemberService {
 
         Boolean isModifiable = Objects.equals(memberId, myMemberId);
         Boolean isFollowing = followRepository.existsByMemberIdAndMyMemberId(memberId, myMemberId);
-        
+
         return MemberProfileResponse.from(member, followerCount, followingCount, isModifiable, isFollowing);
     }
 
@@ -209,9 +223,35 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberFollowersFindResponses getFollowers(Long memberId, Long myMemberId, PageRequest pageRequest) {
-        Slice<FollowDTO> followDTOs = followRepository.findFollowersOfTargetUserWithMyMemberFollowingStatus(memberId, myMemberId, pageRequest);
+        Slice<FollowDTO> followDTOs = followRepository.findFollowersOfTargetUserWithMyMemberFollowingStatus(memberId,
+                myMemberId, pageRequest);
 
         return MemberFollowersFindResponses.from(followDTOs);
+    }
+
+    @Transactional
+    @Override
+    public MemberUpdateResponse updateProfile(MemberUpdateRequest request) {
+        if (!Objects.equals(request.targetMemberId(), request.requestMemberId())) {
+            throw new UnauthorizedAccessException("권한이 없는 멤버입니다.");
+        }
+
+        Optional<ImageInfo> imageInfo = getNewImageInfoOrEmptyImageInfo(request.file());
+        Optional<ProfileImage> profileImage = imageInfo.map(i -> new ProfileImage(i.path(), i.name()));
+        FavoriteCategory favoriteCategory = new FavoriteCategory(request.favoriteCategory());
+
+        Member member = memberRepository.getById(request.targetMemberId());
+
+        Member updatedMember = member.update(
+                request.nickname(),
+                request.aboutMe(),
+                request.newsEmail(),
+                profileImage,
+                favoriteCategory,
+                request.isSubscribed()
+        );
+
+        return MemberUpdateResponse.from(updatedMember.getId());
     }
 
 }
