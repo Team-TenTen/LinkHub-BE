@@ -4,10 +4,10 @@ import com.tenten.linkhub.domain.auth.MemberDetails;
 import com.tenten.linkhub.domain.space.controller.dto.like.LikeCreateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.link.LinkCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.link.LinkCreateApiResponse;
-import com.tenten.linkhub.domain.space.controller.dto.link.LinksGetWithFilterApiRequest;
-import com.tenten.linkhub.domain.space.controller.dto.link.LinksGetWithFilterApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.link.LinkUpdateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.link.LinkUpdateApiResponse;
+import com.tenten.linkhub.domain.space.controller.dto.link.LinksGetWithFilterApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.link.LinksGetWithFilterApiResponses;
 import com.tenten.linkhub.domain.space.controller.mapper.LinkApiMapper;
 import com.tenten.linkhub.domain.space.facade.LinkFacade;
 import com.tenten.linkhub.domain.space.facade.dto.LinkCreateFacadeRequest;
@@ -210,6 +210,16 @@ public class LinkController {
     /**
      * 링크 조회 API
      */
+
+
+    @Operation(
+            summary = "링크 조회 API", description = "- tagId, pageNumber, pageSize, sort를 받아 검색합니다.(sort, filter 조건 없이 사용할 수 있습니다.) \n " +
+            " - sort: {created_at, popular} -> sort를 넣어주지 않을 경우 default는 created_at입니다. \n " +
+            " - tagId: 필터링하고자 하는 태그의 tagId를 넣어주세요. \n ",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "검색이 성공적으로 완료 되었습니다."),
+                    @ApiResponse(responseCode = "404", description = "링크를 조회할 수 있는 권한이 없습니다."),
+            })
     @GetMapping(value = "/spaces/{spaceId}/links")
     public ResponseEntity<LinksGetWithFilterApiResponses> getLinks(
             @PathVariable Long spaceId,
