@@ -2,6 +2,7 @@ package com.tenten.linkhub.domain.member.controller;
 
 import com.tenten.linkhub.domain.auth.MemberDetails;
 import com.tenten.linkhub.domain.member.controller.dto.MailSendApiRequest;
+import com.tenten.linkhub.domain.member.controller.dto.MailSendApiResponse;
 import com.tenten.linkhub.domain.member.controller.dto.MailVerificationApiRequest;
 import com.tenten.linkhub.domain.member.controller.dto.MailVerificationApiResponse;
 import com.tenten.linkhub.domain.member.controller.dto.MemberFollowCreateApiResponse;
@@ -12,8 +13,11 @@ import com.tenten.linkhub.domain.member.controller.dto.MemberJoinApiRequest;
 import com.tenten.linkhub.domain.member.controller.dto.MemberJoinApiResponse;
 import com.tenten.linkhub.domain.member.controller.dto.MemberMyProfileApiResponse;
 import com.tenten.linkhub.domain.member.controller.dto.MemberProfileApiResponse;
+import com.tenten.linkhub.domain.member.controller.dto.MemberSpacesFindApiRequest;
+import com.tenten.linkhub.domain.member.controller.dto.MemberSpacesFindApiResponses;
 import com.tenten.linkhub.domain.member.controller.mapper.MemberApiMapper;
 import com.tenten.linkhub.domain.member.service.MemberService;
+import com.tenten.linkhub.domain.member.service.dto.MailSendResponse;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationRequest;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberFollowCreateResponse;
@@ -22,8 +26,6 @@ import com.tenten.linkhub.domain.member.service.dto.MemberFollowingsFindResponse
 import com.tenten.linkhub.domain.member.service.dto.MemberJoinResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberMyProfileResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberProfileResponse;
-import com.tenten.linkhub.domain.member.controller.dto.MemberSpacesFindApiRequest;
-import com.tenten.linkhub.domain.member.controller.dto.MemberSpacesFindApiResponses;
 import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.global.response.ErrorResponse;
@@ -70,16 +72,20 @@ public class MemberController {
      * 회원가입 또는 이메일 변경 시 메일로 인증번호 발송하는 API
      */
     @Operation(
-            summary = "이메일 발송 API", description = "이메일 발송 API 입니다.",
+            summary = "이메일 발송 API", description = "이메일 발송 API 입니다. 발송한 이메일 내의 인증코드는 5분간 유효하며 성공적으로 뱔송될 경우 받는 응답값(emailCodeDuration(단위: 초))은 남은 인증 시간을 의미합니다.",
             responses = {
                     @ApiResponse(responseCode = "200"),
             })
     @PostMapping("/emails")
-    public ResponseEntity<Void> sendMail(@Valid @RequestBody MailSendApiRequest request) {
+    public ResponseEntity<MailSendApiResponse> sendMail(@Valid @RequestBody MailSendApiRequest request) {
         EmailDto emailDto = EmailDto.toVerificationEmailDto(request.email());
-        memberService.sendVerificationEmail(emailDto);
 
-        return ResponseEntity.ok().build();
+        MailSendResponse response = memberService.sendVerificationEmail(emailDto);
+        MailSendApiResponse apiResponse = mapper.toMailSendApiResponse(response);
+
+        return ResponseEntity
+                .ok()
+                .body(apiResponse);
     }
 
     /**
@@ -276,7 +282,7 @@ public class MemberController {
     }
 
     /**
-     *  특정 멤버 스페이스 검색 API
+     * 특정 멤버 스페이스 검색 API
      */
     @Operation(
             summary = "특정 멤버 스페이스 검색 API", description = "특정 멤버의 스페이스를 keyWord, pageNumber, pageSize, filter를 통해 검색합니다. (keyWord, sort, filter 조건 없이 사용 가능합니다.)\n\n" +

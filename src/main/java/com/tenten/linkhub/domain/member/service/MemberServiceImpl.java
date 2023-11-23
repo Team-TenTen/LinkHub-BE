@@ -11,6 +11,7 @@ import com.tenten.linkhub.domain.member.repository.MemberEmailRedisRepository;
 import com.tenten.linkhub.domain.member.repository.dto.FollowDTO;
 import com.tenten.linkhub.domain.member.repository.follow.FollowRepository;
 import com.tenten.linkhub.domain.member.repository.member.MemberRepository;
+import com.tenten.linkhub.domain.member.service.dto.MailSendResponse;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationRequest;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberAuthInfo;
@@ -49,6 +50,7 @@ public class MemberServiceImpl implements MemberService {
 
     private static final String MEMBER_IMAGE_FOLDER = "member-image/";
     private static final String MEMBER_DEFAULT_IMAGE_PATH = "https://team-10-bucket.s3.ap-northeast-2.amazonaws.com/member-image/member-default.png";
+    private static final Long CODE_VALID_DURATION = 60 * 5L;
 
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
@@ -77,14 +79,16 @@ public class MemberServiceImpl implements MemberService {
 
     @Transactional
     @Override
-    public void sendVerificationEmail(EmailDto emailDto) {
+    public MailSendResponse sendVerificationEmail(EmailDto emailDto) {
         if (memberRepository.existsMemberByNewsEmail(emailDto.getTo())) {
             throw new DataDuplicateException(ErrorCode.DUPLICATE_NEWS_EMAIL);
         }
 
         final String authKey = verificationCodeCreator.createVerificationCode();
         emailService.sendVerificationCodeEmail(emailDto, authKey);
-        memberEmailRedisRepository.saveExpire(authKey, emailDto.getTo(), 60 * 3L);
+        memberEmailRedisRepository.saveExpire(authKey, emailDto.getTo(), CODE_VALID_DURATION);
+
+        return new MailSendResponse(CODE_VALID_DURATION);
     }
 
     @Override
@@ -159,7 +163,7 @@ public class MemberServiceImpl implements MemberService {
 
         Boolean isModifiable = Objects.equals(memberId, myMemberId);
         Boolean isFollowing = followRepository.existsByMemberIdAndMyMemberId(memberId, myMemberId);
-        
+
         return MemberProfileResponse.from(member, followerCount, followingCount, isModifiable, isFollowing);
     }
 
