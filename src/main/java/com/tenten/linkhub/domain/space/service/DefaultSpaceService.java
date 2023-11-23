@@ -19,6 +19,7 @@ import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
+import com.tenten.linkhub.domain.space.service.dto.spacemember.SpaceMemberRoleChangeRequest;
 import com.tenten.linkhub.domain.space.service.mapper.SpaceMapper;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import lombok.RequiredArgsConstructor;
@@ -136,5 +137,16 @@ public class DefaultSpaceService implements SpaceService {
         space.validateVisibilityAndMembership(memberId);
     }
 
+
+    @Override
+    @Transactional
+    public Long changeSpaceMembersRole(SpaceMemberRoleChangeRequest request) {
+        Space space = spaceRepository.getById(request.spaceId());
+        space.validateOwnership(request.myMemberId());
+
+        space.changeSpaceMembersRole(request.targetMemberId(), request.role());
+
+        return space.getId();
+    }
 
 }

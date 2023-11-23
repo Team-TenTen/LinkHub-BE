@@ -19,6 +19,8 @@ import com.tenten.linkhub.domain.member.service.dto.MemberJoinRequest;
 import com.tenten.linkhub.domain.member.service.dto.MemberJoinResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberMyProfileResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberProfileResponse;
+import com.tenten.linkhub.domain.member.service.dto.MemberUpdateRequest;
+import com.tenten.linkhub.domain.member.service.dto.MemberUpdateResponse;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.s3.ImageFileUploader;
@@ -38,12 +40,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
-@TestPropertySource(locations = "classpath:/application-test.yml")
+@ActiveProfiles("test")
 class MemberServiceTest {
 
     @Autowired
@@ -443,6 +445,39 @@ class MemberServiceTest {
         assertThat(responses.responses().getContent().get(1).memberId()).isEqualTo(
                 memberIdFollowingTargetMemberAndFollowedByMyMemberId);
         assertThat(responses.responses().getContent().get(1).isFollowing()).isFalse();
+    }
+
+    @Test
+    @DisplayName("유저는 프로필 정보를 변경할 수 있다.")
+    void updateMember_Success() {
+        //given
+        MockMultipartFile requestFile = new MockMultipartFile("업데이트된 이미지 파일 이름", (byte[]) null);
+        ImageInfo imageInfo = ImageInfo.of("https://updateimage", requestFile.getName());
+        BDDMockito.given(mockImageFileUploader.saveImage(any())).willReturn(imageInfo);
+
+        MemberUpdateRequest request = new MemberUpdateRequest(
+                "변경된 닉네임",
+                "변경된 자기소개",
+                "changedEmail@gmail.com",
+                Category.ENTER_ART,
+                false,
+                requestFile,
+                myMemberId,
+                myMemberId
+        );
+
+        //when
+        MemberUpdateResponse response = memberService.updateProfile(request);
+
+        //then
+        Member member = memberJpaRepository.findById(response.memberId()).get();
+
+        assertThat(member.getNickname()).isEqualTo("변경된 닉네임");
+        assertThat(member.getAboutMe()).isEqualTo("변경된 자기소개");
+        assertThat(member.getNewsEmail()).isEqualTo("changedEmail@gmail.com");
+        assertThat(member.retrieveFavoriteCategories().get(0).getCategory()).isEqualTo(Category.ENTER_ART);
+        assertThat(member.retrieveProfileImages().get(0).getPath()).isEqualTo("https://updateimage");
+        assertThat(member.retrieveProfileImages().get(0).getName()).isEqualTo("업데이트된 이미지 파일 이름");
     }
 
     private MemberJoinRequest createMemberJoinRequest(MockMultipartFile requestFile) {

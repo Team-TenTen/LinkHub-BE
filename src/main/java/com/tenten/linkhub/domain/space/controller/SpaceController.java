@@ -24,6 +24,8 @@ import com.tenten.linkhub.domain.space.controller.dto.space.SpaceDetailGetByIdAp
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceTagsGetApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiResponse;
+import com.tenten.linkhub.domain.space.controller.dto.spacemember.SpaceMemberRoleChangeApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.spacemember.SpaceMemberRoleChangeApiResponse;
 import com.tenten.linkhub.domain.space.controller.mapper.CommentApiMapper;
 import com.tenten.linkhub.domain.space.controller.mapper.FavoriteApiMapper;
 import com.tenten.linkhub.domain.space.controller.mapper.SpaceApiMapper;
@@ -56,9 +58,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Objects;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -210,6 +214,33 @@ public class SpaceController {
 
         SpaceUpdateApiResponse apiResponse = SpaceUpdateApiResponse.from(updatedSpaceId);
 
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
+     * 스페이스 멤버 권한 수정 API
+     */
+    @Operation(
+            summary = "스페이스 멤버 권한 수정 API", description = "스페이스 멤버 권한 수정 API 입니다.\n\n" +
+            "role: {OWNER, CAN_EDIT, CAN_VIEW}",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "스페이스 멤버의 권한 수정이 성공적으로 수정되었습니다."),
+                    @ApiResponse(responseCode = "404", description = "권한이 없는 유저가 스페이스 멤버의 권한을 수정하려고 합니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @PatchMapping(value = "/{spaceId}/members/role",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SpaceMemberRoleChangeApiResponse> changeSpaceMemberRole(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long spaceId,
+            @RequestBody SpaceMemberRoleChangeApiRequest request
+    ) {
+        Long responseSpaceId = spaceService.changeSpaceMembersRole(
+                spaceMapper.toSpaceMemberRoleChangeRequest(spaceId, memberDetails.memberId(), request)
+        );
+
+        SpaceMemberRoleChangeApiResponse apiResponse = SpaceMemberRoleChangeApiResponse.from(responseSpaceId);
         return ResponseEntity.ok(apiResponse);
     }
 

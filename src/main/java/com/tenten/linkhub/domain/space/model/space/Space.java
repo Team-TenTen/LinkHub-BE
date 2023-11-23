@@ -198,6 +198,10 @@ public class Space extends BaseEntity {
                 .ifPresent(this::changeSpaceImage);
     }
 
+    public void changeSpaceMembersRole(Long targetMemberId, Role role) {
+        spaceMembers.changeSpaceMembersRole(targetMemberId, role);
+    }
+
     public Long deleteSpace(Long memberId) {
         validateOwnership(memberId);
 
@@ -220,4 +224,5 @@ public class Space extends BaseEntity {
             throw new LinkViewHistoryException("링크의 접속정보를 저장할 수 없습니다.");
         }
     }
+
 }
