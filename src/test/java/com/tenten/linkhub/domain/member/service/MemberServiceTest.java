@@ -40,12 +40,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
-@TestPropertySource(locations = "classpath:/application-test.yml")
+@ActiveProfiles("test")
 class MemberServiceTest {
 
     @Autowired
