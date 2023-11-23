@@ -16,14 +16,20 @@ import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.link.LinkJpaRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkCreateRequest;
+import com.tenten.linkhub.domain.space.service.dto.link.LinkGetByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkUpdateRequest;
+import com.tenten.linkhub.domain.space.service.dto.link.LinksGetByQueryRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -46,6 +52,7 @@ class DefaultLinkServiceTest {
     private Long memberId1;
     private Long spaceId;
     private Long linkId;
+    private List<Long> linkIds;
 
     @BeforeEach
     void setUp() {
@@ -123,6 +130,58 @@ class DefaultLinkServiceTest {
         assertThat(linkCount).isEqualTo(0);
     }
 
+    @Test
+    @DisplayName("사용자는 최신순으로 링크를 조회할 수 있다.")
+    void getLinks_Request_SortByCreatedAtSuccess() {
+        //given
+        LinksGetByQueryRequest request = new LinksGetByQueryRequest(
+                PageRequest.of(0, 10),
+                spaceId,
+                memberId1,
+                null
+        );
+
+        //when
+        LinkGetByQueryResponses links = linkService.getLinks(request);
+
+        //then
+        assertThat(links.responses().getContent().size()).isEqualTo(4);
+        //최신 순 정렬 확인
+        for (int i = 0; i < linkIds.size(); i++) {
+            assertThat(linkIds.get(i)).isEqualTo(links.responses().getContent().get(i).linkId());
+        }
+    }
+
+    @Test
+    @DisplayName("사용자는 인기순으로 링크를 조회할 수 있다.")
+    void getLinks_Request_SortByPopularSuccess() {
+        //given
+        LinksGetByQueryRequest request = new LinksGetByQueryRequest(
+                PageRequest.of(0, 10, Sort.by("popular")),
+                spaceId,
+                memberId1,
+                null
+        );
+
+        for (int i = 0; i < linkIds.size(); i++) {
+            Link link = linkJpaRepository.findById(linkIds.get(i)).get();
+            for (int j = 0; j < i; j++) {
+                link.increaseLikeCount();
+            }
+        }
+
+        //when
+        LinkGetByQueryResponses links = linkService.getLinks(request);
+
+        //then
+        assertThat(links.responses().getContent().size()).isEqualTo(4);
+
+        //인기 순 정렬 확인
+        for (int i = 0; i < linkIds.size(); i++) {
+            assertThat(linkIds.get(linkIds.size() - (i + 1))).isEqualTo(links.responses().getContent().get(i).linkId());
+        }
+    }
+
     private void setUpTestData() {
         Member member1 = new Member(
                 "123456",
@@ -156,7 +215,20 @@ class DefaultLinkServiceTest {
 
         //링크 생성
         Link link = Link.toLink(space, memberId1, "링크의 제목", new Url("https://www.naver.com"));
+        Link link1 = Link.toLink(space, memberId1, "링크의 제목1", new Url("https://www.naver.com"));
+        Link link2 = Link.toLink(space, memberId1, "링크의 제목2", new Url("https://www.naver.com"));
+        Link link3 = Link.toLink(space, memberId1, "링크의 제목3", new Url("https://www.naver.com"));
+
+
         linkId = linkJpaRepository.save(link).getId();
+        linkIds = List.of(
+                linkId,
+                linkJpaRepository.save(link1).getId(),
+                linkJpaRepository.save(link2).getId(),
+                linkJpaRepository.save(link3).getId()
+        );
+
+
     }
 
 }
