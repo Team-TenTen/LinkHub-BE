@@ -264,6 +264,11 @@ public class LinkController {
     /**
      * 인기 있는 링크 리스트 조회
      */
+    @Operation(
+            summary = "인기 있는 링크 조회 API", description = "랜딩 페이지에서 인기있는 리스트를 조회할 때 사용하는 API 입니다. \n  로그인이 되어있다면 JWT를 넣어 요청 보내주시면 됩니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "인기 있는 링크 조회가 성공적으로 완료 되었습니다.")
+            })
     @GetMapping("/links/popular")
     public ResponseEntity<PopularLinksGetApiResponses> getPopularLinks(
             @AuthenticationPrincipal MemberDetails memberDetails
