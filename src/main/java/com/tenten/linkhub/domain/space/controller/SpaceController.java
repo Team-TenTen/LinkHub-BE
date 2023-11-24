@@ -558,9 +558,13 @@ public class SpaceController {
      * 스페이스를 새로운 스페이스로 가져오기 API
      */
     @Operation(
-            summary = "스페이스 가져오기 API(나의 새로운 스페이스로)", description = "스페이스를 나의 새로운 스페이스로 가져오기 API 입니다.",
+            summary = "스페이스 가져오기 API(나의 새로운 스페이스로)", description = "스페이스를 나의 새로운 스페이스로 가져오기 API 입니다.\n\n" +
+            "스페이스 가져오기는 한 스페이스에 한번만 가능하며 링크 개수 200개 이하인 스페이스만 지원합니다.\n\n " +
+            "조건이 충족되지 않으면 아래의 예외가 발생합니다.",
             responses = {
-                    @ApiResponse(responseCode = "201", description = "스페이스 가져오기가 성공적으로 완료되었습니다.")
+                    @ApiResponse(responseCode = "201", description = "스페이스 가져오기가 성공적으로 완료되었습니다."),
+                    @ApiResponse(responseCode = "400", description = "이미 가져오기한 스페이스 / 링크 개수가 200개 이상인 스페이스",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @PostMapping(value = "/{spaceId}/scraps/new",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
