@@ -45,6 +45,15 @@ public class GlobalApiExceptionHandler {
                 .body(errorResponse);
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalStateException(HttpServletRequest request, IllegalStateException e) {
+        ErrorResponse errorResponse = ErrorResponse.of(e.getMessage(), request.getRequestURI());
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(errorResponse);
+    }
+
     @ExceptionHandler(DataNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleDataNotFoundException(HttpServletRequest request, DataNotFoundException e) {
         ErrorResponse errorResponse = ErrorResponse.of(e.getMessage(), request.getRequestURI());

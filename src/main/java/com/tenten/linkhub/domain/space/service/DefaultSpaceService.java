@@ -165,8 +165,8 @@ public class DefaultSpaceService implements SpaceService {
 
         Long linkCount = linkRepository.countLinkBySpaceId(spaceId);
 
-        if (linkCount > 500){
-            throw new IllegalStateException("가져오기는 500개 이하의 Link를 가진 스페이스만 가능합니다.");
+        if (linkCount > 200){
+            throw new IllegalStateException("가져오기는 200개 이하의 Link를 가진 스페이스만 가능합니다.");
         }
 
         Space space = spaceRepository.getById(spaceId);
