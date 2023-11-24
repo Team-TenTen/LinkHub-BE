@@ -13,6 +13,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
+
 @Entity
 @Table(name = "scraps")
 @Getter
@@ -29,5 +31,13 @@ public class Scrap {
 
     @Column(nullable = false)
     private Long memberId;
+
+    public Scrap(Space space, Long memberId) {
+        validateNotNull(space, "space");
+        validateNotNull(memberId, "memberId");
+
+        this.space = space;
+        this.memberId = memberId;
+    }
 
 }

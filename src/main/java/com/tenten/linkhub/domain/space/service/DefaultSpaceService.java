@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.space.service;
 
+import com.tenten.linkhub.domain.space.model.space.Scrap;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
@@ -183,6 +184,10 @@ public class DefaultSpaceService implements SpaceService {
         Long savedSpaceId = spaceRepository.save(space).getId();
 
         linkService.copyLinkBySpaceIdAndPaste(request.targetSpaceId(), savedSpaceId, request.memberId());
+
+        scrapRepository.save(
+                new Scrap(space, request.memberId())
+        );
 
         return savedSpaceId;
     }

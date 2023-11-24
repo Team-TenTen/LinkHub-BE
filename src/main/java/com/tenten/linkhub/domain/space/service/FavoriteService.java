@@ -1,6 +1,6 @@
 package com.tenten.linkhub.domain.space.service;
 
-import com.tenten.linkhub.domain.space.handler.dto.FavoriteCancelEvent;
+import com.tenten.linkhub.domain.space.handler.dto.FavoriteDeleteEvent;
 import com.tenten.linkhub.domain.space.handler.dto.FavoriteSaveEvent;
 import com.tenten.linkhub.domain.space.model.space.Favorite;
 import com.tenten.linkhub.domain.space.model.space.Space;
@@ -53,7 +53,7 @@ public class FavoriteService {
 
         Long deletedFavoriteId = favoriteRepository.deleteById(favorite.getId());
 
-        eventPublisher.publishEvent(new FavoriteCancelEvent(spaceId));
+        eventPublisher.publishEvent(new FavoriteDeleteEvent(spaceId));
 
         return deletedFavoriteId;
     }

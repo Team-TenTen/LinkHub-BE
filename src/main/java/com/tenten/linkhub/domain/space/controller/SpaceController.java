@@ -581,7 +581,7 @@ public class SpaceController {
         NewSpacesScrapApiResponse apiResponse = NewSpacesScrapApiResponse.from(responseSpaceId);
 
         return ResponseEntity
-                .created(URI.create(SPACE_LOCATION_PRE_FIX + apiResponse))
+                .created(URI.create(SPACE_LOCATION_PRE_FIX + responseSpaceId))
                 .body(apiResponse);
     }
 

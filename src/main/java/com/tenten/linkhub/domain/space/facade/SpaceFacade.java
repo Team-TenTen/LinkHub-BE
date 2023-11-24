@@ -8,6 +8,7 @@ import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeReques
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.mapper.SpaceFacadeMapper;
+import com.tenten.linkhub.domain.space.handler.dto.ScrapSaveEvent;
 import com.tenten.linkhub.domain.space.handler.dto.SpaceImageDeleteEvent;
 import com.tenten.linkhub.domain.space.handler.dto.SpaceDetailFindEvent;
 import com.tenten.linkhub.domain.space.service.LinkService;
@@ -77,8 +78,14 @@ public class SpaceFacade {
         spaceService.validateScrapTargetSpace(request.targetSpaceId(), request.memberId());
 
         ImageInfo imageInfo = spaceImageUploader.getNewImageInfoOrDefaultImageInfo(request.file());
-        return spaceService.createSpaceAndCopyLinks(
-                mapper.toNewSpacesScrapRequest(request, imageInfo));
+
+        Long savedSpaceId = spaceService.createSpaceAndCopyLinks(
+                mapper.toNewSpacesScrapRequest(request, imageInfo)
+        );
+
+        eventPublisher.publishEvent(new ScrapSaveEvent(request.targetSpaceId()));
+
+        return savedSpaceId;
     }
 
     private List<Long> getMemberIds(SpaceWithSpaceImageAndSpaceMemberInfo response) {

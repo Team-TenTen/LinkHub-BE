@@ -1,4 +1,4 @@
 package com.tenten.linkhub.domain.space.handler.dto;
 
-public record FavoriteCancelEvent(Long spaceId) {
+public record ScrapSaveEvent(Long spaceId) {
 }
