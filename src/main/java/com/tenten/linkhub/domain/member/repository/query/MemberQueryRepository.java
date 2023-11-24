@@ -1,19 +1,20 @@
 package com.tenten.linkhub.domain.member.repository.query;
 
-import static com.tenten.linkhub.domain.member.model.QFollow.follow;
-import static com.tenten.linkhub.domain.member.model.QMember.member;
-import static com.tenten.linkhub.domain.member.model.QProfileImage.profileImage;
-
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tenten.linkhub.domain.member.repository.dto.MemberSearchQueryCondition;
 import com.tenten.linkhub.domain.member.repository.dto.MemberWithProfileImageAndFollowingStatus;
 import com.tenten.linkhub.domain.member.repository.dto.QMemberWithProfileImageAndFollowingStatus;
-import java.util.List;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+import static com.tenten.linkhub.domain.member.model.QFollow.follow;
+import static com.tenten.linkhub.domain.member.model.QMember.member;
+import static com.tenten.linkhub.domain.member.model.QProfileImage.profileImage;
 
 @Repository
 public class MemberQueryRepository {

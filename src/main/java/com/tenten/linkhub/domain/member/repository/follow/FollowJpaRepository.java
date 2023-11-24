@@ -2,11 +2,12 @@ package com.tenten.linkhub.domain.member.repository.follow;
 
 import com.tenten.linkhub.domain.member.model.Follow;
 import com.tenten.linkhub.domain.member.repository.dto.FollowDTO;
-import java.util.Optional;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+
+import java.util.Optional;
 
 public interface FollowJpaRepository extends JpaRepository<Follow, Long> {
 

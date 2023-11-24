@@ -21,7 +21,6 @@ import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRespon
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.spacemember.SpaceMemberRoleChangeRequest;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

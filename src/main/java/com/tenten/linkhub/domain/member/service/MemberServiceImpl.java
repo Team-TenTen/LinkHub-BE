@@ -40,15 +40,16 @@ import com.tenten.linkhub.global.infrastructure.ses.AwsSesService;
 import com.tenten.linkhub.global.response.ErrorCode;
 import com.tenten.linkhub.global.util.email.EmailDto;
 import com.tenten.linkhub.global.util.email.VerificationCodeCreator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service

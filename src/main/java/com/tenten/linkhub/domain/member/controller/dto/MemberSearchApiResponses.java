@@ -2,8 +2,9 @@ package com.tenten.linkhub.domain.member.controller.dto;
 
 import com.tenten.linkhub.domain.member.service.dto.MemberSearchResponses;
 import com.tenten.linkhub.global.util.PageMetaData;
-import java.util.List;
 import org.springframework.data.domain.Slice;
+
+import java.util.List;
 
 public record MemberSearchApiResponses(
         List<MemberSearchApiResponse> responses,

@@ -55,8 +55,5 @@ public interface MemberApiMapper {
 
     MemberUpdateApiResponse toMemberUpdateApiResponse(MemberUpdateResponse memberUpdateResponse);
 
-    MemberSpacesFindRequest toMemberSpacesFindRequest(Pageable pageable, MemberSpacesFindApiRequest request,
-            Long requestMemberId, Long targetMemberId);
-
     MemberSearchRequest toMemberSearchRequest(MemberSearchApiRequest request, Pageable pageable, Long myMemberId);
 }

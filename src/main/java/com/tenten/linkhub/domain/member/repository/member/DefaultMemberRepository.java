@@ -6,10 +6,11 @@ import com.tenten.linkhub.domain.member.repository.dto.MemberSearchQueryConditio
 import com.tenten.linkhub.domain.member.repository.dto.MemberWithProfileImageAndFollowingStatus;
 import com.tenten.linkhub.domain.member.repository.query.MemberQueryRepository;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class DefaultMemberRepository implements MemberRepository {
