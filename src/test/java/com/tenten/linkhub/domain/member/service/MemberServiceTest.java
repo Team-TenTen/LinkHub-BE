@@ -1,9 +1,5 @@
 package com.tenten.linkhub.domain.member.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-
 import com.tenten.linkhub.domain.auth.JwtProvider;
 import com.tenten.linkhub.domain.auth.MemberDetails;
 import com.tenten.linkhub.domain.member.model.Member;
@@ -19,6 +15,8 @@ import com.tenten.linkhub.domain.member.service.dto.MemberJoinRequest;
 import com.tenten.linkhub.domain.member.service.dto.MemberJoinResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberMyProfileResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberProfileResponse;
+import com.tenten.linkhub.domain.member.service.dto.MemberSearchRequest;
+import com.tenten.linkhub.domain.member.service.dto.MemberSearchResponses;
 import com.tenten.linkhub.domain.member.service.dto.MemberUpdateRequest;
 import com.tenten.linkhub.domain.member.service.dto.MemberUpdateResponse;
 import com.tenten.linkhub.domain.space.model.category.Category;
@@ -27,7 +25,6 @@ import com.tenten.linkhub.global.aws.s3.ImageFileUploader;
 import com.tenten.linkhub.global.exception.DataDuplicateException;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
-import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,6 +39,12 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
 @Transactional
@@ -445,6 +448,45 @@ class MemberServiceTest {
         assertThat(responses.responses().getContent().get(1).memberId()).isEqualTo(
                 memberIdFollowingTargetMemberAndFollowedByMyMemberId);
         assertThat(responses.responses().getContent().get(1).isFollowing()).isFalse();
+    }
+
+    @Test
+    @DisplayName("사용자는 키워드로 팔로우 유무와 함께 멤버 검색을 할 수 있다.")
+    void searchMember_TargetMemberIdAndNullMemberId_SuccessWithFollowingStatusAllFalse() {
+        //given
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
+        MemberSearchRequest memberSearchRequest = new MemberSearchRequest(
+                "멤버",
+                pageRequest,
+                myMemberId
+        );
+
+        memberService.createFollow(memberIdFollowingTargetMemberAndFollowedByMyMemberId, myMemberId);
+
+        //when
+        MemberSearchResponses responses = memberService.searchMember(memberSearchRequest);
+
+        //then
+        assertThat(responses.responses()).hasSize(6);
+
+        assertThat(responses.responses().getContent().get(0).nickname()).isEqualTo("멤버1");
+        assertThat(responses.responses().getContent().get(0).isFollowing()).isFalse();
+
+        assertThat(responses.responses().getContent().get(1).nickname()).isEqualTo("멤버2");
+        assertThat(responses.responses().getContent().get(1).isFollowing()).isFalse();
+
+        assertThat(responses.responses().getContent().get(2).nickname()).isEqualTo("멤버3");
+        assertThat(responses.responses().getContent().get(2).isFollowing()).isFalse();
+
+        assertThat(responses.responses().getContent().get(3).nickname()).isEqualTo("멤버4");
+        assertThat(responses.responses().getContent().get(3).isFollowing()).isFalse();
+
+        assertThat(responses.responses().getContent().get(4).nickname()).isEqualTo("멤버5");
+        assertThat(responses.responses().getContent().get(4).isFollowing()).isTrue();
+
+        assertThat(responses.responses().getContent().get(5).nickname()).isEqualTo("멤버6");
+        assertThat(responses.responses().getContent().get(5).isFollowing()).isFalse();
     }
 
     @Test
