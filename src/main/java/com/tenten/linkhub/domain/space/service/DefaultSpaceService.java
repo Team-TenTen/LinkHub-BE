@@ -7,7 +7,6 @@ import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.favorite.FavoriteRepository;
 import com.tenten.linkhub.domain.space.repository.link.LinkRepository;
-import com.tenten.linkhub.domain.space.repository.linktag.LinkTagRepository;
 import com.tenten.linkhub.domain.space.repository.scrap.ScrapRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.repository.space.dto.MemberSpacesQueryCondition;
@@ -123,7 +122,7 @@ public class DefaultSpaceService implements SpaceService {
 
     @Override
     public SpaceTagGetResponses getTagsBySpaceId(Long spaceId) {
-        List<TagInfo> tagInfos = tagRepository.findBySpaceIdAndGroupBySpaceName(spaceId);
+        List<TagInfo> tagInfos = tagRepository.findTagBySpaceId(spaceId);
         List<SpaceTagGetResponse> tagResponses = tagInfos
                 .stream()
                 .map(t -> new SpaceTagGetResponse(t.name(), t.color().getValue(), t.tagId()))

@@ -2,7 +2,6 @@ package com.tenten.linkhub.domain.space.repository.comment.query;
 
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.tenten.linkhub.domain.space.model.space.Comment;
 import com.tenten.linkhub.domain.space.model.space.QComment;
 import com.tenten.linkhub.domain.space.repository.comment.dto.CommentAndChildCommentCount;
 import com.tenten.linkhub.domain.space.repository.comment.dto.QCommentAndChildCommentCount;
@@ -33,7 +32,8 @@ public class CommentQueryRepository {
                         JPAExpressions
                                 .select(subComment.count())
                                 .from(subComment)
-                                .where(subComment.parentComment.id.eq(comment.id))
+                                .where(subComment.groupNumber.eq(comment.id),
+                                        subComment.isDeleted.eq(false))
                 ))
                 .from(comment)
                 .where(comment.isDeleted.eq(false),

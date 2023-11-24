@@ -49,6 +49,7 @@ public class LinkQueryDslRepository {
                 .leftJoin(member.profileImages.profileImageList, profileImage)
                 .leftJoin(like).on(like.link.eq(link))
                 .where(link.space.id.eq(condition.spaceId()))
+                .where(link.isDeleted.eq(Boolean.FALSE))
                 .where(hasTagFilter(condition.tagId()))
                 .orderBy(linkSort(condition.pageable()))
                 .offset(condition.pageable().getOffset())
@@ -82,7 +83,7 @@ public class LinkQueryDslRepository {
 
         if (linkGetDtos.size() > condition.pageable().getPageSize()) {
             linkGetDtos.remove(condition.pageable().getPageSize());
-            hasNext = false;
+            hasNext = true;
         }
 
         return new SliceImpl<>(linkGetDtos, condition.pageable(), hasNext);

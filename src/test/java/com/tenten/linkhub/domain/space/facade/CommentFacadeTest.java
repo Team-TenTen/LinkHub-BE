@@ -84,7 +84,7 @@ class CommentFacadeTest {
         assertThat(content.get(0).content()).isEqualTo("첫번째 루트 댓글");
         assertThat(content.get(0).nickname()).isEqualTo("잠자는 사자의 콧털");
         assertThat(content.get(0).profileImagePath()).isEqualTo("https://testprofileimage");
-        assertThat(content.get(0).childCount()).isEqualTo(2);
+        assertThat(content.get(0).childCount()).isEqualTo(4);
         assertThat(content.get(0).isModifiable()).isTrue();
 
         assertThat(content.get(1).content()).isEqualTo("두번째 루트 댓글");
