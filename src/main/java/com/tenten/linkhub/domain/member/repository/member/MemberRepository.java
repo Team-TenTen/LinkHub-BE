@@ -2,9 +2,11 @@ package com.tenten.linkhub.domain.member.repository.member;
 
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.Provider;
-
+import com.tenten.linkhub.domain.member.repository.dto.MemberSearchQueryCondition;
+import com.tenten.linkhub.domain.member.repository.dto.MemberWithProfileImageAndFollowingStatus;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Slice;
 
 public interface MemberRepository {
 
@@ -21,4 +23,6 @@ public interface MemberRepository {
     Member getById(Long memberId);
 
     List<Member> findMembersWithProfileImageAndCategoryByIds(List<Long> memberIds);
+
+    Slice<MemberWithProfileImageAndFollowingStatus> searchMember(MemberSearchQueryCondition queryCond);
 }

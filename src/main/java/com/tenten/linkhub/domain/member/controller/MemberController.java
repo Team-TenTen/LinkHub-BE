@@ -12,6 +12,10 @@ import com.tenten.linkhub.domain.member.controller.dto.MemberJoinApiRequest;
 import com.tenten.linkhub.domain.member.controller.dto.MemberJoinApiResponse;
 import com.tenten.linkhub.domain.member.controller.dto.MemberMyProfileApiResponse;
 import com.tenten.linkhub.domain.member.controller.dto.MemberProfileApiResponse;
+import com.tenten.linkhub.domain.member.controller.dto.MemberSearchApiRequest;
+import com.tenten.linkhub.domain.member.controller.dto.MemberSearchApiResponses;
+import com.tenten.linkhub.domain.member.controller.dto.MemberSpacesFindApiRequest;
+import com.tenten.linkhub.domain.member.controller.dto.MemberSpacesFindApiResponses;
 import com.tenten.linkhub.domain.member.controller.mapper.MemberApiMapper;
 import com.tenten.linkhub.domain.member.service.MemberService;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationRequest;
@@ -22,8 +26,7 @@ import com.tenten.linkhub.domain.member.service.dto.MemberFollowingsFindResponse
 import com.tenten.linkhub.domain.member.service.dto.MemberJoinResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberMyProfileResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberProfileResponse;
-import com.tenten.linkhub.domain.member.controller.dto.MemberSpacesFindApiRequest;
-import com.tenten.linkhub.domain.member.controller.dto.MemberSpacesFindApiResponses;
+import com.tenten.linkhub.domain.member.service.dto.MemberSearchResponses;
 import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.global.response.ErrorResponse;
@@ -35,6 +38,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.Objects;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -49,8 +53,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Objects;
 
 @Tag(name = "members", description = "member API Document")
 @RestController
@@ -302,6 +304,32 @@ public class MemberController {
         );
 
         MemberSpacesFindApiResponses apiResponses = MemberSpacesFindApiResponses.from(responses);
+        return ResponseEntity.ok(apiResponses);
+    }
+
+    /**
+     * 멤버 검색 API
+     */
+    @Operation(
+            summary = "멤버 검색 API", description = "특정 키워드를 기준으로 멤버를 검색합니다. keyWord, pageNumber, pageSize를 통해 검색합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "검색이 성공적으로 완료 되었습니다."),
+            })
+    @GetMapping(value = "/search",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<MemberSearchApiResponses> searchMember(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @ModelAttribute MemberSearchApiRequest request
+    ) {
+        PageRequest pageRequest = PageRequest.of(request.pageNumber(), request.pageSize());
+
+        Long myMemberId = Objects.isNull(memberDetails) ? null : memberDetails.memberId();
+
+        MemberSearchResponses responses = memberService.searchMember(
+                mapper.toMemberSearchRequest(request, pageRequest, myMemberId)
+        );
+
+        MemberSearchApiResponses apiResponses = MemberSearchApiResponses.from(responses);
         return ResponseEntity.ok(apiResponses);
     }
 

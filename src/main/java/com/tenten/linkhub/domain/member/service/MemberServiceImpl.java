@@ -9,6 +9,7 @@ import com.tenten.linkhub.domain.member.model.Provider;
 import com.tenten.linkhub.domain.member.model.Role;
 import com.tenten.linkhub.domain.member.repository.MemberEmailRedisRepository;
 import com.tenten.linkhub.domain.member.repository.dto.FollowDTO;
+import com.tenten.linkhub.domain.member.repository.dto.MemberWithProfileImageAndFollowingStatus;
 import com.tenten.linkhub.domain.member.repository.follow.FollowRepository;
 import com.tenten.linkhub.domain.member.repository.member.MemberRepository;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationRequest;
@@ -23,6 +24,9 @@ import com.tenten.linkhub.domain.member.service.dto.MemberJoinRequest;
 import com.tenten.linkhub.domain.member.service.dto.MemberJoinResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberMyProfileResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberProfileResponse;
+import com.tenten.linkhub.domain.member.service.dto.MemberSearchRequest;
+import com.tenten.linkhub.domain.member.service.dto.MemberSearchResponses;
+import com.tenten.linkhub.domain.member.service.mapper.MemberMapper;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.dto.ImageSaveRequest;
 import com.tenten.linkhub.global.aws.s3.ImageFileUploader;
@@ -33,16 +37,17 @@ import com.tenten.linkhub.global.infrastructure.ses.AwsSesService;
 import com.tenten.linkhub.global.response.ErrorCode;
 import com.tenten.linkhub.global.util.email.EmailDto;
 import com.tenten.linkhub.global.util.email.VerificationCodeCreator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
+@RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
 public class MemberServiceImpl implements MemberService {
@@ -57,23 +62,7 @@ public class MemberServiceImpl implements MemberService {
     private final MemberEmailRedisRepository memberEmailRedisRepository;
     private final ImageFileUploader imageFileUploader;
     private final JwtProvider jwtProvider;
-
-    public MemberServiceImpl(
-            MemberRepository memberRepository,
-            FollowRepository followRepository, AwsSesService emailService,
-            VerificationCodeCreator verificationCodeCreator,
-            MemberEmailRedisRepository memberEmailRedisRepository,
-            ImageFileUploader imageFileUploader,
-            JwtProvider jwtProvider
-    ) {
-        this.followRepository = followRepository;
-        this.emailService = emailService;
-        this.verificationCodeCreator = verificationCodeCreator;
-        this.memberEmailRedisRepository = memberEmailRedisRepository;
-        this.memberRepository = memberRepository;
-        this.imageFileUploader = imageFileUploader;
-        this.jwtProvider = jwtProvider;
-    }
+    private final MemberMapper mapper;
 
     @Transactional
     @Override
@@ -209,9 +198,18 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberFollowersFindResponses getFollowers(Long memberId, Long myMemberId, PageRequest pageRequest) {
-        Slice<FollowDTO> followDTOs = followRepository.findFollowersOfTargetUserWithMyMemberFollowingStatus(memberId, myMemberId, pageRequest);
+        Slice<FollowDTO> followDTOs = followRepository.findFollowersOfTargetUserWithMyMemberFollowingStatus(memberId,
+                myMemberId, pageRequest);
 
         return MemberFollowersFindResponses.from(followDTOs);
+    }
+
+    @Override
+    public MemberSearchResponses searchMember(MemberSearchRequest memberSearchRequest) {
+        Slice<MemberWithProfileImageAndFollowingStatus> memberAndMemberImageSlice = memberRepository.searchMember(
+                mapper.toQueryCond(memberSearchRequest));
+
+        return MemberSearchResponses.from(memberAndMemberImageSlice);
     }
 
 }
