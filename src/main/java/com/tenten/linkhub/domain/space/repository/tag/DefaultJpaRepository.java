@@ -20,8 +20,8 @@ public class DefaultJpaRepository implements TagRepository {
     }
 
     @Override
-    public List<TagInfo> findBySpaceIdAndGroupBySpaceName(Long spaceId) {
-        return tagQueryRepository.findTagBySpaceIdAndGroupBySpaceName(spaceId);
+    public List<TagInfo> findBySpaceId(Long spaceId) {
+        return tagQueryRepository.findTagBySpaceId(spaceId);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class DefaultJpaRepository implements TagRepository {
     }
 
     @Override
-    public Optional<Tag> findBySpaceIdAndSpaceName(Long spaceId, String tagName) {
+    public Optional<Tag> findBySpaceIdAndTagName(Long spaceId, String tagName) {
         return tagJpaRepository.findTagBySpaceIdAndTagName(spaceId, tagName);
     }
 
