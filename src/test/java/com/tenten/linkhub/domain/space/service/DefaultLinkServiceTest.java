@@ -19,6 +19,7 @@ import com.tenten.linkhub.domain.space.service.dto.link.LinkCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkGetByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.link.LinksGetByQueryRequest;
+import com.tenten.linkhub.domain.space.service.dto.link.PopularLinksGetByQueryResponses;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -184,6 +185,45 @@ class DefaultLinkServiceTest {
         }
     }
 
+    @Test
+    @DisplayName("사용자는 인기 있는 링크 리스트 5개를 확인할 수 있다.")
+    void getPopularLinks_memberId_Success() {
+        //given - 좋아요 수 증가
+        for (int i = 0; i < linkIds.size(); i++) {
+            Link link = linkJpaRepository.findById(linkIds.get(i)).get();
+            for (int j = 0; j < i; j++) {
+                link.increaseLikeCount();
+            }
+        }
+
+        //when
+        PopularLinksGetByQueryResponses popularLinks = linkService.getPopularLinks(memberId1);
+
+        //then
+        assertThat(popularLinks.responses()).hasSizeLessThanOrEqualTo(5);
+        for (int i = 0; i < linkIds.size(); i++) {
+            assertThat(linkIds.get(linkIds.size() - (i + 1))).isEqualTo(popularLinks.responses().get(i).linkId());
+        }
+    }
+
+    @Test
+    @DisplayName("로그인 한 사용자는 인기 있는 링크 리스트에서 본인이 좋아요를 누른 링크인지 여부를 확인할 수 있다.")
+    void getPopularLinks2_memberId_Success() {
+        //given
+        linkService.createLike(linkIds.get(0), memberId1);
+
+        //when
+        PopularLinksGetByQueryResponses popularLinks = linkService.getPopularLinks(memberId1);
+
+        //then
+        assertThat(popularLinks.responses()).hasSizeLessThanOrEqualTo(5);
+        assertThat(popularLinks.responses().get(0).isLiked()).isTrue();
+        for (int i = 1; i < linkIds.size(); i++) {
+            assertThat(popularLinks.responses().get(i).isLiked()).isFalse();
+        }
+
+    }
+
     private void setUpTestData() {
         Member member1 = new Member(
                 "123456",
@@ -216,13 +256,13 @@ class DefaultLinkServiceTest {
         spaceId = spaceJpaRepository.save(space).getId();
 
         //링크 생성
-        Link link = Link.toLink(space, memberId1, "링크의 제목", new Url("https://www.naver.com"));
+        Link link0 = Link.toLink(space, memberId1, "링크의 제목", new Url("https://www.naver.com"));
         Link link1 = Link.toLink(space, memberId1, "링크의 제목1", new Url("https://www.naver.com"));
         Link link2 = Link.toLink(space, memberId1, "링크의 제목2", new Url("https://www.naver.com"));
         Link link3 = Link.toLink(space, memberId1, "링크의 제목3", new Url("https://www.naver.com"));
 
 
-        linkId = linkJpaRepository.save(link).getId();
+        linkId = linkJpaRepository.save(link0).getId();
         linkIds = List.of(
                 linkId,
                 linkJpaRepository.save(link1).getId(),
