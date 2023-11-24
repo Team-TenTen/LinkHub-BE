@@ -53,13 +53,13 @@ public class DefaultLinkRepository implements LinkRepository {
     }
 
     @Override
-    public List<Link> findBySpaceId(Long targetSpaceId) {
-        return linkJpaRepository.findBySpaceIdAndIsDeletedFalse(targetSpaceId);
+    public List<Link> findBySpaceId(Long sourceSpaceId) {
+        return linkJpaRepository.findBySpaceIdAndIsDeletedFalse(sourceSpaceId);
     }
 
     @Override
-    public Long bulkInsertLinks(List<Link> targetLinks, Long spaceId, Long memberId) {
-        return linkJdbcRepository.bulkInsertLinks(targetLinks, spaceId, memberId);
+    public Long bulkInsertLinks(List<Link> sourceLinks, Long spaceId, Long memberId) {
+        return linkJdbcRepository.bulkInsertLinks(sourceLinks, spaceId, memberId);
     }
 
 }

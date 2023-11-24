@@ -147,24 +147,24 @@ public class DefaultLinkService implements LinkService {
 
     @Override
     @Transactional
-    public void copyLinkBySpaceIdAndPaste(Long targetSpaceId, Long savedSpaceId, Long memberId) {
-        List<Link> targetLinks = linkRepository.findBySpaceId(targetSpaceId);
+    public void copyLinkBySpaceIdAndPaste(Long sourceSpaceId, Long savedSpaceId, Long memberId) {
+        List<Link> sourceLinks = linkRepository.findBySpaceId(sourceSpaceId);
 
-        List<Long> targetLinkIds = targetLinks
+        List<Long> sourceLinkIds = sourceLinks
                 .stream()
                 .map(Link::getId)
                 .toList();
 
-        List<LinkTag> targetLinkTags = linkTagRepository.findByLinkIdIn(targetLinkIds);
-        List<Tag> targetTags = tagRepository.findBySpaceId(targetSpaceId);
+        List<LinkTag> sourceLinkTags = linkTagRepository.findByLinkIdIn(sourceLinkIds);
+        List<Tag> sourceTags = tagRepository.findBySpaceId(sourceSpaceId);
 
-        Long insertedLinksFirstId = linkRepository.bulkInsertLinks(targetLinks, savedSpaceId, memberId);
-        Map<Long, Long> linkIdMappingMap = linkMapper.toCopedAndPasteLinkIdMap(targetLinks, insertedLinksFirstId);
+        Long insertedLinksFirstId = linkRepository.bulkInsertLinks(sourceLinks, savedSpaceId, memberId);
+        Map<Long, Long> linkIdMappingMap = linkMapper.toCopyAndPasteLinkIdMap(sourceLinks, insertedLinksFirstId);
 
-        Long insertedTagsFirstId = tagRepository.bulkInsertTags(targetTags, savedSpaceId);
-        Map<Long, Long> tagIdMappingMap = linkMapper.toCopedAndPasteTagIdMap(targetTags, insertedTagsFirstId);
+        Long insertedTagsFirstId = tagRepository.bulkInsertTags(sourceTags, savedSpaceId);
+        Map<Long, Long> tagIdMappingMap = linkMapper.toCopyAndPasteTagIdMap(sourceTags, insertedTagsFirstId);
 
-        linkTagRepository.bulkInsertLinkTag(targetLinkTags, linkIdMappingMap, tagIdMappingMap);
+        linkTagRepository.bulkInsertLinkTag(sourceLinkTags, linkIdMappingMap, tagIdMappingMap);
     }
 
 }

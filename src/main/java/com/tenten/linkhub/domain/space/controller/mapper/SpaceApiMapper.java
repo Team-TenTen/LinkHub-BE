@@ -1,6 +1,5 @@
 package com.tenten.linkhub.domain.space.controller.mapper;
 
-import com.tenten.linkhub.domain.member.controller.dto.MemberSpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.NewSpacesScrapApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindWithFilterApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
@@ -41,5 +40,5 @@ public interface SpaceApiMapper {
 
     SpaceMemberRoleChangeRequest toSpaceMemberRoleChangeRequest(Long spaceId, Long myMemberId, SpaceMemberRoleChangeApiRequest request);
 
-    NewSpacesScrapFacadeRequest toNewSpacesScrapFacadeRequest(NewSpacesScrapApiRequest request, Long targetSpaceId, Long memberId, MultipartFile file);
+    NewSpacesScrapFacadeRequest toNewSpacesScrapFacadeRequest(NewSpacesScrapApiRequest request, Long sourceSpaceId, Long memberId, MultipartFile file);
 }

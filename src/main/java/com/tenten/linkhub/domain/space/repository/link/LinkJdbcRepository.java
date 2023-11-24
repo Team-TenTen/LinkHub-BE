@@ -17,13 +17,13 @@ public class LinkJdbcRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public Long bulkInsertLinks(List<Link> targetLinks, Long spaceId, Long memberId) {
+    public Long bulkInsertLinks(List<Link> sourceLinks, Long spaceId, Long memberId) {
         String sql = "INSERT INTO links (space_id, member_id, title, url, like_count, created_at, updated_at, is_deleted, version) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ";
 
         jdbcTemplate.batchUpdate(sql,
-                targetLinks,
-                targetLinks.size(),
+                sourceLinks,
+                sourceLinks.size(),
                 (PreparedStatement ps, Link link) -> {
                     ps.setLong(1, spaceId);
                     ps.setLong(2, memberId);

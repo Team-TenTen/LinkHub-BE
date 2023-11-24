@@ -14,13 +14,13 @@ public class TagJdbcRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public Long bulkInsertTags(List<Tag> targetTags, Long spaceId) {
+    public Long bulkInsertTags(List<Tag> sourceTags, Long spaceId) {
         String sql = "INSERT INTO tags (space_id, name, color) " +
                 "VALUES (?, ?, ?) ";
 
         jdbcTemplate.batchUpdate(sql,
-                targetTags,
-                targetTags.size(),
+                sourceTags,
+                sourceTags.size(),
                 (PreparedStatement ps, Tag tag) -> {
                     ps.setLong(1, spaceId);
                     ps.setString(2, tag.getName());

@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface LinkTagRepository {
-    List<LinkTag> findByLinkIdIn(List<Long> targetLinkIds);
+    List<LinkTag> findByLinkIdIn(List<Long> sourceLinkIds);
 
-    Long bulkInsertLinkTag(List<LinkTag> targetLinkTags, Map<Long, Long> linkIdMappingMap, Map<Long, Long> tagIdMappingMap);
+    Long bulkInsertLinkTag(List<LinkTag> sourceLinkTags, Map<Long, Long> linkIdMappingMap, Map<Long, Long> tagIdMappingMap);
 }

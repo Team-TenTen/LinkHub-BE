@@ -18,13 +18,13 @@ public class LinkTagJdbcRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public Long bulkInsertLinkTag(List<LinkTag> targetLinkTags, Map<Long, Long> linkIdMappingMap, Map<Long, Long> tagIdMappingMap) {
+    public Long bulkInsertLinkTag(List<LinkTag> sourceLinkTags, Map<Long, Long> linkIdMappingMap, Map<Long, Long> tagIdMappingMap) {
         String sql = "INSERT INTO link_tags (link_id, tag_id, created_at, updated_at, is_deleted) " +
                 "VALUES (?, ?, ?, ?, ?) ";
 
         jdbcTemplate.batchUpdate(sql,
-                targetLinkTags,
-                targetLinkTags.size(),
+                sourceLinkTags,
+                sourceLinkTags.size(),
                 (PreparedStatement ps, LinkTag linkTag) -> {
                     ps.setLong(1, linkIdMappingMap.get(linkTag.getLink().getId()));
                     ps.setLong(2, tagIdMappingMap.get(linkTag.getTag().getId()));

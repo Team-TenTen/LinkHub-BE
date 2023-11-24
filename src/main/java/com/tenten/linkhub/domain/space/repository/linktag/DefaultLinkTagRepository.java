@@ -15,13 +15,13 @@ public class DefaultLinkTagRepository implements LinkTagRepository {
     private final LinkTagJdbcRepository linkTagJdbcRepository;
 
     @Override
-    public List<LinkTag> findByLinkIdIn(List<Long> targetLinkIds) {
-        return linkTagJpaRepository.findByLinkIdsInAndIsDeletedFalse(targetLinkIds);
+    public List<LinkTag> findByLinkIdIn(List<Long> sourceLinkIds) {
+        return linkTagJpaRepository.findByLinkIdsInAndIsDeletedFalse(sourceLinkIds);
     }
 
     @Override
-    public Long bulkInsertLinkTag(List<LinkTag> targetLinkTags, Map<Long, Long> linkIdMappingMap, Map<Long, Long> tagIdMappingMap) {
-        return linkTagJdbcRepository.bulkInsertLinkTag(targetLinkTags, linkIdMappingMap, tagIdMappingMap);
+    public Long bulkInsertLinkTag(List<LinkTag> sourceLinkTags, Map<Long, Long> linkIdMappingMap, Map<Long, Long> tagIdMappingMap) {
+        return linkTagJdbcRepository.bulkInsertLinkTag(sourceLinkTags, linkIdMappingMap, tagIdMappingMap);
     }
 
 }

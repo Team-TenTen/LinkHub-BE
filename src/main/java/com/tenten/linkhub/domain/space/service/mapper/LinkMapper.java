@@ -1,7 +1,6 @@
 package com.tenten.linkhub.domain.space.service.mapper;
 
 import com.tenten.linkhub.domain.space.model.link.Link;
-import com.tenten.linkhub.domain.space.model.link.LinkTag;
 import com.tenten.linkhub.domain.space.model.link.Tag;
 import com.tenten.linkhub.domain.space.repository.link.dto.LinkGetQueryCondition;
 import com.tenten.linkhub.domain.space.service.dto.link.LinksGetByQueryRequest;
@@ -24,20 +23,20 @@ public class LinkMapper {
         );
     }
 
-    public Map<Long, Long> toCopedAndPasteLinkIdMap(List<Link> targetLinks, Long insertedLinksFirstId) {
-        return IntStream.range(0, targetLinks.size())
+    public Map<Long, Long> toCopyAndPasteLinkIdMap(List<Link> sourceLinks, Long insertedLinksFirstId) {
+        return IntStream.range(0, sourceLinks.size())
                 .boxed()
                 .collect(Collectors.toMap(
-                        i -> targetLinks.get(i).getId(),
+                        i -> sourceLinks.get(i).getId(),
                         i -> insertedLinksFirstId + i
                 ));
     }
 
-    public Map<Long, Long> toCopedAndPasteTagIdMap(List<Tag> targetTags, Long insertedTagsFirstId) {
-        return IntStream.range(0, targetTags.size())
+    public Map<Long, Long> toCopyAndPasteTagIdMap(List<Tag> sourceTags, Long insertedTagsFirstId) {
+        return IntStream.range(0, sourceTags.size())
                 .boxed()
                 .collect(Collectors.toMap(
-                        i -> targetTags.get(i).getId(),
+                        i -> sourceTags.get(i).getId(),
                         i -> insertedTagsFirstId + i
                 ));
     }

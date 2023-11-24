@@ -37,13 +37,13 @@ public class DefaultJpaRepository implements TagRepository {
     }
 
     @Override
-    public List<Tag> findBySpaceId(Long targetSpaceId) {
-        return tagJpaRepository.findBySpaceId(targetSpaceId);
+    public List<Tag> findBySpaceId(Long sourceSpaceId) {
+        return tagJpaRepository.findBySpaceId(sourceSpaceId);
     }
 
     @Override
-    public Long bulkInsertTags(List<Tag> targetTags, Long spaceId) {
-        return tagJdbcRepository.bulkInsertTags(targetTags, spaceId);
+    public Long bulkInsertTags(List<Tag> sourceTags, Long spaceId) {
+        return tagJdbcRepository.bulkInsertTags(sourceTags, spaceId);
     }
 
 }

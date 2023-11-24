@@ -12,7 +12,7 @@ public record NewSpacesScrapFacadeRequest(
         Boolean isLinkSummarizable,
         Boolean isReadMarkEnabled,
         MultipartFile file,
-        Long targetSpaceId,
+        Long sourceSpaceId,
         Long memberId
 ) {
 }

@@ -20,7 +20,7 @@ public interface LinkRepository {
 
     Long countLinkBySpaceId(Long spaceId);
 
-    List<Link> findBySpaceId(Long targetSpaceId);
+    List<Link> findBySpaceId(Long sourceSpaceId);
 
-    Long bulkInsertLinks(List<Link> targetLinks, Long spaceId, Long memberId);
+    Long bulkInsertLinks(List<Link> sourceLinks, Long spaceId, Long memberId);
 }

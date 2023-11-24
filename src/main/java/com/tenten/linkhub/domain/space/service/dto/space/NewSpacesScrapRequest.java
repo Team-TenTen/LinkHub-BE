@@ -12,7 +12,7 @@ public record NewSpacesScrapRequest(
         Boolean isLinkSummarizable,
         Boolean isReadMarkEnabled,
         ImageInfo imageInfo,
-        Long targetSpaceId,
+        Long sourceSpaceId,
         Long memberId
 ) {
 }

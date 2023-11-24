@@ -182,7 +182,7 @@ public class DefaultSpaceService implements SpaceService {
         Space space = mapper.toSpace(request, spaceMember, spaceImage);
         Long savedSpaceId = spaceRepository.save(space).getId();
 
-        linkService.copyLinkBySpaceIdAndPaste(request.targetSpaceId(), savedSpaceId, request.memberId());
+        linkService.copyLinkBySpaceIdAndPaste(request.sourceSpaceId(), savedSpaceId, request.memberId());
 
         scrapRepository.save(
                 new Scrap(space, request.memberId())

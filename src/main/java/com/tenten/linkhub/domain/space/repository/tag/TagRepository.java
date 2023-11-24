@@ -13,7 +13,7 @@ public interface TagRepository {
 
     Tag save(Tag newTag);
 
-    List<Tag> findBySpaceId(Long targetSpaceId);
+    List<Tag> findBySpaceId(Long sourceSpaceId);
 
-    Long bulkInsertTags(List<Tag> targetTags, Long spaceId);
+    Long bulkInsertTags(List<Tag> sourceTags, Long spaceId);
 }
