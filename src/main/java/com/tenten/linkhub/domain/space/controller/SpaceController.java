@@ -555,17 +555,23 @@ public class SpaceController {
     }
 
     /**
-     *  스페이스를 새로운 스페이스로 가져오기 API
+     * 스페이스를 새로운 스페이스로 가져오기 API
      */
-    @PostMapping(value = "/{spaceId}/scraps/new")
+    @PostMapping(value = "/{spaceId}/scraps/new",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<NewSpacesScrapApiResponse> scrapAndCreateNewSpace(
             @AuthenticationPrincipal MemberDetails memberDetails,
             @PathVariable Long spaceId,
-            @RequestBody NewSpacesScrapApiRequest request,
+            @RequestPart @Valid NewSpacesScrapApiRequest request,
             @RequestPart(required = false) MultipartFile file
     ) {
         NewSpacesScrapFacadeRequest facadeRequest = spaceMapper.toNewSpacesScrapFacadeRequest(request, spaceId, memberDetails.memberId(), file);
         Long responseSpaceId = spaceFacade.scrapAndCreateNewSpace(facadeRequest);
+
+        NewSpacesScrapApiResponse apiResponse = NewSpacesScrapApiResponse.from(responseSpaceId);
+
+        return ResponseEntity.ok(apiResponse);
     }
 
     private void setSpaceViewCookie(HttpServletResponse servletResponse, List<Long> spaceViews) {

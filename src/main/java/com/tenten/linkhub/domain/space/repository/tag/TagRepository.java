@@ -14,4 +14,8 @@ public interface TagRepository {
     Optional<Tag> findBySpaceIdAndSpaceName(Long spaceId, String tagName);
 
     Tag save(Tag newTag);
+
+    List<Tag> findBySpaceId(Long targetSpaceId);
+
+    Long bulkInsertTags(List<Tag> targetTags, Long spaceId);
 }

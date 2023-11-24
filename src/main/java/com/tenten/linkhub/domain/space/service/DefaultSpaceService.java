@@ -6,6 +6,7 @@ import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.favorite.FavoriteRepository;
 import com.tenten.linkhub.domain.space.repository.link.LinkRepository;
+import com.tenten.linkhub.domain.space.repository.linktag.LinkTagRepository;
 import com.tenten.linkhub.domain.space.repository.scrap.ScrapRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.repository.space.dto.MemberSpacesQueryCondition;
@@ -14,6 +15,7 @@ import com.tenten.linkhub.domain.space.repository.tag.TagRepository;
 import com.tenten.linkhub.domain.space.repository.tag.dto.TagInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
 import com.tenten.linkhub.domain.space.service.dto.space.MemberSpacesFindRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.NewSpacesScrapRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponse;
@@ -44,6 +46,7 @@ public class DefaultSpaceService implements SpaceService {
     private final LinkRepository linkRepository;
     private final ScrapRepository scrapRepository;
     private final TagRepository tagRepository;
+    private final LinkService linkService;
     private final SpaceMapper mapper;
 
     @Override
@@ -57,7 +60,7 @@ public class DefaultSpaceService implements SpaceService {
     @Override
     @Transactional
     public Long createSpace(SpaceCreateRequest request) {
-        SpaceMember spaceMember = mapper.toSpaceMember(request, OWNER);
+        SpaceMember spaceMember = mapper.toSpaceMember(request.memberId(), OWNER);
         SpaceImage spaceImage = mapper.toSpaceImage(request.imageInfo());
 
         Space space = mapper.toSpace(request, spaceMember, spaceImage);
@@ -168,6 +171,20 @@ public class DefaultSpaceService implements SpaceService {
 
         Space space = spaceRepository.getById(spaceId);
         space.validateVisibilityAndMembership(memberId);
+    }
+
+    @Override
+    @Transactional
+    public Long createSpaceAndCopyLinks(NewSpacesScrapRequest request) {
+        SpaceMember spaceMember = mapper.toSpaceMember(request.memberId(), OWNER);
+        SpaceImage spaceImage = mapper.toSpaceImage(request.imageInfo());
+
+        Space space = mapper.toSpace(request, spaceMember, spaceImage);
+        Long savedSpaceId = spaceRepository.save(space).getId();
+
+        linkService.copyLinkBySpaceIdAndPaste(request.targetSpaceId(), savedSpaceId, request.memberId());
+
+        return savedSpaceId;
     }
 
 }

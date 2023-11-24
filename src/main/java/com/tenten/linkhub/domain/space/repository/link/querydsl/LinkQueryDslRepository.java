@@ -120,4 +120,5 @@ public class LinkQueryDslRepository {
         // 정렬 조건이 없는 경우 기본적으로 최신순(createdAt 내림차순)으로 정렬
         return new OrderSpecifier(Order.DESC, link.createdAt);
     }
+
 }

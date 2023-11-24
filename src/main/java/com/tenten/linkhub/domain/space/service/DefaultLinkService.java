@@ -12,6 +12,7 @@ import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.like.LikeRepository;
 import com.tenten.linkhub.domain.space.repository.link.LinkRepository;
 import com.tenten.linkhub.domain.space.repository.link.dto.LinkGetDto;
+import com.tenten.linkhub.domain.space.repository.linktag.LinkTagRepository;
 import com.tenten.linkhub.domain.space.repository.linkview.LinkViewRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.repository.tag.TagRepository;
@@ -22,15 +23,19 @@ import com.tenten.linkhub.domain.space.service.dto.link.LinksGetByQueryRequest;
 import com.tenten.linkhub.domain.space.service.mapper.LinkMapper;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
 public class DefaultLinkService implements LinkService {
@@ -39,16 +44,8 @@ public class DefaultLinkService implements LinkService {
     private final SpaceRepository spaceRepository;
     private final LikeRepository likeRepository;
     private final LinkViewRepository linkViewRepository;
+    private final LinkTagRepository linkTagRepository;
     private final LinkMapper linkMapper;
-
-    public DefaultLinkService(LinkRepository linkRepository, TagRepository tagRepository, SpaceRepository spaceRepository, LikeRepository likeRepository, LinkViewRepository linkViewRepository, LinkMapper linkMapper) {
-        this.linkRepository = linkRepository;
-        this.tagRepository = tagRepository;
-        this.spaceRepository = spaceRepository;
-        this.likeRepository = likeRepository;
-        this.linkViewRepository = linkViewRepository;
-        this.linkMapper = linkMapper;
-    }
 
     @Override
     @Transactional
@@ -150,4 +147,27 @@ public class DefaultLinkService implements LinkService {
         LinkGetByQueryResponses responses = LinkGetByQueryResponses.from(linkGetDtos);
         return responses;
     }
+
+    @Override
+    @Transactional
+    public void copyLinkBySpaceIdAndPaste(Long targetSpaceId, Long savedSpaceId, Long memberId) {
+        List<Link> targetLinks = linkRepository.findBySpaceId(targetSpaceId);
+
+        List<Long> targetLinkIds = targetLinks
+                .stream()
+                .map(Link::getId)
+                .toList();
+
+        List<LinkTag> targetLinkTags = linkTagRepository.findByLinkIdIn(targetLinkIds);
+        List<Tag> targetTags = tagRepository.findBySpaceId(targetSpaceId);
+
+        Long insertedLinksFirstId = linkRepository.bulkInsertLinks(targetLinks, savedSpaceId, memberId);
+        Map<Long, Long> linkIdMappingMap = linkMapper.toCopedAndPasteLinkIdMap(targetLinks, insertedLinksFirstId);
+
+        Long insertedTagsFirstId = tagRepository.bulkInsertTags(targetTags, savedSpaceId);
+        Map<Long, Long> tagIdMappingMap = linkMapper.toCopedAndPasteTagIdMap(targetTags, insertedTagsFirstId);
+
+        linkTagRepository.bulkInsertLinkTag(targetLinkTags, linkIdMappingMap, tagIdMappingMap);
+    }
+
 }
