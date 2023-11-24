@@ -9,8 +9,6 @@ import java.util.Optional;
 public interface TagRepository {
     List<TagInfo> findBySpaceId(Long spaceId);
 
-    boolean existsTagInSpace(Long spaceId, String tagName);
-
     Optional<Tag> findBySpaceIdAndTagName(Long spaceId, String tagName);
 
     Tag save(Tag newTag);

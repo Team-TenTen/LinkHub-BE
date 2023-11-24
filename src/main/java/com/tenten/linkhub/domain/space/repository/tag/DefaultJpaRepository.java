@@ -21,12 +21,7 @@ public class DefaultJpaRepository implements TagRepository {
 
     @Override
     public List<TagInfo> findBySpaceId(Long spaceId) {
-        return tagQueryRepository.findTagBySpaceId(spaceId);
-    }
-
-    @Override
-    public boolean existsTagInSpace(Long spaceId, String tagName) {
-        return tagQueryRepository.existsTagInSpace(spaceId, tagName);
+        return tagQueryRepository.findTagBySpaceIdAndGroupBySpaceName(spaceId);
     }
 
     @Override
