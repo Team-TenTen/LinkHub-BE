@@ -135,5 +135,6 @@ public class Link extends BaseEntity {
 
     public void deleteLink() {
         this.isDeleted = true;
+        deleteLinkTag();
     }
 }

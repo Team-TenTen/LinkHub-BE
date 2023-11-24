@@ -49,6 +49,7 @@ public class LinkQueryDslRepository {
                 .leftJoin(member.profileImages.profileImageList, profileImage)
                 .leftJoin(like).on(like.link.eq(link))
                 .where(link.space.id.eq(condition.spaceId()))
+                .where(link.isDeleted.eq(Boolean.FALSE))
                 .where(hasTagFilter(condition.tagId()))
                 .orderBy(linkSort(condition.pageable()))
                 .offset(condition.pageable().getOffset())
