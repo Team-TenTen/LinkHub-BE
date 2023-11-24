@@ -1,6 +1,5 @@
-package com.tenten.linkhub.domain.notification.model;
+package com.tenten.linkhub.domain.space.model.space;
 
-import com.tenten.linkhub.domain.space.model.space.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,7 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,16 +25,16 @@ public class Invitation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "notification_id", referencedColumnName = "id", nullable = false)
-    private Notification notification;
-
-    @Column(nullable = false)
-    private Long spaceId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "space_id", referencedColumnName = "id", nullable = false)
+    private Space space;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
     @Column(nullable = false)
     private Boolean isAccepted;
+
+    @Column(nullable = false)
+    private Long notificationId;
 }
