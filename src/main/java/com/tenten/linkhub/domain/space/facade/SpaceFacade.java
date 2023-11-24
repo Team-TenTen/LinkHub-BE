@@ -8,8 +8,8 @@ import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeReques
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.mapper.SpaceFacadeMapper;
-import com.tenten.linkhub.domain.space.handler.dto.SpaceImagesDeleteEvent;
-import com.tenten.linkhub.domain.space.handler.dto.SpaceIncreaseViewCountEvent;
+import com.tenten.linkhub.domain.space.handler.dto.SpaceImageDeleteEvent;
+import com.tenten.linkhub.domain.space.handler.dto.SpaceDetailFindEvent;
 import com.tenten.linkhub.domain.space.service.LinkService;
 import com.tenten.linkhub.domain.space.service.SpaceImageUploader;
 import com.tenten.linkhub.domain.space.service.SpaceService;
@@ -69,7 +69,7 @@ public class SpaceFacade {
         DeletedSpaceImageNames deletedSpaceImageNames = spaceService.deleteSpaceById(spaceId, memberId);
 
         eventPublisher.publishEvent(
-                new SpaceImagesDeleteEvent(deletedSpaceImageNames.fileNames())
+                new SpaceImageDeleteEvent(deletedSpaceImageNames.fileNames())
         );
     }
 
@@ -90,7 +90,7 @@ public class SpaceFacade {
     private List<Long> increaseSpaceViewCountAndSetSpaceViews(List<Long> spaceViews, Long spaceId) {
         if (spaceViews.isEmpty()) {
             eventPublisher.publishEvent(
-                    new SpaceIncreaseViewCountEvent(spaceId)
+                    new SpaceDetailFindEvent(spaceId)
             );
 
             spaceViews.add(spaceId);
@@ -99,7 +99,7 @@ public class SpaceFacade {
 
         if (!spaceViews.contains(spaceId)) {
             eventPublisher.publishEvent(
-                    new SpaceIncreaseViewCountEvent(spaceId)
+                    new SpaceDetailFindEvent(spaceId)
             );
 
             spaceViews.add(spaceId);
