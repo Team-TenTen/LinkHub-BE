@@ -1,6 +1,8 @@
 package com.tenten.linkhub.domain.space.model.space.vo;
 
+import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
+import com.tenten.linkhub.global.exception.DataNotFoundException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
@@ -76,8 +78,19 @@ public class SpaceMembers {
     }
 
     public boolean containMember(Long memberId) {
-        return spaceMemberList.
-                stream()
-                .anyMatch(m -> Objects.equals(m.getMemberId(), memberId));
+        return spaceMemberList
+                .stream()
+                .anyMatch(sm -> Objects.equals(sm.getMemberId(), memberId) && !sm.getIsDeleted());
     }
+
+    public void changeSpaceMembersRole(Long targetMemberId, Role role) {
+        SpaceMember targetSpaceMember = getSpaceMemberList()
+                .stream()
+                .filter(sm -> Objects.equals(sm.getMemberId(), targetMemberId))
+                .findFirst()
+                .orElseThrow(() -> new DataNotFoundException("해당 스페이스멤버를 찾지 못했습니다."));
+
+        targetSpaceMember.changeRole(role);
+    }
+
 }

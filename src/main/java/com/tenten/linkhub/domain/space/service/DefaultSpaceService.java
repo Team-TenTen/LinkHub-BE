@@ -13,12 +13,13 @@ import com.tenten.linkhub.domain.space.repository.tag.dto.TagInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
 import com.tenten.linkhub.domain.space.service.dto.space.MemberSpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
+import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
+import com.tenten.linkhub.domain.space.service.dto.spacemember.SpaceMemberRoleChangeRequest;
 import com.tenten.linkhub.domain.space.service.mapper.SpaceMapper;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import lombok.RequiredArgsConstructor;
@@ -114,10 +115,10 @@ public class DefaultSpaceService implements SpaceService {
 
     @Override
     public SpaceTagGetResponses getTagsBySpaceId(Long spaceId) {
-        List<TagInfo> tagInfos = tagRepository.findBySpaceIdAndGroupBySpaceName(spaceId);
+        List<TagInfo> tagInfos = tagRepository.findBySpaceId(spaceId);
         List<SpaceTagGetResponse> tagResponses = tagInfos
                 .stream()
-                .map(t -> new SpaceTagGetResponse(t.name(), t.color().getValue()))
+                .map(t -> new SpaceTagGetResponse(t.name(), t.color().getValue(), t.tagId()))
                 .toList();
 
         return SpaceTagGetResponses.from(tagResponses);
@@ -128,6 +129,24 @@ public class DefaultSpaceService implements SpaceService {
         Space space = spaceRepository.getSpaceJoinSpaceMemberById(spaceId);
 
         space.checkLinkViewHistoryEnabled(memberId);
+    }
+
+    @Override
+    public void checkMemberCanViewLink(Long memberId, Long spaceId) {
+        Space space = spaceRepository.getSpaceJoinSpaceMemberById(spaceId);
+        space.validateVisibilityAndMembership(memberId);
+    }
+
+
+    @Override
+    @Transactional
+    public Long changeSpaceMembersRole(SpaceMemberRoleChangeRequest request) {
+        Space space = spaceRepository.getById(request.spaceId());
+        space.validateOwnership(request.myMemberId());
+
+        space.changeSpaceMembersRole(request.targetMemberId(), request.role());
+
+        return space.getId();
     }
 
 }

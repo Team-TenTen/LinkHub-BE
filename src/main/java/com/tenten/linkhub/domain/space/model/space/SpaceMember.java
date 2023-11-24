@@ -65,6 +65,10 @@ public class SpaceMember extends BaseEntity {
         this.space = space;
     }
 
+    public void changeRole(Role role) {
+        this.role = role;
+    }
+
     public Long deleteSpaceMember() {
         this.isDeleted = true;
         return id;

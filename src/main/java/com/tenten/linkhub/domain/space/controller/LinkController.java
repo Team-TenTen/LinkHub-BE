@@ -6,20 +6,29 @@ import com.tenten.linkhub.domain.space.controller.dto.link.LinkCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.link.LinkCreateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.link.LinkUpdateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.link.LinkUpdateApiResponse;
+import com.tenten.linkhub.domain.space.controller.dto.link.LinksGetWithFilterApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.link.LinksGetWithFilterApiResponses;
 import com.tenten.linkhub.domain.space.controller.mapper.LinkApiMapper;
 import com.tenten.linkhub.domain.space.facade.LinkFacade;
 import com.tenten.linkhub.domain.space.facade.dto.LinkCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.LinkUpdateFacadeRequest;
+import com.tenten.linkhub.domain.space.service.dto.link.LinkGetByQueryResponses;
+import com.tenten.linkhub.domain.space.service.dto.link.LinksGetByQueryRequest;
 import com.tenten.linkhub.global.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -27,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
+import java.util.Objects;
 
 @RestController
 public class LinkController {
@@ -45,11 +55,13 @@ public class LinkController {
      */
     @Operation(
             summary = "링크 생성 API",
-            description = "[JWT 필요] 스페이스 내에서 링크를 생성하는 API 입니다. Tag는 필수로 포함되어야 하는 값은 아닙니다. \n - Tag를 포함하여 링크를 생성하는 경우: tag 필드 포함. 단, \"\" 나 \" \"를 허용하지 않습니다.\n - Tag를 포함하지 않고 링크를 생성하는 경우: 아예 tag 필드 없이 보내주세요",
+            description = "[JWT 필요] 스페이스 내에서 링크를 생성하는 API 입니다. TagName과 Color는 필수로 포함되어야 하는 값은 아닙니다. \n - TagName & Color를 포함하여 링크를 수정하는 경우: tagName & Color 필드 포함. 단, \"\" 나 \" \"를 허용하지 않습니다.\n - Tag를 포함하지 않고 링크를 생성하는 경우: 아예 tagName & Color 필드 없이 보내주세요",
             responses = {
                     @ApiResponse(responseCode = "201", description = "링크가 성공적으로 생성된 경우"),
-                    @ApiResponse(responseCode = "404", description = "링크 생성 권한이 없습니다."),
-                    @ApiResponse(responseCode = "404", description = "요청한 spaceId에 해당하는 스페이스를 찾을 수 없습니다.")
+                    @ApiResponse(responseCode = "404", description = "링크 생성 권한이 없습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "404", description = "요청한 spaceId에 해당하는 스페이스를 찾을 수 없습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @PostMapping(value = "/spaces/{spaceId}/links",
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -76,12 +88,15 @@ public class LinkController {
      */
     @Operation(
             summary = "링크 수정 API",
-            description = "[JWT 필요] 스페이스 내에서 링크를 수정하는 API 입니다. Tag는 필수로 포함되어야 하는 값은 아닙니다. \n - Tag를 포함하여 링크를 수정하는 경우: tag 필드 포함. 단, \"\" 나 \" \"를 허용하지 않습니다.\n - Tag를 포함하지 않고 링크를 수하는 경우: 아예 tag 필드 없이 보내주세요",
+            description = "[JWT 필요] 스페이스 내에서 링크를 수정하는 API 입니다. TagName과 Color는 필수로 포함되어야 하는 값은 아닙니다. \n - TagName & Color를 포함하여 링크를 수정하는 경우: tagName & Color 필드 포함. 단, \"\" 나 \" \"를 허용하지 않습니다.\n - Tag를 포함하지 않고 링크를 수정하는 경우: 아예 tagName & Color 필드 없이 보내주세요",
             responses = {
                     @ApiResponse(responseCode = "200", description = "링크가 성공적으로 수정된 경우"),
-                    @ApiResponse(responseCode = "404", description = "링크 수정 권한이 없습니다."),
-                    @ApiResponse(responseCode = "404", description = "요청한 spaceId에 해당하는 스페이스를 찾을 수 없습니다."),
-                    @ApiResponse(responseCode = "404", description = "요청한 linkId에 해당하는 스페이스를 찾을 수 없습니다.")
+                    @ApiResponse(responseCode = "404", description = "링크 수정 권한이 없습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "404", description = "요청한 spaceId에 해당하는 스페이스를 찾을 수 없습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "404", description = "요청한 linkId에 해당하는 스페이스를 찾을 수 없습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @PutMapping(value = "/spaces/{spaceId}/links/{linkId}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -180,9 +195,12 @@ public class LinkController {
             description = "[JWT 필요] 스페이스 내에서 링크를 삭제하는 API 입니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "링크가 성공적으로 삭제된 경우"),
-                    @ApiResponse(responseCode = "404", description = "링크 삭제 권한이 없습니다."),
-                    @ApiResponse(responseCode = "404", description = "요청한 spaceId에 해당하는 스페이스를 찾을 수 없습니다."),
-                    @ApiResponse(responseCode = "404", description = "요청한 linkId에 해당하는 스페이스를 찾을 수 없습니다.")
+                    @ApiResponse(responseCode = "404", description = "링크 삭제 권한이 없습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "404", description = "요청한 spaceId에 해당하는 스페이스를 찾을 수 없습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "404", description = "요청한 linkId에 해당하는 스페이스를 찾을 수 없습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @DeleteMapping(value = "/spaces/{spaceId}/links/{linkId}")
     public ResponseEntity<Void> deleteLink(
@@ -195,6 +213,48 @@ public class LinkController {
         return ResponseEntity
                 .noContent()
                 .build();
+    }
+
+    /**
+     * 링크 조회 API
+     */
+
+
+    @Operation(
+            summary = "링크 조회 API", description = "- tagId, pageNumber, pageSize, sort를 받아 검색합니다.(sort, filter 조건 없이 사용할 수 있습니다.) \n " +
+            " - sort: {created_at, popular} -> sort를 넣어주지 않을 경우 default는 created_at입니다. \n " +
+            " - tagId: 필터링하고자 하는 태그의 tagId를 넣어주세요. \n ",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "검색이 성공적으로 완료 되었습니다."),
+                    @ApiResponse(responseCode = "404", description = "링크를 조회할 수 있는 권한이 없습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            })
+    @GetMapping(value = "/spaces/{spaceId}/links")
+    public ResponseEntity<LinksGetWithFilterApiResponses> getLinks(
+            @PathVariable Long spaceId,
+            @ModelAttribute LinksGetWithFilterApiRequest request,
+            @AuthenticationPrincipal MemberDetails memberDetails
+    ) {
+        Long memberId = Objects.isNull(memberDetails) ? null : memberDetails.memberId();
+
+        PageRequest pageRequest = PageRequest.of(
+                request.pageNumber(),
+                request.pageSize(),
+                StringUtils.hasText(request.sort()) ? Sort.by(request.sort()) : Sort.unsorted());
+
+        LinksGetByQueryRequest serviceRequest = mapper.toLinksGetByQueryRequest(
+                request,
+                pageRequest,
+                spaceId,
+                memberId
+        );
+
+        LinkGetByQueryResponses facadeResponses = linkFacade.getLinks(serviceRequest);
+        LinksGetWithFilterApiResponses response = LinksGetWithFilterApiResponses.from(facadeResponses);
+
+        return ResponseEntity
+                .ok()
+                .body(response);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.tenten.linkhub.domain.member.service;
 
 import com.tenten.linkhub.domain.member.model.Provider;
+import com.tenten.linkhub.domain.member.service.dto.MailSendResponse;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationRequest;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberFindResponse;
@@ -12,6 +13,8 @@ import com.tenten.linkhub.domain.member.service.dto.MemberJoinRequest;
 import com.tenten.linkhub.domain.member.service.dto.MemberJoinResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberMyProfileResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberProfileResponse;
+import com.tenten.linkhub.domain.member.service.dto.MemberUpdateRequest;
+import com.tenten.linkhub.domain.member.service.dto.MemberUpdateResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberSearchRequest;
 import com.tenten.linkhub.domain.member.service.dto.MemberSearchResponses;
 import com.tenten.linkhub.global.util.email.EmailDto;
@@ -20,7 +23,7 @@ import org.springframework.data.domain.PageRequest;
 
 public interface MemberService {
 
-    void sendVerificationEmail(EmailDto emailDto);
+    MailSendResponse sendVerificationEmail(EmailDto emailDto);
 
     MailVerificationResponse verificateEmail(MailVerificationRequest request);
 
@@ -41,6 +44,8 @@ public interface MemberService {
     MemberFollowingsFindResponses getFollowings(Long memberId, Long myMemberId, PageRequest pageRequest);
 
     MemberFollowersFindResponses getFollowers(Long memberId, Long myMemberId, PageRequest pageRequest);
+
+    MemberUpdateResponse updateProfile(MemberUpdateRequest memberUpdateRequest);
 
     MemberSearchResponses searchMember(MemberSearchRequest memberSearchRequest);
 }

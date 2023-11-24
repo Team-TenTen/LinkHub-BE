@@ -7,7 +7,6 @@ import com.tenten.linkhub.domain.member.model.Provider;
 import com.tenten.linkhub.domain.member.repository.member.MemberJpaRepository;
 import com.tenten.linkhub.domain.space.exception.LinkViewHistoryException;
 import com.tenten.linkhub.domain.space.model.category.Category;
-import com.tenten.linkhub.domain.space.model.link.Color;
 import com.tenten.linkhub.domain.space.model.link.Link;
 import com.tenten.linkhub.domain.space.model.link.vo.Url;
 import com.tenten.linkhub.domain.space.model.space.Role;
@@ -17,15 +16,21 @@ import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.link.LinkJpaRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkCreateRequest;
+import com.tenten.linkhub.domain.space.service.dto.link.LinkGetByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkUpdateRequest;
+import com.tenten.linkhub.domain.space.service.dto.link.LinksGetByQueryRequest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -49,6 +54,7 @@ class DefaultLinkServiceTest {
     private Long memberId1;
     private Long spaceId;
     private Long linkId;
+    private List<Long> linkIds;
 
     @BeforeEach
     void setUp() {
@@ -65,7 +71,7 @@ class DefaultLinkServiceTest {
                 "개발 블로그 1",
                 "백엔드",
                 memberId1,
-                Color.BLUE
+                "blue"
         );
 
         //when
@@ -76,7 +82,7 @@ class DefaultLinkServiceTest {
 
         assertThat(savedLink.getUrl()).usingRecursiveComparison().isEqualTo(new Url("https://mideveloperni.tistory.com/"));
         assertThat(savedLink.getTitle()).isEqualTo("개발 블로그 1");
-        assertThat(savedLink.getTags().get(0).getName()).isEqualTo("백엔드");
+        assertThat(savedLink.getLinkTags().get(0).getTag().getName()).isEqualTo("백엔드");
     }
 
     @Test
@@ -90,7 +96,7 @@ class DefaultLinkServiceTest {
                 "바꾼 태그",
                 memberId1,
                 linkId,
-                Color.GRAY
+                "gray"
         );
 
         //when
@@ -101,7 +107,7 @@ class DefaultLinkServiceTest {
 
         assertThat(savedLink.getUrl()).usingRecursiveComparison().isEqualTo(new Url("https://mideveloperni2.tistory.com/"));
         assertThat(savedLink.getTitle()).isEqualTo("바꾼 타이틀");
-        assertThat(savedLink.getTags().get(0).getName()).isEqualTo("바꾼 태그");
+        assertThat(savedLink.getLinkTags().get(0).getTag().getName()).isEqualTo("바꾼 태그");
     }
 
     @Test
@@ -124,6 +130,58 @@ class DefaultLinkServiceTest {
         //then
         int linkCount = (int) linkJpaRepository.findById(linkId).stream().count();
         assertThat(linkCount).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("사용자는 최신순으로 링크를 조회할 수 있다.")
+    void getLinks_Request_SortByCreatedAtSuccess() {
+        //given
+        LinksGetByQueryRequest request = new LinksGetByQueryRequest(
+                PageRequest.of(0, 10),
+                spaceId,
+                memberId1,
+                null
+        );
+
+        //when
+        LinkGetByQueryResponses links = linkService.getLinks(request);
+
+        //then
+        assertThat(links.responses().getContent().size()).isEqualTo(4);
+        //최신 순 정렬 확인
+        for (int i = 0; i < linkIds.size(); i++) {
+            assertThat(linkIds.get(i)).isEqualTo(links.responses().getContent().get(i).linkId());
+        }
+    }
+
+    @Test
+    @DisplayName("사용자는 인기순으로 링크를 조회할 수 있다.")
+    void getLinks_Request_SortByPopularSuccess() {
+        //given
+        LinksGetByQueryRequest request = new LinksGetByQueryRequest(
+                PageRequest.of(0, 10, Sort.by("popular")),
+                spaceId,
+                memberId1,
+                null
+        );
+
+        for (int i = 0; i < linkIds.size(); i++) {
+            Link link = linkJpaRepository.findById(linkIds.get(i)).get();
+            for (int j = 0; j < i; j++) {
+                link.increaseLikeCount();
+            }
+        }
+
+        //when
+        LinkGetByQueryResponses links = linkService.getLinks(request);
+
+        //then
+        assertThat(links.responses().getContent().size()).isEqualTo(4);
+
+        //인기 순 정렬 확인
+        for (int i = 0; i < linkIds.size(); i++) {
+            assertThat(linkIds.get(linkIds.size() - (i + 1))).isEqualTo(links.responses().getContent().get(i).linkId());
+        }
     }
 
     private void setUpTestData() {
@@ -159,7 +217,20 @@ class DefaultLinkServiceTest {
 
         //링크 생성
         Link link = Link.toLink(space, memberId1, "링크의 제목", new Url("https://www.naver.com"));
+        Link link1 = Link.toLink(space, memberId1, "링크의 제목1", new Url("https://www.naver.com"));
+        Link link2 = Link.toLink(space, memberId1, "링크의 제목2", new Url("https://www.naver.com"));
+        Link link3 = Link.toLink(space, memberId1, "링크의 제목3", new Url("https://www.naver.com"));
+
+
         linkId = linkJpaRepository.save(link).getId();
+        linkIds = List.of(
+                linkId,
+                linkJpaRepository.save(link1).getId(),
+                linkJpaRepository.save(link2).getId(),
+                linkJpaRepository.save(link3).getId()
+        );
+
+
     }
 
 }

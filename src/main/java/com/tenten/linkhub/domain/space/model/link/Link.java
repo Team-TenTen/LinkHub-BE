@@ -22,7 +22,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 
@@ -41,7 +40,7 @@ public class Link extends BaseEntity {
     private Space space;
 
     @OneToMany(mappedBy = "link", cascade = CascadeType.PERSIST)
-    private List<Tag> tags = new ArrayList<>();
+    private List<LinkTag> linkTags = new ArrayList<>();
 
     @Column(nullable = false)
     private Long memberId;
@@ -58,9 +57,12 @@ public class Link extends BaseEntity {
     @Version
     private int version;
 
-    public void addTag(Tag tag) {
-        tags.add(tag);
-        tag.changeLink(this);
+    @OneToMany(mappedBy = "link", cascade = CascadeType.PERSIST)
+    private List<LinkViewHistory> linkViewHistories = new ArrayList<>();
+
+    public void addLinkTag(LinkTag linkTag) {
+        linkTags.add(linkTag);
+        linkTag.changeLink(this);
     }
 
     public static Link toLink(Space space,
@@ -90,26 +92,37 @@ public class Link extends BaseEntity {
         this.likeCount = 0L;
     }
 
-    public void updateLink(Url url, String title, Optional<Tag> tag) {
+    public void updateLink(Url url, String title, LinkTag linkTag) {
         validateNotNull(url, "url");
         validateNotNull(title, "title");
         this.url = url;
         this.title = title;
 
-        if (hasTag()) {
-            deleteTag();
+        if (hasLinkTag()) { //기존에 태그를 사용하는 링크였다면 삭제 처리
+            deleteLinkTag();
         }
 
-        tag.ifPresent(value -> this.tags.add(value));
+        this.linkTags.add(linkTag);
     }
 
-    private boolean hasTag() {
-        return !tags.isEmpty();
+    public void updateLink(Url url, String title) {
+        validateNotNull(url, "url");
+        validateNotNull(title, "title");
+        this.url = url;
+        this.title = title;
+
+        if (hasLinkTag()) { //기존에 태그를 사용하는 링크였다면 삭제 처리
+            deleteLinkTag();
+        }
     }
 
-    private void deleteTag() {
-        this.tags.forEach(Tag::deleteTag);
-        this.tags.clear();
+    private boolean hasLinkTag() {
+        return !linkTags.isEmpty();
+    }
+
+    private void deleteLinkTag() {
+        this.linkTags.forEach(LinkTag::deleteLink);
+        this.linkTags.clear();
     }
 
     public void increaseLikeCount() {
@@ -122,6 +135,6 @@ public class Link extends BaseEntity {
 
     public void deleteLink() {
         this.isDeleted = true;
-
+        deleteLinkTag();
     }
 }
