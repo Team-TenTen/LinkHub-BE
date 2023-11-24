@@ -8,12 +8,15 @@ import com.tenten.linkhub.domain.space.controller.dto.link.LinkUpdateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.link.LinkUpdateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.link.LinksGetWithFilterApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.link.LinksGetWithFilterApiResponses;
+import com.tenten.linkhub.domain.space.controller.dto.link.PopularLinksGetApiResponses;
 import com.tenten.linkhub.domain.space.controller.mapper.LinkApiMapper;
 import com.tenten.linkhub.domain.space.facade.LinkFacade;
 import com.tenten.linkhub.domain.space.facade.dto.LinkCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.LinkUpdateFacadeRequest;
+import com.tenten.linkhub.domain.space.service.LinkService;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkGetByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.link.LinksGetByQueryRequest;
+import com.tenten.linkhub.domain.space.service.dto.link.PopularLinksGetByQueryResponses;
 import com.tenten.linkhub.global.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -41,13 +44,16 @@ import java.util.Objects;
 @RestController
 public class LinkController {
     private static final String LINK_LOCATION_PREFIX = "https://api.Link-hub.site/links/";
-
     private final LinkFacade linkFacade;
+    private final LinkService linkService;
     private final LinkApiMapper mapper;
 
-    public LinkController(LinkFacade linkFacade, LinkApiMapper mapper) {
+    public LinkController(LinkFacade linkFacade,
+                          LinkApiMapper mapper,
+                          LinkService linkService) {
         this.linkFacade = linkFacade;
         this.mapper = mapper;
+        this.linkService = linkService;
     }
 
     /**
@@ -218,8 +224,6 @@ public class LinkController {
     /**
      * 링크 조회 API
      */
-
-
     @Operation(
             summary = "링크 조회 API", description = "- tagId, pageNumber, pageSize, sort를 받아 검색합니다.(sort, filter 조건 없이 사용할 수 있습니다.) \n " +
             " - sort: {created_at, popular} -> sort를 넣어주지 않을 경우 default는 created_at입니다. \n " +
@@ -255,6 +259,23 @@ public class LinkController {
         return ResponseEntity
                 .ok()
                 .body(response);
+    }
+
+    /**
+     * 인기 있는 링크 리스트 조회
+     */
+    @GetMapping("/links/popular")
+    public ResponseEntity<PopularLinksGetApiResponses> getPopularLinks(
+            @AuthenticationPrincipal MemberDetails memberDetails
+    ) {
+        Long memberId = Objects.isNull(memberDetails) ? null : memberDetails.memberId();
+
+        PopularLinksGetByQueryResponses responses = linkService.getPopularLinks(memberId);
+        PopularLinksGetApiResponses apiResponses = PopularLinksGetApiResponses.from(responses);
+
+        return ResponseEntity
+                .ok()
+                .body(apiResponses);
     }
 
 }

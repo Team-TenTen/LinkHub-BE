@@ -4,6 +4,7 @@ import com.tenten.linkhub.domain.space.service.dto.link.LinkCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkGetByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.link.LinksGetByQueryRequest;
+import com.tenten.linkhub.domain.space.service.dto.link.PopularLinksGetByQueryResponses;
 
 public interface LinkService {
 
@@ -21,4 +22,5 @@ public interface LinkService {
 
     LinkGetByQueryResponses getLinks(LinksGetByQueryRequest request);
 
+    PopularLinksGetByQueryResponses getPopularLinks(Long memberId);
 }
