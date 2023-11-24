@@ -115,7 +115,7 @@ public class DefaultSpaceService implements SpaceService {
 
     @Override
     public SpaceTagGetResponses getTagsBySpaceId(Long spaceId) {
-        List<TagInfo> tagInfos = tagRepository.findBySpaceIdAndGroupBySpaceName(spaceId);
+        List<TagInfo> tagInfos = tagRepository.findBySpaceId(spaceId);
         List<SpaceTagGetResponse> tagResponses = tagInfos
                 .stream()
                 .map(t -> new SpaceTagGetResponse(t.name(), t.color().getValue(), t.tagId()))

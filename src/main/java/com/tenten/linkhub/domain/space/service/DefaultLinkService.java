@@ -26,10 +26,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
 import java.util.Optional;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
@@ -61,7 +58,7 @@ public class DefaultLinkService implements LinkService {
                 new Url(request.url()));
 
         if (request.hasCreateTagInfo()) { //태그 정보를 포함하여 링크를 생성할 경우
-            Optional<Tag> tag = tagRepository.findBySpaceIdAndSpaceName(request.spaceId(), request.tagName());
+            Optional<Tag> tag = tagRepository.findBySpaceIdAndTagName(request.spaceId(), request.tagName());
             Tag newTag = Tag.toTag(space, request.tagName(), Color.toColor(request.color()));
             if (tag.isEmpty()) {
                 tagRepository.save(newTag);
@@ -80,7 +77,7 @@ public class DefaultLinkService implements LinkService {
         Link link = linkRepository.getById(request.linkId());
 
         if (request.hasUpdateTagInfo()) { //태그 정보를 포함하여 링크를 수정할 경우
-            Optional<Tag> tag = tagRepository.findBySpaceIdAndSpaceName(request.spaceId(), request.tagName());
+            Optional<Tag> tag = tagRepository.findBySpaceIdAndTagName(request.spaceId(), request.tagName());
             Tag newTag = Tag.toTag(space, request.tagName(), Color.toColor(request.color()));
 
             if (tag.isEmpty()) {

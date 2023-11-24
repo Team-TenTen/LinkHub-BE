@@ -82,7 +82,7 @@ public class LinkQueryDslRepository {
 
         if (linkGetDtos.size() > condition.pageable().getPageSize()) {
             linkGetDtos.remove(condition.pageable().getPageSize());
-            hasNext = false;
+            hasNext = true;
         }
 
         return new SliceImpl<>(linkGetDtos, condition.pageable(), hasNext);
