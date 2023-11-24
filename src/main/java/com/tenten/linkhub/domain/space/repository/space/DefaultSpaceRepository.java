@@ -60,4 +60,9 @@ public class DefaultSpaceRepository implements SpaceRepository {
         spaceJpaRepository.decreaseFavoriteCount(spaceId);
     }
 
+    @Override
+    public void increaseScrapCount(Long spaceId) {
+        spaceJpaRepository.increaseScrapCount(spaceId);
+    }
+
 }

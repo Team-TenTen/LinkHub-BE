@@ -1,11 +1,13 @@
 package com.tenten.linkhub.domain.space.controller.mapper;
 
+import com.tenten.linkhub.domain.space.controller.dto.space.NewSpacesScrapApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindWithFilterApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceTagsGetApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceUpdateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindByQueryApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.spacemember.SpaceMemberRoleChangeApiRequest;
+import com.tenten.linkhub.domain.space.facade.dto.NewSpacesScrapFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
@@ -37,4 +39,6 @@ public interface SpaceApiMapper {
     SpaceTagsGetApiResponse toSpaceTagsGetApiResponse(SpaceTagGetResponses response);
 
     SpaceMemberRoleChangeRequest toSpaceMemberRoleChangeRequest(Long spaceId, Long myMemberId, SpaceMemberRoleChangeApiRequest request);
+
+    NewSpacesScrapFacadeRequest toNewSpacesScrapFacadeRequest(NewSpacesScrapApiRequest request, Long sourceSpaceId, Long memberId, MultipartFile file);
 }

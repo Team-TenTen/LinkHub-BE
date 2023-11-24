@@ -2,6 +2,7 @@ package com.tenten.linkhub.domain.space.service;
 
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
 import com.tenten.linkhub.domain.space.service.dto.space.MemberSpacesFindRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.NewSpacesScrapRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
@@ -33,4 +34,8 @@ public interface SpaceService {
     void checkMemberCanViewLink(Long memberId, Long spaceId);
 
     Long changeSpaceMembersRole(SpaceMemberRoleChangeRequest request);
+
+    void validateScrapTargetSpace(Long spaceId, Long memberId);
+
+    Long createSpaceAndCopyLinks(NewSpacesScrapRequest request);
 }

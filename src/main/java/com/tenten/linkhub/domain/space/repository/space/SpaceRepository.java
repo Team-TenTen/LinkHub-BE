@@ -21,4 +21,6 @@ public interface SpaceRepository {
     void increaseFavoriteCount(Long spaceId);
 
     void decreaseFavoriteCount(Long spaceId);
+
+    void increaseScrapCount(Long spaceId);
 }

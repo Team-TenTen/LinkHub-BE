@@ -8,6 +8,7 @@ import com.tenten.linkhub.domain.space.model.space.dto.SpaceUpdateDto;
 import com.tenten.linkhub.domain.space.repository.space.dto.MemberSpacesQueryCondition;
 import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
 import com.tenten.linkhub.domain.space.service.dto.space.MemberSpacesFindRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.NewSpacesScrapRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
@@ -40,9 +41,23 @@ public class SpaceMapper {
                 request.isReadMarkEnabled());
     }
 
-    public SpaceMember toSpaceMember(SpaceCreateRequest request, Role role) {
-        return new SpaceMember(
+    public Space toSpace(NewSpacesScrapRequest request, SpaceMember spaceMember, SpaceImage spaceImage) {
+        return new Space(
                 request.memberId(),
+                request.spaceName(),
+                request.description(),
+                request.category(),
+                spaceImage,
+                spaceMember,
+                request.isVisible(),
+                request.isComment(),
+                request.isLinkSummarizable(),
+                request.isReadMarkEnabled());
+    }
+
+    public SpaceMember toSpaceMember(Long memberId, Role role) {
+        return new SpaceMember(
+                memberId,
                 role);
     }
 

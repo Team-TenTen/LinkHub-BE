@@ -5,6 +5,7 @@ import com.tenten.linkhub.domain.space.repository.link.dto.LinkGetDto;
 import com.tenten.linkhub.domain.space.repository.link.dto.LinkGetQueryCondition;
 import org.springframework.data.domain.Slice;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface LinkRepository {
@@ -16,4 +17,10 @@ public interface LinkRepository {
     Optional<Link> findById(Long linkId);
 
     Slice<LinkGetDto> getLinksByCondition(LinkGetQueryCondition condition);
+
+    Long countLinkBySpaceId(Long spaceId);
+
+    List<Link> findBySpaceId(Long sourceSpaceId);
+
+    Long bulkInsertLinks(List<Link> sourceLinks, Long spaceId, Long memberId);
 }

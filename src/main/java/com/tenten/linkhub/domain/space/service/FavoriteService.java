@@ -1,7 +1,7 @@
 package com.tenten.linkhub.domain.space.service;
 
-import com.tenten.linkhub.domain.space.handler.dto.SpaceDecreaseFavoriteCountEvent;
-import com.tenten.linkhub.domain.space.handler.dto.SpaceIncreaseFavoriteCountEvent;
+import com.tenten.linkhub.domain.space.handler.dto.FavoriteDeleteEvent;
+import com.tenten.linkhub.domain.space.handler.dto.FavoriteSaveEvent;
 import com.tenten.linkhub.domain.space.model.space.Favorite;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
@@ -39,7 +39,7 @@ public class FavoriteService {
         Favorite favorite = mapper.toFavorite(space, memberId);
         Favorite savedFavorite = favoriteRepository.save(favorite);
 
-        eventPublisher.publishEvent(new SpaceIncreaseFavoriteCountEvent(spaceId));
+        eventPublisher.publishEvent(new FavoriteSaveEvent(spaceId));
 
         return SpaceRegisterInFavoriteResponse.of(
                 savedFavorite.getId(),
@@ -53,7 +53,7 @@ public class FavoriteService {
 
         Long deletedFavoriteId = favoriteRepository.deleteById(favorite.getId());
 
-        eventPublisher.publishEvent(new SpaceDecreaseFavoriteCountEvent(spaceId));
+        eventPublisher.publishEvent(new FavoriteDeleteEvent(spaceId));
 
         return deletedFavoriteId;
     }
