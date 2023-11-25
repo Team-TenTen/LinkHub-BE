@@ -4,6 +4,7 @@ import com.tenten.linkhub.domain.space.service.dto.link.LinkCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkGetByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.link.LinksGetByQueryRequest;
+import com.tenten.linkhub.domain.space.service.dto.link.PopularLinksGetByQueryResponses;
 
 public interface LinkService {
 
@@ -20,6 +21,8 @@ public interface LinkService {
     void deleteLink(Long linkId);
 
     LinkGetByQueryResponses getLinks(LinksGetByQueryRequest request);
+
+    PopularLinksGetByQueryResponses getPopularLinks(Long memberId);
 
     void copyLinkBySpaceIdAndPaste(Long targetSpaceId, Long savedSpaceId, Long memberId);
 }

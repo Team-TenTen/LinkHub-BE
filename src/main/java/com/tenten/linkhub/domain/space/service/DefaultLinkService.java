@@ -12,6 +12,7 @@ import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.like.LikeRepository;
 import com.tenten.linkhub.domain.space.repository.link.LinkRepository;
 import com.tenten.linkhub.domain.space.repository.link.dto.LinkGetDto;
+import com.tenten.linkhub.domain.space.repository.link.dto.PopularLinkGetDto;
 import com.tenten.linkhub.domain.space.repository.linktag.LinkTagRepository;
 import com.tenten.linkhub.domain.space.repository.linkview.LinkViewRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
@@ -20,6 +21,7 @@ import com.tenten.linkhub.domain.space.service.dto.link.LinkCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkGetByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.link.LinksGetByQueryRequest;
+import com.tenten.linkhub.domain.space.service.dto.link.PopularLinksGetByQueryResponses;
 import com.tenten.linkhub.domain.space.service.mapper.LinkMapper;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
@@ -28,6 +30,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -142,6 +145,13 @@ public class DefaultLinkService implements LinkService {
     public LinkGetByQueryResponses getLinks(LinksGetByQueryRequest request) {
         Slice<LinkGetDto> linkGetDtos = linkRepository.getLinksByCondition(linkMapper.toQueryCondition(request));
         LinkGetByQueryResponses responses = LinkGetByQueryResponses.from(linkGetDtos);
+        return responses;
+    }
+
+    @Override
+    public PopularLinksGetByQueryResponses getPopularLinks(Long memberId) {
+        List<PopularLinkGetDto> popularLinks = linkRepository.getPopularLinks(memberId);
+        PopularLinksGetByQueryResponses responses = PopularLinksGetByQueryResponses.from(popularLinks);
         return responses;
     }
 

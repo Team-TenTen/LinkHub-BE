@@ -3,6 +3,7 @@ package com.tenten.linkhub.domain.space.repository.link;
 import com.tenten.linkhub.domain.space.model.link.Link;
 import com.tenten.linkhub.domain.space.repository.link.dto.LinkGetDto;
 import com.tenten.linkhub.domain.space.repository.link.dto.LinkGetQueryCondition;
+import com.tenten.linkhub.domain.space.repository.link.dto.PopularLinkGetDto;
 import com.tenten.linkhub.domain.space.repository.link.querydsl.LinkQueryDslRepository;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import org.springframework.data.domain.Slice;
@@ -45,6 +46,11 @@ public class DefaultLinkRepository implements LinkRepository {
     @Override
     public Slice<LinkGetDto> getLinksByCondition(LinkGetQueryCondition condition) {
         return linkQueryDslRepository.getLinksByCondition(condition);
+    }
+
+    @Override
+    public List<PopularLinkGetDto> getPopularLinks(Long memberId) {
+        return linkQueryDslRepository.getPopularLinks(memberId);
     }
 
     @Override
