@@ -23,7 +23,7 @@ public class DefaultJpaRepository implements TagRepository {
 
     @Override
     public List<TagInfo> findTagBySpaceId(Long spaceId) {
-        return tagQueryRepository.findTagBySpaceIdAndGroupBySpaceName(spaceId);
+        return tagQueryRepository.findTagBySpaceId(spaceId);
     }
 
     @Override

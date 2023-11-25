@@ -20,7 +20,7 @@ public class TagQueryRepository {
         this.jpaQueryFactory = jpaQueryFactory;
     }
 
-    public List<TagInfo> findTagBySpaceIdAndGroupBySpaceName(Long spaceId) {
+    public List<TagInfo> findTagBySpaceId(Long spaceId) {
         return jpaQueryFactory
                 .select(new QTagInfo(
                         tag.name,
