@@ -2,13 +2,16 @@ package com.tenten.linkhub.domain.space.facade;
 
 import com.tenten.linkhub.domain.member.service.MemberService;
 import com.tenten.linkhub.domain.member.service.dto.MemberInfos;
+import com.tenten.linkhub.domain.space.facade.dto.NewSpacesScrapFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.mapper.SpaceFacadeMapper;
-import com.tenten.linkhub.domain.space.handler.dto.SpaceImagesDeleteEvent;
-import com.tenten.linkhub.domain.space.handler.dto.SpaceIncreaseViewCountEvent;
+import com.tenten.linkhub.domain.space.handler.dto.ScrapSaveEvent;
+import com.tenten.linkhub.domain.space.handler.dto.SpaceImageDeleteEvent;
+import com.tenten.linkhub.domain.space.handler.dto.SpaceDetailFindEvent;
+import com.tenten.linkhub.domain.space.service.LinkService;
 import com.tenten.linkhub.domain.space.service.SpaceImageUploader;
 import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
@@ -31,6 +34,7 @@ public class SpaceFacade {
     private final SpaceService spaceService;
     private final MemberService memberService;
     private final SpaceImageUploader spaceImageUploader;
+    private final LinkService linkService;
     private final SpaceFacadeMapper mapper;
     private final ApplicationEventPublisher eventPublisher;
 
@@ -66,8 +70,22 @@ public class SpaceFacade {
         DeletedSpaceImageNames deletedSpaceImageNames = spaceService.deleteSpaceById(spaceId, memberId);
 
         eventPublisher.publishEvent(
-                new SpaceImagesDeleteEvent(deletedSpaceImageNames.fileNames())
+                new SpaceImageDeleteEvent(deletedSpaceImageNames.fileNames())
         );
+    }
+
+    public Long scrapAndCreateNewSpace(NewSpacesScrapFacadeRequest request) {
+        spaceService.validateScrapTargetSpace(request.sourceSpaceId(), request.memberId());
+
+        ImageInfo imageInfo = spaceImageUploader.getNewImageInfoOrDefaultImageInfo(request.file());
+
+        Long savedSpaceId = spaceService.createSpaceAndCopyLinks(
+                mapper.toNewSpacesScrapRequest(request, imageInfo)
+        );
+
+        eventPublisher.publishEvent(new ScrapSaveEvent(request.sourceSpaceId()));
+
+        return savedSpaceId;
     }
 
     private List<Long> getMemberIds(SpaceWithSpaceImageAndSpaceMemberInfo response) {
@@ -79,7 +97,7 @@ public class SpaceFacade {
     private List<Long> increaseSpaceViewCountAndSetSpaceViews(List<Long> spaceViews, Long spaceId) {
         if (spaceViews.isEmpty()) {
             eventPublisher.publishEvent(
-                    new SpaceIncreaseViewCountEvent(spaceId)
+                    new SpaceDetailFindEvent(spaceId)
             );
 
             spaceViews.add(spaceId);
@@ -88,7 +106,7 @@ public class SpaceFacade {
 
         if (!spaceViews.contains(spaceId)) {
             eventPublisher.publishEvent(
-                    new SpaceIncreaseViewCountEvent(spaceId)
+                    new SpaceDetailFindEvent(spaceId)
             );
 
             spaceViews.add(spaceId);

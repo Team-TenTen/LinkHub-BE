@@ -1,8 +1,5 @@
 package com.tenten.linkhub.domain.member.model;
 
-import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
-import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
-
 import com.tenten.linkhub.domain.member.model.vo.FavoriteCategories;
 import com.tenten.linkhub.domain.member.model.vo.ProfileImages;
 import com.tenten.linkhub.global.entity.BaseEntity;
@@ -15,11 +12,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.util.List;
-import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
+import java.util.Optional;
+
+import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
+import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 
 @Entity
 @Getter

@@ -16,11 +16,14 @@ import java.util.Optional;
 public class DefaultLinkRepository implements LinkRepository {
     private final LinkJpaRepository linkJpaRepository;
     private final LinkQueryDslRepository linkQueryDslRepository;
+    private final LinkJdbcRepository linkJdbcRepository;
 
     public DefaultLinkRepository(LinkJpaRepository linkJpaRepository,
-                                 LinkQueryDslRepository linkQueryDslRepository) {
+                                 LinkQueryDslRepository linkQueryDslRepository,
+                                 LinkJdbcRepository linkJdbcRepository) {
         this.linkJpaRepository = linkJpaRepository;
         this.linkQueryDslRepository = linkQueryDslRepository;
+        this.linkJdbcRepository = linkJdbcRepository;
     }
 
     @Override
@@ -48,6 +51,21 @@ public class DefaultLinkRepository implements LinkRepository {
     @Override
     public List<PopularLinkGetDto> getPopularLinks(Long memberId) {
         return linkQueryDslRepository.getPopularLinks(memberId);
+    }
+
+    @Override
+    public Long countLinkBySpaceId(Long spaceId) {
+        return linkJpaRepository.countLinkBySpaceIdAndIsDeletedFalse(spaceId);
+    }
+
+    @Override
+    public List<Link> findBySpaceId(Long sourceSpaceId) {
+        return linkJpaRepository.findBySpaceIdAndIsDeletedFalse(sourceSpaceId);
+    }
+
+    @Override
+    public Long bulkInsertLinks(List<Link> sourceLinks, Long spaceId, Long memberId) {
+        return linkJdbcRepository.bulkInsertLinks(sourceLinks, spaceId, memberId);
     }
 
 }

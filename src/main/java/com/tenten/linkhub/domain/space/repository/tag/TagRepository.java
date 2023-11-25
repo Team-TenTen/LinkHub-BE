@@ -7,9 +7,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface TagRepository {
-    List<TagInfo> findBySpaceId(Long spaceId);
+    List<TagInfo> findTagBySpaceId(Long spaceId);
 
     Optional<Tag> findBySpaceIdAndTagName(Long spaceId, String tagName);
 
     Tag save(Tag newTag);
+
+    List<Tag> findBySpaceId(Long sourceSpaceId);
+
+    Long bulkInsertTags(List<Tag> sourceTags, Long spaceId);
 }

@@ -2,7 +2,11 @@ package com.tenten.linkhub.domain.member.repository.member;
 
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.Provider;
+import com.tenten.linkhub.domain.member.repository.dto.MemberSearchQueryCondition;
+import com.tenten.linkhub.domain.member.repository.dto.MemberWithProfileImageAndFollowingStatus;
+import com.tenten.linkhub.domain.member.repository.query.MemberQueryRepository;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,9 +16,12 @@ import java.util.Optional;
 public class DefaultMemberRepository implements MemberRepository {
 
     private final MemberJpaRepository memberJpaRepository;
+    private final MemberQueryRepository memberQueryRepository;
 
-    public DefaultMemberRepository(MemberJpaRepository memberJpaRepository) {
+    public DefaultMemberRepository(MemberJpaRepository memberJpaRepository,
+            MemberQueryRepository memberQueryRepository) {
         this.memberJpaRepository = memberJpaRepository;
+        this.memberQueryRepository = memberQueryRepository;
     }
 
     @Override
@@ -50,6 +57,11 @@ public class DefaultMemberRepository implements MemberRepository {
     @Override
     public List<Member> findMembersWithProfileImageAndCategoryByIds(List<Long> memberIds) {
         return memberJpaRepository.findMembersWithProfileImageAndCategoryByMemberIds(memberIds);
+    }
+
+    @Override
+    public Slice<MemberWithProfileImageAndFollowingStatus> searchMember(MemberSearchQueryCondition queryCond) {
+        return memberQueryRepository.findMembersWithProfileImages(queryCond);
     }
 
 }

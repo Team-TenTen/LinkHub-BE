@@ -13,14 +13,16 @@ public class DefaultJpaRepository implements TagRepository {
 
     private final TagQueryRepository tagQueryRepository;
     private final TagJpaRepository tagJpaRepository;
+    private final TagJdbcRepository tagJdbcRepository;
 
-    public DefaultJpaRepository(TagQueryRepository tagQueryRepository, TagJpaRepository tagJpaRepository) {
+    public DefaultJpaRepository(TagQueryRepository tagQueryRepository, TagJpaRepository tagJpaRepository, TagJdbcRepository tagJdbcRepository) {
         this.tagQueryRepository = tagQueryRepository;
         this.tagJpaRepository = tagJpaRepository;
+        this.tagJdbcRepository = tagJdbcRepository;
     }
 
     @Override
-    public List<TagInfo> findBySpaceId(Long spaceId) {
+    public List<TagInfo> findTagBySpaceId(Long spaceId) {
         return tagQueryRepository.findTagBySpaceIdAndGroupBySpaceName(spaceId);
     }
 
@@ -32,6 +34,16 @@ public class DefaultJpaRepository implements TagRepository {
     @Override
     public Tag save(Tag newTag) {
         return tagJpaRepository.save(newTag);
+    }
+
+    @Override
+    public List<Tag> findBySpaceId(Long sourceSpaceId) {
+        return tagJpaRepository.findBySpaceId(sourceSpaceId);
+    }
+
+    @Override
+    public Long bulkInsertTags(List<Tag> sourceTags, Long spaceId) {
+        return tagJdbcRepository.bulkInsertTags(sourceTags, spaceId);
     }
 
 }

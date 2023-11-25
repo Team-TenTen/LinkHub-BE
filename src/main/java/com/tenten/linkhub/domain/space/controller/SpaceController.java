@@ -14,6 +14,8 @@ import com.tenten.linkhub.domain.space.controller.dto.comment.RootCommentsFindAp
 import com.tenten.linkhub.domain.space.controller.dto.favorite.MyFavoriteSpacesFindApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.favorite.MyFavoriteSpacesFindApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.favorite.SpaceRegisterInFavoriteApiResponse;
+import com.tenten.linkhub.domain.space.controller.dto.space.NewSpacesScrapApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.space.NewSpacesScrapApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpaceFindWithFilterApiResponses;
 import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindByQueryApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindByQueryApiResponses;
@@ -32,6 +34,7 @@ import com.tenten.linkhub.domain.space.controller.mapper.SpaceApiMapper;
 import com.tenten.linkhub.domain.space.facade.CommentFacade;
 import com.tenten.linkhub.domain.space.facade.SpaceFacade;
 import com.tenten.linkhub.domain.space.facade.dto.CommentAndChildCountAndMemberInfoResponses;
+import com.tenten.linkhub.domain.space.facade.dto.NewSpacesScrapFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.RepliesAndMemberInfoResponses;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
@@ -549,6 +552,37 @@ public class SpaceController {
 
         MyFavoriteSpacesFindApiResponses apiResponses = MyFavoriteSpacesFindApiResponses.from(responses);
         return ResponseEntity.ok(apiResponses);
+    }
+
+    /**
+     * 스페이스를 새로운 스페이스로 가져오기 API
+     */
+    @Operation(
+            summary = "스페이스 가져오기 API(나의 새로운 스페이스로)", description = "스페이스를 나의 새로운 스페이스로 가져오기 API 입니다.\n\n" +
+            "스페이스 가져오기는 한 스페이스에 한번만 가능하며 링크 개수 200개 이하인 스페이스만 지원합니다.\n\n " +
+            "조건이 충족되지 않으면 아래의 예외가 발생합니다.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "스페이스 가져오기가 성공적으로 완료되었습니다."),
+                    @ApiResponse(responseCode = "400", description = "이미 가져오기한 스페이스 / 링크 개수가 200개 이상인 스페이스",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @PostMapping(value = "/{spaceId}/scraps/new",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<NewSpacesScrapApiResponse> scrapAndCreateNewSpace(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long spaceId,
+            @RequestPart @Valid NewSpacesScrapApiRequest request,
+            @RequestPart(required = false) MultipartFile file
+    ) {
+        NewSpacesScrapFacadeRequest facadeRequest = spaceMapper.toNewSpacesScrapFacadeRequest(request, spaceId, memberDetails.memberId(), file);
+        Long responseSpaceId = spaceFacade.scrapAndCreateNewSpace(facadeRequest);
+
+        NewSpacesScrapApiResponse apiResponse = NewSpacesScrapApiResponse.from(responseSpaceId);
+
+        return ResponseEntity
+                .created(URI.create(SPACE_LOCATION_PRE_FIX + responseSpaceId))
+                .body(apiResponse);
     }
 
     private void setSpaceViewCookie(HttpServletResponse servletResponse, List<Long> spaceViews) {

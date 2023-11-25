@@ -1,9 +1,10 @@
 package com.tenten.linkhub.domain.space.handler;
 
-import com.tenten.linkhub.domain.space.handler.dto.SpaceDecreaseFavoriteCountEvent;
-import com.tenten.linkhub.domain.space.handler.dto.SpaceImagesDeleteEvent;
-import com.tenten.linkhub.domain.space.handler.dto.SpaceIncreaseFavoriteCountEvent;
-import com.tenten.linkhub.domain.space.handler.dto.SpaceIncreaseViewCountEvent;
+import com.tenten.linkhub.domain.space.handler.dto.FavoriteDeleteEvent;
+import com.tenten.linkhub.domain.space.handler.dto.SpaceImageDeleteEvent;
+import com.tenten.linkhub.domain.space.handler.dto.FavoriteSaveEvent;
+import com.tenten.linkhub.domain.space.handler.dto.SpaceDetailFindEvent;
+import com.tenten.linkhub.domain.space.handler.dto.ScrapSaveEvent;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.global.aws.s3.ImageFileUploader;
 import org.springframework.context.event.EventListener;
@@ -28,29 +29,36 @@ public class SpaceEventHandler {
     @Async
     @EventListener
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void increaseSpaceViewCount(SpaceIncreaseViewCountEvent event){
+    public void handleFindSpaceDetailEvent(SpaceDetailFindEvent event){
         spaceRepository.getById(event.spaceId())
                 .increaseViewCount();
     }
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    public void deleteImageFiles(SpaceImagesDeleteEvent event) {
+    public void handleDeleteImageEvent(SpaceImageDeleteEvent event) {
         imageFileUploader.deleteImages(event.spaceImageNames());
     }
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void increaseFavoriteCount (SpaceIncreaseFavoriteCountEvent event) {
+    public void handleSaveFavoriteEvent(FavoriteSaveEvent event) {
         spaceRepository.increaseFavoriteCount(event.spaceId());
     }
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void decreaseFavoriteCount (SpaceDecreaseFavoriteCountEvent event) {
+    public void handleDeleteFavoriteEvent(FavoriteDeleteEvent event) {
         spaceRepository.decreaseFavoriteCount(event.spaceId());
+    }
+
+    @Async
+    @EventListener
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void handleScrapSaveEvent(ScrapSaveEvent event) {
+        spaceRepository.increaseScrapCount(event.spaceId());
     }
 
 }

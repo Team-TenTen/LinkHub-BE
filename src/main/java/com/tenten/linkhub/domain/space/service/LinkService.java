@@ -23,4 +23,6 @@ public interface LinkService {
     LinkGetByQueryResponses getLinks(LinksGetByQueryRequest request);
 
     PopularLinksGetByQueryResponses getPopularLinks(Long memberId);
+
+    void copyLinkBySpaceIdAndPaste(Long targetSpaceId, Long savedSpaceId, Long memberId);
 }

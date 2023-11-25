@@ -1,10 +1,13 @@
 package com.tenten.linkhub.domain.space.service;
 
+import com.tenten.linkhub.domain.space.model.space.Scrap;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.favorite.FavoriteRepository;
+import com.tenten.linkhub.domain.space.repository.link.LinkRepository;
+import com.tenten.linkhub.domain.space.repository.scrap.ScrapRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.repository.space.dto.MemberSpacesQueryCondition;
 import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberRepository;
@@ -12,6 +15,7 @@ import com.tenten.linkhub.domain.space.repository.tag.TagRepository;
 import com.tenten.linkhub.domain.space.repository.tag.dto.TagInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
 import com.tenten.linkhub.domain.space.service.dto.space.MemberSpacesFindRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.NewSpacesScrapRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponse;
@@ -39,7 +43,10 @@ public class DefaultSpaceService implements SpaceService {
     private final SpaceRepository spaceRepository;
     private final SpaceMemberRepository spaceMemberRepository;
     private final FavoriteRepository favoriteRepository;
+    private final LinkRepository linkRepository;
+    private final ScrapRepository scrapRepository;
     private final TagRepository tagRepository;
+    private final LinkService linkService;
     private final SpaceMapper mapper;
 
     @Override
@@ -53,7 +60,7 @@ public class DefaultSpaceService implements SpaceService {
     @Override
     @Transactional
     public Long createSpace(SpaceCreateRequest request) {
-        SpaceMember spaceMember = mapper.toSpaceMember(request, OWNER);
+        SpaceMember spaceMember = mapper.toSpaceMember(request.memberId(), OWNER);
         SpaceImage spaceImage = mapper.toSpaceImage(request.imageInfo());
 
         Space space = mapper.toSpace(request, spaceMember, spaceImage);
@@ -115,7 +122,7 @@ public class DefaultSpaceService implements SpaceService {
 
     @Override
     public SpaceTagGetResponses getTagsBySpaceId(Long spaceId) {
-        List<TagInfo> tagInfos = tagRepository.findBySpaceId(spaceId);
+        List<TagInfo> tagInfos = tagRepository.findTagBySpaceId(spaceId);
         List<SpaceTagGetResponse> tagResponses = tagInfos
                 .stream()
                 .map(t -> new SpaceTagGetResponse(t.name(), t.color().getValue(), t.tagId()))
@@ -147,6 +154,41 @@ public class DefaultSpaceService implements SpaceService {
         space.changeSpaceMembersRole(request.targetMemberId(), request.role());
 
         return space.getId();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void validateScrapTargetSpace(Long spaceId, Long memberId) {
+        if (scrapRepository.existsBySpaceIdAndMemberId(spaceId, memberId)) {
+            throw new IllegalStateException("한 스페이스에 대한 가져오기는 1회만 가능합니다.");
+        }
+
+        Long linkCount = linkRepository.countLinkBySpaceId(spaceId);
+
+        if (linkCount > 200){
+            throw new IllegalStateException("가져오기는 200개 이하의 Link를 가진 스페이스만 가능합니다.");
+        }
+
+        Space space = spaceRepository.getById(spaceId);
+        space.validateVisibilityAndMembership(memberId);
+    }
+
+    @Override
+    @Transactional
+    public Long createSpaceAndCopyLinks(NewSpacesScrapRequest request) {
+        SpaceMember spaceMember = mapper.toSpaceMember(request.memberId(), OWNER);
+        SpaceImage spaceImage = mapper.toSpaceImage(request.imageInfo());
+
+        Space space = mapper.toSpace(request, spaceMember, spaceImage);
+        Long savedSpaceId = spaceRepository.save(space).getId();
+
+        linkService.copyLinkBySpaceIdAndPaste(request.sourceSpaceId(), savedSpaceId, request.memberId());
+
+        scrapRepository.save(
+                new Scrap(space, request.memberId())
+        );
+
+        return savedSpaceId;
     }
 
 }

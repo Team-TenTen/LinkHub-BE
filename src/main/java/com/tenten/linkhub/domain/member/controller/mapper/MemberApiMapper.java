@@ -7,17 +7,18 @@ import com.tenten.linkhub.domain.member.controller.dto.MemberFollowCreateApiResp
 import com.tenten.linkhub.domain.member.controller.dto.MemberJoinApiRequest;
 import com.tenten.linkhub.domain.member.controller.dto.MemberMyProfileApiResponse;
 import com.tenten.linkhub.domain.member.controller.dto.MemberProfileApiResponse;
-import com.tenten.linkhub.domain.member.controller.dto.MemberSpacesFindApiRequest;
-import com.tenten.linkhub.domain.member.service.dto.MailSendResponse;
+import com.tenten.linkhub.domain.member.controller.dto.MemberSearchApiRequest;
 import com.tenten.linkhub.domain.member.controller.dto.MemberSpacesFindApiRequest;
 import com.tenten.linkhub.domain.member.controller.dto.MemberUpdateApiRequest;
 import com.tenten.linkhub.domain.member.controller.dto.MemberUpdateApiResponse;
+import com.tenten.linkhub.domain.member.service.dto.MailSendResponse;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationRequest;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberFollowCreateResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberJoinRequest;
 import com.tenten.linkhub.domain.member.service.dto.MemberMyProfileResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberProfileResponse;
+import com.tenten.linkhub.domain.member.service.dto.MemberSearchRequest;
 import com.tenten.linkhub.domain.member.service.dto.MemberUpdateRequest;
 import com.tenten.linkhub.domain.member.service.dto.MemberUpdateResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.MemberSpacesFindRequest;
@@ -41,13 +42,18 @@ public interface MemberApiMapper {
 
     MemberProfileApiResponse toMemberProfileApiResponse(MemberProfileResponse memberProfileResponse);
 
-    MemberFollowCreateApiResponse toMemberFollowCreateApiResponse(MemberFollowCreateResponse memberFollowCreateResponse);
+    MemberFollowCreateApiResponse toMemberFollowCreateApiResponse(
+            MemberFollowCreateResponse memberFollowCreateResponse);
 
     MemberMyProfileApiResponse toMemberMyProfileApiResponse(MemberMyProfileResponse memberMyProfileResponse);
 
-    MemberSpacesFindRequest toMemberSpacesFindRequest(Pageable pageable, MemberSpacesFindApiRequest request, Long requestMemberId, Long targetMemberId);
+    MemberSpacesFindRequest toMemberSpacesFindRequest(Pageable pageable, MemberSpacesFindApiRequest request,
+            Long requestMemberId, Long targetMemberId);
 
-    MemberUpdateRequest toMemberUpdateRequest(MemberUpdateApiRequest request, MultipartFile file, Long targetMemberId, Long requestMemberId);
+    MemberUpdateRequest toMemberUpdateRequest(MemberUpdateApiRequest request, MultipartFile file, Long targetMemberId,
+            Long requestMemberId);
 
     MemberUpdateApiResponse toMemberUpdateApiResponse(MemberUpdateResponse memberUpdateResponse);
+
+    MemberSearchRequest toMemberSearchRequest(MemberSearchApiRequest request, Pageable pageable, Long myMemberId);
 }
