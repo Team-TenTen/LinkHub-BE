@@ -12,8 +12,6 @@ import com.tenten.linkhub.domain.space.repository.link.dto.LinkGetQueryCondition
 import com.tenten.linkhub.domain.space.repository.link.dto.LinkViewDto;
 import com.tenten.linkhub.domain.space.repository.link.dto.PopularLinkGetDto;
 import com.tenten.linkhub.domain.space.repository.link.dto.QPopularLinkGetDto;
-import com.tenten.linkhub.domain.space.repository.tag.dto.QTagInfo;
-import com.tenten.linkhub.domain.space.repository.tag.dto.TagInfo;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -113,18 +111,6 @@ public class LinkQueryDslRepository {
                         space.isDeleted.eq(Boolean.FALSE))
                 .orderBy(link.likeCount.desc())
                 .limit(5)
-                .fetch();
-    }
-
-    public List<TagInfo> findTagBySpaceIdAndGroupBySpaceName(Long spaceId) {
-        return jpaQueryFactory
-                .select(new QTagInfo(
-                        tag.name,
-                        tag.color,
-                        tag.id
-                ))
-                .from(tag)
-                .where(tag.space.id.eq(spaceId))
                 .fetch();
     }
 

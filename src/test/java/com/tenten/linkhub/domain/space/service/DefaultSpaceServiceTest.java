@@ -188,6 +188,23 @@ class DefaultSpaceServiceTest {
     }
 
     @Test
+    @DisplayName("스페이스에서 사용된 태그 목록을 조회 시 더이상 스페이스 내에서 사용하지 않는 태그는 조회되지 않는다.")
+    void getTagsBySpaceId_spaceId2_Success() {
+        //given - 링크 2개를 저장 후 그 중 하나를 삭제
+        Space space = spaceJpaRepository.findById(myFirstSpaceId).get();
+        Long linkId1 = linkFacade.createLink(myFirstSpaceId, myMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목A", "태그1", "gray"));
+        Long linkId2 = linkFacade.createLink(myFirstSpaceId, myMemberId, new LinkCreateFacadeRequest("https://www.naver.com", "제목C", "태그2", "red"));
+        linkFacade.deleteLink(space.getId(), linkId2, myMemberId);
+
+        //when
+        SpaceTagGetResponses response = spaceService.getTagsBySpaceId(myFirstSpaceId);
+
+        //then
+        assertThat(response.tags()).hasSize(1);
+        assertThat(response.tags().get(0).name()).isEqualTo("태그1");
+    }
+
+    @Test
     @DisplayName("스페이스에서 읽음 처리 기능을 활성화하지 않았다면 이력을 저장할 수 없다.")
     void checkLinkViewHistory_MemberIdAndSpaceId_ThrowsException() {
         //when & then

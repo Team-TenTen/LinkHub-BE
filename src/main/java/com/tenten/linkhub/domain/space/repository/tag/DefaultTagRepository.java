@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class DefaultJpaRepository implements TagRepository {
+public class DefaultTagRepository implements TagRepository {
 
     private final TagQueryRepository tagQueryRepository;
     private final TagJpaRepository tagJpaRepository;
     private final TagJdbcRepository tagJdbcRepository;
 
-    public DefaultJpaRepository(TagQueryRepository tagQueryRepository, TagJpaRepository tagJpaRepository, TagJdbcRepository tagJdbcRepository) {
+    public DefaultTagRepository(TagQueryRepository tagQueryRepository, TagJpaRepository tagJpaRepository, TagJdbcRepository tagJdbcRepository) {
         this.tagQueryRepository = tagQueryRepository;
         this.tagJpaRepository = tagJpaRepository;
         this.tagJdbcRepository = tagJdbcRepository;
@@ -23,7 +23,7 @@ public class DefaultJpaRepository implements TagRepository {
 
     @Override
     public List<TagInfo> findTagBySpaceId(Long spaceId) {
-        return tagQueryRepository.findTagBySpaceIdAndGroupBySpaceName(spaceId);
+        return tagQueryRepository.findTagBySpaceId(spaceId);
     }
 
     @Override
