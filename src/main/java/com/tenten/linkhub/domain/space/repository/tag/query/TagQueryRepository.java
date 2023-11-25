@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.space.repository.tag.query;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tenten.linkhub.domain.space.repository.tag.dto.QTagInfo;
 import com.tenten.linkhub.domain.space.repository.tag.dto.TagInfo;
@@ -7,7 +8,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.tenten.linkhub.domain.space.model.link.QLinkTag.linkTag;
 import static com.tenten.linkhub.domain.space.model.link.QTag.tag;
+import static java.lang.Boolean.FALSE;
 
 @Repository
 public class TagQueryRepository {
@@ -25,8 +28,13 @@ public class TagQueryRepository {
                         tag.id
                 ))
                 .from(tag)
-                .where(tag.space.id.eq(spaceId))
+                .join(linkTag).on(linkTag.tag.eq(tag))
+                .groupBy(tag)
+                .where(tag.space.id.eq(spaceId), isActiveTag())
                 .fetch();
     }
 
+    private BooleanExpression isActiveTag() {
+        return linkTag.isDeleted.eq(FALSE);
+    }
 }
