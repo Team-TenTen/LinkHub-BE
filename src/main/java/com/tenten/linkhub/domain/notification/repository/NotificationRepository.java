@@ -4,4 +4,6 @@ import com.tenten.linkhub.domain.notification.model.Notification;
 
 public interface NotificationRepository {
     Notification getById(Long notificationId);
+
+    Notification save(Notification notification);
 }

@@ -2,7 +2,6 @@ package com.tenten.linkhub.domain.notification.model;
 
 import com.tenten.linkhub.global.entity.BaseTimeEntity;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
-import com.tenten.linkhub.global.util.CommonValidator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

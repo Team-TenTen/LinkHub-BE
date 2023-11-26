@@ -1,7 +1,6 @@
 package com.tenten.linkhub.domain.space.model.space;
 
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
-import com.tenten.linkhub.global.util.CommonValidator;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
