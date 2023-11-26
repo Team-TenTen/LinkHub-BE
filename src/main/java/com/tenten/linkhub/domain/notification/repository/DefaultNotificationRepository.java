@@ -23,6 +23,11 @@ public class DefaultNotificationRepository implements NotificationRepository {
     }
 
     @Override
+    public Notification save(Notification notification) {
+        return notificationJpaRepository.save(notification);
+    }
+
+    @Override
     public Slice<SpaceInvitationNotificationGetDto> getInviteNotifications(NotificationGetQueryCondition condition) {
         return notificationQueryDslRepository.getSpaceInvitationNotifications(condition);
     }

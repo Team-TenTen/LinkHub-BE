@@ -45,16 +45,16 @@ public class SpaceInvitationController {
                     @ApiResponse(responseCode = "201", description = "스페이스 초대를 성공적으로 완료하였습니다.")
             })
     @PostMapping(
-            value = "/invite",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            value = "/invitations",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SpaceInvitationApiResponse> invite(
             @AuthenticationPrincipal MemberDetails memberDetails,
             @RequestBody @Valid SpaceInvitationApiRequest request
     ) {
-        Long savedNotificationId = spaceInvitationFacade.invite(spaceInvitationApiMapper.toSpaceInvitationFacadeRequest(request, memberDetails.memberId()));
+        Long notificationId = spaceInvitationFacade.invite(spaceInvitationApiMapper.toSpaceInvitationFacadeRequest(request, memberDetails.memberId()));
 
-        SpaceInvitationApiResponse apiResponse = SpaceInvitationApiResponse.from(savedNotificationId);
+        SpaceInvitationApiResponse apiResponse = SpaceInvitationApiResponse.from(notificationId);
 
         return ResponseEntity
                 .created(URI.create(NOTIFICATION_LOCATION_PRE_FIX))

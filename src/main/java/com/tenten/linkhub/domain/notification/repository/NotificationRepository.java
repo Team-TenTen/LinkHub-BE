@@ -9,4 +9,6 @@ public interface NotificationRepository {
     Notification getById(Long notificationId);
 
     Slice<SpaceInvitationNotificationGetDto> getInviteNotifications(NotificationGetQueryCondition condition);
+
+    Notification save(Notification notification);
 }
