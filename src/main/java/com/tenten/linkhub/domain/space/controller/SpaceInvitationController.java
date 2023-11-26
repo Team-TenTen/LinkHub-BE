@@ -27,8 +27,8 @@ import java.net.URI;
 public class SpaceInvitationController {
     private static final String NOTIFICATION_LOCATION_PRE_FIX = "https://api.Link-hub.site/notifications";
 
-    private SpaceInvitationFacade spaceInvitationFacade;
-    private SpaceInvitationApiMapper spaceInvitationApiMapper;
+    private final SpaceInvitationFacade spaceInvitationFacade;
+    private final SpaceInvitationApiMapper mapper;
 
     /**
      * 스페이스 초대 API
@@ -40,15 +40,15 @@ public class SpaceInvitationController {
             })
     @PostMapping(
             value = "/invite",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SpaceInvitationApiResponse> invite(
             @AuthenticationPrincipal MemberDetails memberDetails,
             @RequestBody @Valid SpaceInvitationApiRequest request
     ) {
-        Long savedNotificationId = spaceInvitationFacade.invite(spaceInvitationApiMapper.toSpaceInvitationFacadeRequest(request, memberDetails.memberId()));
+        Long notificationId = spaceInvitationFacade.invite(mapper.toSpaceInvitationFacadeRequest(request, memberDetails.memberId()));
 
-        SpaceInvitationApiResponse apiResponse = SpaceInvitationApiResponse.from(savedNotificationId);
+        SpaceInvitationApiResponse apiResponse = SpaceInvitationApiResponse.from(notificationId);
 
         return ResponseEntity
                 .created(URI.create(NOTIFICATION_LOCATION_PRE_FIX))

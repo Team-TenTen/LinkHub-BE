@@ -9,7 +9,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -34,20 +33,13 @@ public class Notification {
     @Column(name = "notification_type", nullable = false)
     private NotificationType notificationType;
 
-    @Column(name = "content", nullable = false)
-    private String content;
-
     @Column(name = "is_checked")
     private boolean isChecked;
 
-    @Builder
-    public Notification(Long id, Long recipientId, Long senderId, NotificationType notificationType, String content,
-            boolean isChecked) {
-        this.id = id;
+    public Notification(Long recipientId, Long senderId, NotificationType notificationType) {
         this.recipientId = recipientId;
         this.senderId = senderId;
         this.notificationType = notificationType;
-        this.content = content;
         this.isChecked = false;
     }
 

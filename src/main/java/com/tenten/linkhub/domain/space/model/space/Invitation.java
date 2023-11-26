@@ -37,4 +37,15 @@ public class Invitation {
 
     @Column(nullable = false)
     private Long notificationId;
+
+    @Column(nullable = false)
+    private Long memberId;
+
+    public Invitation(Space space, Role role, Long notificationId, Long memberId) {
+        this.space = space;
+        this.role = role;
+        this.notificationId = notificationId;
+        this.memberId = memberId;
+        this.isAccepted = false;
+    }
 }
