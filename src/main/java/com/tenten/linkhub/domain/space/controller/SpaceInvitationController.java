@@ -1,10 +1,13 @@
 package com.tenten.linkhub.domain.space.controller;
 
 import com.tenten.linkhub.domain.auth.MemberDetails;
+import com.tenten.linkhub.domain.space.controller.dto.invitation.SpaceInvitationAcceptApiRequest;
+import com.tenten.linkhub.domain.space.controller.dto.invitation.SpaceInvitationAcceptApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.invitation.SpaceInvitationApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.invitation.SpaceInvitationApiResponse;
 import com.tenten.linkhub.domain.space.controller.mapper.SpaceInvitationApiMapper;
 import com.tenten.linkhub.domain.space.facade.SpaceInvitationFacade;
+import com.tenten.linkhub.domain.space.service.dto.invitation.SpaceInvitationAcceptRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -54,4 +57,21 @@ public class SpaceInvitationController {
                 .created(URI.create(NOTIFICATION_LOCATION_PRE_FIX))
                 .body(apiResponse);
     }
+
+    /**
+     *  스페이스 초대 수락 API
+     */
+    @PostMapping(value = "/invitation/accept")
+    public ResponseEntity<SpaceInvitationAcceptApiResponse> acceptSpaceInvitation(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @RequestBody SpaceInvitationAcceptApiRequest request
+    ) {
+        SpaceInvitationAcceptRequest serviceRequest = spaceInvitationApiMapper.toSpaceInvitationAcceptRequest(request.notificationId(), memberDetails.memberId());
+        Long spaceId = spaceInvitationFacade.acceptSpaceInvitation(serviceRequest);
+
+        SpaceInvitationAcceptApiResponse apiResponse = SpaceInvitationAcceptApiResponse.from(spaceId);
+
+        return ResponseEntity.ok(apiResponse);
+    }
+
 }
