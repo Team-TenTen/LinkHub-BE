@@ -62,6 +62,7 @@ public class SecurityConfig {
                                 .requestMatchers("/spaces/search/me").authenticated()
                                 .requestMatchers("/members/profile").authenticated()
                                 .requestMatchers("/spaces/favorites/me").authenticated()
+                                .requestMatchers("/notifications/invitations").authenticated()
                                 .requestMatchers(HttpMethod.GET).permitAll() // 임시로 풀어준 것 운영시에는 허용 주소 관리
                                 .requestMatchers("/members/join").permitAll()
                                 .requestMatchers("/members/emails/**").permitAll()
@@ -104,7 +105,7 @@ public class SecurityConfig {
 
         @Override
         public void commence(HttpServletRequest request, HttpServletResponse response,
-                AuthenticationException authException) throws IOException {
+                             AuthenticationException authException) throws IOException {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());

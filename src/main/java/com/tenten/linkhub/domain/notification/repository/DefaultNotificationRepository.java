@@ -1,8 +1,12 @@
 package com.tenten.linkhub.domain.notification.repository;
 
 import com.tenten.linkhub.domain.notification.model.Notification;
+import com.tenten.linkhub.domain.notification.repository.dto.NotificationGetQueryCondition;
+import com.tenten.linkhub.domain.notification.repository.dto.SpaceInvitationNotificationGetDto;
+import com.tenten.linkhub.domain.notification.repository.querydsl.NotificationQueryDslRepository;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
@@ -10,6 +14,7 @@ import org.springframework.stereotype.Repository;
 public class DefaultNotificationRepository implements NotificationRepository {
 
     private final NotificationJpaRepository notificationJpaRepository;
+    private final NotificationQueryDslRepository notificationQueryDslRepository;
 
     @Override
     public Notification getById(Long notificationId) {
@@ -21,5 +26,10 @@ public class DefaultNotificationRepository implements NotificationRepository {
     public Notification save(Notification notification) {
         return notificationJpaRepository.save(notification);
     }
-}
 
+    @Override
+    public Slice<SpaceInvitationNotificationGetDto> getInviteNotifications(NotificationGetQueryCondition condition) {
+        return notificationQueryDslRepository.getSpaceInvitationNotifications(condition);
+    }
+
+}
