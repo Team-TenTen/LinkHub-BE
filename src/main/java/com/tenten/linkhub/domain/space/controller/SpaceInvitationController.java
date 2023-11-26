@@ -8,7 +8,10 @@ import com.tenten.linkhub.domain.space.controller.dto.invitation.SpaceInvitation
 import com.tenten.linkhub.domain.space.controller.mapper.SpaceInvitationApiMapper;
 import com.tenten.linkhub.domain.space.facade.SpaceInvitationFacade;
 import com.tenten.linkhub.domain.space.service.dto.invitation.SpaceInvitationAcceptRequest;
+import com.tenten.linkhub.global.response.ErrorResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -23,15 +26,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 
-@Tag(name = "spaces", description = "space 템플릿 API Document")
+@Tag(name = "spaceInvitation", description = "spaceInvitation 템플릿 API Document")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/spaces")
 public class SpaceInvitationController {
     private static final String NOTIFICATION_LOCATION_PRE_FIX = "https://api.Link-hub.site/notifications";
 
-    private SpaceInvitationFacade spaceInvitationFacade;
-    private SpaceInvitationApiMapper spaceInvitationApiMapper;
+    private final SpaceInvitationFacade spaceInvitationFacade;
+    private final SpaceInvitationApiMapper spaceInvitationApiMapper;
 
     /**
      * 스페이스 초대 API
@@ -61,6 +64,15 @@ public class SpaceInvitationController {
     /**
      *  스페이스 초대 수락 API
      */
+    @Operation(
+            summary = "스페이스 초대 수락 API", description = "스페이스 초대 수락 API 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "스페이스 초대가 성공적으로 수락 되어 해당 스페이스의 멤버가 되었습니다."),
+                    @ApiResponse(responseCode = "404",
+                            description = "존재하지 않는 스페이스 초대를 수락 하려고 합니다,\n\n " +
+                                    "자신이 받은 스페이스 초대가 아닙니다.)",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
     @PostMapping(value = "/invitation/accept")
     public ResponseEntity<SpaceInvitationAcceptApiResponse> acceptSpaceInvitation(
             @AuthenticationPrincipal MemberDetails memberDetails,
