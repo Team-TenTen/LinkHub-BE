@@ -83,8 +83,6 @@ class SpaceInvitationFacadeTest {
         assertThat(notification.getSenderId()).isEqualTo(anotherMember.getId());
         assertThat(notification.getNotificationType()).isEqualTo(NotificationType.INVITATION);
 
-        System.out.println(notification.getId());
-
         Invitation invitation = invitationJpaRepository.findByNotificationId(notificationId).get();
 
         assertThat(invitation.getNotificationId()).isEqualTo(notificationId);
