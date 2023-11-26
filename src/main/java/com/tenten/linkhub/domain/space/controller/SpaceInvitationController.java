@@ -73,7 +73,7 @@ public class SpaceInvitationController {
                                     "자신이 받은 스페이스 초대가 아닙니다.)",
                             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
-    @PostMapping(value = "/invitation/accept")
+    @PostMapping(value = "/invitations/accept")
     public ResponseEntity<SpaceInvitationAcceptApiResponse> acceptSpaceInvitation(
             @AuthenticationPrincipal MemberDetails memberDetails,
             @RequestBody SpaceInvitationAcceptApiRequest request
