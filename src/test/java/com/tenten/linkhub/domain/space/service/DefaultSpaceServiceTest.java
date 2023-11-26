@@ -248,6 +248,19 @@ class DefaultSpaceServiceTest {
                 .isInstanceOf(UnauthorizedAccessException.class);
     }
 
+    @Test
+    @DisplayName("")
+    void deleteSpaceMemberByMe() {
+        //when
+        spaceService.deleteSpaceMemberByMe(myFirstSpaceId, anotherMemberId);
+
+        //then
+        Space space = spaceJpaRepository.findById(myFirstSpaceId).get();
+        List<SpaceMember> spaceMembers = space.getSpaceMembers();
+
+        assertThat(spaceMembers.size()).isEqualTo(1);
+    }
+
     private void setupData() {
         Member member = new Member(
                 "testSocialId",
