@@ -29,7 +29,7 @@ public class SpaceInvitationService {
         return space.getId();
     }
 
-    public Invitation createInvitation(SpaceInvitationRequest request) {
+    public Long createInvitation(SpaceInvitationRequest request) {
         Space space = spaceRepository.getById(request.spaceId());
 
         Invitation invitation = new Invitation(
@@ -39,6 +39,6 @@ public class SpaceInvitationService {
                 request.notificationId()
         );
 
-        return invitationRepository.save(invitation);
+        return invitationRepository.save(invitation).getId();
     }
 }
