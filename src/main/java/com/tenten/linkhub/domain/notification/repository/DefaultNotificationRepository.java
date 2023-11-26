@@ -17,4 +17,9 @@ public class DefaultNotificationRepository implements NotificationRepository {
                 .orElseThrow(() -> new DataNotFoundException("해당 Notification을 찾지 못했습니다."));
     }
 
+    @Override
+    public Notification save(Notification notification) {
+        return notificationJpaRepository.save(notification);
+    }
 }
+

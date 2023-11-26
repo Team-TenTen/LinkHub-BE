@@ -17,4 +17,8 @@ public class DefaultInvitationRepository implements InvitationRepository {
                 .orElseThrow(() -> new DataNotFoundException("해당 notificationId에 해당하는 Invitation를 찾을수 없습니다."));
     }
 
+    @Override
+    public Invitation save(Invitation invitation) {
+        return invitationJpaRepository.save(invitation);
+    }
 }
