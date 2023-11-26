@@ -35,8 +35,8 @@ public class SpaceInvitationService {
         Invitation invitation = new Invitation(
                 space,
                 request.role(),
-                request.notificationId(),
-                request.memberId()
+                request.memberId(),
+                request.notificationId()
         );
 
         return invitationRepository.save(invitation);
