@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.notification.model;
 
+import com.tenten.linkhub.global.entity.BaseTimeEntity;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import com.tenten.linkhub.global.util.CommonValidator;
 import jakarta.persistence.Column;
@@ -23,7 +24,7 @@ import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 @Getter
 @Table(name = "notifications")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Notification {
+public class Notification extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,8 +45,7 @@ public class Notification {
     private boolean isChecked;
 
     @Builder
-    public Notification(Long recipientId, Long senderId, NotificationType notificationType,
-                        boolean isChecked) {
+    public Notification(Long recipientId, Long senderId, NotificationType notificationType) {
         validateNotNull(recipientId, "recipientId");
         validateNotNull(senderId, "senderId");
         validateNotNull(notificationType, "notificationType");
