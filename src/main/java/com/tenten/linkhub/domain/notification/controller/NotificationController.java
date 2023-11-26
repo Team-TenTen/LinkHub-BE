@@ -1,12 +1,12 @@
 package com.tenten.linkhub.domain.notification.controller;
 
 import com.tenten.linkhub.domain.auth.MemberDetails;
-import com.tenten.linkhub.domain.notification.controller.dto.SpaceInvitationGetApiRequest;
-import com.tenten.linkhub.domain.notification.controller.dto.SpaceInvitationGetApiResponses;
+import com.tenten.linkhub.domain.notification.controller.dto.SpaceInviteNotificationGetApiRequest;
+import com.tenten.linkhub.domain.notification.controller.dto.SpaceInviteNotificationGetApiResponses;
 import com.tenten.linkhub.domain.notification.controller.mapper.NotificationApiMapper;
 import com.tenten.linkhub.domain.notification.service.NotificationService;
-import com.tenten.linkhub.domain.notification.service.dto.SpaceInvitationGetRequest;
-import com.tenten.linkhub.domain.notification.service.dto.SpaceInvitationGetResponses;
+import com.tenten.linkhub.domain.notification.service.dto.SpaceInviteNotificationGetRequest;
+import com.tenten.linkhub.domain.notification.service.dto.SpaceInviteNotificationGetResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -29,8 +29,8 @@ public class NotificationController {
      * 스페이스 초대 알림 조회 API
      */
     @GetMapping(value = "/invitations")
-    public ResponseEntity<SpaceInvitationGetApiResponses> getInviteNotifications(
-            @ModelAttribute SpaceInvitationGetApiRequest request,
+    public ResponseEntity<SpaceInviteNotificationGetApiResponses> getInviteNotifications(
+            @ModelAttribute SpaceInviteNotificationGetApiRequest request,
             @AuthenticationPrincipal MemberDetails memberDetails
     ) {
         PageRequest pageRequest = PageRequest.of(
@@ -38,13 +38,13 @@ public class NotificationController {
                 request.pageSize()
         );
 
-        SpaceInvitationGetRequest serviceRequest = apiMapper.toSpaceInvitationGetRequest(
+        SpaceInviteNotificationGetRequest serviceRequest = apiMapper.toSpaceInvitationGetRequest(
                 pageRequest,
                 memberDetails.memberId()
         );
 
-        SpaceInvitationGetResponses responses = notificationService.getSpaceInvitations(serviceRequest);
-        SpaceInvitationGetApiResponses apiResponses = SpaceInvitationGetApiResponses.from(responses);
+        SpaceInviteNotificationGetResponses responses = notificationService.getSpaceInvitations(serviceRequest);
+        SpaceInviteNotificationGetApiResponses apiResponses = SpaceInviteNotificationGetApiResponses.from(responses);
 
         return ResponseEntity
                 .ok()

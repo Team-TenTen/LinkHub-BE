@@ -1,6 +1,6 @@
 package com.tenten.linkhub.domain.notification.controller.mapper;
 
-import com.tenten.linkhub.domain.notification.service.dto.SpaceInvitationGetRequest;
+import com.tenten.linkhub.domain.notification.service.dto.SpaceInviteNotificationGetRequest;
 import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.springframework.data.domain.Pageable;
@@ -9,5 +9,5 @@ import org.springframework.data.domain.Pageable;
         injectionStrategy = InjectionStrategy.CONSTRUCTOR
 )
 public interface NotificationApiMapper {
-    SpaceInvitationGetRequest toSpaceInvitationGetRequest(Pageable pageable, Long memberId);
+    SpaceInviteNotificationGetRequest toSpaceInvitationGetRequest(Pageable pageable, Long memberId);
 }

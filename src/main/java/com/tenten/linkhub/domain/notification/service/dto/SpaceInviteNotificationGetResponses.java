@@ -3,12 +3,12 @@ package com.tenten.linkhub.domain.notification.service.dto;
 import com.tenten.linkhub.domain.notification.repository.dto.SpaceInvitationNotificationGetDto;
 import org.springframework.data.domain.Slice;
 
-public record SpaceInvitationGetResponses(
-        Slice<SpaceInvitationGetResponse> responses
+public record SpaceInviteNotificationGetResponses(
+        Slice<SpaceInviteNotificationGetResponse> responses
 ) {
-    public static SpaceInvitationGetResponses from(Slice<SpaceInvitationNotificationGetDto> notificationGetDtos) {
-        Slice<SpaceInvitationGetResponse> responseList = notificationGetDtos.map(
-                n -> new SpaceInvitationGetResponse(
+    public static SpaceInviteNotificationGetResponses from(Slice<SpaceInvitationNotificationGetDto> notificationGetDtos) {
+        Slice<SpaceInviteNotificationGetResponse> responseList = notificationGetDtos.map(
+                n -> new SpaceInviteNotificationGetResponse(
                         n.notificationId(),
                         n.invitingMemberId(),
                         n.spaceId(),
@@ -19,6 +19,6 @@ public record SpaceInvitationGetResponses(
                 )
         );
 
-        return new SpaceInvitationGetResponses(responseList);
+        return new SpaceInviteNotificationGetResponses(responseList);
     }
 }

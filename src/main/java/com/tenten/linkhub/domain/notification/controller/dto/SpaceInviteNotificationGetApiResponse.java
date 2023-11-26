@@ -2,7 +2,7 @@ package com.tenten.linkhub.domain.notification.controller.dto;
 
 import com.tenten.linkhub.domain.notification.model.NotificationType;
 
-public record SpaceInvitationGetApiResponse(
+public record SpaceInviteNotificationGetApiResponse(
         Long notificationId,
         Long invitingMemberId,
         Long spaceId,

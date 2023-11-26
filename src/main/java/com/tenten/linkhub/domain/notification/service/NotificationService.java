@@ -3,8 +3,8 @@ package com.tenten.linkhub.domain.notification.service;
 import com.tenten.linkhub.domain.notification.model.Notification;
 import com.tenten.linkhub.domain.notification.repository.NotificationRepository;
 import com.tenten.linkhub.domain.notification.repository.dto.SpaceInvitationNotificationGetDto;
-import com.tenten.linkhub.domain.notification.service.dto.SpaceInvitationGetRequest;
-import com.tenten.linkhub.domain.notification.service.dto.SpaceInvitationGetResponses;
+import com.tenten.linkhub.domain.notification.service.dto.SpaceInviteNotificationGetRequest;
+import com.tenten.linkhub.domain.notification.service.dto.SpaceInviteNotificationGetResponses;
 import com.tenten.linkhub.domain.notification.service.mapper.NotificationMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
@@ -26,8 +26,8 @@ public class NotificationService {
         notification.changeIsCheckedAsTrue(memberId);
     }
 
-    public SpaceInvitationGetResponses getSpaceInvitations(SpaceInvitationGetRequest request) {
+    public SpaceInviteNotificationGetResponses getSpaceInvitations(SpaceInviteNotificationGetRequest request) {
         Slice<SpaceInvitationNotificationGetDto> notificationGetDtos = notificationRepository.getInviteNotifications(notificationMapper.toQueryCondition(request));
-        return SpaceInvitationGetResponses.from(notificationGetDtos);
+        return SpaceInviteNotificationGetResponses.from(notificationGetDtos);
     }
 }
