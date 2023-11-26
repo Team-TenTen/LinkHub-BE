@@ -29,7 +29,7 @@ public class NotificationQueryDslRepository {
         List<SpaceInvitationNotificationGetDto> notificationGetDtos = jpaQueryFactory
                 .select(new QSpaceInvitationNotificationGetDto(
                         notification.id,
-                        invitation.memberId,
+                        notification.senderId,
                         invitation.space.id,
                         member.nickname,
                         space.spaceName,
@@ -56,8 +56,8 @@ public class NotificationQueryDslRepository {
     }
 
     BooleanExpression checkMemberJoinCondition(Long memberId) {
-        BooleanExpression joinMemberCondition = invitation.memberId.eq(member.id);
-        BooleanExpression isSameMemberId = invitation.memberId.eq(memberId);
+        BooleanExpression joinMemberCondition = notification.senderId.eq(member.id);
+        BooleanExpression isSameMemberId = notification.recipientId.eq(memberId);
 
         return joinMemberCondition.and(isSameMemberId);
     }
