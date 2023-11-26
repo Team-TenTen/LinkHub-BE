@@ -62,7 +62,7 @@ public class SpaceInvitationController {
     }
 
     /**
-     *  스페이스 초대 수락 API
+     * 스페이스 초대 수락 API
      */
     @Operation(
             summary = "스페이스 초대 수락 API", description = "스페이스 초대 수락 API 입니다.",
