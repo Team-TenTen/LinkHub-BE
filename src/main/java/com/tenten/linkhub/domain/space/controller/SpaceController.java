@@ -585,6 +585,19 @@ public class SpaceController {
                 .body(apiResponse);
     }
 
+    /**
+     *  스페이스 나가기 API
+     */
+    @DeleteMapping(value = "/{spaceId}/join")
+    public ResponseEntity<Void> leaveSpace(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long spaceId
+    ) {
+        spaceService.deleteSpaceMemberByMe(spaceId, memberDetails.memberId());
+
+        return ResponseEntity.noContent().build();
+    }
+
     private void setSpaceViewCookie(HttpServletResponse servletResponse, List<Long> spaceViews) {
         String spaceViewCookieValue = spaceViews.toString()
                 .replace(",", "_")

@@ -225,4 +225,8 @@ public class Space extends BaseEntity {
         }
     }
 
+    public void deleteSpaceMember(Long memberId) {
+        spaceMembers.deleteSpaceMember(memberId);
+    }
+
 }

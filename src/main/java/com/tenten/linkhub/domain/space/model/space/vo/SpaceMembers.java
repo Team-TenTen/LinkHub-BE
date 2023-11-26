@@ -93,4 +93,14 @@ public class SpaceMembers {
         targetSpaceMember.changeRole(role);
     }
 
+    public void deleteSpaceMember(Long memberId) {
+        SpaceMember spaceMember = getSpaceMemberList()
+                .stream()
+                .filter(sm -> Objects.equals(sm.getMemberId(), memberId))
+                .findFirst()
+                .orElseThrow(() -> new DataNotFoundException("해당하는 스페이스 멤버가 존재하지 않습니다."));
+
+        spaceMember.deleteSpaceMember();
+    }
+
 }

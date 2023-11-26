@@ -191,4 +191,12 @@ public class DefaultSpaceService implements SpaceService {
         return savedSpaceId;
     }
 
+    @Override
+    @Transactional
+    public void deleteSpaceMemberByMe(Long spaceId, Long memberId) {
+        Space space = spaceRepository.getById(spaceId);
+
+        space.deleteSpaceMember(memberId);
+    }
+
 }
