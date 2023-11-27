@@ -20,6 +20,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.querydsl.core.types.dsl.Expressions.TRUE;
 import static com.tenten.linkhub.domain.member.model.QMember.member;
 import static com.tenten.linkhub.domain.member.model.QProfileImage.profileImage;
 import static com.tenten.linkhub.domain.space.model.link.QLike.like;
@@ -92,6 +93,7 @@ public class LinkQueryDslRepository {
     }
 
     public List<PopularLinkGetDto> getPopularLinks(Long memberId) {
+
         return jpaQueryFactory
                 .select(new QPopularLinkGetDto(
                         link.id,
@@ -110,6 +112,13 @@ public class LinkQueryDslRepository {
                 .where(link.isDeleted.eq(Boolean.FALSE),
                         space.isDeleted.eq(Boolean.FALSE))
                 .orderBy(link.likeCount.desc())
+//                .groupBy(link.id,
+//                        link.title,
+//                        link.url.url,
+//                        tag.name,
+//                        tag.color,
+//                        link.likeCount,
+//                        like.memberId)
                 .limit(5)
                 .fetch();
     }
@@ -126,7 +135,7 @@ public class LinkQueryDslRepository {
         if (tagId != null) {
             return linkTag.tag.id.eq(tagId);
         }
-        return Expressions.TRUE;
+        return TRUE;
     }
 
 
