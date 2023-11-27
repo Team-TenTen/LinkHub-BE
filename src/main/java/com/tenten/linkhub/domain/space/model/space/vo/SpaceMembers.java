@@ -30,7 +30,7 @@ public class SpaceMembers {
 
     public void addSpaceMember(SpaceMember spaceMember) {
         validateNotNull(spaceMember, "spaceImages");
-        validateDuplicationSpaceMember(spaceMember);
+        validateDuplicationSpaceMember(spaceMember.getMemberId());
 
         this.spaceMemberList.add(spaceMember);
     }
@@ -105,8 +105,8 @@ public class SpaceMembers {
         spaceMember.deleteSpaceMember();
     }
 
-    public void validateDuplicationSpaceMember(SpaceMember spaceMember) {
-        if (getSpaceMemberList().contains(spaceMember)) {
+    public void validateDuplicationSpaceMember(Long memberId) {
+        if (getSpaceMemberIds().contains(memberId)) {
             throw new DuplicateKeyException("해당 멤버는 이미 스페이스의 멤버입니다.");
         }
     }
