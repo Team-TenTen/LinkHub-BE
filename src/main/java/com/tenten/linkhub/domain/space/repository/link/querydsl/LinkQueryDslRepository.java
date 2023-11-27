@@ -74,7 +74,7 @@ public class LinkQueryDslRepository {
                                                         LinkViewDto.class,
                                                         member.nickname.as("memberName"),
                                                         profileImage.path.as("memberProfileImage")
-                                                )
+                                                ).skipNulls()
                                         ).as("linkViewHistories")
                                 )
                         )
