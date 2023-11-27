@@ -78,4 +78,17 @@ public class SpaceMember extends BaseEntity {
         return !Objects.equals(this.role, Role.CAN_VIEW);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SpaceMember that = (SpaceMember) o;
+        return Objects.equals(id, that.id) && Objects.equals(space, that.space) && Objects.equals(memberId, that.memberId) && role == that.role;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, space, memberId, role);
+    }
+
 }

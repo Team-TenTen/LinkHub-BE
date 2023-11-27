@@ -9,6 +9,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.dao.DuplicateKeyException;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -29,6 +30,7 @@ public class SpaceMembers {
 
     public void addSpaceMember(SpaceMember spaceMember) {
         validateNotNull(spaceMember, "spaceImages");
+        validateDuplicationSpaceMember(spaceMember);
 
         this.spaceMemberList.add(spaceMember);
     }
@@ -101,6 +103,12 @@ public class SpaceMembers {
                 .orElseThrow(() -> new DataNotFoundException("해당하는 스페이스 멤버가 존재하지 않습니다."));
 
         spaceMember.deleteSpaceMember();
+    }
+
+    public void validateDuplicationSpaceMember(SpaceMember spaceMember) {
+        if (getSpaceMemberList().contains(spaceMember)) {
+            throw new DuplicateKeyException("해당 멤버는 이미 스페이스의 멤버입니다.");
+        }
     }
 
 }

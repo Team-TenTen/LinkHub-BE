@@ -4,6 +4,7 @@ import com.tenten.linkhub.global.response.ErrorResponse;
 import com.tenten.linkhub.global.response.ErrorWithDetailCodeResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -47,6 +48,15 @@ public class GlobalApiExceptionHandler {
 
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<ErrorResponse> handleIllegalStateException(HttpServletRequest request, IllegalStateException e) {
+        ErrorResponse errorResponse = ErrorResponse.of(e.getMessage(), request.getRequestURI());
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(errorResponse);
+    }
+
+    @ExceptionHandler(DuplicateKeyException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateKeyException(HttpServletRequest request, DuplicateKeyException e) {
         ErrorResponse errorResponse = ErrorResponse.of(e.getMessage(), request.getRequestURI());
 
         return ResponseEntity
