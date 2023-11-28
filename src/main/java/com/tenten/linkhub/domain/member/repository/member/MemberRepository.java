@@ -15,6 +15,8 @@ public interface MemberRepository {
 
     boolean existsMemberByNewsEmail(String email);
 
+    boolean existsMemberByNickname(String nickname);
+
     Optional<Member> findBySocialIdAndProvider(String socialId, Provider provider);
 
     Member save(Member newUser);

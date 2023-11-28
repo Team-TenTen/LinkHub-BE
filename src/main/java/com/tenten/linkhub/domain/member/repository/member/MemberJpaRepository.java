@@ -15,6 +15,8 @@ public interface MemberJpaRepository extends JpaRepository<Member, Long> {
 
     boolean existsByNewsEmail(String email);
 
+    boolean existsByNickname(String nickname);
+
     @Query("SELECT m FROM Member m " +
             "WHERE m.socialId = :socialId " +
             "AND m.provider = :provider " +
