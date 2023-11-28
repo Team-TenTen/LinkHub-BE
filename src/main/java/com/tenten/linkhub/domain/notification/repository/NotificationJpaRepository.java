@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface NotificationJpaRepository extends JpaRepository<Notification, Long> {
 
+    Boolean existsByRecipientIdAndSenderId(Long recipientId, Long senderId);
 }

@@ -11,4 +11,6 @@ public interface NotificationRepository {
     Slice<SpaceInvitationNotificationGetDto> getInviteNotifications(NotificationGetQueryCondition condition);
 
     Notification save(Notification notification);
+
+    Boolean existsByMemberIdAndMyMemberId(Long memberId, Long myMemberId);
 }

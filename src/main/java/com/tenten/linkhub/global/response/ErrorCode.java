@@ -20,7 +20,10 @@ public enum ErrorCode {
     DUPLICATE_NICKNAME("M004", "중복된 닉네임입니다."),
 
     //favorite
-    DUPLICATE_FAVORITE("F001", "중복된 즐겨찾기 등록입니다.");
+    DUPLICATE_FAVORITE("F001", "중복된 즐겨찾기 등록입니다."),
+
+    //notification
+    DUPLICATE_NOTIFICATION("N001", "중복된 알림 등록입니다.");
 
     private final String code;
     private final String message;
