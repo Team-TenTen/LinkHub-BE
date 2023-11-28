@@ -89,7 +89,6 @@ public class S3Uploader implements ImageFileUploader {
         }
     }
 
-
     private String changeFileName(String fileName, String folder) {
         String uuid = UUID.randomUUID().toString();
         return folder + uuid + "-" + fileName;

@@ -73,8 +73,6 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
 
-
-
 }
 
 tasks.named('test') {
@@ -86,7 +84,7 @@ def generated = "$buildDir/generated/querydsl"
 
 // querydsl QClass 파일 생성 위치를 지정
 tasks.withType(JavaCompile) {
-    options.getGeneratedSourceOutputDirectory().set(file(generated))
+    options.generatedSourceOutputDirectory = file(generated)
 }
 
 // java source set 에 querydsl QClass 위치 추가

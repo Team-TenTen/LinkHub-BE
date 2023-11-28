@@ -41,4 +41,5 @@ public class SpaceInvitationService {
 
         return invitationRepository.save(invitation).getId();
     }
+
 }
