@@ -233,12 +233,13 @@ class DefaultSpaceServiceTest {
         Space space = spaceJpaRepository.findById(spaceId).get();
 
         List<SpaceMember> spaceMembers = space.getSortedSpaceMember();
+        assertThat(space.getMemberId()).isEqualTo(myMemberId);
         assertThat(spaceMembers.size()).isEqualTo(2);
         assertThat(spaceMembers.get(1).getRole()).isEqualTo(Role.CAN_EDIT);
     }
 
     @Test
-    @DisplayName("스페이스 멤버들의 권한을 OWNER로 변경할 경우 기존 OWNER는 CAN_EDIT으로 변경 된다.")
+    @DisplayName("스페이스 멤버의 권한을 OWNER로 변경할 경우 기존 OWNER는 CAN_EDIT으로 변경 된다.")
     void changeSpaceMembersRole_changeRoleAsOwner() {
         //given
         SpaceMemberRoleChangeRequest request = new SpaceMemberRoleChangeRequest(myFirstSpaceId, myMemberId, anotherMemberId, Role.OWNER);
@@ -250,6 +251,7 @@ class DefaultSpaceServiceTest {
         Space space = spaceJpaRepository.findById(spaceId).get();
 
         List<SpaceMember> spaceMembers = space.getSortedSpaceMember();
+        assertThat(space.getMemberId()).isEqualTo(anotherMemberId);
         assertThat(spaceMembers.size()).isEqualTo(2);
         assertThat(spaceMembers.get(0).getMemberId()).isEqualTo(anotherMemberId);
         assertThat(spaceMembers.get(0).getRole()).isEqualTo(Role.OWNER);

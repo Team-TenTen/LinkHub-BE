@@ -87,19 +87,24 @@ public class SpaceMembers {
                 .anyMatch(sm -> Objects.equals(sm.getMemberId(), memberId) && !sm.getIsDeleted());
     }
 
-    public void changeSpaceMembersRole(Long targetMemberId, Role role) {
+    public Long changeSpaceMembersRole(Long targetMemberId, Role role) {
         SpaceMember targetSpaceMember = getSpaceMemberList()
                 .stream()
                 .filter(sm -> Objects.equals(sm.getMemberId(), targetMemberId))
                 .findFirst()
                 .orElseThrow(() -> new DataNotFoundException("해당 스페이스멤버를 찾지 못했습니다."));
 
+        SpaceMember spaceOwner = getSpaceOwner();
+
         if (Objects.equals(role, OWNER)) {
-            SpaceMember spaceOwner = getSpaceOwner();
             spaceOwner.changeRole(CAN_EDIT);
+
+            targetSpaceMember.changeRole(role);
+            return targetSpaceMember.getMemberId();
         }
 
         targetSpaceMember.changeRole(role);
+        return spaceOwner.getMemberId();
     }
 
     public void deleteSpaceMember(Long memberId) {

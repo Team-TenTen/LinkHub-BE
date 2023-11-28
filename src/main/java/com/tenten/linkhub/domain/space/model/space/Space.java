@@ -199,7 +199,7 @@ public class Space extends BaseEntity {
     }
 
     public void changeSpaceMembersRole(Long targetMemberId, Role role) {
-        spaceMembers.changeSpaceMembersRole(targetMemberId, role);
+        memberId = spaceMembers.changeSpaceMembersRole(targetMemberId, role);
     }
 
     public Long deleteSpace(Long memberId) {
