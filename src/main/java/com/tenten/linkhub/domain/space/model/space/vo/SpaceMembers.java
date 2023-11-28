@@ -98,7 +98,7 @@ public class SpaceMembers {
             SpaceMember spaceOwner = getSpaceOwner();
             spaceOwner.changeRole(CAN_EDIT);
         }
-        
+
         targetSpaceMember.changeRole(role);
     }
 

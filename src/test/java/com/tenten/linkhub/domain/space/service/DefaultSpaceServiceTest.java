@@ -238,6 +238,26 @@ class DefaultSpaceServiceTest {
     }
 
     @Test
+    @DisplayName("스페이스 멤버들의 권한을 OWNER로 변경할 경우 기존 OWNER는 CAN_EDIT으로 변경 된다.")
+    void changeSpaceMembersRole_changeRoleAsOwner() {
+        //given
+        SpaceMemberRoleChangeRequest request = new SpaceMemberRoleChangeRequest(myFirstSpaceId, myMemberId, anotherMemberId, Role.OWNER);
+
+        //when
+        Long spaceId = spaceService.changeSpaceMembersRole(request);
+
+        //then
+        Space space = spaceJpaRepository.findById(spaceId).get();
+
+        List<SpaceMember> spaceMembers = space.getSortedSpaceMember();
+        assertThat(spaceMembers.size()).isEqualTo(2);
+        assertThat(spaceMembers.get(0).getMemberId()).isEqualTo(anotherMemberId);
+        assertThat(spaceMembers.get(0).getRole()).isEqualTo(Role.OWNER);
+        assertThat(spaceMembers.get(1).getMemberId()).isEqualTo(myMemberId);
+        assertThat(spaceMembers.get(1).getRole()).isEqualTo(Role.CAN_EDIT);
+    }
+
+    @Test
     @DisplayName("스페이스의 오너가 아닌 멤버가 스페이스 멤버의 권한을 변경하려고 하면 UnauthorizedAccessException예외가 발생한다.")
     void changeSpaceMembersRole_UnauthorizedAccessException() {
         //given
