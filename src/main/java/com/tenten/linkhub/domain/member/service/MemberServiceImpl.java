@@ -57,7 +57,7 @@ import java.util.Optional;
 public class MemberServiceImpl implements MemberService {
 
     private static final String MEMBER_IMAGE_FOLDER = "member-image/";
-    private static final String MEMBER_DEFAULT_IMAGE_PATH = "https://team-10-bucket.s3.ap-northeast-2.amazonaws.com/member-image/member-default.png";
+    private static final String MEMBER_DEFAULT_IMAGE_PATH = "https://team-10-bucket.s3.ap-northeast-2.amazonaws.com/member-image/member-default-v1.png";
     private static final Long CODE_VALID_DURATION = 60 * 5L;
 
     private final MemberRepository memberRepository;
