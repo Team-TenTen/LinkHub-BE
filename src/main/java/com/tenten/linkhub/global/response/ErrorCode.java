@@ -16,9 +16,14 @@ public enum ErrorCode {
     //member
     DUPLICATE_NEWS_EMAIL("M001", "중복된 이메일입니다."),
     DUPLICATE_FOLLOWING("M002", "중복된 팔로잉입니다."),
+    DUPLICATE_SOCIAL_ID("M003", "중복된 소셜 아이디입니다."),
+    DUPLICATE_NICKNAME("M004", "중복된 닉네임입니다."),
 
     //favorite
-    DUPLICATE_FAVORITE("F001", "중복된 즐겨찾기 등록입니다.");
+    DUPLICATE_FAVORITE("F001", "중복된 즐겨찾기 등록입니다."),
+
+    //notification
+    DUPLICATE_NOTIFICATION("N001", "중복된 알림 등록입니다.");
 
     private final String code;
     private final String message;

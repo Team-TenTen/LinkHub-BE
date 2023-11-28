@@ -112,8 +112,16 @@ public class MemberServiceImpl implements MemberService {
     public MemberJoinResponse join(MemberJoinRequest memberJoinRequest) {
         memberRepository.findBySocialIdAndProvider(memberJoinRequest.socialId(), memberJoinRequest.provider())
                 .ifPresent(m -> {
-                    throw new UnauthorizedAccessException("이미 가입한 회원입니다.");
+                    throw new DataDuplicateException(ErrorCode.DUPLICATE_SOCIAL_ID);
                 });
+
+        if (memberRepository.existsMemberByNewsEmail(memberJoinRequest.newsEmail())) {
+            throw new DataDuplicateException(ErrorCode.DUPLICATE_NEWS_EMAIL);
+        }
+
+        if (memberRepository.existsMemberByNickname(memberJoinRequest.nickname())) {
+            throw new DataDuplicateException(ErrorCode.DUPLICATE_NICKNAME);
+        }
 
         ImageInfo imageInfo = getNewImageInfoOrDefaultImageInfo(memberJoinRequest.file());
 
@@ -251,6 +259,11 @@ public class MemberServiceImpl implements MemberService {
                 mapper.toQueryCond(memberSearchRequest));
 
         return MemberSearchResponses.from(memberAndMemberImageSlice);
+    }
+
+    @Override
+    public Long findMemberIdByEmail(String email) {
+        return memberRepository.findMemberIdByEmail(email);
     }
 
 }
