@@ -27,7 +27,7 @@ import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 @NoArgsConstructor
 public class SpaceMembers {
 
-    @OneToMany(mappedBy = "space", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "space", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SpaceMember> spaceMemberList = new ArrayList<>();
 
     public void addSpaceMember(SpaceMember spaceMember) {
