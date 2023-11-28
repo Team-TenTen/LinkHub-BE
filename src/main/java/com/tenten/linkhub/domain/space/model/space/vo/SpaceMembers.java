@@ -109,6 +109,10 @@ public class SpaceMembers {
                 .findFirst()
                 .orElseThrow(() -> new DataNotFoundException("해당하는 스페이스 멤버가 존재하지 않습니다."));
 
+        if (Objects.equals(spaceMember.getRole(), OWNER)) {
+            throw new IllegalStateException("스페이스의 주인은 스페이스를 나갈 수 없습니다. 나가기 대신 스페이스 삭제를 해주세요.");
+        }
+
         spaceMember.deleteSpaceMember();
     }
 

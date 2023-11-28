@@ -269,7 +269,7 @@ class DefaultSpaceServiceTest {
     }
 
     @Test
-    @DisplayName("")
+    @DisplayName("유저는 자신이 속한 스페이스를 나갈 수 있다.")
     void deleteSpaceMemberByMe() {
         //when
         spaceService.deleteSpaceMemberByMe(myFirstSpaceId, anotherMemberId);
@@ -279,6 +279,14 @@ class DefaultSpaceServiceTest {
         List<SpaceMember> spaceMembers = space.getSpaceMembers();
 
         assertThat(spaceMembers.size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("스페이스의 OWNER는 스페이스 떠나기를 할 경우 IllegalStateException가 발생한다. ")
+    void deleteSpaceMemberByMe_IllegalStateException() {
+        //when//then
+        assertThatThrownBy(() -> spaceService.deleteSpaceMemberByMe(myFirstSpaceId, myMemberId))
+                .isInstanceOf(IllegalStateException.class);
     }
 
     private void setupData() {
