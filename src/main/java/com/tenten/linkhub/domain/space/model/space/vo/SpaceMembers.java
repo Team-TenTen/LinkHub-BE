@@ -18,6 +18,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.tenten.linkhub.domain.space.model.space.Role.CAN_EDIT;
+import static com.tenten.linkhub.domain.space.model.space.Role.OWNER;
 import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 
 @Getter
@@ -92,6 +94,11 @@ public class SpaceMembers {
                 .findFirst()
                 .orElseThrow(() -> new DataNotFoundException("해당 스페이스멤버를 찾지 못했습니다."));
 
+        if (Objects.equals(role, OWNER)) {
+            SpaceMember spaceOwner = getSpaceOwner();
+            spaceOwner.changeRole(CAN_EDIT);
+        }
+        
         targetSpaceMember.changeRole(role);
     }
 
@@ -109,6 +116,14 @@ public class SpaceMembers {
         if (getSpaceMemberIds().contains(memberId)) {
             throw new DuplicateKeyException("해당 멤버는 이미 스페이스의 멤버입니다.");
         }
+    }
+
+    private SpaceMember getSpaceOwner() {
+        return getSpaceMemberList()
+                .stream()
+                .filter(sm -> Objects.equals(sm.getRole(), OWNER))
+                .findFirst()
+                .orElseThrow(() -> new DataNotFoundException("해당 스페이스에 Owner가 존재하지 않습니디."));
     }
 
 }
