@@ -51,7 +51,7 @@ public class GlobalApiExceptionHandler {
         ErrorResponse errorResponse = ErrorResponse.of(e.getMessage(), request.getRequestURI());
 
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(HttpStatus.FORBIDDEN)
                 .body(errorResponse);
     }
 
