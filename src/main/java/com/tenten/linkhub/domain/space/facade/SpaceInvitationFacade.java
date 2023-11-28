@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.space.facade;
 
+import com.tenten.linkhub.domain.member.service.MemberService;
 import com.tenten.linkhub.domain.notification.service.NotificationService;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceInvitationFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.mapper.SpaceInvitationFacadeMapper;
@@ -15,12 +16,15 @@ public class SpaceInvitationFacade {
     private final SpaceInvitationService spaceInvitationService;
     private final NotificationService notificationService;
     private final SpaceInvitationFacadeMapper mapper;
+    private final MemberService memberService;
 
     @Transactional
     public Long invite(SpaceInvitationFacadeRequest request) {
-        Long notificationId = notificationService.createNotification(mapper.toNotificationCreateRequest(request));
+        Long memberId = memberService.findMemberIdByEmail(request.email());
 
-        spaceInvitationService.createInvitation(mapper.toSpaceInvitationRequest(request, notificationId));
+        Long notificationId = notificationService.createNotification(mapper.toNotificationCreateRequest(request, memberId));
+
+        spaceInvitationService.createInvitation(mapper.toSpaceInvitationRequest(request, notificationId, memberId));
 
         return notificationId;
     }

@@ -64,4 +64,9 @@ public class DefaultMemberRepository implements MemberRepository {
         return memberQueryRepository.findMembersWithProfileImages(queryCond);
     }
 
+    @Override
+    public Long findMemberIdByEmail(String email) {
+        return memberJpaRepository.findMemberIdByEmail(email);
+    }
+
 }

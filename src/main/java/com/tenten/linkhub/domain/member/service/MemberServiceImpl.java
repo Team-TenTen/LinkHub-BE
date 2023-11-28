@@ -253,4 +253,9 @@ public class MemberServiceImpl implements MemberService {
         return MemberSearchResponses.from(memberAndMemberImageSlice);
     }
 
+    @Override
+    public Long findMemberIdByEmail(String email) {
+        return memberRepository.findMemberIdByEmail(email);
+    }
+
 }

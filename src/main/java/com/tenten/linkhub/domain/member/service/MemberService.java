@@ -49,4 +49,6 @@ public interface MemberService {
     MemberUpdateResponse updateProfile(MemberUpdateRequest memberUpdateRequest);
 
     MemberSearchResponses searchMember(MemberSearchRequest memberSearchRequest);
+
+    Long findMemberIdByEmail(String email);
 }

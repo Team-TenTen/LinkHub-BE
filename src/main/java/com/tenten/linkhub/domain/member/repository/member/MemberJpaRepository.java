@@ -36,5 +36,7 @@ public interface MemberJpaRepository extends JpaRepository<Member, Long> {
             "WHERE m.id IN :memberIds")
     List<Member> findMembersWithProfileImageAndCategoryByMemberIds(List<Long> memberIds);
 
+    @Query("SELECT m.id FROM Member m WHERE m.newsEmail = :email")
+    Long findMemberIdByEmail(String email);
 }
 
