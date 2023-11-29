@@ -20,6 +20,7 @@ import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.spacemember.SpaceMemberRoleChangeRequest;
+import com.tenten.linkhub.global.exception.PolicyViolationException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -284,11 +285,11 @@ class DefaultSpaceServiceTest {
     }
 
     @Test
-    @DisplayName("스페이스의 OWNER는 스페이스 떠나기를 할 경우 IllegalStateException가 발생한다. ")
-    void deleteSpaceMemberByMe_IllegalStateException() {
+    @DisplayName("스페이스의 OWNER는 스페이스 떠나기를 할 경우 PolicyViolationException가 발생한다. ")
+    void deleteSpaceMemberByMe_PolicyViolationException() {
         //when//then
         assertThatThrownBy(() -> spaceService.deleteSpaceMemberByMe(myFirstSpaceId, myMemberId))
-                .isInstanceOf(IllegalStateException.class);
+                .isInstanceOf(PolicyViolationException.class);
     }
 
     private void setupData() {

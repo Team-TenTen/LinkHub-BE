@@ -25,6 +25,7 @@ import com.tenten.linkhub.domain.space.service.LinkService;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkCreateRequest;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.s3.ImageFileUploader;
+import com.tenten.linkhub.global.exception.PolicyViolationException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -308,8 +309,8 @@ class SpaceFacadeTest {
     }
 
     @Test
-    @DisplayName("유저가 같은 스페이스를 두번 복사할 경우 IllegalStateException가 발생한다.")
-    void scrapAndCreateNewSpace_IllegalStateException() {
+    @DisplayName("유저가 같은 스페이스를 두번 복사할 경우 PolicyViolationException가 발생한다.")
+    void scrapAndCreateNewSpace_PolicyViolationException() {
         //given
         NewSpacesScrapFacadeRequest request = new NewSpacesScrapFacadeRequest(
                 "가져오기한 스페이스",
@@ -328,7 +329,7 @@ class SpaceFacadeTest {
         spaceFacade.scrapAndCreateNewSpace(request);
 
         assertThatThrownBy(() -> spaceFacade.scrapAndCreateNewSpace(request))
-                .isInstanceOf(IllegalStateException.class);
+                .isInstanceOf(PolicyViolationException.class);
     }
 
     private void setUpData() {
