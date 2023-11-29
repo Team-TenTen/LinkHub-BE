@@ -31,7 +31,7 @@ public class DefaultMemberRepository implements MemberRepository {
     }
 
     public boolean existsMemberByNewsEmail(String email) {
-        return memberJpaRepository.existsByNewsEmail(email);
+        return memberJpaRepository.existsByNewsEmailAndIsDeletedFalse(email);
     }
     @Override
     public Optional<Member> findBySocialIdAndProvider(String socialId, Provider provider) {
