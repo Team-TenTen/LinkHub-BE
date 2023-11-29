@@ -308,8 +308,8 @@ class SpaceFacadeTest {
     }
 
     @Test
-    @DisplayName("유저는 다른 유저의 스페이스를 복사하여 자신의 새로운 스페이스로 생성할 수 있다.")
-    void scrapAndCreateNewSpace() {
+    @DisplayName("유저가 같은 스페이스를 두번 복사할 경우 IllegalStateException가 발생한다.")
+    void scrapAndCreateNewSpace_IllegalStateException() {
         //given
         NewSpacesScrapFacadeRequest request = new NewSpacesScrapFacadeRequest(
                 "가져오기한 스페이스",
@@ -325,9 +325,10 @@ class SpaceFacadeTest {
         );
 
         //when//then
-        Long savedSpaceId = spaceFacade.scrapAndCreateNewSpace(request);
+        spaceFacade.scrapAndCreateNewSpace(request);
 
-        //then
+        assertThatThrownBy(() -> spaceFacade.scrapAndCreateNewSpace(request))
+                .isInstanceOf(IllegalStateException.class);
     }
 
     private void setUpData() {
