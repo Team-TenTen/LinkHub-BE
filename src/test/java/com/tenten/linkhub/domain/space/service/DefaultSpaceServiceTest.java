@@ -233,7 +233,29 @@ class DefaultSpaceServiceTest {
         Space space = spaceJpaRepository.findById(spaceId).get();
 
         List<SpaceMember> spaceMembers = space.getSortedSpaceMember();
+        assertThat(space.getMemberId()).isEqualTo(myMemberId);
         assertThat(spaceMembers.size()).isEqualTo(2);
+        assertThat(spaceMembers.get(1).getRole()).isEqualTo(Role.CAN_EDIT);
+    }
+
+    @Test
+    @DisplayName("스페이스 멤버의 권한을 OWNER로 변경할 경우 기존 OWNER는 CAN_EDIT으로 변경 된다.")
+    void changeSpaceMembersRole_changeRoleAsOwner() {
+        //given
+        SpaceMemberRoleChangeRequest request = new SpaceMemberRoleChangeRequest(myFirstSpaceId, myMemberId, anotherMemberId, Role.OWNER);
+
+        //when
+        Long spaceId = spaceService.changeSpaceMembersRole(request);
+
+        //then
+        Space space = spaceJpaRepository.findById(spaceId).get();
+
+        List<SpaceMember> spaceMembers = space.getSortedSpaceMember();
+        assertThat(space.getMemberId()).isEqualTo(anotherMemberId);
+        assertThat(spaceMembers.size()).isEqualTo(2);
+        assertThat(spaceMembers.get(0).getMemberId()).isEqualTo(anotherMemberId);
+        assertThat(spaceMembers.get(0).getRole()).isEqualTo(Role.OWNER);
+        assertThat(spaceMembers.get(1).getMemberId()).isEqualTo(myMemberId);
         assertThat(spaceMembers.get(1).getRole()).isEqualTo(Role.CAN_EDIT);
     }
 
@@ -246,6 +268,27 @@ class DefaultSpaceServiceTest {
         //when//then
         assertThatThrownBy(() -> spaceService.changeSpaceMembersRole(request))
                 .isInstanceOf(UnauthorizedAccessException.class);
+    }
+
+    @Test
+    @DisplayName("유저는 자신이 속한 스페이스를 나갈 수 있다.")
+    void deleteSpaceMemberByMe() {
+        //when
+        spaceService.deleteSpaceMemberByMe(myFirstSpaceId, anotherMemberId);
+
+        //then
+        Space space = spaceJpaRepository.findById(myFirstSpaceId).get();
+        List<SpaceMember> spaceMembers = space.getSpaceMembers();
+
+        assertThat(spaceMembers.size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("스페이스의 OWNER는 스페이스 떠나기를 할 경우 IllegalStateException가 발생한다. ")
+    void deleteSpaceMemberByMe_IllegalStateException() {
+        //when//then
+        assertThatThrownBy(() -> spaceService.deleteSpaceMemberByMe(myFirstSpaceId, myMemberId))
+                .isInstanceOf(IllegalStateException.class);
     }
 
     private void setupData() {

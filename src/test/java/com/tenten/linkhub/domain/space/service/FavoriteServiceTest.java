@@ -63,6 +63,7 @@ class FavoriteServiceTest {
     @AfterEach
     void tearDown() {
         favoriteJpaRepository.deleteAll();
+        spaceJpaRepository.deleteAll();
     }
 
     @Test

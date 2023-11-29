@@ -585,6 +585,26 @@ public class SpaceController {
                 .body(apiResponse);
     }
 
+    /**
+     *  스페이스 나가기 API
+     */
+    @Operation(
+            summary = "스페이스 나가기 API", description = "스페이스 나가기 API 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "스페이스 나가기가 성공적으로 수행되었습니다."),
+                    @ApiResponse(responseCode = "404", description = "존재하지 않는 스페이스 / 존재하지 않는 스페이스 멤버",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+            })
+    @DeleteMapping(value = "/{spaceId}/join")
+    public ResponseEntity<Void> leaveSpace(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long spaceId
+    ) {
+        spaceService.deleteSpaceMemberByMe(spaceId, memberDetails.memberId());
+
+        return ResponseEntity.noContent().build();
+    }
+
     private void setSpaceViewCookie(HttpServletResponse servletResponse, List<Long> spaceViews) {
         String spaceViewCookieValue = spaceViews.toString()
                 .replace(",", "_")
