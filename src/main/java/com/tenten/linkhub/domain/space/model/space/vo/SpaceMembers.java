@@ -2,7 +2,10 @@ package com.tenten.linkhub.domain.space.model.space.vo;
 
 import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
+import com.tenten.linkhub.global.exception.DataDuplicateException;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
+import com.tenten.linkhub.global.exception.PolicyViolationException;
+import com.tenten.linkhub.global.response.ErrorCode;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
@@ -20,6 +23,8 @@ import java.util.stream.Collectors;
 
 import static com.tenten.linkhub.domain.space.model.space.Role.CAN_EDIT;
 import static com.tenten.linkhub.domain.space.model.space.Role.OWNER;
+import static com.tenten.linkhub.global.response.ErrorCode.DUPLICATE_SPACE_MEMBER;
+import static com.tenten.linkhub.global.response.ErrorCode.SPACE_OWNER_LEAVE_ATTEMPT;
 import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 
 @Getter
@@ -115,7 +120,7 @@ public class SpaceMembers {
                 .orElseThrow(() -> new DataNotFoundException("해당하는 스페이스 멤버가 존재하지 않습니다."));
 
         if (Objects.equals(spaceMember.getRole(), OWNER)) {
-            throw new IllegalStateException("스페이스의 주인은 스페이스를 나갈 수 없습니다. 나가기 대신 스페이스 삭제를 해주세요.");
+            throw new PolicyViolationException(SPACE_OWNER_LEAVE_ATTEMPT);
         }
 
         spaceMember.deleteSpaceMember();
@@ -123,7 +128,7 @@ public class SpaceMembers {
 
     public void validateDuplicationSpaceMember(Long memberId) {
         if (getSpaceMemberIds().contains(memberId)) {
-            throw new DuplicateKeyException("해당 멤버는 이미 스페이스의 멤버입니다.");
+            throw new DataDuplicateException(DUPLICATE_SPACE_MEMBER);
         }
     }
 

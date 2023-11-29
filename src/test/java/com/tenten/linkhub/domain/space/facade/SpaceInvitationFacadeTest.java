@@ -18,14 +18,13 @@ import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.invitation.InvitationJpaRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.service.dto.invitation.SpaceInvitationAcceptRequest;
+import com.tenten.linkhub.global.exception.DataDuplicateException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -123,15 +122,15 @@ class SpaceInvitationFacadeTest {
     }
 
     @Test
-    @DisplayName("유저가 스페이스 초대를 중복 수락할 경우 해당 DuplicateKeyException가 발생한다.")
-    void acceptSpaceInvitation_DuplicateKeyException() {
+    @DisplayName("유저가 스페이스 초대를 중복 수락할 경우 해당 DataDuplicateException가 발생한다.")
+    void acceptSpaceInvitation_DataDuplicateException() {
         //given
         SpaceInvitationAcceptRequest request = new SpaceInvitationAcceptRequest(myMember.getId(), myNotification.getId());
 
         //when//then
         spaceInvitationFacade.acceptSpaceInvitation(request);
         assertThatThrownBy(() -> spaceInvitationFacade.acceptSpaceInvitation(request))
-                .isInstanceOf(DuplicateKeyException.class);
+                .isInstanceOf(DataDuplicateException.class);
     }
 
     private void setUpTestData() {
