@@ -303,6 +303,31 @@ class SpaceFacadeTest {
         assertThat(scrapedLinks.get(0).getLinkTags().get(0).getTag().getName()).isEqualTo("도구");
         assertThat(scrapedLinks.get(1).getTitle()).isEqualTo("무신사");
         assertThat(scrapedLinks.get(1).getLinkTags().get(0).getTag().getName()).isEqualTo("의류");
+        assertThat(scrapedLinks.get(2).getTitle()).isEqualTo("발란");
+        assertThat(scrapedLinks.get(2).getLinkTags().get(0).getTag().getName()).isEqualTo("의류");
+    }
+
+    @Test
+    @DisplayName("유저는 다른 유저의 스페이스를 복사하여 자신의 새로운 스페이스로 생성할 수 있다.")
+    void scrapAndCreateNewSpace() {
+        //given
+        NewSpacesScrapFacadeRequest request = new NewSpacesScrapFacadeRequest(
+                "가져오기한 스페이스",
+                "다른 유저의 스페이스를 가져오기한 스페이스 입니다.",
+                Category.ETC,
+                true,
+                true,
+                true,
+                true,
+                null,
+                anotherSpaceId,
+                myMemberId
+        );
+
+        //when//then
+        Long savedSpaceId = spaceFacade.scrapAndCreateNewSpace(request);
+
+        //then
     }
 
     private void setUpData() {
@@ -390,8 +415,7 @@ class SpaceFacadeTest {
                         "도구",
                         anotherMemberId,
                         "yellow"
-                )
-        );
+                ));
 
         linkService.createLink(
                 new LinkCreateRequest(
@@ -401,8 +425,17 @@ class SpaceFacadeTest {
                         "의류",
                         anotherMemberId,
                         "blue"
-                )
-        );
+                ));
+
+        linkService.createLink(
+                new LinkCreateRequest(
+                        anotherSpaceId,
+                        "https://balaan.com",
+                        "발란",
+                        "의류",
+                        anotherMemberId,
+                        "blue"
+                ));
     }
 
 }
