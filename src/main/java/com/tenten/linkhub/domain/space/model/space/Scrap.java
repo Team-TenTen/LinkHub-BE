@@ -25,18 +25,17 @@ public class Scrap {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "space_id", referencedColumnName = "id", nullable = false)
-    private Space space;
+    @Column(nullable = false)
+    private Long spaceId;
 
     @Column(nullable = false)
     private Long memberId;
 
-    public Scrap(Space space, Long memberId) {
-        validateNotNull(space, "space");
+    public Scrap(Long spaceId, Long memberId) {
+        validateNotNull(spaceId, "spaceId");
         validateNotNull(memberId, "memberId");
 
-        this.space = space;
+        this.spaceId = spaceId;
         this.memberId = memberId;
     }
 
