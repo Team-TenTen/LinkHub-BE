@@ -51,6 +51,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.tenten.linkhub.global.response.ErrorCode.DUPLICATE_MEMBER;
+
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
@@ -112,7 +114,7 @@ public class MemberServiceImpl implements MemberService {
     public MemberJoinResponse join(MemberJoinRequest memberJoinRequest) {
         memberRepository.findBySocialIdAndProvider(memberJoinRequest.socialId(), memberJoinRequest.provider())
                 .ifPresent(m -> {
-                    throw new UnauthorizedAccessException("이미 가입한 회원입니다.");
+                    throw new DataDuplicateException(DUPLICATE_MEMBER);
                 });
 
         ImageInfo imageInfo = getNewImageInfoOrDefaultImageInfo(memberJoinRequest.file());
@@ -157,7 +159,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberProfileResponse getProfile(Long memberId, Long myMemberId) {
         Member member = memberRepository.findByIdWithImageAndCategory(memberId)
-                .orElseThrow(() -> new UnauthorizedAccessException("존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new DataNotFoundException("존재하지 않는 회원입니다."));
 
         Long followerCount = followRepository.countFollowers(memberId);
         Long followingCount = followRepository.countFollowing(memberId);
@@ -171,7 +173,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberMyProfileResponse getMyProfile(Long memberId) {
         Member member = memberRepository.findByIdWithImageAndCategory(memberId)
-                .orElseThrow(() -> new UnauthorizedAccessException("존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new DataNotFoundException("존재하지 않는 회원입니다."));
 
         Long followerCount = followRepository.countFollowers(memberId);
         Long followingCount = followRepository.countFollowing(memberId);
