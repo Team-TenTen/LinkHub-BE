@@ -24,7 +24,6 @@ import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.s3.ImageFileUploader;
 import com.tenten.linkhub.global.exception.DataDuplicateException;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
-import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -143,7 +142,7 @@ class MemberServiceTest {
 
         //when && then
         assertThatThrownBy(() -> memberService.join(createMemberJoinRequest(requestFile)))
-                .isInstanceOf(UnauthorizedAccessException.class)
+                .isInstanceOf(DataDuplicateException.class)
                 .hasMessageContaining("이미 가입한 회원입니다.");
     }
 
@@ -194,7 +193,7 @@ class MemberServiceTest {
 
         // when //then
         assertThatThrownBy(() -> memberService.getProfile(notExistingMemberId, myMemberId))
-                .isInstanceOf(UnauthorizedAccessException.class)
+                .isInstanceOf(DataNotFoundException.class)
                 .hasMessageContaining("존재하지 않는 회원입니다.");
     }
 

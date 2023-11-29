@@ -8,11 +8,25 @@ public record ErrorWithDetailCodeResponse(
         String requestURI,
         String time
 ) {
-    public static ErrorWithDetailCodeResponse of(ErrorCode errorCode, String requestURI) {
-
+    public static ErrorWithDetailCodeResponse of(
+            ErrorCode errorCode,
+            String requestURI
+    ) {
         return new ErrorWithDetailCodeResponse(
                 errorCode.getCode(),
                 errorCode.getMessage(),
+                requestURI,
+                LocalDateTime.now().toString());
+    }
+
+    public static ErrorWithDetailCodeResponse of(
+            String errorCode,
+            String errorMessage,
+            String requestURI
+    ) {
+        return new ErrorWithDetailCodeResponse(
+                errorCode,
+                errorMessage,
                 requestURI,
                 LocalDateTime.now().toString());
     }

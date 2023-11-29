@@ -20,6 +20,7 @@ import com.tenten.linkhub.domain.space.repository.link.LinkJpaRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberJpaRepository;
 import com.tenten.linkhub.domain.space.service.dto.link.LinksGetByQueryRequest;
+import com.tenten.linkhub.global.exception.DataDuplicateException;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import org.assertj.core.api.Assertions;
@@ -171,7 +172,7 @@ class LinkFacadeTest {
 
         //when & then
         Assertions.assertThatThrownBy(() -> linkFacade.createLike(linkId, memberId1))
-                .isInstanceOf(UnauthorizedAccessException.class);
+                .isInstanceOf(DataDuplicateException.class);
     }
 
     @Test

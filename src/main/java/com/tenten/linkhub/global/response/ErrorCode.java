@@ -18,12 +18,16 @@ public enum ErrorCode {
     //member
     DUPLICATE_NEWS_EMAIL("M001", "중복된 이메일입니다."),
     DUPLICATE_FOLLOWING("M002", "중복된 팔로잉입니다."),
+    DUPLICATE_MEMBER("M003", "이미 가입한 회원입니다."),
 
     //space
     SPACE_OWNER_LEAVE_ATTEMPT("S001", "스페이스의 주인은 스페이스를 나갈 수 없습니다. 나가기 대신 스페이스 삭제를 진행해야 합니다."),
     DUPLICATE_SPACE_MEMBER("S002", "해당 멤버는 이미 스페이스의 멤버입니다."),
     SPACE_SCRAP_LIMIT("S003", "한 스페이스에 대한 가져오기는 1회만 가능합니다."),
     LINK_COUNT_LIMIT_FOR_SCRAP("S004", "가져오기는 200개 이하의 Link를 가진 스페이스만 가능합니다."),
+
+    //link
+    DUPLICATE_LINK_RIKE("L001", "이미 좋아요한 링크 입니다."),
 
     //favorite
     DUPLICATE_FAVORITE("F001", "중복된 즐겨찾기 등록입니다.");

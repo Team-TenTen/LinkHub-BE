@@ -4,7 +4,6 @@ import com.tenten.linkhub.global.response.ErrorResponse;
 import com.tenten.linkhub.global.response.ErrorWithDetailCodeResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -14,53 +13,72 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import static com.tenten.linkhub.global.response.ErrorCode.INVALID_USER_INPUT;
+import static com.tenten.linkhub.global.response.ErrorCode.NOT_SUPPORTED_HTTP_MEDIA_TYPE;
+
 @RestControllerAdvice
 @Slf4j
 public class GlobalApiExceptionHandler {
 
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-    public ResponseEntity<ErrorResponse> handleHttpMediaTypeNotSupportedException(HttpServletRequest request, HttpMediaTypeNotSupportedException e) {
-        ErrorResponse errorResponse = ErrorResponse.of(e.getMessage(), request.getRequestURI());
+    public ResponseEntity<ErrorWithDetailCodeResponse> handleHttpMediaTypeNotSupportedException(HttpServletRequest request, HttpMediaTypeNotSupportedException e) {
+        ErrorWithDetailCodeResponse errorWithDetailCodeResponse = ErrorWithDetailCodeResponse.of(
+                NOT_SUPPORTED_HTTP_MEDIA_TYPE.getCode(),
+                e.getMessage(),
+                request.getRequestURI());
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(errorResponse);
+                .body(errorWithDetailCodeResponse);
     }
 
     @ExceptionHandler(BindException.class)
-    public ResponseEntity<ErrorResponse> handleBindException(HttpServletRequest request, BindException e) {
+    public ResponseEntity<ErrorWithDetailCodeResponse> handleBindException(HttpServletRequest request, BindException e) {
         String detailMessage = getDetailMessage(e);
-        ErrorResponse errorResponse = ErrorResponse.of(detailMessage, request.getRequestURI());
+        ErrorWithDetailCodeResponse errorWithDetailCodeResponse = ErrorWithDetailCodeResponse.of(
+                INVALID_USER_INPUT.getCode(),
+                detailMessage,
+                request.getRequestURI());
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(errorResponse);
+                .body(errorWithDetailCodeResponse);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(HttpServletRequest request, IllegalArgumentException e) {
-        ErrorResponse errorResponse = ErrorResponse.of(e.getMessage(), request.getRequestURI());
+    public ResponseEntity<ErrorWithDetailCodeResponse> handleIllegalArgumentException(HttpServletRequest request, IllegalArgumentException e) {
+        ErrorWithDetailCodeResponse errorWithDetailCodeResponse = ErrorWithDetailCodeResponse.of(
+                INVALID_USER_INPUT.getCode(),
+                e.getMessage(),
+                request.getRequestURI());
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(errorResponse);
+                .body(errorWithDetailCodeResponse);
     }
 
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalStateException(HttpServletRequest request, IllegalStateException e) {
-        ErrorResponse errorResponse = ErrorResponse.of(e.getMessage(), request.getRequestURI());
+    @ExceptionHandler(PolicyViolationException.class)
+    public ResponseEntity<ErrorWithDetailCodeResponse> handlePolicyViolationException(HttpServletRequest request, PolicyViolationException e) {
+        ErrorWithDetailCodeResponse errorResponse = ErrorWithDetailCodeResponse.of(
+                e.getErrorCode(),
+                request.getRequestURI()
+        );
 
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
                 .body(errorResponse);
     }
 
-    @ExceptionHandler(DuplicateKeyException.class)
-    public ResponseEntity<ErrorResponse> handleDuplicateKeyException(HttpServletRequest request, DuplicateKeyException e) {
-        ErrorResponse errorResponse = ErrorResponse.of(e.getMessage(), request.getRequestURI());
+    @ExceptionHandler(DataDuplicateException.class)
+    public ResponseEntity<ErrorWithDetailCodeResponse> handleDataDuplicateException(HttpServletRequest request,
+                                                                                    DataDuplicateException e) {
+        ErrorWithDetailCodeResponse errorResponse = ErrorWithDetailCodeResponse.of(
+                e.getErrorCode(),
+                request.getRequestURI()
+        );
 
         return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(HttpStatus.CONFLICT)
                 .body(errorResponse);
     }
 
@@ -90,20 +108,7 @@ public class GlobalApiExceptionHandler {
         );
 
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(errorResponse);
-    }
-
-    @ExceptionHandler(DataDuplicateException.class)
-    public ResponseEntity<ErrorWithDetailCodeResponse> handleDataDuplicateException(HttpServletRequest request,
-                                                                                    DataDuplicateException e) {
-        ErrorWithDetailCodeResponse errorResponse = ErrorWithDetailCodeResponse.of(
-                e.getErrorCode(),
-                request.getRequestURI()
-        );
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(errorResponse);
     }
 
@@ -121,7 +126,7 @@ public class GlobalApiExceptionHandler {
         for (FieldError fieldError : bindingResult.getFieldErrors()) {
             stringBuilder.append(fieldError.getField()).append(":");
             stringBuilder.append(fieldError.getDefaultMessage());
-            stringBuilder.append(", ");
+            stringBuilder.append(",\n");
         }
         return stringBuilder.toString();
     }

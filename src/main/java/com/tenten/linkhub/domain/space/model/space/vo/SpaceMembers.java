@@ -5,14 +5,12 @@ import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.global.exception.DataDuplicateException;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import com.tenten.linkhub.global.exception.PolicyViolationException;
-import com.tenten.linkhub.global.response.ErrorCode;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.dao.DuplicateKeyException;
 
 import java.util.ArrayList;
 import java.util.Comparator;
