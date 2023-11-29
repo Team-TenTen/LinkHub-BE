@@ -13,7 +13,7 @@ public interface MemberJpaRepository extends JpaRepository<Member, Long> {
     @Query("SELECT m FROM Member m LEFT JOIN FETCH m.profileImages pi WHERE m.id IN :memberIds AND m.isDeleted = false")
     List<Member> findMemberJoinProfileImageByMemberIds(List<Long> memberIds);
 
-    boolean existsByNewsEmail(String email);
+    boolean existsByNewsEmailAndIsDeletedFalse(String email);
 
     boolean existsByNickname(String nickname);
 
@@ -35,7 +35,7 @@ public interface MemberJpaRepository extends JpaRepository<Member, Long> {
     @Query("SELECT m FROM Member m " +
             "LEFT JOIN FETCH m.profileImages pi " +
             "LEFT JOIN FETCH m.favoriteCategories fc " +
-            "WHERE m.id IN :memberIds")
+            "WHERE m.id IN :memberIds AND m.isDeleted = false ")
     List<Member> findMembersWithProfileImageAndCategoryByMemberIds(List<Long> memberIds);
 
     @Query("SELECT m.id FROM Member m WHERE m.newsEmail = :email")

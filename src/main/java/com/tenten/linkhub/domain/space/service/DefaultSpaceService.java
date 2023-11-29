@@ -185,7 +185,7 @@ public class DefaultSpaceService implements SpaceService {
         linkService.copyLinkBySpaceIdAndPaste(request.sourceSpaceId(), savedSpaceId, request.memberId());
 
         scrapRepository.save(
-                new Scrap(space, request.memberId())
+                new Scrap(request.sourceSpaceId(), request.memberId())
         );
 
         return savedSpaceId;
