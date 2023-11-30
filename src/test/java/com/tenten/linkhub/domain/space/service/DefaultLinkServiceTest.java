@@ -151,7 +151,7 @@ class DefaultLinkServiceTest {
         assertThat(links.responses().getContent().size()).isEqualTo(4);
         //최신 순 정렬 확인
         for (int i = 0; i < linkIds.size(); i++) {
-            assertThat(linkIds.get(i)).isEqualTo(links.responses().getContent().get(i).linkId());
+            assertThat(linkIds.get(linkIds.size() - 1 - i)).isEqualTo(links.responses().getContent().get(i).linkId());
         }
     }
 
