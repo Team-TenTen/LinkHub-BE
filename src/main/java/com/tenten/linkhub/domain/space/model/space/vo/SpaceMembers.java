@@ -2,7 +2,9 @@ package com.tenten.linkhub.domain.space.model.space.vo;
 
 import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
+import com.tenten.linkhub.global.exception.DataDuplicateException;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
+import com.tenten.linkhub.global.exception.PolicyViolationException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
@@ -17,6 +19,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.tenten.linkhub.domain.space.model.space.Role.CAN_EDIT;
+import static com.tenten.linkhub.domain.space.model.space.Role.OWNER;
+import static com.tenten.linkhub.global.response.ErrorCode.DUPLICATE_SPACE_MEMBER;
+import static com.tenten.linkhub.global.response.ErrorCode.SPACE_OWNER_LEAVE_ATTEMPT;
 import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 
 @Getter
@@ -24,11 +30,12 @@ import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 @NoArgsConstructor
 public class SpaceMembers {
 
-    @OneToMany(mappedBy = "space", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "space", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SpaceMember> spaceMemberList = new ArrayList<>();
 
     public void addSpaceMember(SpaceMember spaceMember) {
         validateNotNull(spaceMember, "spaceImages");
+        validateDuplicationSpaceMember(spaceMember.getMemberId());
 
         this.spaceMemberList.add(spaceMember);
     }
@@ -83,14 +90,52 @@ public class SpaceMembers {
                 .anyMatch(sm -> Objects.equals(sm.getMemberId(), memberId) && !sm.getIsDeleted());
     }
 
-    public void changeSpaceMembersRole(Long targetMemberId, Role role) {
+    public Long changeSpaceMembersRole(Long targetMemberId, Role role) {
         SpaceMember targetSpaceMember = getSpaceMemberList()
                 .stream()
                 .filter(sm -> Objects.equals(sm.getMemberId(), targetMemberId))
                 .findFirst()
                 .orElseThrow(() -> new DataNotFoundException("해당 스페이스멤버를 찾지 못했습니다."));
 
+        SpaceMember spaceOwner = getSpaceOwner();
+
+        if (Objects.equals(role, OWNER)) {
+            spaceOwner.changeRole(CAN_EDIT);
+
+            targetSpaceMember.changeRole(role);
+            return targetSpaceMember.getMemberId();
+        }
+
         targetSpaceMember.changeRole(role);
+        return spaceOwner.getMemberId();
+    }
+
+    public void deleteSpaceMember(Long memberId) {
+        SpaceMember spaceMember = getSpaceMemberList()
+                .stream()
+                .filter(sm -> Objects.equals(sm.getMemberId(), memberId))
+                .findFirst()
+                .orElseThrow(() -> new DataNotFoundException("해당하는 스페이스 멤버가 존재하지 않습니다."));
+
+        if (Objects.equals(spaceMember.getRole(), OWNER)) {
+            throw new PolicyViolationException(SPACE_OWNER_LEAVE_ATTEMPT);
+        }
+
+        spaceMember.deleteSpaceMember();
+    }
+
+    public void validateDuplicationSpaceMember(Long memberId) {
+        if (getSpaceMemberIds().contains(memberId)) {
+            throw new DataDuplicateException(DUPLICATE_SPACE_MEMBER);
+        }
+    }
+
+    private SpaceMember getSpaceOwner() {
+        return getSpaceMemberList()
+                .stream()
+                .filter(sm -> Objects.equals(sm.getRole(), OWNER))
+                .findFirst()
+                .orElseThrow(() -> new DataNotFoundException("해당 스페이스에 Owner가 존재하지 않습니디."));
     }
 
 }

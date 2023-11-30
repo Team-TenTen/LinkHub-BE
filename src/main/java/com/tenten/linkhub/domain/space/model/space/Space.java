@@ -199,7 +199,7 @@ public class Space extends BaseEntity {
     }
 
     public void changeSpaceMembersRole(Long targetMemberId, Role role) {
-        spaceMembers.changeSpaceMembersRole(targetMemberId, role);
+        memberId = spaceMembers.changeSpaceMembersRole(targetMemberId, role);
     }
 
     public Long deleteSpace(Long memberId) {
@@ -223,6 +223,10 @@ public class Space extends BaseEntity {
         if(!isContainMember || isReadMarkEnabled.equals(Boolean.FALSE)){
             throw new LinkViewHistoryException("링크의 접속정보를 저장할 수 없습니다.");
         }
+    }
+
+    public void deleteSpaceMember(Long memberId) {
+        spaceMembers.deleteSpaceMember(memberId);
     }
 
 }

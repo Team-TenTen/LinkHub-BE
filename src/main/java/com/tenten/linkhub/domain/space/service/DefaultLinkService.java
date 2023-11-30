@@ -23,6 +23,7 @@ import com.tenten.linkhub.domain.space.service.dto.link.LinkUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.link.LinksGetByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.link.PopularLinksGetByQueryResponses;
 import com.tenten.linkhub.domain.space.service.mapper.LinkMapper;
+import com.tenten.linkhub.global.exception.DataDuplicateException;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static com.tenten.linkhub.global.response.ErrorCode.DUPLICATE_LINK_RIKE;
 
 @RequiredArgsConstructor
 @Service
@@ -103,7 +106,7 @@ public class DefaultLinkService implements LinkService {
 
         likeRepository.findByLinkIdAndMemberId(linkId, memberId)
                 .ifPresent(m -> {
-                    throw new UnauthorizedAccessException("이미 좋아요한 링크입니다.");
+                    throw new DataDuplicateException(DUPLICATE_LINK_RIKE);
                 });
 
         likeRepository.save(new Like(link, memberId));

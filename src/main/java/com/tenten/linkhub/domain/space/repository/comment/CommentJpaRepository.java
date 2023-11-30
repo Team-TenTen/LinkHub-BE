@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 public interface CommentJpaRepository extends JpaRepository<Comment, Long> {
-    @Query("SELECT c FROM Comment c WHERE c.groupNumber = :commentId AND c.isDeleted = false ORDER BY c.createdAt ASC")
+    @Query("SELECT c FROM Comment c WHERE c.groupNumber = :commentId AND c.isDeleted = false ORDER BY c.createdAt DESC")
     Slice<Comment> findRepliesByParentCommentId(Long commentId, Pageable pageable);
 
     @Query("SELECT c FROM Comment c WHERE c.id = :commentId AND c.isDeleted = false")

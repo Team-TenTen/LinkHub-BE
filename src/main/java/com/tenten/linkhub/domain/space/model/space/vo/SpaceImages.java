@@ -20,7 +20,7 @@ import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 @NoArgsConstructor
 public class SpaceImages {
 
-    @OneToMany(mappedBy = "space", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "space", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SpaceImage> spaceImageList = new ArrayList<>();
 
     public void addSpaceImage(SpaceImage spaceImage) {

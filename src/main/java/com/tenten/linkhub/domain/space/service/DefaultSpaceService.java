@@ -25,6 +25,7 @@ import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndS
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.spacemember.SpaceMemberRoleChangeRequest;
 import com.tenten.linkhub.domain.space.service.mapper.SpaceMapper;
+import com.tenten.linkhub.global.exception.PolicyViolationException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
@@ -35,6 +36,8 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.tenten.linkhub.domain.space.model.space.Role.OWNER;
+import static com.tenten.linkhub.global.response.ErrorCode.LINK_COUNT_LIMIT_FOR_SCRAP;
+import static com.tenten.linkhub.global.response.ErrorCode.SPACE_SCRAP_LIMIT;
 
 @RequiredArgsConstructor
 @Service
@@ -160,13 +163,13 @@ public class DefaultSpaceService implements SpaceService {
     @Transactional(readOnly = true)
     public void validateScrapTargetSpace(Long spaceId, Long memberId) {
         if (scrapRepository.existsBySpaceIdAndMemberId(spaceId, memberId)) {
-            throw new IllegalStateException("한 스페이스에 대한 가져오기는 1회만 가능합니다.");
+            throw new PolicyViolationException(SPACE_SCRAP_LIMIT);
         }
 
         Long linkCount = linkRepository.countLinkBySpaceId(spaceId);
 
         if (linkCount > 200){
-            throw new IllegalStateException("가져오기는 200개 이하의 Link를 가진 스페이스만 가능합니다.");
+            throw new PolicyViolationException(LINK_COUNT_LIMIT_FOR_SCRAP);
         }
 
         Space space = spaceRepository.getById(spaceId);
@@ -185,10 +188,18 @@ public class DefaultSpaceService implements SpaceService {
         linkService.copyLinkBySpaceIdAndPaste(request.sourceSpaceId(), savedSpaceId, request.memberId());
 
         scrapRepository.save(
-                new Scrap(space, request.memberId())
+                new Scrap(request.sourceSpaceId(), request.memberId())
         );
 
         return savedSpaceId;
+    }
+
+    @Override
+    @Transactional
+    public void deleteSpaceMemberByMe(Long spaceId, Long memberId) {
+        Space space = spaceRepository.getById(spaceId);
+
+        space.deleteSpaceMember(memberId);
     }
 
 }

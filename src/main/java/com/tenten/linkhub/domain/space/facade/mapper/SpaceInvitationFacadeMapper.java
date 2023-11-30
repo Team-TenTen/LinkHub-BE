@@ -11,7 +11,7 @@ import org.mapstruct.Mapper;
 )
 public interface SpaceInvitationFacadeMapper {
 
-    NotificationCreateRequest toNotificationCreateRequest(SpaceInvitationFacadeRequest request);
+    NotificationCreateRequest toNotificationCreateRequest(SpaceInvitationFacadeRequest request, Long memberId);
 
-    SpaceInvitationRequest toSpaceInvitationRequest(SpaceInvitationFacadeRequest request, Long notificationId);
+    SpaceInvitationRequest toSpaceInvitationRequest(SpaceInvitationFacadeRequest request, Long notificationId, Long memberId);
 }

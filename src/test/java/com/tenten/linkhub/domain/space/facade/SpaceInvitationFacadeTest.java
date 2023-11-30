@@ -18,6 +18,7 @@ import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.invitation.InvitationJpaRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.service.dto.invitation.SpaceInvitationAcceptRequest;
+import com.tenten.linkhub.global.exception.DataDuplicateException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -67,7 +68,7 @@ class SpaceInvitationFacadeTest {
     void invite_SpaceInvitationFacadeRequest_Success() {
         //given
         SpaceInvitationFacadeRequest request = new SpaceInvitationFacadeRequest(
-                invitedMember.getId(),
+                invitedMember.getNewsEmail(),
                 anotherSpace.getId(),
                 Role.CAN_VIEW,
                 anotherMember.getId()
@@ -120,6 +121,18 @@ class SpaceInvitationFacadeTest {
                 .isInstanceOf(UnauthorizedAccessException.class);
     }
 
+    @Test
+    @DisplayName("유저가 스페이스 초대를 중복 수락할 경우 해당 DataDuplicateException가 발생한다.")
+    void acceptSpaceInvitation_DataDuplicateException() {
+        //given
+        SpaceInvitationAcceptRequest request = new SpaceInvitationAcceptRequest(myMember.getId(), myNotification.getId());
+
+        //when//then
+        spaceInvitationFacade.acceptSpaceInvitation(request);
+        assertThatThrownBy(() -> spaceInvitationFacade.acceptSpaceInvitation(request))
+                .isInstanceOf(DataDuplicateException.class);
+    }
+
     private void setUpTestData() {
         Member member1 = new Member(
                 "testSocialId",
@@ -139,7 +152,7 @@ class SpaceInvitationFacadeTest {
                 com.tenten.linkhub.domain.member.model.Role.USER,
                 "프롱이",
                 "프롱이 소개글",
-                "abc@gmail.com",
+                "abcd@gmail.com",
                 true,
                 new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지"),
                 new FavoriteCategory(Category.KNOWLEDGE_ISSUE_CAREER)
@@ -151,7 +164,7 @@ class SpaceInvitationFacadeTest {
                 com.tenten.linkhub.domain.member.model.Role.USER,
                 "풀스택",
                 "풀스택 소개글",
-                "abcd@gmail.com",
+                "abcde@gmail.com",
                 true,
                 new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지"),
                 new FavoriteCategory(Category.KNOWLEDGE_ISSUE_CAREER)

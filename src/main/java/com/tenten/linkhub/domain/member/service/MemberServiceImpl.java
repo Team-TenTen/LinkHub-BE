@@ -57,7 +57,7 @@ import java.util.Optional;
 public class MemberServiceImpl implements MemberService {
 
     private static final String MEMBER_IMAGE_FOLDER = "member-image/";
-    private static final String MEMBER_DEFAULT_IMAGE_PATH = "https://team-10-bucket.s3.ap-northeast-2.amazonaws.com/member-image/member-default.png";
+    private static final String MEMBER_DEFAULT_IMAGE_PATH = "https://team-10-bucket.s3.ap-northeast-2.amazonaws.com/member-image/member-default-v1.png";
     private static final Long CODE_VALID_DURATION = 60 * 5L;
 
     private final MemberRepository memberRepository;
@@ -112,8 +112,16 @@ public class MemberServiceImpl implements MemberService {
     public MemberJoinResponse join(MemberJoinRequest memberJoinRequest) {
         memberRepository.findBySocialIdAndProvider(memberJoinRequest.socialId(), memberJoinRequest.provider())
                 .ifPresent(m -> {
-                    throw new UnauthorizedAccessException("이미 가입한 회원입니다.");
+                    throw new DataDuplicateException(ErrorCode.DUPLICATE_SOCIAL_ID);
                 });
+
+        if (memberRepository.existsMemberByNewsEmail(memberJoinRequest.newsEmail())) {
+            throw new DataDuplicateException(ErrorCode.DUPLICATE_NEWS_EMAIL);
+        }
+
+        if (memberRepository.existsMemberByNickname(memberJoinRequest.nickname())) {
+            throw new DataDuplicateException(ErrorCode.DUPLICATE_NICKNAME);
+        }
 
         ImageInfo imageInfo = getNewImageInfoOrDefaultImageInfo(memberJoinRequest.file());
 
@@ -157,7 +165,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberProfileResponse getProfile(Long memberId, Long myMemberId) {
         Member member = memberRepository.findByIdWithImageAndCategory(memberId)
-                .orElseThrow(() -> new UnauthorizedAccessException("존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new DataNotFoundException("존재하지 않는 회원입니다."));
 
         Long followerCount = followRepository.countFollowers(memberId);
         Long followingCount = followRepository.countFollowing(memberId);
@@ -171,7 +179,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberMyProfileResponse getMyProfile(Long memberId) {
         Member member = memberRepository.findByIdWithImageAndCategory(memberId)
-                .orElseThrow(() -> new UnauthorizedAccessException("존재하지 않는 회원입니다."));
+                .orElseThrow(() -> new DataNotFoundException("존재하지 않는 회원입니다."));
 
         Long followerCount = followRepository.countFollowers(memberId);
         Long followingCount = followRepository.countFollowing(memberId);
@@ -251,6 +259,11 @@ public class MemberServiceImpl implements MemberService {
                 mapper.toQueryCond(memberSearchRequest));
 
         return MemberSearchResponses.from(memberAndMemberImageSlice);
+    }
+
+    @Override
+    public Long findMemberIdByEmail(String email) {
+        return memberRepository.findMemberIdByEmail(email);
     }
 
 }

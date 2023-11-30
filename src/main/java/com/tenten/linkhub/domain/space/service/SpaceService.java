@@ -38,4 +38,6 @@ public interface SpaceService {
     void validateScrapTargetSpace(Long spaceId, Long memberId);
 
     Long createSpaceAndCopyLinks(NewSpacesScrapRequest request);
+
+    void deleteSpaceMemberByMe(Long spaceId, Long memberId);
 }
