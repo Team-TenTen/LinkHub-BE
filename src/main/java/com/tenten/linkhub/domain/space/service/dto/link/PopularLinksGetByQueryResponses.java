@@ -13,12 +13,12 @@ public record PopularLinksGetByQueryResponses(
                 .stream()
                 .map(
                         dto -> new PopularLinksGetByQueryResponse(
-                                dto.getLinkId(),
-                                dto.getTitle(),
-                                dto.getUrl(),
-                                dto.getTagName(),
-                                Objects.isNull(dto.getTagColor()) ? null : dto.getTagColor().getValue(),
-                                dto.getLikeCount(),
+                                dto.linkId(),
+                                dto.title(),
+                                dto.url(),
+                                dto.tagName(),
+                                Objects.isNull(dto.tagColor()) ? null : dto.tagColor().getValue(),
+                                dto.likeCount(),
                                 dto.isLiked()
                         )
                 )

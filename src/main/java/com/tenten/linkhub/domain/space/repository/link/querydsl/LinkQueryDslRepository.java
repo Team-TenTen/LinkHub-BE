@@ -9,8 +9,10 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tenten.linkhub.domain.space.repository.link.dto.LinkGetDto;
 import com.tenten.linkhub.domain.space.repository.link.dto.LinkGetQueryCondition;
+import com.tenten.linkhub.domain.space.repository.link.dto.LinkInfoDto;
 import com.tenten.linkhub.domain.space.repository.link.dto.LinkViewDto;
 import com.tenten.linkhub.domain.space.repository.link.dto.PopularLinkGetDto;
+import com.tenten.linkhub.domain.space.repository.link.dto.QLinkInfoDto;
 import com.tenten.linkhub.domain.space.repository.link.dto.QPopularLinkGetDto;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -18,7 +20,9 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.querydsl.core.types.dsl.Expressions.TRUE;
 import static com.tenten.linkhub.domain.member.model.QMember.member;
@@ -41,85 +45,97 @@ public class LinkQueryDslRepository {
     }
 
     public Slice<LinkGetDto> getLinksByCondition(LinkGetQueryCondition condition) {
-        List<LinkGetDto> linkGetDtos = jpaQueryFactory
-                .select(link)
+        List<LinkInfoDto> linkInfoDtos = jpaQueryFactory
+                .select(
+                        new QLinkInfoDto(
+                                link.id,
+                                link.title,
+                                link.url.url,
+                                tag.name,
+                                tag.color,
+                                link.likeCount,
+                                isLikedByMember(condition.memberId()),
+                                space.isLinkSummarizable,
+                                space.isReadMarkEnabled,
+                                link.createdAt
+                        )
+                )
                 .from(link)
                 .leftJoin(link.linkTags, linkTag).on(linkTag.isDeleted.eq(false))
                 .leftJoin(linkTag.tag, tag)
                 .leftJoin(link.space, space)
-                .leftJoin(link.linkViewHistories, linkViewHistory)
-                .leftJoin(member).on(linkViewHistory.memberId.eq(member.id))
-                .leftJoin(member.profileImages.profileImageList, profileImage)
-                .leftJoin(like).on(like.link.eq(link))
+                .leftJoin(like).on(like.link.eq(link), isLikedByMember(condition.memberId()))
                 .where(link.space.id.eq(condition.spaceId()))
                 .where(link.isDeleted.eq(Boolean.FALSE))
                 .where(hasTagFilter(condition.tagId()))
                 .orderBy(linkSort(condition.pageable()))
                 .offset(condition.pageable().getOffset())
                 .limit(condition.pageable().getPageSize() + 1)
-                .transform(
-                        GroupBy.groupBy(link.id).list(
-                                Projections.fields(
-                                        LinkGetDto.class,
-                                        link.id.as("linkId"),
-                                        link.title.as("title"),
-                                        link.url.url.as("url"),
-                                        tag.name.as("tagName"),
-                                        tag.color.as("tagColor"),
-                                        link.likeCount.as("likeCount"),
-                                        isLikedByMember(condition.memberId()).as("isLiked"),
-                                        space.isLinkSummarizable.as("canLinkSummaraizable"),
-                                        space.isReadMarkEnabled.as("canReadMark"),
-                                        GroupBy.list(
-                                                Projections.fields(
-                                                        LinkViewDto.class,
-                                                        member.nickname.as("memberName"),
-                                                        profileImage.path.as("memberProfileImage")
-                                                ).skipNulls()
-                                        ).as("linkViewHistories")
-                                )
-                        )
-                );
-
+                .distinct()
+                .fetch();
 
         boolean hasNext = false;
 
-        if (linkGetDtos.size() > condition.pageable().getPageSize()) {
-            linkGetDtos.remove(condition.pageable().getPageSize());
+        if (linkInfoDtos.size() > condition.pageable().getPageSize()) {
+            linkInfoDtos.remove(condition.pageable().getPageSize());
             hasNext = true;
         }
+
+        List<Long> linkIds = linkInfoDtos.stream()
+                .map(LinkInfoDto::linkId) // LinkInfoDto 객체에서 id 필드만 추출
+                .toList();
+
+        Map<Long, List<LinkViewDto>> linkViewDtoMap = jpaQueryFactory
+                .select(link)
+                .from(link)
+                .leftJoin(link.linkViewHistories, linkViewHistory)
+                .leftJoin(member).on(linkViewHistory.memberId.eq(member.id))
+                .leftJoin(member.profileImages.profileImageList, profileImage)
+                .where(link.id.in(linkIds))
+                .transform(GroupBy.groupBy(link.id).as(
+                        GroupBy.list(
+                                Projections.fields(
+                                        LinkViewDto.class,
+                                        member.nickname.as("memberName"),
+                                        profileImage.path.as("memberProfileImage")
+                                ).skipNulls()
+                        )
+
+                ));
+
+
+        // LinkInfoDto와 LinkViewDtoMap을 사용하여 LinkGetDto 생성
+        List<LinkGetDto> linkGetDtos =
+                linkInfoDtos.stream()
+                        .map(linkInfoDto -> new LinkGetDto(linkInfoDto, linkViewDtoMap.get(linkInfoDto.linkId())))
+                        .toList();
 
         return new SliceImpl<>(linkGetDtos, condition.pageable(), hasNext);
     }
 
     public List<PopularLinkGetDto> getPopularLinks(Long memberId) {
-
         return jpaQueryFactory
-                .select(new QPopularLinkGetDto(
-                        link.id,
-                        link.title,
-                        link.url.url,
-                        tag.name,
-                        tag.color,
-                        link.likeCount,
-                        isLikedByMember(memberId)
-                ))
+                .select(
+                        new QPopularLinkGetDto(
+                                link.id,
+                                link.title,
+                                link.url.url,
+                                tag.name,
+                                tag.color,
+                                link.likeCount,
+                                isLikedByMember(memberId)
+                        )
+                )
                 .from(link)
                 .leftJoin(link.space, space)
                 .leftJoin(link.linkTags, linkTag).on(linkTag.isDeleted.eq(false))
                 .leftJoin(linkTag.tag, tag)
-                .leftJoin(like).on(like.link.eq(link))
+                .leftJoin(like).on(like.link.eq(link), isLikedByMember(memberId))
                 .where(link.isDeleted.eq(Boolean.FALSE),
                         space.isDeleted.eq(Boolean.FALSE))
                 .orderBy(link.likeCount.desc())
-//                .groupBy(link.id,
-//                        link.title,
-//                        link.url.url,
-//                        tag.name,
-//                        tag.color,
-//                        link.likeCount,
-//                        like.memberId)
                 .limit(5)
+                .distinct()
                 .fetch();
     }
 
@@ -139,22 +155,29 @@ public class LinkQueryDslRepository {
     }
 
 
-    private OrderSpecifier<String> linkSort(Pageable pageable) {
+    private OrderSpecifier[] linkSort(Pageable pageable) {
+        List<OrderSpecifier> orderSpecifiers = new ArrayList<>();
+
         for (Sort.Order sort : pageable.getSort()) {
             String property = sort.getProperty();
 
             switch (property) {
                 case "created_at" -> {
-                    return new OrderSpecifier(Order.DESC, link.createdAt);
+                    orderSpecifiers.add(new OrderSpecifier(Order.DESC, link.createdAt));
+                    orderSpecifiers.add(new OrderSpecifier(Order.DESC, link.id));
+                    return orderSpecifiers.toArray(new OrderSpecifier[orderSpecifiers.size()]);
                 }
                 case "popular" -> {
-                    return new OrderSpecifier(Order.DESC, link.likeCount);
+                    orderSpecifiers.add(new OrderSpecifier(Order.DESC, link.likeCount));
+                    return orderSpecifiers.toArray(new OrderSpecifier[orderSpecifiers.size()]);
                 }
             }
         }
 
         // 정렬 조건이 없는 경우 기본적으로 최신순(createdAt 내림차순)으로 정렬
-        return new OrderSpecifier(Order.DESC, link.createdAt);
+        orderSpecifiers.add(new OrderSpecifier(Order.DESC, link.createdAt));
+        orderSpecifiers.add(new OrderSpecifier(Order.DESC, link.id));
+        return orderSpecifiers.toArray(new OrderSpecifier[orderSpecifiers.size()]);
     }
 
 }
