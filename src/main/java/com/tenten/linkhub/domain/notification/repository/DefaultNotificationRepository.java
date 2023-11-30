@@ -33,6 +33,11 @@ public class DefaultNotificationRepository implements NotificationRepository {
     }
 
     @Override
+    public void deleteById(Long notificationId, Long memberId) {
+        notificationJpaRepository.deleteById(notificationId, memberId);
+    }
+
+    @Override
     public Slice<SpaceInvitationNotificationGetDto> getInviteNotifications(NotificationGetQueryCondition condition) {
         return notificationQueryDslRepository.getSpaceInvitationNotifications(condition);
     }

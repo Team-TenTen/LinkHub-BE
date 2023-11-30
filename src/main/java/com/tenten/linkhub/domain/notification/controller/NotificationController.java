@@ -14,8 +14,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -56,5 +58,18 @@ public class NotificationController {
         return ResponseEntity
                 .ok()
                 .body(apiResponses);
+    }
+
+
+    @DeleteMapping(value = "/{notificationId}")
+    public ResponseEntity<Void> deleteNotification(
+            @PathVariable Long notificationId,
+            @AuthenticationPrincipal MemberDetails memberDetails
+    ) {
+        notificationService.deleteNotification(notificationId, memberDetails.memberId());
+
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 }
