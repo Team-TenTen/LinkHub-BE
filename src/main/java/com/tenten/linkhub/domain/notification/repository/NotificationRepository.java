@@ -13,4 +13,6 @@ public interface NotificationRepository {
     Notification save(Notification notification);
 
     Boolean existsByMemberIdAndMyMemberId(Long memberId, Long myMemberId);
+
+    void deleteByIdAndRecipientId(Long notificationId, Long memberId);
 }

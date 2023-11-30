@@ -14,8 +14,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -56,5 +58,25 @@ public class NotificationController {
         return ResponseEntity
                 .ok()
                 .body(apiResponses);
+    }
+
+    /**
+     * 알림 삭제 API
+     */
+    @Operation(
+            summary = "알림 삭제 API ", description = "[JWT 필요] - notificationId를 받아 알림을 삭제해주는 API 입니다. 초대 알림의 경우 초대 내역도 함께 삭제합니다. ",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "알림 삭제 요청이 성공적으로 완료되었습니다.")
+            })
+    @DeleteMapping(value = "/{notificationId}")
+    public ResponseEntity<Void> deleteNotification(
+            @PathVariable Long notificationId,
+            @AuthenticationPrincipal MemberDetails memberDetails
+    ) {
+        notificationService.deleteNotification(notificationId, memberDetails.memberId());
+
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 }

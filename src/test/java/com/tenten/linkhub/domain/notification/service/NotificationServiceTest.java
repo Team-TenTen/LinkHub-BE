@@ -77,6 +77,25 @@ public class NotificationServiceTest {
         assertThat(spaceInvitations.responses().getContent().get(1).invitingMemberId()).isEqualTo(invitingMemberId2);
     }
 
+    @Test
+    @DisplayName("사용자는 알림 내역을 삭제할 수 있다.")
+    void deleteNotification_notificationIdAndMemberId_Success() {
+        //given
+        Long inviteNotificationId = spaceInvitationFacade.invite(new SpaceInvitationFacadeRequest("invitedMember@gmail.com", spaceIds.get(0), Role.CAN_EDIT, invitingMemberId1));
+
+        //when
+        notificationService.deleteNotification(inviteNotificationId, invitedMemberId);
+
+        //then
+        SpaceInviteNotificationGetRequest request = new SpaceInviteNotificationGetRequest(
+                PageRequest.of(0, 10),
+                invitedMemberId
+        );
+        SpaceInviteNotificationGetResponses spaceInvitations = notificationService.getSpaceInvitations(request);
+
+        assertThat(spaceInvitations.responses().getContent().size()).isEqualTo(0);
+    }
+
     private void setUpTestData() {
         Member invitingMember1 = new Member(
                 "123456",

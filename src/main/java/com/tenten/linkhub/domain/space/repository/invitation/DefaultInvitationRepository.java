@@ -21,4 +21,9 @@ public class DefaultInvitationRepository implements InvitationRepository {
     public Invitation save(Invitation invitation) {
         return invitationJpaRepository.save(invitation);
     }
+
+    @Override
+    public void deleteByNotificationIdAndMemberId(Long notificationId, Long memberId) {
+        invitationJpaRepository.deleteByNotificationId(notificationId, memberId);
+    }
 }

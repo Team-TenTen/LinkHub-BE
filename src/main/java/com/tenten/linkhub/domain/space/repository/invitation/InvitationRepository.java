@@ -6,4 +6,6 @@ public interface InvitationRepository {
     Invitation getByNotificationId(Long notificationId);
 
     Invitation save(Invitation invitation);
+
+    void deleteByNotificationIdAndMemberId(Long notificationId, Long memberId);
 }
