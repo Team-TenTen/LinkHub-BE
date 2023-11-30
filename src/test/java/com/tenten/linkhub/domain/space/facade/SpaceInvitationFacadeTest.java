@@ -68,7 +68,7 @@ class SpaceInvitationFacadeTest {
     void invite_SpaceInvitationFacadeRequest_Success() {
         //given
         SpaceInvitationFacadeRequest request = new SpaceInvitationFacadeRequest(
-                invitedMember.getId(),
+                invitedMember.getNewsEmail(),
                 anotherSpace.getId(),
                 Role.CAN_VIEW,
                 anotherMember.getId()
@@ -152,7 +152,7 @@ class SpaceInvitationFacadeTest {
                 com.tenten.linkhub.domain.member.model.Role.USER,
                 "프롱이",
                 "프롱이 소개글",
-                "abc@gmail.com",
+                "abcd@gmail.com",
                 true,
                 new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지"),
                 new FavoriteCategory(Category.KNOWLEDGE_ISSUE_CAREER)
@@ -164,7 +164,7 @@ class SpaceInvitationFacadeTest {
                 com.tenten.linkhub.domain.member.model.Role.USER,
                 "풀스택",
                 "풀스택 소개글",
-                "abcd@gmail.com",
+                "abcde@gmail.com",
                 true,
                 new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지"),
                 new FavoriteCategory(Category.KNOWLEDGE_ISSUE_CAREER)

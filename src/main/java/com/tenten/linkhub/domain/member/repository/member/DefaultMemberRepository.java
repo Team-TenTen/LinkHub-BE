@@ -33,6 +33,12 @@ public class DefaultMemberRepository implements MemberRepository {
     public boolean existsMemberByNewsEmail(String email) {
         return memberJpaRepository.existsByNewsEmailAndIsDeletedFalse(email);
     }
+
+    @Override
+    public boolean existsMemberByNickname(String nickname) {
+        return memberJpaRepository.existsByNickname(nickname);
+    }
+
     @Override
     public Optional<Member> findBySocialIdAndProvider(String socialId, Provider provider) {
         return memberJpaRepository.findBySocialIdAndProvider(socialId, provider);
@@ -62,6 +68,11 @@ public class DefaultMemberRepository implements MemberRepository {
     @Override
     public Slice<MemberWithProfileImageAndFollowingStatus> searchMember(MemberSearchQueryCondition queryCond) {
         return memberQueryRepository.findMembersWithProfileImages(queryCond);
+    }
+
+    @Override
+    public Long findMemberIdByEmail(String email) {
+        return memberJpaRepository.findMemberIdByEmail(email);
     }
 
 }

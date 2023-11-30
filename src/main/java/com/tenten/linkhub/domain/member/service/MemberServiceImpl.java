@@ -51,8 +51,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.tenten.linkhub.global.response.ErrorCode.DUPLICATE_MEMBER;
-
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
@@ -114,8 +112,16 @@ public class MemberServiceImpl implements MemberService {
     public MemberJoinResponse join(MemberJoinRequest memberJoinRequest) {
         memberRepository.findBySocialIdAndProvider(memberJoinRequest.socialId(), memberJoinRequest.provider())
                 .ifPresent(m -> {
-                    throw new DataDuplicateException(DUPLICATE_MEMBER);
+                    throw new DataDuplicateException(ErrorCode.DUPLICATE_SOCIAL_ID);
                 });
+
+        if (memberRepository.existsMemberByNewsEmail(memberJoinRequest.newsEmail())) {
+            throw new DataDuplicateException(ErrorCode.DUPLICATE_NEWS_EMAIL);
+        }
+
+        if (memberRepository.existsMemberByNickname(memberJoinRequest.nickname())) {
+            throw new DataDuplicateException(ErrorCode.DUPLICATE_NICKNAME);
+        }
 
         ImageInfo imageInfo = getNewImageInfoOrDefaultImageInfo(memberJoinRequest.file());
 
@@ -253,6 +259,11 @@ public class MemberServiceImpl implements MemberService {
                 mapper.toQueryCond(memberSearchRequest));
 
         return MemberSearchResponses.from(memberAndMemberImageSlice);
+    }
+
+    @Override
+    public Long findMemberIdByEmail(String email) {
+        return memberRepository.findMemberIdByEmail(email);
     }
 
 }

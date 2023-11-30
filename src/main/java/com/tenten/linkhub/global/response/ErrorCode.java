@@ -18,7 +18,8 @@ public enum ErrorCode {
     //member
     DUPLICATE_NEWS_EMAIL("M001", "중복된 이메일입니다."),
     DUPLICATE_FOLLOWING("M002", "중복된 팔로잉입니다."),
-    DUPLICATE_MEMBER("M003", "이미 가입한 회원입니다."),
+    DUPLICATE_SOCIAL_ID("M003", "중복된 소셜 아이디입니다."),
+    DUPLICATE_NICKNAME("M004", "중복된 닉네임입니다."),
 
     //space
     SPACE_OWNER_LEAVE_ATTEMPT("S001", "스페이스의 주인은 스페이스를 나갈 수 없습니다. 나가기 대신 스페이스 삭제를 진행해야 합니다."),
@@ -30,7 +31,10 @@ public enum ErrorCode {
     DUPLICATE_LINK_RIKE("L001", "이미 좋아요한 링크 입니다."),
 
     //favorite
-    DUPLICATE_FAVORITE("F001", "중복된 즐겨찾기 등록입니다.");
+    DUPLICATE_FAVORITE("F001", "중복된 즐겨찾기 등록입니다."),
+
+    //notification
+    DUPLICATE_NOTIFICATION("N001", "중복된 알림 등록입니다.");
 
     private final String code;
     private final String message;

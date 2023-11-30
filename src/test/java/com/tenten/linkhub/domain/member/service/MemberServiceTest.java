@@ -135,15 +135,14 @@ class MemberServiceTest {
     }
 
     @Test
-    @DisplayName("이미 등록된 사용자는 회원 가입에 실패한다.")
+    @DisplayName("이미 등록된 회원은 가입에 실패한다.")
     void join_MemberJoinRequest_Fail() {
         //given
         MemberJoinResponse response = memberService.join(createMemberJoinRequest(requestFile));
 
         //when && then
         assertThatThrownBy(() -> memberService.join(createMemberJoinRequest(requestFile)))
-                .isInstanceOf(DataDuplicateException.class)
-                .hasMessageContaining("이미 가입한 회원입니다.");
+                .isInstanceOf(DataDuplicateException.class);
     }
 
     @Test
@@ -527,7 +526,7 @@ class MemberServiceTest {
                 Provider.kakao,
                 "백둥이",
                 "만나서 반갑습니다.",
-                "linkhub@link-hub.site",
+                "linkhub1@link-hub.site",
                 Category.KNOWLEDGE_ISSUE_CAREER,
                 true,
                 requestFile
@@ -544,7 +543,7 @@ class MemberServiceTest {
                 Provider.kakao,
                 "멤버1",
                 "내 유저",
-                "linkhub@link-hub.site",
+                "linkhub2@link-hub.site",
                 Category.KNOWLEDGE_ISSUE_CAREER,
                 true,
                 requestFile
@@ -555,7 +554,7 @@ class MemberServiceTest {
                 Provider.kakao,
                 "멤버2",
                 "타겟 유저",
-                "linkhub@link-hub.site",
+                "linkhub3@link-hub.site",
                 Category.KNOWLEDGE_ISSUE_CAREER,
                 true,
                 requestFile
@@ -566,7 +565,7 @@ class MemberServiceTest {
                 Provider.kakao,
                 "멤버3",
                 "타겟 유저가 팔로우했지만 나는 안한 유저",
-                "linkhub@link-hub.site",
+                "linkhub4@link-hub.site",
                 Category.KNOWLEDGE_ISSUE_CAREER,
                 true,
                 requestFile
@@ -577,7 +576,7 @@ class MemberServiceTest {
                 Provider.kakao,
                 "멤버4",
                 "타겟 유저가 팔로우하고 나도 팔로우한 유저",
-                "linkhub@link-hub.site",
+                "linkhub5@link-hub.site",
                 Category.KNOWLEDGE_ISSUE_CAREER,
                 true,
                 requestFile
@@ -588,7 +587,7 @@ class MemberServiceTest {
                 Provider.kakao,
                 "멤버5",
                 "내가 팔로우하는 타겟 유저를 팔로우한 유저",
-                "linkhub@link-hub.site",
+                "linkhub6@link-hub.site",
                 Category.KNOWLEDGE_ISSUE_CAREER,
                 true,
                 requestFile
