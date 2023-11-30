@@ -14,5 +14,5 @@ public interface NotificationRepository {
 
     Boolean existsByMemberIdAndMyMemberId(Long memberId, Long myMemberId);
 
-    void deleteById(Long notificationId, Long memberId);
+    void deleteByIdAndRecipientId(Long notificationId, Long memberId);
 }

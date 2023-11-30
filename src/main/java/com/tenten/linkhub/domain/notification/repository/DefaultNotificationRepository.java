@@ -33,8 +33,8 @@ public class DefaultNotificationRepository implements NotificationRepository {
     }
 
     @Override
-    public void deleteById(Long notificationId, Long memberId) {
-        notificationJpaRepository.deleteById(notificationId, memberId);
+    public void deleteByIdAndRecipientId(Long notificationId, Long memberId) {
+        notificationJpaRepository.deleteByIdAndRecipientId(notificationId, memberId);
     }
 
     @Override

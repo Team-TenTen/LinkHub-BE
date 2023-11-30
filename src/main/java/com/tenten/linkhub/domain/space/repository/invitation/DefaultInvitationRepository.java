@@ -23,7 +23,7 @@ public class DefaultInvitationRepository implements InvitationRepository {
     }
 
     @Override
-    public void deleteByNotificationId(Long notificationId, Long memberId) {
+    public void deleteByNotificationIdAndMemberId(Long notificationId, Long memberId) {
         invitationJpaRepository.deleteByNotificationId(notificationId, memberId);
     }
 }

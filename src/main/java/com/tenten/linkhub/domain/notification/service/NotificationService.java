@@ -54,7 +54,7 @@ public class NotificationService {
 
     @Transactional
     public void deleteNotification(Long notificationId, Long memberId) {
-        invitationRepository.deleteByNotificationId(notificationId, memberId);
-        notificationRepository.deleteById(notificationId, memberId);
+        invitationRepository.deleteByNotificationIdAndMemberId(notificationId, memberId);
+        notificationRepository.deleteByIdAndRecipientId(notificationId, memberId);
     }
 }

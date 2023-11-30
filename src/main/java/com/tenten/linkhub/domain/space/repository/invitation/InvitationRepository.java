@@ -7,5 +7,5 @@ public interface InvitationRepository {
 
     Invitation save(Invitation invitation);
 
-    void deleteByNotificationId(Long notificationId, Long memberId);
+    void deleteByNotificationIdAndMemberId(Long notificationId, Long memberId);
 }
