@@ -2,6 +2,7 @@ package com.tenten.linkhub.domain.space.service.dto.link;
 
 import com.tenten.linkhub.domain.space.repository.link.dto.LinkGetDto;
 import org.springframework.data.domain.Slice;
+
 import java.util.Objects;
 
 
@@ -11,16 +12,16 @@ public record LinkGetByQueryResponses(
     public static LinkGetByQueryResponses from(Slice<LinkGetDto> linkGetDtos) {
         Slice<LinkGetByQueryResponse> responseList = linkGetDtos
                 .map(dto -> new LinkGetByQueryResponse(
-                        dto.getLinkId(),
-                        dto.getTitle(),
-                        dto.getUrl(),
-                        dto.getTagName(),
-                        Objects.isNull(dto.getTagColor()) ? null : dto.getTagColor().getValue(),
-                        dto.getLikeCount(),
-                        dto.isLiked(),
-                        dto.isCanLinkSummaraizable(),
-                        dto.isCanReadMark(),
-                        dto.getLinkViewHistories()
+                        dto.linkInfoDto().linkId(),
+                        dto.linkInfoDto().title(),
+                        dto.linkInfoDto().url(),
+                        dto.linkInfoDto().tagName(),
+                        Objects.isNull(dto.linkInfoDto().tagColor()) ? null : dto.linkInfoDto().tagColor().getValue(),
+                        dto.linkInfoDto().likeCount(),
+                        dto.linkInfoDto().isLiked(),
+                        dto.linkInfoDto().canLinkSummaraizable(),
+                        dto.linkInfoDto().canReadMark(),
+                        dto.linkViewHistories()
                 ));
 
         return new LinkGetByQueryResponses(responseList);
