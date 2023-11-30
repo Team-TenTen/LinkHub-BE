@@ -83,8 +83,9 @@ public class DefaultSpaceService implements SpaceService {
         List<SpaceMember> sortedSpaceMember = space.getSortedSpaceMember();
 
         Boolean hasFavorite = favoriteRepository.isExist(memberId, spaceId);
+        Boolean hasScrap = scrapRepository.existsBySpaceIdAndMemberId(spaceId, memberId);
 
-        return SpaceWithSpaceImageAndSpaceMemberInfo.of(space, sortedSpaceMember, isOwner, isCanEdit, hasFavorite);
+        return SpaceWithSpaceImageAndSpaceMemberInfo.of(space, sortedSpaceMember, isOwner, isCanEdit, hasFavorite, hasScrap);
     }
 
     @Override

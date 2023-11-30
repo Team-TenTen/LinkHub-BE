@@ -22,6 +22,7 @@ public record SpaceDetailGetByIdApiResponse(
         Boolean isOwner,
         Boolean isCanEdit,
         Boolean hasFavorite,
+        Boolean hasScrap,
         List<SpaceMemberDetailInfo> memberDetailInfos
 ) {
     public static SpaceDetailGetByIdApiResponse from(SpaceDetailGetByIdFacadeResponse response){
@@ -41,6 +42,7 @@ public record SpaceDetailGetByIdApiResponse(
                 response.isOwner(),
                 response.isCanEdit(),
                 response.hasFavorite(),
+                response.hasScrap(),
                 response.memberDetailInfos()
         );
     }

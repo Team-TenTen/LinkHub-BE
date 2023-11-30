@@ -140,6 +140,7 @@ class SpaceFacadeTest {
         assertThat(response.isOwner()).isEqualTo(true);
         assertThat(response.isCanEdit()).isEqualTo(true);
         assertThat(response.hasFavorite()).isEqualTo(true);
+        assertThat(response.hasScrap()).isEqualTo(false);
         assertThat(spaceMemberDetailInfos.get(0).memberId()).isEqualTo(myMemberId);
         assertThat(spaceMemberDetailInfos.get(0).nickname()).isEqualTo("잠자는 사자의 콧털");
         assertThat(spaceMemberDetailInfos.get(0).profilePath()).isEqualTo("https://testprofileimage");
