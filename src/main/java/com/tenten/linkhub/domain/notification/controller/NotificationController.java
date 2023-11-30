@@ -60,7 +60,14 @@ public class NotificationController {
                 .body(apiResponses);
     }
 
-
+    /**
+     * 알림 삭제 API
+     */
+    @Operation(
+            summary = "알림 삭제 API ", description = "[JWT 필요] - notificationId를 받아 알림을 삭제해주는 API 입니다. 초대 알림의 경우 초대 내역도 함께 삭제합니다. ",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "알림 삭제 요청이 성공적으로 완료되었습니다.")
+            })
     @DeleteMapping(value = "/{notificationId}")
     public ResponseEntity<Void> deleteNotification(
             @PathVariable Long notificationId,
