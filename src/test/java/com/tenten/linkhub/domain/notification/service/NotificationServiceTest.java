@@ -16,7 +16,6 @@ import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +46,8 @@ public class NotificationServiceTest {
     @Autowired
     private MemberJpaRepository memberJpaRepository;
 
-    private Long invitingMemberId;
+    private Long invitingMemberId1;
+    private Long invitingMemberId2;
     private Long invitedMemberId;
     private List<Long> spaceIds = new ArrayList<>();
 
@@ -56,14 +56,12 @@ public class NotificationServiceTest {
         setUpTestData();
     }
 
-    @Disabled
     @Test
     @DisplayName("수신한 스페이스 초대 알림을 조회할 수 있다.")
     void getSpaceInvitations_memberId_Success() {
-        //given - 4개의 space에 미리 invitedMember를 초대
-        for (Long spaceId : spaceIds) {
-            spaceInvitationFacade.invite(new SpaceInvitationFacadeRequest("2222@gmail.com", spaceId, Role.CAN_EDIT, invitingMemberId));
-        }
+        //given - 2개의 스페이스에 각각 미리 invitedMember를 초대
+        spaceInvitationFacade.invite(new SpaceInvitationFacadeRequest("invitedMember@gmail.com", spaceIds.get(0), Role.CAN_EDIT, invitingMemberId1));
+        spaceInvitationFacade.invite(new SpaceInvitationFacadeRequest("invitedMember@gmail.com", spaceIds.get(1), Role.CAN_EDIT, invitingMemberId2));
 
         SpaceInviteNotificationGetRequest request = new SpaceInviteNotificationGetRequest(
                 PageRequest.of(0, 10),
@@ -75,13 +73,12 @@ public class NotificationServiceTest {
 
         //then
         assertThat(spaceInvitations.responses().getContent().size()).isEqualTo(spaceIds.size());
-        for (int i = 0; i < spaceIds.size(); i++) {
-            assertThat(spaceInvitations.responses().getContent().get(i).invitingMemberId()).isEqualTo(invitingMemberId);
-        }
+        assertThat(spaceInvitations.responses().getContent().get(0).invitingMemberId()).isEqualTo(invitingMemberId1);
+        assertThat(spaceInvitations.responses().getContent().get(1).invitingMemberId()).isEqualTo(invitingMemberId2);
     }
 
     private void setUpTestData() {
-        Member invitingMember = new Member(
+        Member invitingMember1 = new Member(
                 "123456",
                 Provider.kakao,
                 com.tenten.linkhub.domain.member.model.Role.USER,
@@ -92,37 +89,65 @@ public class NotificationServiceTest {
                 new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지1"),
                 new FavoriteCategory(Category.ENTER_ART)
         );
+
+        Member invitingMember2 = new Member(
+                "123456",
+                Provider.kakao,
+                com.tenten.linkhub.domain.member.model.Role.USER,
+                "닉네임 데이터",
+                "소개 데이터",
+                "1111@gmail.com",
+                false,
+                new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지1"),
+                new FavoriteCategory(Category.ENTER_ART)
+        );
+
         Member invitedMember = new Member(
                 "123456",
                 Provider.kakao,
                 com.tenten.linkhub.domain.member.model.Role.USER,
                 "닉네임 데이터1",
                 "소개 데이터1",
-                "2222@gmail.com",
+                "invitedMember@gmail.com",
                 false,
                 new ProfileImage("https://testprofileimage", "테스트용 멤버 프로필 이미지1"),
                 new FavoriteCategory(Category.ENTER_ART)
         );
 
-        invitingMemberId = memberJpaRepository.save(invitingMember).getId();
+        invitingMemberId1 = memberJpaRepository.save(invitingMember1).getId();
+        invitingMemberId2 = memberJpaRepository.save(invitingMember2).getId();
         invitedMemberId = memberJpaRepository.save(invitedMember).getId();
 
         spaceIds.clear();
-        for (int i = 0; i < 4; i++) {
-            Space space = new Space(
-                    invitingMemberId,
-                    "스페이스의 제목",
-                    "스페이스 설명",
-                    Category.ENTER_ART,
-                    new SpaceImage("https://testimage1", "테스트 이미지1"),
-                    new SpaceMember(invitingMemberId, Role.OWNER),
-                    true,
-                    true,
-                    true,
-                    true
-            );
-            spaceJpaRepository.save(space);
-            spaceIds.add(space.getId());
-        }
+        Space space1 = new Space(
+                invitingMemberId1,
+                "스페이스의 제목",
+                "스페이스 설명",
+                Category.ENTER_ART,
+                new SpaceImage("https://testimage1", "테스트 이미지1"),
+                new SpaceMember(invitingMemberId1, Role.OWNER),
+                true,
+                true,
+                true,
+                true
+        );
+        spaceJpaRepository.save(space1);
+        spaceIds.add(space1.getId());
+
+        Space space2 = new Space(
+                invitingMemberId2,
+                "스페이스의 제목",
+                "스페이스 설명",
+                Category.ENTER_ART,
+                new SpaceImage("https://testimage1", "테스트 이미지1"),
+                new SpaceMember(invitingMemberId2, Role.OWNER),
+                true,
+                true,
+                true,
+                true
+        );
+        spaceJpaRepository.save(space2);
+        spaceIds.add(space2.getId());
+
     }
 }
