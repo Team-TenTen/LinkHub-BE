@@ -20,6 +20,7 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -154,22 +155,29 @@ public class LinkQueryDslRepository {
     }
 
 
-    private OrderSpecifier<String> linkSort(Pageable pageable) {
+    private OrderSpecifier[] linkSort(Pageable pageable) {
+        List<OrderSpecifier> orderSpecifiers = new ArrayList<>();
+
         for (Sort.Order sort : pageable.getSort()) {
             String property = sort.getProperty();
 
             switch (property) {
                 case "created_at" -> {
-                    return new OrderSpecifier(Order.DESC, link.createdAt);
+                    orderSpecifiers.add(new OrderSpecifier(Order.DESC, link.createdAt));
+                    orderSpecifiers.add(new OrderSpecifier(Order.DESC, link.id));
+                    return orderSpecifiers.toArray(new OrderSpecifier[orderSpecifiers.size()]);
                 }
                 case "popular" -> {
-                    return new OrderSpecifier(Order.DESC, link.likeCount);
+                    orderSpecifiers.add(new OrderSpecifier(Order.DESC, link.likeCount));
+                    return orderSpecifiers.toArray(new OrderSpecifier[orderSpecifiers.size()]);
                 }
             }
         }
 
         // 정렬 조건이 없는 경우 기본적으로 최신순(createdAt 내림차순)으로 정렬
-        return new OrderSpecifier(Order.DESC, link.createdAt);
+        orderSpecifiers.add(new OrderSpecifier(Order.DESC, link.createdAt));
+        orderSpecifiers.add(new OrderSpecifier(Order.DESC, link.id));
+        return orderSpecifiers.toArray(new OrderSpecifier[orderSpecifiers.size()]);
     }
 
 }
