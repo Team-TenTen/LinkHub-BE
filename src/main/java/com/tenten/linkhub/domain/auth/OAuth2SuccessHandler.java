@@ -24,7 +24,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        String redirectUrl = "https://link-hub.site/oauth2/redirection/kakao"; // 운영 시 수정 예정
+        String redirectUrl = "https://link-hub.site/oauth2/redirection/kakao"; // 운영 시 수정 예정 ("https://link-hub.site/oauth2/redirection/kakao")
 
         DefaultOAuth2User oAuth2User = (DefaultOAuth2User) authentication.getPrincipal();
 

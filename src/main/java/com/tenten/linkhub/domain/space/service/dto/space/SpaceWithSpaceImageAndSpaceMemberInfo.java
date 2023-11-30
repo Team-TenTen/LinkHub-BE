@@ -23,9 +23,10 @@ public record SpaceWithSpaceImageAndSpaceMemberInfo(
         Boolean isOwner,
         Boolean isCanEdit,
         Boolean hasFavorite,
+        Boolean hasScrap,
         List<SpaceMemberInfo> spaceMemberInfos
 ) {
-    public static SpaceWithSpaceImageAndSpaceMemberInfo of(Space space, List<SpaceMember> sortedSpaceMember, Boolean isOwner, Boolean isCanEdit, Boolean hasFavorite) {
+    public static SpaceWithSpaceImageAndSpaceMemberInfo of(Space space, List<SpaceMember> sortedSpaceMember, Boolean isOwner, Boolean isCanEdit, Boolean hasFavorite, Boolean hasScrap) {
         List<SpaceMemberInfo> spaceMemberInfos = sortedSpaceMember.stream()
                 .map(sm -> new SpaceMemberInfo(sm.getMemberId(), sm.getRole()))
                 .toList();
@@ -47,6 +48,7 @@ public record SpaceWithSpaceImageAndSpaceMemberInfo(
                 isOwner,
                 isCanEdit,
                 hasFavorite,
+                hasScrap,
                 spaceMemberInfos
         );
     }

@@ -26,6 +26,7 @@ public record SpaceDetailGetByIdFacadeResponse(
         Boolean isOwner,
         Boolean isCanEdit,
         Boolean hasFavorite,
+        Boolean hasScrap,
         List<Long> spaceViews
 ) {
     public static SpaceDetailGetByIdFacadeResponse of(
@@ -66,6 +67,7 @@ public record SpaceDetailGetByIdFacadeResponse(
                 response.isOwner(),
                 response.isCanEdit(),
                 response.hasFavorite(),
+                response.hasScrap(),
                 spaceViews
         );
     }
