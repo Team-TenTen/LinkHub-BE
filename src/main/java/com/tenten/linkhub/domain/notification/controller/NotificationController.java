@@ -85,6 +85,11 @@ public class NotificationController {
     /**
      *  확인하지 않은 알림 개수 카운팅 API
      */
+    @Operation(
+            summary = "체크하지 않은 알림 개수 카운팅 API ", description = "[JWT 필요] - 체크하지 않은 알림 개수 카운팅 API 입니다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "체크하지 않은 알림 개수가 성공적으로 카운팅 되었습니다.")
+            })
     @GetMapping(value = "/unchecked",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UncheckedNotificationsCountApiResponse> countUncheckedNotifications(
