@@ -29,7 +29,7 @@ public class LinkJdbcRepository {
                     ps.setLong(2, memberId);
                     ps.setString(3, link.getTitle());
                     ps.setString(4, link.getUrl().getUrl());
-                    ps.setLong(5, link.getLikeCount());
+                    ps.setLong(5, 0L);
                     ps.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));
                     ps.setTimestamp(7, Timestamp.valueOf(LocalDateTime.now()));
                     ps.setBoolean(8, false);
