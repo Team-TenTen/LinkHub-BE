@@ -24,7 +24,7 @@ public class SpaceInvitationFacade {
     public Long invite(SpaceInvitationFacadeRequest request) {
         Long memberId = memberService.findMemberIdByEmail(request.email());
 
-        if (Boolean.TRUE.equals(notificationService.existsByMemberIdAndMyMemberId(memberId, request.myMemberId()))) {
+        if (notificationService.existsByMemberIdAndMyMemberIdAndSpaceId(memberId, request.myMemberId(), request.spaceId())) {
             throw new DataDuplicateException(ErrorCode.DUPLICATE_NOTIFICATION);
         }
 

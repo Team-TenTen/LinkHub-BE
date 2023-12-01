@@ -55,6 +55,25 @@ public class NotificationQueryDslRepository {
 
     }
 
+    public boolean existsByRecipientIdAndSenderIdAndSpaceId(Long memberId, Long myMemberId, Long spaceId) {
+        Integer fetchOne = jpaQueryFactory
+                .selectOne()
+                .from(notification)
+                .join(invitation).on(invitation.notificationId.eq(notification.id))
+                .where(equalsRecipientIdAndSenderIdAndSpaceId(memberId, myMemberId, spaceId))
+                .fetchFirst();
+        return fetchOne != null;
+
+    }
+
+    private BooleanExpression equalsRecipientIdAndSenderIdAndSpaceId(Long recipientId, Long senderId, Long spaceId) {
+        BooleanExpression recipientCondition = notification.recipientId.eq(recipientId);
+        BooleanExpression senderCondition = notification.senderId.eq(senderId);
+        BooleanExpression spaceConditon = invitation.space.id.eq(spaceId);
+
+        return recipientCondition.and(senderCondition).and(spaceConditon);
+    }
+
     BooleanExpression checkMemberJoinCondition(Long memberId) {
         BooleanExpression joinMemberCondition = notification.senderId.eq(member.id);
         BooleanExpression isSameMemberId = notification.recipientId.eq(memberId);

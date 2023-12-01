@@ -28,8 +28,8 @@ public class DefaultNotificationRepository implements NotificationRepository {
     }
 
     @Override
-    public Boolean existsByMemberIdAndMyMemberId(Long memberId, Long myMemberId) {
-        return notificationJpaRepository.existsByRecipientIdAndSenderId(memberId, myMemberId);
+    public boolean existsByMemberIdAndMyMemberIdAndSpaceId(Long memberId, Long myMemberId, Long spaceId) {
+        return notificationQueryDslRepository.existsByRecipientIdAndSenderIdAndSpaceId(memberId, myMemberId, spaceId);
     }
 
     @Override
