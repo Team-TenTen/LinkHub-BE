@@ -263,7 +263,13 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Long findMemberIdByEmail(String email) {
-        return memberRepository.findMemberIdByEmail(email);
+        Long memberId = memberRepository.findMemberIdByEmail(email);
+
+        if (Objects.isNull(memberId)) {
+            throw new DataNotFoundException("멤버를 찾을 수 없습니다.");
+        }
+
+        return memberId;
     }
 
 }
