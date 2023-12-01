@@ -137,7 +137,9 @@ public class SpaceController {
     @Operation(
             summary = "스페이스 생성 API", description = "스페이스 생성 API 입니다.",
             responses = {
-                    @ApiResponse(responseCode = "201", description = "스페이스가 성공적으로 생성되었습니다.")
+                    @ApiResponse(responseCode = "201", description = "스페이스가 성공적으로 생성되었습니다."),
+                    @ApiResponse(responseCode = "400", description = "올바르지 않은 요청이 들어왔습니다.(G004: 요청 파라미터가 올바르지 않음./ G003: 지원하지 않는 contentType이 요청됨.)",
+                            content = @Content(schema = @Schema(implementation = ErrorWithDetailCodeResponse.class)))
             })
     @PostMapping(
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -167,7 +169,7 @@ public class SpaceController {
             summary = "스페이스 상세 조회 API", description = "스페이스 상세 조회 API 입니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "스페이스가 성공적으로 조회되었습니다."),
-                    @ApiResponse(responseCode = "404", description = "요청한 spaceId에 해당하는 스페이스를 찾을 수 없습니다.",
+                    @ApiResponse(responseCode = "404", description = "요청한 spaceId에 해당하는 스페이스를 찾을 수 없습니다./ 권한으로 인해 스페이스를 조회할 수 없음.",
                             content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @GetMapping(value = "/{spaceId}",
@@ -197,8 +199,10 @@ public class SpaceController {
             summary = "스페이스 정보 수정 API", description = "스페이스 정보 수정 API 입니다.",
             responses = {
                     @ApiResponse(responseCode = "200", description = "스페이스가 성공적으로 수정되었습니다."),
-                    @ApiResponse(responseCode = "404", description = "권한이 없는 유저가 스페이스를 수정하려고 합니다.",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                    @ApiResponse(responseCode = "404", description = "스페이스를 찾을 수 없습니다./ 권한이 없는 유저가 스페이스를 수정하려고 합니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "(G004: 필수 파라미터 누락 및 서버에서 지원하지 않는 타입 및 제한 보다 큰 사이즈의 파라미터가 요청되었습니다.)",
+                            content = @Content(schema = @Schema(implementation = ErrorWithDetailCodeResponse.class)))
             })
     @PatchMapping(value = "/{spaceId}",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -302,7 +306,9 @@ public class SpaceController {
             responses = {
                     @ApiResponse(responseCode = "201", description = "루트 댓글이 성공적으로 생성되었습니다."),
                     @ApiResponse(responseCode = "404", description = "댓글을 달 수 없는 스페이스에 댓글을 생성하려고 합니다.",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "G004: 필수 파라미터 누락 및 서버에서 지원하지 않는 타입 및 제한 보다 큰 사이즈의 파라미터가 요청되었습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorWithDetailCodeResponse.class)))
             })
     @PostMapping(value = "/{spaceId}/comments",
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -330,7 +336,9 @@ public class SpaceController {
             responses = {
                     @ApiResponse(responseCode = "201", description = "대댓글이 성공적으로 생성되었습니다."),
                     @ApiResponse(responseCode = "404", description = "존재하지 않는 스페이스 / 대댓글을 달 수 없는 스페이스 / 존재하지 않는 부모 댓글",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "G004: 필수 파라미터 누락 및 서버에서 지원하지 않는 타입 및 제한 보다 큰 사이즈의 파라미터가 요청되었습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorWithDetailCodeResponse.class)))
             })
     @PostMapping(value = "/{spaceId}/comments/{commentId}/replies",
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -441,7 +449,9 @@ public class SpaceController {
             responses = {
                     @ApiResponse(responseCode = "201", description = "댓글이 성공적으로 수정되었습니다."),
                     @ApiResponse(responseCode = "404", description = "존재하지 않는 스페이스 / 댓글을 달 수 없는 스페이스 / 존재하지 않는 댓글 / 수정 권한 없음",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "400", description = "G004: 필수 파라미터 누락 및 서버에서 지원하지 않는 타입 및 제한 보다 큰 사이즈의 파라미터가 요청되었습니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorWithDetailCodeResponse.class)))
             })
     @PutMapping("/{spaceId}/comments/{commentId}")
     public ResponseEntity<CommentUpdateApiResponse> updateComment(
@@ -492,8 +502,11 @@ public class SpaceController {
                     @ApiResponse(responseCode = "200", description = "스페이스가 성공적으로 즐겨찾기 등록 되었습니다."),
                     @ApiResponse(responseCode = "404",
                             description = "존재하지 않는 스페이스를 즐겨찾기 등록하려고 합니다,\n\n " +
-                                    "권한이 없는 스페이스를 즐겨찾기에 등록하려고 합니다. (두 예외 응답에 대한 응답값은 Schema를 눌러 확인해주세요!!)",
-                            content = @Content(schema = @Schema(oneOf = {ErrorResponse.class, ErrorWithDetailCodeResponse.class})))
+                                    "권한이 없는 스페이스를 즐겨찾기에 등록하려고 합니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "409",
+                    description = "이미 즐겨찾기 된 스페이스 입니다.",
+                            content = @Content(schema = @Schema(implementation = ErrorWithDetailCodeResponse.class)))
             })
     @PostMapping(value = "/{spaceId}/favorites",
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -517,7 +530,7 @@ public class SpaceController {
                     @ApiResponse(responseCode = "404",
                             description = "존재하지 않는 즐겨찾기를 취소하려고 합니다,\n\n " +
                                     "즐겨찾기를 등록한 유저가 아닌 다른 유저가 즐겨찾기를 취소하려고 합니다. (두 예외 응답에 대한 응답값은 Schema를 눌러 확인해주세요!!)",
-                            content = @Content(schema = @Schema(oneOf = {ErrorResponse.class, ErrorWithDetailCodeResponse.class})))
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @DeleteMapping(value = "/{spaceId}/favorites")
     public ResponseEntity<Void> cancelFavoriteSpace(
@@ -563,8 +576,13 @@ public class SpaceController {
             "조건이 충족되지 않으면 아래의 예외가 발생합니다.",
             responses = {
                     @ApiResponse(responseCode = "201", description = "스페이스 가져오기가 성공적으로 완료되었습니다."),
-                    @ApiResponse(responseCode = "400", description = "이미 가져오기한 스페이스 / 링크 개수가 200개 이상인 스페이스",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                    @ApiResponse(responseCode = "400, 403", description = "400: (G004: 필수 파라미터 누락 및 서버에서 지원하지 않는 타입 및 제한 보다 큰 사이즈의 파라미터가 요청되었습니다.)\n\n " +
+                            "403: (S003: 한 스페이스에 대한 가져오기는 1회만 가능합니다./ S004: 가져오기는 200개 이하의 Link를 가진 스페이스만 가능합니다.)",
+                            content = @Content(schema = @Schema(implementation = ErrorWithDetailCodeResponse.class))),
+                    @ApiResponse(responseCode = "404",
+                    description = "존재하지 않는 스페이스를 가져오기 하려고 합니다,\n\n " +
+                            "권한이 없는 스페이스를 가져오기 하려고 합니다.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
             })
     @PostMapping(value = "/{spaceId}/scraps/new",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
