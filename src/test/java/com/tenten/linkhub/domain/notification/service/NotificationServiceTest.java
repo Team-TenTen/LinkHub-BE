@@ -15,6 +15,7 @@ import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
+import com.tenten.linkhub.domain.space.service.dto.invitation.SpaceInvitationAcceptRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -94,6 +95,22 @@ public class NotificationServiceTest {
         SpaceInviteNotificationGetResponses spaceInvitations = notificationService.getSpaceInvitations(request);
 
         assertThat(spaceInvitations.responses().getContent().size()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("사용자는 체크하지 않은 알림 갯수를 파악할 수 있다.")
+    void countUncheckedNotificationsByRecipientId() {
+        //given
+        spaceInvitationFacade.invite(new SpaceInvitationFacadeRequest("invitedMember@gmail.com", spaceIds.get(0), Role.CAN_EDIT, invitingMemberId1));
+        Long notificationId = spaceInvitationFacade.invite(new SpaceInvitationFacadeRequest("invitedMember@gmail.com", spaceIds.get(1), Role.CAN_EDIT, invitingMemberId2));
+
+        spaceInvitationFacade.acceptSpaceInvitation(new SpaceInvitationAcceptRequest(invitedMemberId, notificationId));
+
+        //when
+        Long uncheckedNotificationCount = notificationService.countUncheckedNotificationsByRecipientId(invitedMemberId);
+
+        //then
+        assertThat(uncheckedNotificationCount).isEqualTo(1L);
     }
 
     private void setUpTestData() {

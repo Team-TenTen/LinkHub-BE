@@ -15,4 +15,6 @@ public interface NotificationRepository {
     Boolean existsByMemberIdAndMyMemberId(Long memberId, Long myMemberId);
 
     void deleteByIdAndRecipientId(Long notificationId, Long memberId);
+
+    Long countUncheckedNotificationsByRecipientId(Long memberId);
 }
