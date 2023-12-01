@@ -10,6 +10,7 @@ public record MailVerificationApiRequest(
         @Email(message = "유효한 이메일 형식이 아닙니다.")
         String email,
 
+        @Schema(title = "인증번호", example = "123456")
         @NotBlank(message = "인증번호는 빈 값이 들어올 수 없습니다.")
         String code
 ) {
