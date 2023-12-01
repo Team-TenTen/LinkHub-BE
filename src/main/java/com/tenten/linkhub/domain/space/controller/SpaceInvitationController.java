@@ -9,6 +9,7 @@ import com.tenten.linkhub.domain.space.controller.mapper.SpaceInvitationApiMappe
 import com.tenten.linkhub.domain.space.facade.SpaceInvitationFacade;
 import com.tenten.linkhub.domain.space.service.dto.invitation.SpaceInvitationAcceptRequest;
 import com.tenten.linkhub.global.response.ErrorResponse;
+import com.tenten.linkhub.global.response.ErrorWithDetailCodeResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -42,7 +43,10 @@ public class SpaceInvitationController {
     @Operation(
             summary = "스페이스 초대 API", description = "스페이스 초대 API 입니다.",
             responses = {
-                    @ApiResponse(responseCode = "201", description = "스페이스 초대를 성공적으로 완료하였습니다.")
+                    @ApiResponse(responseCode = "201", description = "스페이스 초대를 성공적으로 완료하였습니다."),
+                    @ApiResponse(responseCode = "400, 409", description = "400: (G004: 필수 파라미터 누락 및 서버에서 지원하지 않는 타입 및 제한 보다 큰 사이즈의 파라미터가 요청되었습니다.)\n\n " +
+                            "409: (N001: 중복된 알림 등록입니다.)",
+                            content = @Content(schema = @Schema(implementation = ErrorWithDetailCodeResponse.class)))
             })
     @PostMapping(
             value = "/invitations",
@@ -70,8 +74,10 @@ public class SpaceInvitationController {
                     @ApiResponse(responseCode = "200", description = "스페이스 초대가 성공적으로 수락 되어 해당 스페이스의 멤버가 되었습니다."),
                     @ApiResponse(responseCode = "404",
                             description = "존재하지 않는 스페이스 초대를 수락 하려고 합니다,\n\n " +
-                                    "자신이 받은 스페이스 초대가 아닙니다.)",
-                            content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+                                    "권한이 없는 멤버가 초대를 수락하려고 합니다.(자기 자신이 받은 초대가 아님.))",
+                            content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+                    @ApiResponse(responseCode = "409", description = "409: (S002: 해당 멤버는 이미 스페이스의 멤버입니다.)",
+                            content = @Content(schema = @Schema(implementation = ErrorWithDetailCodeResponse.class)))
             })
     @PostMapping(value = "/invitations/accept")
     public ResponseEntity<SpaceInvitationAcceptApiResponse> acceptSpaceInvitation(
