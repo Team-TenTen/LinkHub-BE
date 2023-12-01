@@ -54,7 +54,7 @@ public class SpaceInvitationService {
             throw new DataDuplicateException(ErrorCode.DUPLICATE_NOTIFICATION);
         }
 
-        //방장이 보낸 초대인지 체크
+        //방장에게 보낸 초대인지 체크
         Space space = spaceRepository.getById(spaceId);
         if (TRUE.equals(space.isOwner(memberId))) {
             throw new IllegalArgumentException("스페이스의 방장은 멤버로 추가할 수 없습니다.");
