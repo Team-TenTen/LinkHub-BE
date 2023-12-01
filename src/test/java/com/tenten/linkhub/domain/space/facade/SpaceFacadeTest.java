@@ -20,8 +20,10 @@ import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.favorite.FavoriteJpaRepository;
 import com.tenten.linkhub.domain.space.repository.link.LinkJpaRepository;
+import com.tenten.linkhub.domain.space.repository.scrap.ScrapRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.service.LinkService;
+import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkCreateRequest;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.s3.ImageFileUploader;
@@ -68,6 +70,9 @@ class SpaceFacadeTest {
 
     @Autowired
     private LinkJpaRepository linkJpaRepository;
+
+    @Autowired
+    private ScrapRepository scrapRepository;
 
     @MockBean
     private ImageFileUploader mockImageFileUploader;
@@ -307,6 +312,36 @@ class SpaceFacadeTest {
         assertThat(scrapedLinks.get(1).getLinkTags().get(0).getTag().getName()).isEqualTo("의류");
         assertThat(scrapedLinks.get(2).getTitle()).isEqualTo("발란");
         assertThat(scrapedLinks.get(2).getLinkTags().get(0).getTag().getName()).isEqualTo("의류");
+    }
+
+    @Test
+    @DisplayName("유저가 스페이스를 삭제할 때 해당 스페이스가 가져오기한 스페이스면 해당 Scrap 엔티티도 삭제된다.")
+    void deleteSpace_scrapSpace() {
+        //given
+        NewSpacesScrapFacadeRequest request = new NewSpacesScrapFacadeRequest(
+                "가져오기한 스페이스",
+                "다른 유저의 스페이스를 가져오기한 스페이스 입니다.",
+                Category.ETC,
+                true,
+                true,
+                true,
+                true,
+                null,
+                anotherSpaceId,
+                myMemberId
+        );
+        
+        Long savedSpaceId = spaceFacade.scrapAndCreateNewSpace(request);
+        
+        //when
+        spaceFacade.deleteSpace(savedSpaceId, myMemberId);
+        
+        //when
+        Optional<Space> space = spaceJpaRepository.findById(savedSpaceId);
+        Boolean isScrapExists = scrapRepository.existsByTargetSpaceId(savedSpaceId);
+
+        assertThat(space.isEmpty()).isTrue();
+        assertThat(isScrapExists).isFalse();
     }
 
     @Test
