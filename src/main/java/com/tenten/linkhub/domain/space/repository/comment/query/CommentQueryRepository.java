@@ -23,7 +23,7 @@ public class CommentQueryRepository {
         this.queryFactory = queryFactory;
     }
 
-    public Slice<CommentAndChildCommentCount> findCommentAndChildCommentCountBySpaceId(Long spaceId, Pageable pageable){
+    public Slice<CommentAndChildCommentCount> findCommentAndChildCommentCountBySpaceId(Long spaceId, Pageable pageable) {
         QComment subComment = new QComment("subComment");
 
         List<CommentAndChildCommentCount> responses = queryFactory
@@ -39,7 +39,8 @@ public class CommentQueryRepository {
                 .where(comment.isDeleted.eq(false),
                         comment.space.id.eq(spaceId),
                         comment.parentComment.isNull())
-                .orderBy(comment.createdAt.desc())
+                .orderBy(comment.createdAt.desc(),
+                        comment.id.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .fetch();
