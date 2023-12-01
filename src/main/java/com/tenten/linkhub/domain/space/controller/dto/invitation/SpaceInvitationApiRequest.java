@@ -7,8 +7,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record SpaceInvitationApiRequest(
-        @Email
         @Schema(title = "이메일", example = "frong@gmail.com")
+        @Email(message = "유효한 이메일 형식이 아닙니다.")
         @NotBlank(message = "이메일은 빈 값이 들어올 수 없습니다.") String email,
 
         @Schema(title = "스페이스 아이디", example = "2")
