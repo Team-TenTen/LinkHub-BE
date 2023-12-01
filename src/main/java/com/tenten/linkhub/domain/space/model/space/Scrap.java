@@ -2,12 +2,9 @@ package com.tenten.linkhub.domain.space.model.space;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,16 +23,21 @@ public class Scrap {
     private Long id;
 
     @Column(nullable = false)
-    private Long spaceId;
+    private Long sourceSpaceId;
+
+    @Column(nullable = false)
+    private Long targetSpaceId;
 
     @Column(nullable = false)
     private Long memberId;
 
-    public Scrap(Long spaceId, Long memberId) {
-        validateNotNull(spaceId, "spaceId");
+    public Scrap(Long sourceSpaceId, Long targetSpaceId, Long memberId) {
+        validateNotNull(sourceSpaceId, "spaceId");
+        validateNotNull(targetSpaceId, "targetSpaceId");
         validateNotNull(memberId, "memberId");
 
-        this.spaceId = spaceId;
+        this.sourceSpaceId = sourceSpaceId;
+        this.targetSpaceId = targetSpaceId;
         this.memberId = memberId;
     }
 
