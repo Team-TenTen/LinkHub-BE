@@ -57,4 +57,10 @@ public class NotificationService {
         invitationRepository.deleteByNotificationIdAndMemberId(notificationId, memberId);
         notificationRepository.deleteByIdAndRecipientId(notificationId, memberId);
     }
+
+    @Transactional(readOnly = true)
+    public Long countUncheckedNotificationsByRecipientId(Long memberId) {
+        return notificationRepository.countUncheckedNotificationsByRecipientId(memberId);
+    }
+
 }
