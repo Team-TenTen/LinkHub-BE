@@ -63,6 +63,7 @@ public class SecurityConfig {
                                 .requestMatchers("/members/profile").authenticated()
                                 .requestMatchers("/spaces/favorites/me").authenticated()
                                 .requestMatchers("/notifications/invitations").authenticated()
+                                .requestMatchers("/notifications/unchecked").authenticated()
                                 .requestMatchers(HttpMethod.GET).permitAll() // 임시로 풀어준 것 운영시에는 허용 주소 관리
                                 .requestMatchers("/members/join").permitAll()
                                 .requestMatchers("/members/emails/**").permitAll()
