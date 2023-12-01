@@ -13,5 +13,5 @@ public interface NotificationJpaRepository extends JpaRepository<Notification, L
     @Query("DELETE FROM Notification n WHERE n.id = :notificationId AND n.recipientId = :memberId")
     void deleteByIdAndRecipientId(Long notificationId, Long memberId);
 
-    Long countByRecipientIdAndCheckedFalse(Long recipientId);
+    Long countByRecipientIdAndIsCheckedFalse(Long recipientId);
 }
