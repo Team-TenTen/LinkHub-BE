@@ -83,7 +83,7 @@ public class DefaultSpaceService implements SpaceService {
         List<SpaceMember> sortedSpaceMember = space.getSortedSpaceMember();
 
         Boolean hasFavorite = favoriteRepository.isExist(memberId, spaceId);
-        Boolean hasScrap = scrapRepository.existsBySpaceIdAndMemberId(spaceId, memberId);
+        Boolean hasScrap = scrapRepository.existsBySourceSpaceIdAndMemberId(spaceId, memberId);
 
         return SpaceWithSpaceImageAndSpaceMemberInfo.of(space, sortedSpaceMember, isOwner, isCanEdit, hasFavorite, hasScrap);
     }
@@ -109,6 +109,10 @@ public class DefaultSpaceService implements SpaceService {
     public DeletedSpaceImageNames deleteSpaceById(Long spaceId, Long memberId) {
         Space space = spaceRepository.getById(spaceId);
         space.deleteSpace(memberId);
+
+        if (scrapRepository.existsByTargetSpaceId(spaceId)) {
+            scrapRepository.deleteByTargetSpaceId(spaceId);
+        }
 
         return DeletedSpaceImageNames.from(space.getAllSpaceImages());
     }
@@ -163,7 +167,7 @@ public class DefaultSpaceService implements SpaceService {
     @Override
     @Transactional(readOnly = true)
     public void validateScrapTargetSpace(Long spaceId, Long memberId) {
-        if (scrapRepository.existsBySpaceIdAndMemberId(spaceId, memberId)) {
+        if (scrapRepository.existsBySourceSpaceIdAndMemberId(spaceId, memberId)) {
             throw new PolicyViolationException(SPACE_SCRAP_LIMIT);
         }
 
@@ -189,7 +193,7 @@ public class DefaultSpaceService implements SpaceService {
         linkService.copyLinkBySpaceIdAndPaste(request.sourceSpaceId(), savedSpaceId, request.memberId());
 
         scrapRepository.save(
-                new Scrap(request.sourceSpaceId(), request.memberId())
+                new Scrap(request.sourceSpaceId(), savedSpaceId, request.memberId())
         );
 
         return savedSpaceId;
