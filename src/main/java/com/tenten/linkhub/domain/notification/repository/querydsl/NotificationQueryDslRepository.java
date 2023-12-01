@@ -37,8 +37,8 @@ public class NotificationQueryDslRepository {
                         invitation.isAccepted
                 ))
                 .from(notification)
-                .join(invitation).on(invitation.notificationId.eq(notification.id))
-                .join(invitation.space, space)
+                .leftJoin(invitation).on(invitation.notificationId.eq(notification.id))
+                .leftJoin(invitation.space, space)
                 .join(member).on(checkMemberJoinCondition(condition.memberId()))
                 .offset(condition.pageable().getOffset())
                 .limit(condition.pageable().getPageSize() + 1)
