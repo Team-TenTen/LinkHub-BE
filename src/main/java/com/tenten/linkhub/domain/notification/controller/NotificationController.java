@@ -3,6 +3,7 @@ package com.tenten.linkhub.domain.notification.controller;
 import com.tenten.linkhub.domain.auth.MemberDetails;
 import com.tenten.linkhub.domain.notification.controller.dto.SpaceInviteNotificationGetApiRequest;
 import com.tenten.linkhub.domain.notification.controller.dto.SpaceInviteNotificationGetApiResponses;
+import com.tenten.linkhub.domain.notification.controller.dto.UncheckedNotificationsCountApiResponse;
 import com.tenten.linkhub.domain.notification.controller.mapper.NotificationApiMapper;
 import com.tenten.linkhub.domain.notification.service.NotificationService;
 import com.tenten.linkhub.domain.notification.service.dto.SpaceInviteNotificationGetRequest;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -79,4 +81,19 @@ public class NotificationController {
                 .noContent()
                 .build();
     }
+
+    /**
+     *  확인하지 않은 알림 개수 카운팅 API
+     */
+    @GetMapping(value = "/unchecked",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<UncheckedNotificationsCountApiResponse> countUncheckedNotifications(
+            @AuthenticationPrincipal MemberDetails memberDetails
+    ) {
+        Long uncheckedNotificationCount = notificationService.countUncheckedNotificationsByRecipientId(memberDetails.memberId());
+        UncheckedNotificationsCountApiResponse apiResponse = UncheckedNotificationsCountApiResponse.from(uncheckedNotificationCount);
+
+        return ResponseEntity.ok(apiResponse);
+    }
+
 }

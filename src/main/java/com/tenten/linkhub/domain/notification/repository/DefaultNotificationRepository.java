@@ -38,6 +38,11 @@ public class DefaultNotificationRepository implements NotificationRepository {
     }
 
     @Override
+    public Long countUncheckedNotificationsByRecipientId(Long memberId) {
+        return notificationJpaRepository.countByRecipientIdAndCheckedFalse(memberId);
+    }
+
+    @Override
     public Slice<SpaceInvitationNotificationGetDto> getInviteNotifications(NotificationGetQueryCondition condition) {
         return notificationQueryDslRepository.getSpaceInvitationNotifications(condition);
     }
