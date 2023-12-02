@@ -44,8 +44,10 @@ public class SpaceInvitationController {
             summary = "스페이스 초대 API", description = "스페이스 초대 API 입니다.",
             responses = {
                     @ApiResponse(responseCode = "201", description = "스페이스 초대를 성공적으로 완료하였습니다."),
-                    @ApiResponse(responseCode = "400, 409", description = "400: (G004: 필수 파라미터 누락 및 서버에서 지원하지 않는 타입 및 제한 보다 큰 사이즈의 파라미터가 요청되었습니다.)\n\n " +
-                            "409: (N001: 중복된 알림 등록입니다.)",
+                    @ApiResponse(responseCode = "400", description = "1. G004: 필수 파라미터 누락 및 서버에서 지원하지 않는 타입 및 제한 보다 큰 사이즈의 파라미터가 요청되었습니다. \n " +
+                            " 2. G004: 스페이스의 방장은 멤버로 추가할 수 없습니다. \n ",
+                            content = @Content(schema = @Schema(implementation = ErrorWithDetailCodeResponse.class))),
+                    @ApiResponse(responseCode = "409", description = "1. N001: 중복된 알림 등록입니다.",
                             content = @Content(schema = @Schema(implementation = ErrorWithDetailCodeResponse.class)))
             })
     @PostMapping(

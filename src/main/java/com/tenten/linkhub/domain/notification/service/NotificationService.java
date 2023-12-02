@@ -48,8 +48,8 @@ public class NotificationService {
         return notificationRepository.save(notification).getId();
     }
 
-    public Boolean existsByMemberIdAndMyMemberId(Long memberId, Long myMemberId) {
-        return notificationRepository.existsByMemberIdAndMyMemberId(memberId, myMemberId);
+    public boolean existsByMemberIdAndMyMemberIdAndSpaceId(Long memberId, Long myMemberId, Long spaceId) {
+        return notificationRepository.existsByMemberIdAndMyMemberIdAndSpaceId(memberId, myMemberId, spaceId);
     }
 
     @Transactional

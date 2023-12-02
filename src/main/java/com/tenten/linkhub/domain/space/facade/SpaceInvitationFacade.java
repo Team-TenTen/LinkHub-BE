@@ -6,8 +6,6 @@ import com.tenten.linkhub.domain.space.facade.dto.SpaceInvitationFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.mapper.SpaceInvitationFacadeMapper;
 import com.tenten.linkhub.domain.space.service.SpaceInvitationService;
 import com.tenten.linkhub.domain.space.service.dto.invitation.SpaceInvitationAcceptRequest;
-import com.tenten.linkhub.global.exception.DataDuplicateException;
-import com.tenten.linkhub.global.response.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +22,7 @@ public class SpaceInvitationFacade {
     public Long invite(SpaceInvitationFacadeRequest request) {
         Long memberId = memberService.findMemberIdByEmail(request.email());
 
-        if (Boolean.TRUE.equals(notificationService.existsByMemberIdAndMyMemberId(memberId, request.myMemberId()))) {
-            throw new DataDuplicateException(ErrorCode.DUPLICATE_NOTIFICATION);
-        }
+        spaceInvitationService.validateSpaceInvitation(memberId, request.myMemberId(), request.spaceId());
 
         Long notificationId = notificationService.createNotification(mapper.toNotificationCreateRequest(request, memberId));
 
