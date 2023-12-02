@@ -17,7 +17,7 @@ public record MemberJoinApiRequest(
         @NotBlank(message = "닉네임은 빈 값이 들어올 수 없습니다.") String nickname,
 
         @Schema(title = "한줄 소개", example = "만나서 반갑습니다.")
-        @NotBlank(message = "한줄 소개는 빈 값이 들어올 수 없습니다.") String aboutMe,
+        String aboutMe,
 
         @Schema(title = "이메일", example = "frong@gmail.com")
         @NotBlank(message = "이메일은 빈 값이 들어올 수 없습니다.") String newsEmail,
