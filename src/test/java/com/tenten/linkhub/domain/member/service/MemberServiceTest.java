@@ -497,7 +497,7 @@ class MemberServiceTest {
 
         MemberUpdateRequest request = new MemberUpdateRequest(
                 "변경된 닉네임",
-                "변경된 자기소개",
+                "",
                 "changedEmail@gmail.com",
                 Category.ENTER_ART,
                 false,
@@ -513,7 +513,7 @@ class MemberServiceTest {
         Member member = memberJpaRepository.findById(response.memberId()).get();
 
         assertThat(member.getNickname()).isEqualTo("변경된 닉네임");
-        assertThat(member.getAboutMe()).isEqualTo("변경된 자기소개");
+        assertThat(member.getAboutMe()).isEqualTo("");
         assertThat(member.getNewsEmail()).isEqualTo("changedEmail@gmail.com");
         assertThat(member.retrieveFavoriteCategories().get(0).getCategory()).isEqualTo(Category.ENTER_ART);
         assertThat(member.retrieveProfileImages().get(0).getPath()).isEqualTo("https://updateimage");
