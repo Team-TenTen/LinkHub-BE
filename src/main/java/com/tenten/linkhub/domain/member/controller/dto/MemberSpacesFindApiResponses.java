@@ -21,7 +21,8 @@ public record MemberSpacesFindApiResponses(
                         r.scrapCount(),
                         r.favoriteCount(),
                         r.spaceImagePath(),
-                        r.ownerNickName()));
+                        r.ownerNickName(),
+                        r.isVisible()));
 
         PageMetaData pageMetaData = new PageMetaData(
                 mapResponses.hasNext(),

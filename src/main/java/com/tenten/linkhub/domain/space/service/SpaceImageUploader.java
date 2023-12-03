@@ -13,7 +13,7 @@ import java.util.Optional;
 @Component
 public class SpaceImageUploader {
     private static final String SPACE_IMAGE_FOLDER = "space-image/";
-    private static final String SPACE_DEFAULT_IMAGE_PATH = "https://team-10-bucket.s3.ap-northeast-2.amazonaws.com/space-image/space-default.png";
+    private static final String SPACE_DEFAULT_IMAGE_PATH = "https://team-10-bucket.s3.ap-northeast-2.amazonaws.com/space-image/space-default-v1.png";
 
     private final ImageFileUploader imageFileUploader;
 

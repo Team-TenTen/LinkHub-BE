@@ -497,7 +497,7 @@ class MemberServiceTest {
 
         MemberUpdateRequest request = new MemberUpdateRequest(
                 "변경된 닉네임",
-                "변경된 자기소개",
+                "",
                 "changedEmail@gmail.com",
                 Category.ENTER_ART,
                 false,

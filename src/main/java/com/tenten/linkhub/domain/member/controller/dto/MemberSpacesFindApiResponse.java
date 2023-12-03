@@ -11,6 +11,7 @@ public record MemberSpacesFindApiResponse(
         Long scrapCount,
         Long favoriteCount,
         String spaceImagePath,
-        String ownerNickName
+        String ownerNickName,
+        Boolean isVisible
 ) {
 }
