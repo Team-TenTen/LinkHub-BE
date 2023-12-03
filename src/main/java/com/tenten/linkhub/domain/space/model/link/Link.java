@@ -45,7 +45,7 @@ public class Link extends BaseEntity {
     @Column(nullable = false)
     private Long memberId;
 
-    @Column(nullable = false)
+    @Column(length = 100, nullable = false)
     private String title;
 
     @Embedded
