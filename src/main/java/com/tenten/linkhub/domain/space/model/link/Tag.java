@@ -30,7 +30,7 @@ public class Tag {
     @JoinColumn(name = "space_id", nullable = false)
     private Space space;
 
-    @Column(nullable = false)
+    @Column(length = 30, nullable = false)
     private String name;
 
     @Enumerated(EnumType.STRING)
