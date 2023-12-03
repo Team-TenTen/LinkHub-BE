@@ -134,7 +134,7 @@ public class LinkQueryDslRepository {
                 .where(link.isDeleted.eq(Boolean.FALSE),
                         space.isDeleted.eq(Boolean.FALSE))
                 .orderBy(link.likeCount.desc())
-                .limit(5)
+                .limit(10)
                 .distinct()
                 .fetch();
     }
