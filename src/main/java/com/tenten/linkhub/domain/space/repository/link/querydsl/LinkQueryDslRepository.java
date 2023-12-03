@@ -90,7 +90,7 @@ public class LinkQueryDslRepository {
                 .from(link)
                 .leftJoin(link.linkViewHistories, linkViewHistory)
                 .leftJoin(member).on(linkViewHistory.memberId.eq(member.id))
-                .leftJoin(member.profileImages.profileImageList, profileImage)
+                .leftJoin(member.profileImages.profileImageList, profileImage).on(profileImage.isDeleted.eq(false))
                 .where(link.id.in(linkIds))
                 .transform(GroupBy.groupBy(link.id).as(
                         GroupBy.list(
@@ -134,7 +134,7 @@ public class LinkQueryDslRepository {
                 .where(link.isDeleted.eq(Boolean.FALSE),
                         space.isDeleted.eq(Boolean.FALSE))
                 .orderBy(link.likeCount.desc())
-                .limit(5)
+                .limit(10)
                 .distinct()
                 .fetch();
     }
