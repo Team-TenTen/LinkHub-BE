@@ -15,7 +15,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -54,8 +53,8 @@ public class Link extends BaseEntity {
     @Column(nullable = false)
     private Long likeCount;
 
-    @Version
-    private int version;
+//    @Version
+//    private int version;
 
     @OneToMany(mappedBy = "link", cascade = CascadeType.PERSIST)
     private List<LinkViewHistory> linkViewHistories = new ArrayList<>();

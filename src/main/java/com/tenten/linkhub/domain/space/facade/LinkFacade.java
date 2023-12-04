@@ -14,6 +14,7 @@ import com.tenten.linkhub.domain.space.service.dto.link.LinksGetByQueryRequest;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class LinkFacade {
@@ -59,6 +60,7 @@ public class LinkFacade {
         return linkService.updateLink(request);
     }
 
+    @Transactional
     public Boolean createLike(Long linkId, Long memberId) {
         Boolean isLiked = linkService.createLike(linkId, memberId);
 
@@ -69,6 +71,7 @@ public class LinkFacade {
         return isLiked;
     }
 
+    @Transactional
     public void cancelLike(Long linkId, Long memberId) {
         linkService.cancelLike(linkId, memberId);
 

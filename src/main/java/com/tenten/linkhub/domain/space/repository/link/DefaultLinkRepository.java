@@ -68,4 +68,14 @@ public class DefaultLinkRepository implements LinkRepository {
         return linkJdbcRepository.bulkInsertLinks(sourceLinks, spaceId, memberId);
     }
 
+    @Override
+    public void increaseLikeCount(Long linkId) {
+        linkJpaRepository.increaseLikeCount(linkId);
+    }
+
+    @Override
+    public void decreaseLikeCount(Long linkId) {
+        linkJpaRepository.decreaseLikeCount(linkId);
+    }
+
 }

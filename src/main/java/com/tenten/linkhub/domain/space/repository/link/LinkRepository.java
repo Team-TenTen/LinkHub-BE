@@ -26,4 +26,8 @@ public interface LinkRepository {
     List<Link> findBySpaceId(Long sourceSpaceId);
 
     Long bulkInsertLinks(List<Link> sourceLinks, Long spaceId, Long memberId);
+
+    void increaseLikeCount(Long linkId);
+
+    void decreaseLikeCount(Long linkId);
 }
