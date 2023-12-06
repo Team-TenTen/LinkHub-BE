@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkHub 메일 인증 안내</title>
+</head>
+<body>
+<div style="font-family: 'Apple SD Gothic Neo', 'sans-serif' !important; width: 700px; height: 900px; border-top: 4px solid #50B584; margin: 100px auto; padding: 30px 0; box-sizing: border-box;">
+    <h1 style="margin: 0; padding: 0 5px; font-size: 28px; font-weight: 400;">
+        <span style="font-size: 50px; margin: 0 0 10px 3px;">LinkHub</span><br/>
+        <span style="color: #50B584">메일인증</span> 안내입니다.
+    </h1>
+    <p style="font-size: 16px; line-height: 26px; margin-top: 50px; padding: 0 5px;">
+        링크 허브 가입을 위한 인증 번호를 알려드립니다.<br/>
+        아래 인증 번호를 <strong style="color:#50B584">5분이내</strong>에 입력하시면 인증이 완료됩니다. <br/>
+    </p>
+    <div style="width: 576px;height: 90px; margin-top: 50px; padding: 0 27px;color: #242424;font-size: 16px;font-weight: bold;background-color: #F9F9F9;vertical-align: middle;line-height: 90px;">
+        인증번호 : <strong style="font-style: normal;font-weight: bold;color: #50B584" th:text="${authKey}"></strong>
+    </div>
+    <p style="font-size: 16px; line-height: 26px; margin-top: 50px; padding: 0 5px;">
+        이전 페이지로 돌아가 발급 받으신 인증번호를 입력해주세요.<br/> <br/> <br/>
+        감사합니다.<br/>
+    </p>
+    <div style="border-top: 4px solid #50B584; margin: 40px auto; padding: 30px 0;"></div>
+</div>
+</body>
+</html>
