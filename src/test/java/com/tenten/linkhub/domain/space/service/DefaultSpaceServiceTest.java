@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.space.service;
 
+import com.tenten.linkhub.IntegrationApplicationTest;
 import com.tenten.linkhub.domain.member.model.FavoriteCategory;
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.ProfileImage;
@@ -26,10 +27,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -37,10 +36,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@ActiveProfiles("test")
 @Transactional
-@SpringBootTest
-class DefaultSpaceServiceTest {
+class DefaultSpaceServiceTest extends IntegrationApplicationTest {
 
     @Autowired
     private SpaceService spaceService;
