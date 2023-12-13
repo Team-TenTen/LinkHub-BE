@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.space.service;
 
+import com.tenten.linkhub.IntegrationApplicationTest;
 import com.tenten.linkhub.domain.member.model.FavoriteCategory;
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.ProfileImage;
@@ -22,8 +23,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -31,10 +30,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@ActiveProfiles("test")
 @Transactional
-@SpringBootTest
-class CommentServiceTest {
+class CommentServiceTest extends IntegrationApplicationTest {
 
     @Autowired
     private CommentService commentService;
@@ -251,7 +248,7 @@ class CommentServiceTest {
                 .isInstanceOf(DataNotFoundException.class);
     }
 
-    private void setUpTestData(){
+    private void setUpTestData() {
         Member member1 = new Member(
                 "testSocialId",
                 Provider.kakao,
@@ -297,7 +294,7 @@ class CommentServiceTest {
                 "두번째 스페이스",
                 "두번째 스페이스 소개글",
                 Category.ETC,
-                new SpaceImage( "https://testimage2", "테스트 이미지2"),
+                new SpaceImage("https://testimage2", "테스트 이미지2"),
                 new SpaceMember(setUpMemberId1, Role.OWNER),
                 true,
                 false,

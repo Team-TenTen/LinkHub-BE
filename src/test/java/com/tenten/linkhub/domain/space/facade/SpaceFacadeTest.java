@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.space.facade;
 
+import com.tenten.linkhub.IntegrationApplicationTest;
 import com.tenten.linkhub.domain.member.model.FavoriteCategory;
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.ProfileImage;
@@ -23,10 +24,8 @@ import com.tenten.linkhub.domain.space.repository.link.LinkJpaRepository;
 import com.tenten.linkhub.domain.space.repository.scrap.ScrapRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.service.LinkService;
-import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkCreateRequest;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
-import com.tenten.linkhub.global.aws.s3.ImageFileUploader;
 import com.tenten.linkhub.global.exception.PolicyViolationException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,10 +33,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -48,10 +44,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 
-@ActiveProfiles("test")
 @Transactional
-@SpringBootTest
-class SpaceFacadeTest {
+class SpaceFacadeTest extends IntegrationApplicationTest {
 
     @Autowired
     private SpaceFacade spaceFacade;
@@ -73,9 +67,6 @@ class SpaceFacadeTest {
 
     @Autowired
     private ScrapRepository scrapRepository;
-
-    @MockBean
-    private ImageFileUploader mockImageFileUploader;
 
     private Long myMemberId;
     private Long anotherMemberId;
