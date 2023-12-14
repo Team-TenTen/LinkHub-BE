@@ -1,6 +1,6 @@
 package com.tenten.linkhub.global.config;
 
-import com.tenten.linkhub.domain.space.SpaceViewListResolver;
+import com.tenten.linkhub.global.SpaceViewListResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;

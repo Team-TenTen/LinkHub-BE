@@ -24,13 +24,13 @@ public class SpaceImages {
     private List<SpaceImage> spaceImageList = new ArrayList<>();
 
     public void addSpaceImage(SpaceImage spaceImage) {
-        validateNotNull(spaceImage, "spaceImages");
+        validateNotNull(spaceImage, "spaceImage");
 
         this.spaceImageList.add(spaceImage);
     }
 
     public void changeSpaceImage(SpaceImage spaceImage) {
-        validateNotNull(spaceImage, "spaceImages");
+        validateNotNull(spaceImage, "spaceImage");
 
         List<SpaceImage> imageList = getSpaceImageList();
 

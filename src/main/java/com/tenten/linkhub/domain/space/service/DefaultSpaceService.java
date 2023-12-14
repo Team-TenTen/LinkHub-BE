@@ -152,7 +152,6 @@ public class DefaultSpaceService implements SpaceService {
         space.validateVisibilityAndMembership(memberId);
     }
 
-
     @Override
     @Transactional
     public Long changeSpaceMembersRole(SpaceMemberRoleChangeRequest request) {
@@ -166,7 +165,7 @@ public class DefaultSpaceService implements SpaceService {
 
     @Override
     @Transactional(readOnly = true)
-    public void validateScrapTargetSpace(Long spaceId, Long memberId) {
+    public void validateScrapSourceSpace(Long spaceId, Long memberId) {
         if (scrapRepository.existsBySourceSpaceIdAndMemberId(spaceId, memberId)) {
             throw new PolicyViolationException(SPACE_SCRAP_LIMIT);
         }
