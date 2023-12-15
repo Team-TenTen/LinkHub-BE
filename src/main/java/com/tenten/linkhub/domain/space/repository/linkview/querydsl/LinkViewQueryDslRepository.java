@@ -1,4 +1,4 @@
-package com.tenten.linkhub.domain.space.repository.linkview.query;
+package com.tenten.linkhub.domain.space.repository.linkview.querydsl;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -7,11 +7,11 @@ import org.springframework.stereotype.Repository;
 import static com.tenten.linkhub.domain.space.model.link.QLinkViewHistory.linkViewHistory;
 
 @Repository
-public class LinkViewQueryRepository {
+public class LinkViewQueryDslRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    public LinkViewQueryRepository(JPAQueryFactory jpaQueryFactory) {
+    public LinkViewQueryDslRepository(JPAQueryFactory jpaQueryFactory) {
         this.jpaQueryFactory = jpaQueryFactory;
     }
 

@@ -1,4 +1,4 @@
-package com.tenten.linkhub.domain.space.repository.favorite.query;
+package com.tenten.linkhub.domain.space.repository.favorite.querydsl;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -22,11 +22,11 @@ import static com.tenten.linkhub.domain.space.model.space.QFavorite.favorite;
 import static com.tenten.linkhub.domain.space.model.space.QSpaceImage.spaceImage;
 
 @Repository
-public class FavoriteQueryRepository {
+public class FavoriteQueryDslRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    public FavoriteQueryRepository(JPAQueryFactory queryFactory) {
+    public FavoriteQueryDslRepository(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
 

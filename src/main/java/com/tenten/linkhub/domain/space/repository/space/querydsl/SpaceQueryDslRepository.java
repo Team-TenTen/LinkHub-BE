@@ -1,4 +1,4 @@
-package com.tenten.linkhub.domain.space.repository.space.query;
+package com.tenten.linkhub.domain.space.repository.space.querydsl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
@@ -20,12 +20,12 @@ import static com.tenten.linkhub.domain.space.model.space.QSpaceImage.spaceImage
 import static com.tenten.linkhub.domain.space.model.space.QSpaceMember.spaceMember;
 
 @Repository
-public class SpaceQueryRepository {
+public class SpaceQueryDslRepository {
 
     private final JPAQueryFactory queryFactory;
     private final DynamicQueryFactory dynamicQueryFactory;
 
-    public SpaceQueryRepository(JPAQueryFactory queryFactory) {
+    public SpaceQueryDslRepository(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
         this.dynamicQueryFactory = new DynamicQueryFactory();
     }

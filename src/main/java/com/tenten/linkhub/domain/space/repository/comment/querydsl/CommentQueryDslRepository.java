@@ -1,4 +1,4 @@
-package com.tenten.linkhub.domain.space.repository.comment.query;
+package com.tenten.linkhub.domain.space.repository.comment.querydsl;
 
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -15,11 +15,11 @@ import java.util.List;
 import static com.tenten.linkhub.domain.space.model.space.QComment.comment;
 
 @Repository
-public class CommentQueryRepository {
+public class CommentQueryDslRepository {
 
     private final JPAQueryFactory queryFactory;
 
-    public CommentQueryRepository(JPAQueryFactory queryFactory) {
+    public CommentQueryDslRepository(JPAQueryFactory queryFactory) {
         this.queryFactory = queryFactory;
     }
 

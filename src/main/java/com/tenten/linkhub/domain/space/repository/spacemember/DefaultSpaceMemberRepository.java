@@ -1,20 +1,20 @@
 package com.tenten.linkhub.domain.space.repository.spacemember;
 
-import com.tenten.linkhub.domain.space.repository.spacemember.query.SpaceMemberQueryRepository;
+import com.tenten.linkhub.domain.space.repository.spacemember.querydsl.SpaceMemberQueryDslRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class DefaultSpaceMemberRepository implements SpaceMemberRepository {
 
-    private final SpaceMemberQueryRepository spaceMemberQueryRepository;
+    private final SpaceMemberQueryDslRepository spaceMemberQueryDslRepository;
 
-    public DefaultSpaceMemberRepository(SpaceMemberQueryRepository spaceMemberQueryRepository) {
-        this.spaceMemberQueryRepository = spaceMemberQueryRepository;
+    public DefaultSpaceMemberRepository(SpaceMemberQueryDslRepository spaceMemberQueryDslRepository) {
+        this.spaceMemberQueryDslRepository = spaceMemberQueryDslRepository;
     }
 
     @Override
     public boolean existsAuthorizedSpaceMember(Long memberId, Long spaceId) {
-        return spaceMemberQueryRepository.existsAuthorizedSpaceMember(memberId, spaceId);
+        return spaceMemberQueryDslRepository.existsAuthorizedSpaceMember(memberId, spaceId);
     }
 
 }

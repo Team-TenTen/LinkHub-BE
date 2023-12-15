@@ -2,7 +2,7 @@ package com.tenten.linkhub.domain.space.repository.tag;
 
 import com.tenten.linkhub.domain.space.model.link.Tag;
 import com.tenten.linkhub.domain.space.repository.tag.dto.TagInfo;
-import com.tenten.linkhub.domain.space.repository.tag.query.TagQueryRepository;
+import com.tenten.linkhub.domain.space.repository.tag.querydsl.TagQueryDslRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,19 +11,19 @@ import java.util.Optional;
 @Repository
 public class DefaultTagRepository implements TagRepository {
 
-    private final TagQueryRepository tagQueryRepository;
+    private final TagQueryDslRepository tagQueryDslRepository;
     private final TagJpaRepository tagJpaRepository;
     private final TagJdbcRepository tagJdbcRepository;
 
-    public DefaultTagRepository(TagQueryRepository tagQueryRepository, TagJpaRepository tagJpaRepository, TagJdbcRepository tagJdbcRepository) {
-        this.tagQueryRepository = tagQueryRepository;
+    public DefaultTagRepository(TagQueryDslRepository tagQueryDslRepository, TagJpaRepository tagJpaRepository, TagJdbcRepository tagJdbcRepository) {
+        this.tagQueryDslRepository = tagQueryDslRepository;
         this.tagJpaRepository = tagJpaRepository;
         this.tagJdbcRepository = tagJdbcRepository;
     }
 
     @Override
     public List<TagInfo> findTagBySpaceId(Long spaceId) {
-        return tagQueryRepository.findTagBySpaceId(spaceId);
+        return tagQueryDslRepository.findTagBySpaceId(spaceId);
     }
 
     @Override
