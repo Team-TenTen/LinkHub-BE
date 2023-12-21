@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.StringUtils;
 
+import static com.querydsl.core.types.dsl.Expressions.numberTemplate;
 import static com.tenten.linkhub.domain.space.model.space.QSpace.space;
 
 @NoArgsConstructor
@@ -42,7 +43,9 @@ public class DynamicQueryFactory {
 
     public BooleanExpression eqSpaceName(String keyWord) {
         if (StringUtils.hasText(keyWord)) {
-            return space.spaceName.contains(keyWord);
+            String formattedSearchWord = "\"" + keyWord + "\"";
+            return numberTemplate(Double.class, "function('match_against', {0}, {1})",
+                    space.spaceName, keyWord).gt(0);
         }
 
         return null;
