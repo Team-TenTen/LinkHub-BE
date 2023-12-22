@@ -1,4 +1,4 @@
-package com.tenten.linkhub.domain.space.repository.spacemember.query;
+package com.tenten.linkhub.domain.space.repository.spacemember.querydsl;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -8,10 +8,10 @@ import org.springframework.stereotype.Repository;
 import static com.tenten.linkhub.domain.space.model.space.QSpaceMember.spaceMember;
 
 @Repository
-public class SpaceMemberQueryRepository {
+public class SpaceMemberQueryDslRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
-    public SpaceMemberQueryRepository(JPAQueryFactory jpaQueryFactory) {
+    public SpaceMemberQueryDslRepository(JPAQueryFactory jpaQueryFactory) {
         this.jpaQueryFactory = jpaQueryFactory;
     }
 

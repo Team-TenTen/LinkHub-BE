@@ -75,7 +75,7 @@ public class SpaceFacade {
     }
 
     public Long scrapAndCreateNewSpace(NewSpacesScrapFacadeRequest request) {
-        spaceService.validateScrapTargetSpace(request.sourceSpaceId(), request.memberId());
+        spaceService.validateScrapSourceSpace(request.sourceSpaceId(), request.memberId());
 
         ImageInfo imageInfo = spaceImageUploader.getNewImageInfoOrDefaultImageInfo(request.file());
 

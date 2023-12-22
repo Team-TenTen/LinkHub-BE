@@ -4,7 +4,7 @@ import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.space.dto.MemberSpacesQueryCondition;
 import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
-import com.tenten.linkhub.domain.space.repository.space.query.SpaceQueryRepository;
+import com.tenten.linkhub.domain.space.repository.space.querydsl.SpaceQueryDslRepository;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
@@ -14,16 +14,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class DefaultSpaceRepository implements SpaceRepository {
 
     private final SpaceJpaRepository spaceJpaRepository;
-    private final SpaceQueryRepository spaceQueryRepository;
+    private final SpaceQueryDslRepository spaceQueryDslRepository;
 
-    public DefaultSpaceRepository(SpaceJpaRepository spaceJpaRepository, SpaceQueryRepository spaceQueryRepository) {
+    public DefaultSpaceRepository(SpaceJpaRepository spaceJpaRepository, SpaceQueryDslRepository spaceQueryDslRepository) {
         this.spaceJpaRepository = spaceJpaRepository;
-        this.spaceQueryRepository = spaceQueryRepository;
+        this.spaceQueryDslRepository = spaceQueryDslRepository;
     }
 
     @Override
     public Slice<SpaceAndSpaceImageOwnerNickName> findPublicSpacesJoinSpaceImageByQuery(QueryCondition queryCondition) {
-        return spaceQueryRepository.findPublicSpacesJoinSpaceImageByCondition(queryCondition);
+        return spaceQueryDslRepository.findPublicSpacesJoinSpaceImageByCondition(queryCondition);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class DefaultSpaceRepository implements SpaceRepository {
 
     @Override
     public Slice<SpaceAndSpaceImageOwnerNickName> findMemberSpacesJoinSpaceImageByQuery(MemberSpacesQueryCondition queryCondition) {
-        return spaceQueryRepository.findMemberSpacesJoinSpaceImageByCondition(queryCondition);
+        return spaceQueryDslRepository.findMemberSpacesJoinSpaceImageByCondition(queryCondition);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.tenten.linkhub.domain.space.repository.tag.query;
+package com.tenten.linkhub.domain.space.repository.tag.querydsl;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -13,10 +13,10 @@ import static com.tenten.linkhub.domain.space.model.link.QTag.tag;
 import static java.lang.Boolean.FALSE;
 
 @Repository
-public class TagQueryRepository {
+public class TagQueryDslRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
-    public TagQueryRepository(JPAQueryFactory jpaQueryFactory) {
+    public TagQueryDslRepository(JPAQueryFactory jpaQueryFactory) {
         this.jpaQueryFactory = jpaQueryFactory;
     }
 

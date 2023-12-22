@@ -49,7 +49,7 @@ import com.tenten.linkhub.domain.space.service.dto.favorite.SpaceRegisterInFavor
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
-import com.tenten.linkhub.domain.space.util.SpaceViewList;
+import com.tenten.linkhub.domain.space.controller.annotation.SpaceViewList;
 import com.tenten.linkhub.global.response.ErrorResponse;
 import com.tenten.linkhub.global.response.ErrorWithDetailCodeResponse;
 import io.swagger.v3.oas.annotations.Operation;

@@ -35,7 +35,7 @@ public interface SpaceService {
 
     Long changeSpaceMembersRole(SpaceMemberRoleChangeRequest request);
 
-    void validateScrapTargetSpace(Long spaceId, Long memberId);
+    void validateScrapSourceSpace(Long spaceId, Long memberId);
 
     Long createSpaceAndCopyLinks(NewSpacesScrapRequest request);
 

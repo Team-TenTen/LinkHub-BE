@@ -1,4 +1,4 @@
-package com.tenten.linkhub.domain.space.util;
+package com.tenten.linkhub.domain.space.controller.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,6 +1,6 @@
-package com.tenten.linkhub.domain.space;
+package com.tenten.linkhub.global;
 
-import com.tenten.linkhub.domain.space.util.SpaceViewList;
+import com.tenten.linkhub.domain.space.controller.annotation.SpaceViewList;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.MethodParameter;

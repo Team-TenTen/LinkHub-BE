@@ -1,24 +1,24 @@
 package com.tenten.linkhub.domain.space.repository.linkview;
 
 import com.tenten.linkhub.domain.space.model.link.LinkViewHistory;
-import com.tenten.linkhub.domain.space.repository.linkview.query.LinkViewQueryRepository;
+import com.tenten.linkhub.domain.space.repository.linkview.querydsl.LinkViewQueryDslRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class DefaultLinkViewRepository implements LinkViewRepository {
 
-    private final LinkViewQueryRepository linkViewQueryRepository;
+    private final LinkViewQueryDslRepository linkViewQueryDslRepository;
     private final LinkViewJpaRepository linkViewJpaRepository;
 
-    public DefaultLinkViewRepository(LinkViewQueryRepository linkViewQueryRepository,
+    public DefaultLinkViewRepository(LinkViewQueryDslRepository linkViewQueryDslRepository,
                                      LinkViewJpaRepository linkViewJpaRepository) {
-        this.linkViewQueryRepository = linkViewQueryRepository;
+        this.linkViewQueryDslRepository = linkViewQueryDslRepository;
         this.linkViewJpaRepository = linkViewJpaRepository;
     }
 
     @Override
     public boolean existsLinkView(Long linkId, Long memberId) {
-        return linkViewQueryRepository.existsLinkViewHistory(linkId, memberId);
+        return linkViewQueryDslRepository.existsLinkViewHistory(linkId, memberId);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.tenten.linkhub.domain.space.repository.space.query;
+package com.tenten.linkhub.domain.space.repository.space.querydsl;
 
 import com.querydsl.core.types.NullExpression;
 import com.querydsl.core.types.Order;
