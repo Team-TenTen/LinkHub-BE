@@ -21,6 +21,7 @@ create table spaces
                                                       )
     ENGINE=InnoDB
     DEFAULT CHARACTER SET = utf8;
+SET GLOBAL innodb_ft_enable_stopword = 0;
 
 drop table if exists members;
 create table members
