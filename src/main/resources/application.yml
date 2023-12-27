@@ -26,7 +26,7 @@ spring:
       port: 6379
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
     show-sql: true
     properties:
       hibernate:
