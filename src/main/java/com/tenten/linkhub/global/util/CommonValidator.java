@@ -22,4 +22,13 @@ public final class CommonValidator {
         }
     }
 
+    public static void validateMinMaxSize(String value, int minSize, int maxSize, String valueName) {
+        validateNotNull(value, valueName);
+
+        int targetSize = value.length();
+        if (targetSize < minSize || targetSize > maxSize) {
+            throw new IllegalArgumentException(String.format("%s의 길이는 %s 이상 %s 이하 이여야 합니다.", valueName, minSize, maxSize));
+        }
+    }
+
 }

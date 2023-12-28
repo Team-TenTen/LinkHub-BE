@@ -18,8 +18,8 @@ public class LinkJdbcRepository {
     private final JdbcTemplate jdbcTemplate;
 
     public Long bulkInsertLinks(List<Link> sourceLinks, Long spaceId, Long memberId) {
-        String sql = "INSERT INTO links (space_id, member_id, title, url, like_count, created_at, updated_at, is_deleted, version) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) ";
+        String sql = "INSERT INTO links (space_id, member_id, title, url, like_count, created_at, updated_at, is_deleted) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?) ";
 
         jdbcTemplate.batchUpdate(sql,
                 sourceLinks,
@@ -33,7 +33,6 @@ public class LinkJdbcRepository {
                     ps.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now()));
                     ps.setTimestamp(7, Timestamp.valueOf(LocalDateTime.now()));
                     ps.setBoolean(8, false);
-                    ps.setLong(9, 0L);
                 });
 
         return jdbcTemplate.queryForObject("SELECT last_insert_id()", Long.class);

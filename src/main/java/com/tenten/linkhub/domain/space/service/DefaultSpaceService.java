@@ -31,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -38,6 +39,7 @@ import java.util.Objects;
 import static com.tenten.linkhub.domain.space.model.space.Role.OWNER;
 import static com.tenten.linkhub.global.response.ErrorCode.LINK_COUNT_LIMIT_FOR_SCRAP;
 import static com.tenten.linkhub.global.response.ErrorCode.SPACE_SCRAP_LIMIT;
+import static com.tenten.linkhub.global.util.CommonValidator.validateMinMaxSize;
 
 @RequiredArgsConstructor
 @Service
@@ -55,6 +57,7 @@ public class DefaultSpaceService implements SpaceService {
     @Override
     @Transactional(readOnly = true)
     public SpacesFindByQueryResponses findPublicSpacesByQuery(PublicSpacesFindByQueryRequest request) {
+        validateSearchKeWord(request.keyWord());
         Slice<SpaceAndSpaceImageOwnerNickName> spaceAndSpaceImageOwnerNickName = spaceRepository.findPublicSpacesJoinSpaceImageByQuery(mapper.toQueryCond(request));
 
         return SpacesFindByQueryResponses.from(spaceAndSpaceImageOwnerNickName);
@@ -120,6 +123,8 @@ public class DefaultSpaceService implements SpaceService {
     @Override
     @Transactional(readOnly = true)
     public SpacesFindByQueryResponses findMemberSpacesByQuery(MemberSpacesFindRequest request) {
+        validateSearchKeWord(request.keyWord());
+
         Boolean isMySpace = Objects.equals(request.requestMemberId(), request.targetMemberId());
         MemberSpacesQueryCondition queryCondition = mapper.toMemberSpacesQueryCondition(request, isMySpace);
 
@@ -204,6 +209,12 @@ public class DefaultSpaceService implements SpaceService {
         Space space = spaceRepository.getById(spaceId);
 
         space.deleteSpaceMember(memberId);
+    }
+
+    private void validateSearchKeWord(String keyWord) {
+        if (StringUtils.hasText(keyWord)) {
+            validateMinMaxSize(keyWord, 2, 255, "keyWord");
+        }
     }
 
 }

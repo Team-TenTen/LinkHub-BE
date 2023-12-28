@@ -54,9 +54,6 @@ public class Link extends BaseEntity {
     @Column(nullable = false)
     private Long likeCount;
 
-    @Version
-    private int version;
-
     @OneToMany(mappedBy = "link", cascade = CascadeType.PERSIST)
     private List<LinkViewHistory> linkViewHistories = new ArrayList<>();
 

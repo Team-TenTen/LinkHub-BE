@@ -11,7 +11,7 @@ truncate table favorites;
 truncate table comments;
 truncate table invitations;
 truncate table scraps;
-truncate table space_member;
+truncate table space_members;
 truncate table spaces;
 
 truncate table link_tags;
