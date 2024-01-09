@@ -51,6 +51,11 @@ spring:
             authorization-grant-type: authorization_code
             client-name: kakao
             scope: profile_image, profile_nickname
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
 
 ---
 spring:
