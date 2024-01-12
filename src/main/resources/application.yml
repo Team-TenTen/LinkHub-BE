@@ -59,7 +59,6 @@ management:
     web:
       exposure:
         include: prometheus
-
 ---
 spring:
   config:
@@ -113,6 +112,9 @@ jwt:
 
 server:
   forward-headers-strategy: framework
+  tomcat:
+    mbeanregistry:
+      enabled: true
 
 kakao:
   admin-key:
