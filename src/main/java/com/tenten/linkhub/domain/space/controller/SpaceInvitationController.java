@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -94,4 +95,8 @@ public class SpaceInvitationController {
         return ResponseEntity.ok(apiResponse);
     }
 
+    @GetMapping(value = "/test")
+    public ResponseEntity<Void> logTest() {
+        throw new RuntimeException("logTest용 예외 발생!!");
+    }
 }
