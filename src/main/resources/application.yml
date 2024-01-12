@@ -11,6 +11,9 @@ spring:
   config:
     activate:
       on-profile: common
+  logging:
+    loki:
+      url: ${LOKI_URL}
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${RDS_URL}
@@ -62,6 +65,8 @@ spring:
   config:
     activate:
       on-profile: local
+  application:
+    name: LinkHub-server-local
 ---
 spring:
   config:
@@ -69,6 +74,8 @@ spring:
       on-profile: prod
   jpa:
     show-sql: false
+  application:
+    name: LinkHub-server-prod
 ---
 cloud:
   aws:
