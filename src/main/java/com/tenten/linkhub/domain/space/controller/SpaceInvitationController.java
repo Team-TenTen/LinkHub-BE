@@ -95,8 +95,4 @@ public class SpaceInvitationController {
         return ResponseEntity.ok(apiResponse);
     }
 
-    @GetMapping(value = "/test")
-    public ResponseEntity<Void> logTest() {
-        throw new RuntimeException("logTest용 예외 발생!!");
-    }
 }
