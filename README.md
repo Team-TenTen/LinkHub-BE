@@ -42,6 +42,10 @@
 | <img src="https://img.shields.io/badge/Notion-FFFFFF?style=flat-square&logo=Notion&logoColor=black"/></a> | <img src="https://img.shields.io/badge/slack-232F3E?style=flat-square&logo=slack&logoColor=white&style=flat"/></a> | <img src="https://img.shields.io/badge/Discord-232F3E?style=flat-square&logo=Discord&logoColor=blue&style=flat"/></a> | <img src="https://img.shields.io/badge/Github-000000?style=flat-square&logo=Github&logoColor=white&style=flat"/></a> | <img src="https://img.shields.io/badge/Erd Cloud-0052CC?style=flat-square&logo=erdcloud%20software&logoColor=white&style=flat"/></a> | <img src="https://img.shields.io/badge/Figma-50B584?style=flat-square&logo=Figma&logoColor=white&style=flat"/></a> |
 
 
+## 🏰 아키텍처
+<img width="738" alt="서버 아키텍처(v3)" src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/4e964e90-be09-4b72-a46b-2066f6076b5c">
+
+
 ## 📘 ERD
 ![스크린샷 2023-12-03 오후 4 44 07](https://github.com/Team-TenTen/LinkHub-BE/assets/90172648/15b82f59-5f85-4567-996d-66652ac44aa0)
 
