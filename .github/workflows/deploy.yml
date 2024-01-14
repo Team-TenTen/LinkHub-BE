@@ -3,7 +3,6 @@ name: LinkHub CI/CD
 on:
   push:
     branches:
-      - develop
       - test/load
 
 jobs:
