@@ -64,6 +64,14 @@ public class DefaultSpaceService implements SpaceService {
     }
 
     @Override
+    public SpacesFindByQueryResponses findPublicSpacesByLikeQuery(PublicSpacesFindByQueryRequest request) {
+        validateSearchKeWord(request.keyWord());
+        Slice<SpaceAndSpaceImageOwnerNickName> spaceAndSpaceImageOwnerNickName = spaceRepository.findPublicSpacesJoinSpaceImageByLikeQuery(mapper.toQueryCond(request));
+
+        return SpacesFindByQueryResponses.from(spaceAndSpaceImageOwnerNickName);
+    }
+
+    @Override
     @Transactional
     public Long createSpace(SpaceCreateRequest request) {
         SpaceMember spaceMember = mapper.toSpaceMember(request.memberId(), OWNER);

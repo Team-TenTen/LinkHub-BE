@@ -132,6 +132,34 @@ public class SpaceController {
     }
 
     /**
+     * 스페이스 검색(like 쿼리) API
+     */
+    @Operation(
+            summary = "스페이스 검색 API(like 쿼리)", description = "keyWord, pageNumber, pageSize, sort, filter를 받아 검색합니다.(keyWord, sort, filter 조건 없이 사용 가능합니다.)\n\n" +
+            "sort: {created_at, updated_at, favorite_count, view_count}\n\n" +
+            "filter: {ENTER_ART, LIFE_KNOWHOW_SHOPPING, HOBBY_LEISURE_TRAVEL, KNOWLEDGE_ISSUE_CAREER, ETC}",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "검색이 성공적으로 완료 되었습니다."),
+            })
+    @GetMapping(value = "/search/like-query",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PublicSpacesFindByQueryApiResponses> findPublicSpacesByLikeQuery(
+            @ModelAttribute PublicSpacesFindByQueryApiRequest request
+    ) {
+        PageRequest pageRequest = PageRequest.of(
+                request.pageNumber(),
+                request.pageSize(),
+                StringUtils.hasText(request.sort()) ? Sort.by(request.sort()) : Sort.unsorted());
+
+        SpacesFindByQueryResponses responses = spaceService.findPublicSpacesByLikeQuery(
+                spaceMapper.toPublicSpacesFindByQueryRequest(request, pageRequest)
+        );
+
+        PublicSpacesFindByQueryApiResponses apiResponses = PublicSpacesFindByQueryApiResponses.from(responses);
+        return ResponseEntity.ok(apiResponses);
+    }
+
+    /**
      * 스페이스 생성 API
      */
     @Operation(

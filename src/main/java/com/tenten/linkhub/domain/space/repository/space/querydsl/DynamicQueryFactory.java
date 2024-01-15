@@ -54,6 +54,14 @@ public class DynamicQueryFactory {
         return null;
     }
 
+    public BooleanExpression eqSpaceNameWithLikeQuery(String keyWord) {
+        if (StringUtils.hasText(keyWord)) {
+            return space.spaceName.contains(keyWord);
+        }
+
+        return null;
+    }
+
     public BooleanExpression eqIsVisible(Boolean isSelfSpace) {
         if (isSelfSpace) {
             return null;

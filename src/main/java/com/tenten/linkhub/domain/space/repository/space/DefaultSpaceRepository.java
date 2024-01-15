@@ -65,4 +65,9 @@ public class DefaultSpaceRepository implements SpaceRepository {
         spaceJpaRepository.increaseScrapCount(spaceId);
     }
 
+    @Override
+    public Slice<SpaceAndSpaceImageOwnerNickName> findPublicSpacesJoinSpaceImageByLikeQuery(QueryCondition queryCondition) {
+        return spaceQueryDslRepository.findPublicSpacesJoinSpaceImageByConditionWithLikeQuery(queryCondition);
+    }
+
 }
