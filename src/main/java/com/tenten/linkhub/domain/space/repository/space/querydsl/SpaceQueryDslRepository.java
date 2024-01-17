@@ -40,7 +40,7 @@ public class SpaceQueryDslRepository {
                 .join(member).on(space.memberId.eq(member.id))
                 .where(space.isDeleted.eq(false),
                         space.isVisible.eq(true),
-                        dynamicQueryFactory.eqSpaceName(condition.keyWord()),
+                        dynamicQueryFactory.eqSpaceNameWithPlus(condition.keyWord()),
                         dynamicQueryFactory.eqCategory(condition.filter())
                 )
                 .orderBy(dynamicQueryFactory.spaceSort(condition.pageable()))
@@ -77,7 +77,7 @@ public class SpaceQueryDslRepository {
                 .where(spaceMember.memberId.eq(condition.memberId()),
                         space.isDeleted.eq(false),
                         dynamicQueryFactory.eqIsVisible(condition.isMySpace()),
-                        dynamicQueryFactory.eqSpaceName(condition.keyWord()),
+                        dynamicQueryFactory.eqSpaceNameWithPlus(condition.keyWord()),
                         dynamicQueryFactory.eqCategory(condition.filter())
                 )
                 .orderBy(space.createdAt.desc())
