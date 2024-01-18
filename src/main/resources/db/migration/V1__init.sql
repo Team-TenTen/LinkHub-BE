@@ -16,11 +16,8 @@ create table spaces
     scrap_count          bigint                                                                                               not null,
     space_name           varchar(255)                                                                                         not null,
     view_count           bigint                                                                                               not null,
-    FULLTEXT INDEX `ft_space_name` (`space_name`) WITH PARSER `ngram`
-                                                      )
-    ENGINE=InnoDB
-    DEFAULT CHARACTER SET = utf8;
-SET GLOBAL innodb_ft_enable_stopword = 0;
+    FULLTEXT INDEX `ft_space_name` (`space_name`) WITH PARSER `ngram`)
+    ENGINE=InnoDB;
 
 create table members
 (
