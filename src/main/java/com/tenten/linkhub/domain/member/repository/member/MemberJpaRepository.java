@@ -40,5 +40,8 @@ public interface MemberJpaRepository extends JpaRepository<Member, Long> {
 
     @Query("SELECT m.id FROM Member m WHERE m.newsEmail = :email")
     Long findMemberIdByEmail(String email);
+
+    @Query("SELECT m FROM Member m WHERE m.id IN :memberIds AND m.isDeleted = false")
+    List<Member> findByIds(List<Long> memberIds);
 }
 

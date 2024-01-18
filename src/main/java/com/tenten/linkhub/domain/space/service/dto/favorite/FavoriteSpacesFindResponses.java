@@ -1,6 +1,5 @@
 package com.tenten.linkhub.domain.space.service.dto.favorite;
 
-import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
 import org.springframework.data.domain.Slice;
 

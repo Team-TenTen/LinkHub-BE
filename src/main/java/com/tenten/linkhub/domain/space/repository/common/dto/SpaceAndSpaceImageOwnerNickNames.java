@@ -27,4 +27,5 @@ public record SpaceAndSpaceImageOwnerNickNames(
 
         return new SpaceAndSpaceImageOwnerNickNames(mapSpaceAndSpaceImageOwnerNickNames);
     }
+
 }

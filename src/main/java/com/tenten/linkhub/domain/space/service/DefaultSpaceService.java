@@ -4,7 +4,7 @@ import com.tenten.linkhub.domain.space.model.space.Scrap;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
-import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
+import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImage;
 import com.tenten.linkhub.domain.space.repository.favorite.FavoriteRepository;
 import com.tenten.linkhub.domain.space.repository.link.LinkRepository;
 import com.tenten.linkhub.domain.space.repository.scrap.ScrapRepository;
@@ -58,7 +58,7 @@ public class DefaultSpaceService implements SpaceService {
     @Transactional(readOnly = true)
     public SpacesFindByQueryResponses findPublicSpacesByQuery(PublicSpacesFindByQueryRequest request) {
         validateSearchKeWord(request.keyWord());
-        Slice<SpaceAndSpaceImageOwnerNickName> spaceAndSpaceImageOwnerNickName = spaceRepository.findPublicSpacesJoinSpaceImageByQuery(mapper.toQueryCond(request));
+        Slice<SpaceAndSpaceImage> spaceAndSpaceImageOwnerNickName = spaceRepository.findPublicSpacesJoinSpaceImageByQuery(mapper.toQueryCond(request));
 
         return SpacesFindByQueryResponses.from(spaceAndSpaceImageOwnerNickName);
     }
@@ -128,7 +128,7 @@ public class DefaultSpaceService implements SpaceService {
         Boolean isMySpace = Objects.equals(request.requestMemberId(), request.targetMemberId());
         MemberSpacesQueryCondition queryCondition = mapper.toMemberSpacesQueryCondition(request, isMySpace);
 
-        Slice<SpaceAndSpaceImageOwnerNickName> spaceAndSpaceImageOwnerNickName = spaceRepository.findMemberSpacesJoinSpaceImageByQuery(queryCondition);
+        Slice<SpaceAndSpaceImage> spaceAndSpaceImageOwnerNickName = spaceRepository.findMemberSpacesJoinSpaceImageByQuery(queryCondition);
 
         return SpacesFindByQueryResponses.from(spaceAndSpaceImageOwnerNickName);
     }
