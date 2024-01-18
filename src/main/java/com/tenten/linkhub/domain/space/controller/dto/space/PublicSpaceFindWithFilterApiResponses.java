@@ -1,6 +1,6 @@
 package com.tenten.linkhub.domain.space.controller.dto.space;
 
-import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
+import com.tenten.linkhub.domain.space.facade.dto.SpacesWithNicknameFindByQueryFacadeResponses;
 import com.tenten.linkhub.global.util.PageMetaData;
 import org.springframework.data.domain.Slice;
 
@@ -10,7 +10,7 @@ public record PublicSpaceFindWithFilterApiResponses(
         List<PublicSpaceFindWithFilterApiResponse> responses,
         PageMetaData metaData
 ) {
-    public static PublicSpaceFindWithFilterApiResponses from(SpacesFindByQueryResponses responses) {
+    public static PublicSpaceFindWithFilterApiResponses from(SpacesWithNicknameFindByQueryFacadeResponses responses) {
         Slice<PublicSpaceFindWithFilterApiResponse> mapResponses = responses.responses()
                 .map(r -> new PublicSpaceFindWithFilterApiResponse(
                         r.spaceId(),

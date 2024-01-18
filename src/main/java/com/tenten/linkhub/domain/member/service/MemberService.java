@@ -12,6 +12,7 @@ import com.tenten.linkhub.domain.member.service.dto.MemberInfos;
 import com.tenten.linkhub.domain.member.service.dto.MemberJoinRequest;
 import com.tenten.linkhub.domain.member.service.dto.MemberJoinResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberMyProfileResponse;
+import com.tenten.linkhub.domain.member.service.dto.MemberNicknames;
 import com.tenten.linkhub.domain.member.service.dto.MemberProfileResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberSearchRequest;
 import com.tenten.linkhub.domain.member.service.dto.MemberSearchResponses;
@@ -51,4 +52,6 @@ public interface MemberService {
     MemberSearchResponses searchMember(MemberSearchRequest memberSearchRequest);
 
     Long findMemberIdByEmail(String email);
+
+    MemberNicknames findMemberNicknamesByMemberIds(List<Long> memberIds);
 }

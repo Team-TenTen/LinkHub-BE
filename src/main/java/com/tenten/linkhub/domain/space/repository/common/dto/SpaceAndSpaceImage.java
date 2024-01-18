@@ -5,9 +5,8 @@ import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 
 import java.util.List;
 
-public record SpaceAndSpaceImageOwnerNickName(
+public record SpaceAndSpaceImage(
         Space space,
-        List<SpaceImage> spaceImages,
-        String ownerNickName
+        List<SpaceImage> spaceImages
 ) {
 }

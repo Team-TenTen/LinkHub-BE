@@ -1,14 +1,13 @@
 package com.tenten.linkhub.domain.space.service.dto.favorite;
 
-import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
-import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
+import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImage;
 import org.springframework.data.domain.Slice;
 
 import java.util.Objects;
 
 public record FavoriteSpacesFindResponses(Slice<FavoriteSpacesFindResponse> responses) {
 
-    public static FavoriteSpacesFindResponses from(Slice<SpaceAndSpaceImageOwnerNickName> response){
+    public static FavoriteSpacesFindResponses from(Slice<SpaceAndSpaceImage> response){
         Slice<FavoriteSpacesFindResponse> mapResponses = response.map(s -> new FavoriteSpacesFindResponse(
                 s.space().getId(),
                 s.space().getSpaceName(),
