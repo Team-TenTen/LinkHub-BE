@@ -5,11 +5,13 @@ import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.tenten.linkhub.domain.space.model.category.Category;
+import com.tenten.linkhub.global.util.SearchKeywordParser;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.StringUtils;
 
+import static com.querydsl.core.types.dsl.Expressions.numberTemplate;
 import static com.tenten.linkhub.domain.space.model.space.QSpace.space;
 
 @NoArgsConstructor
@@ -42,7 +44,14 @@ public class DynamicQueryFactory {
 
     public BooleanExpression eqSpaceName(String keyWord) {
         if (StringUtils.hasText(keyWord)) {
-            return space.spaceName.contains(keyWord);
+            String tokenizedKeyword = SearchKeywordParser.parseToTokenAndAppendPlus(keyWord, 2);
+
+            return numberTemplate(
+                    Double.class,
+                    "function('match_against', {0}, {1})",
+                    space.spaceName,
+                    tokenizedKeyword)
+                    .gt(0);
         }
 
         return null;

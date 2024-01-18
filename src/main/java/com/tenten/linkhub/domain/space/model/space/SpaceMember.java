@@ -22,7 +22,7 @@ import java.util.Objects;
 import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
 
 @Entity
-@Table(name = "space_member", uniqueConstraints = {
+@Table(name = "space_members", uniqueConstraints = {
         @UniqueConstraint(
                 name = "space_member_unique",
                 columnNames = {

@@ -4,10 +4,12 @@ import com.tenten.linkhub.domain.space.model.category.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public record SpaceCreateApiRequest(
         @Schema(title = "스페이스 이름", example = "java 개발자 출근길 보기 좋은 글 모음")
-        @NotBlank(message = "스페이스 이름은 빈 값이 들어올 수 없습니다.") String spaceName,
+        @NotBlank(message = "스페이스 이름은 빈 값이 들어올 수 없습니다.")
+        @Size(min = 2, max = 255, message = "스페이스 이름은 2자 이상 255자 이하여야 합니다.") String spaceName,
 
         @Schema(title = "스페이스 소개글", example = "java 개발자 하루 30분 매일 하나씩 보기 좋은 글 모음입니다.")
         String description,
