@@ -6,8 +6,8 @@ import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.repository.common.dto.QSpaceAndOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
-import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImage;
-import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImages;
+import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
+import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickNames;
 import com.tenten.linkhub.domain.space.repository.favorite.dto.MyFavoriteSpacesQueryCondition;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -30,7 +30,7 @@ public class FavoriteQueryDslRepository {
         this.queryFactory = queryFactory;
     }
 
-    public Slice<SpaceAndSpaceImage> findMyFavoriteSpacesByQuery(MyFavoriteSpacesQueryCondition condition) {
+    public Slice<SpaceAndSpaceImageOwnerNickName> findMyFavoriteSpacesByQuery(MyFavoriteSpacesQueryCondition condition) {
         List<SpaceAndOwnerNickName> spaceAndOwnerNickNames = queryFactory
                 .select(new QSpaceAndOwnerNickName(
                         favorite.space,
@@ -52,9 +52,10 @@ public class FavoriteQueryDslRepository {
         List<Long> spaceIds = getSpaceIds(spaceAndOwnerNickNames);
         List<SpaceImage> spaceImages = findSpaceImagesBySpaceIds(spaceIds);
 
-        SpaceAndSpaceImages spaceAndSpaceImages = SpaceAndSpaceImages.of(spaceAndOwnerNickNames, spaceImages);
 
-        List<SpaceAndSpaceImage> contents = spaceAndSpaceImages.contents();
+        SpaceAndSpaceImageOwnerNickNames spaceAndSpaceImageOwnerNickNames = SpaceAndSpaceImageOwnerNickNames.of(spaceAndOwnerNickNames, spaceImages);
+
+        List<SpaceAndSpaceImageOwnerNickName> contents = spaceAndSpaceImageOwnerNickNames.contents();
         boolean hasNext = false;
 
         if (contents.size() > condition.pageable().getPageSize()) {
