@@ -1,16 +1,38 @@
-# LinkHub
-
+![스크린샷 2024-01-23 오전 1 42 31](https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/aa341f05-3915-425a-b439-c26e644425d9)
 ## 🔗 LinkHub 🔗
 >  링크 아카이빙 및 공유 서비스
-## 🔗 프로젝트 기획 배경 및 동기 🔗
->  북마크를 이용해 정리하던 많은 링크들을 카테고리나 태그를 이용해 그룹화할 필요가 있다. 
-- 기존 브라우저의 북마크만으로는 계층 별로 정리하거나 구분하기에 한계가 존재한다.
-- 기존 북마크의 경우, 묶인 링크를 한 사람만 확인할 수 있으며 다른 사용자와의 공유가 불편하다.
-- 팀 스페이스의 링크 공유자는 중요한 공지사항이나 꼭 공유해야하는 글들을 다른 팀원이 링크를 읽었는지 확인할 필요가 있다. 
-
 ## 🔗 프로젝트 기간 🔗
 
 > 프로젝트 기간 : 2023/10/10 ~ 2023/12/05
+
+## 🔗 프로젝트 기획 배경 및 동기 🔗
+>  저희는 아래와 같은 불편함들을 해결하기 위해 LinkHub 서비스를 기획했습니다.
+- 기존 브라우저의 북마크만으로는 계층 별로 정리하거나 구분하기에 한계가 존재한다.
+- 기존 북마크의 경우, 묶인 링크를 한 사람만 확인할 수 있으며 다른 사용자와의 공유가 불편하다.
+- 슬랙 혹은 카카오 단톡방에 링크 공유 시 다른 텍스트 메세지들에 의해 해당 링크가 자주 묻힌다.
+- 슬랙 혹은 단톡방에서 팀원들이 해당 링크를 봤는지 확인하고 싶다.
+- 슬랙 혹은 카카오 단톡방에 링크를 공유하면 해당 링크를 본 인원들을 파악하고 싶다.
+- 지역 맛집 혹은 쇼핑몰 등을 검색하면 양질의 정보가 아닌 많은 광고들로 인해 정보를 필터링하는 추가적인 비용이 소모된다.
+## 🔗 핵심 기능 🔗
+- **링크 아카이빙**: 
+  <br>링크의 메타태그를 통해 자동으로 제목을 추천해주며 태그를 통해 추후 필터링의 용이성을 올림
+  <img width="948" alt="스크린샷 2024-01-23 오전 1 38 16" src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/370b6e66-141d-415c-b685-5da911142f87">
+
+  
+- **공유 아카이빙 공간**:
+  <br>스페이스 초대 기능을 통해 언제든지 팀원들을 초대할 수 있으며 viewer 및 editor 등의 세부 권한 지정이 가능하다. 또한 설정 시 팀원들의 링크 조회 이력을 표시할 수 있다.
+  <img width="957" alt="스크린샷 2024-01-23 오전 1 38 33" src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/53bf0690-1e53-4e83-8db2-e140971eb1fd">
+
+
+- **즐겨찾기**:
+  <br>공개된 스페이스(링크 저장소)는 즐겨찾기 기능을 통해 구독을 할 수 있다. 또한 많은 유저들에게 즐겨찾기된 스페이스는 메인화면 즐겨찾기 순 옵션에서 상위에 노출되게 된다.
+  <img width="948" alt="스크린샷 2024-01-23 오전 1 38 47" src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/5a6d8d7a-6dfe-4433-9b0f-878b2ef89741">
+
+
+- **가져오기**:
+  <br>공개된 스페이스를(링크 저장소) 복사하여 편집 가능한 나의 스페이스로 만들 수 있다. 즐겨찾기와 다르게 원본의 이후 변경사항은 반영되지 않는다.
+  <img width="955" alt="스크린샷 2024-01-23 오전 1 39 06" src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/b4539f72-a9ff-4120-ad98-c431a2e26f9d">
+
 
 ## 👨‍👩‍👦 서버 팀원 소개
 | Team Leader |Developer |                                   Developer                                    |
@@ -30,11 +52,19 @@
   <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white"/></a>
 <img src="https://img.shields.io/badge/gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white"></a>
   <img src="https://img.shields.io/badge/Junit-25A162?style=for-the-badge&logo=JUnit5&logoColor=white"/></a>
-<img src="https://img.shields.io/badge/amazon aws-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white"></a>
   <img src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=spring-security&logoColor=white"/></a>
   <img src="https://img.shields.io/badge/Spring Oauth2-000000?style=for-the-badge&logo=oauth2&logoColor=white"></a>
   <img src="https://img.shields.io/badge/mapstruct-6DB33F?style=for-the-badge&logo=mapstruct&logoColor=white"></a>
-  
+
+### 인프라
+<img src="https://img.shields.io/badge/amazon aws-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white"></a>
+<img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white"></a>
+<img src="https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white"></a>
+<img src="https://img.shields.io/badge/GitHub Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white"></a>
+<img src="https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white"></a>
+<img src="https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white"></a>
+<img src="https://img.shields.io/badge/Grafana Loki-F46800?style=for-the-badge&logo=grafana&logoColor=white"></a>
+
 
 ## 👨‍👩‍👦 협업 툴
 |                                                  Notion                                                   |                                                       Slack                                                        |                                                        Discord                                                        |                                                        GitHub                                                        |                                                              Erd Cloud                                                               |                                                        Figma                                                        |
