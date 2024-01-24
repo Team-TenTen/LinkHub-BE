@@ -15,6 +15,6 @@ public record SpacesFindByQueryResponse(
         Long scrapCount,
         Long favoriteCount,
         String spaceImagePath,
-        Long ownerId
+        String ownerNickName
 ) {
 }

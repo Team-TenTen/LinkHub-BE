@@ -52,7 +52,6 @@ public class FavoriteQueryDslRepository {
         List<Long> spaceIds = getSpaceIds(spaceAndOwnerNickNames);
         List<SpaceImage> spaceImages = findSpaceImagesBySpaceIds(spaceIds);
 
-
         SpaceAndSpaceImageOwnerNickNames spaceAndSpaceImageOwnerNickNames = SpaceAndSpaceImageOwnerNickNames.of(spaceAndOwnerNickNames, spaceImages);
 
         List<SpaceAndSpaceImageOwnerNickName> contents = spaceAndSpaceImageOwnerNickNames.contents();
