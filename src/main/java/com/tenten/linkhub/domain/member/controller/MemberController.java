@@ -20,8 +20,6 @@ import com.tenten.linkhub.domain.member.controller.dto.MemberSpacesFindApiRespon
 import com.tenten.linkhub.domain.member.controller.dto.MemberUpdateApiRequest;
 import com.tenten.linkhub.domain.member.controller.dto.MemberUpdateApiResponse;
 import com.tenten.linkhub.domain.member.controller.mapper.MemberApiMapper;
-import com.tenten.linkhub.domain.member.facade.MemberFacade;
-import com.tenten.linkhub.domain.member.facade.dto.MemberSpacesFindByQueryFacadeResponses;
 import com.tenten.linkhub.domain.member.service.MemberService;
 import com.tenten.linkhub.domain.member.service.dto.MailSendResponse;
 import com.tenten.linkhub.domain.member.service.dto.MailVerificationRequest;
@@ -35,6 +33,7 @@ import com.tenten.linkhub.domain.member.service.dto.MemberProfileResponse;
 import com.tenten.linkhub.domain.member.service.dto.MemberSearchResponses;
 import com.tenten.linkhub.domain.member.service.dto.MemberUpdateResponse;
 import com.tenten.linkhub.domain.space.service.SpaceService;
+import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.global.response.ErrorResponse;
 import com.tenten.linkhub.global.util.email.EmailDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -68,13 +67,11 @@ import java.util.Objects;
 public class MemberController {
     private final MemberService memberService;
     private final SpaceService spaceService;
-    private final MemberFacade memberFacade;
     private final MemberApiMapper mapper;
 
-    public MemberController(MemberService memberService, SpaceService spaceService, MemberFacade memberFacade, MemberApiMapper mapper) {
+    public MemberController(MemberService memberService, SpaceService spaceService, MemberApiMapper mapper) {
         this.memberService = memberService;
         this.spaceService = spaceService;
-        this.memberFacade = memberFacade;
         this.mapper = mapper;
     }
 
@@ -344,7 +341,7 @@ public class MemberController {
         PageRequest pageRequest = PageRequest.of(request.pageNumber(), request.pageSize());
         Long requestMemberId = Objects.isNull(memberDetails) ? null : memberDetails.memberId();
 
-        MemberSpacesFindByQueryFacadeResponses responses = memberFacade.findMemberSpacesByQuery(
+        SpacesFindByQueryResponses responses = spaceService.findMemberSpacesByQuery(
                 mapper.toMemberSpacesFindRequest(pageRequest, request, requestMemberId, memberId)
         );
 

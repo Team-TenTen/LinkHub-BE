@@ -38,7 +38,6 @@ import com.tenten.linkhub.domain.space.facade.dto.NewSpacesScrapFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.RepliesAndMemberInfoResponses;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
-import com.tenten.linkhub.domain.space.facade.dto.SpacesWithNicknameFindByQueryFacadeResponses;
 import com.tenten.linkhub.domain.space.service.CommentService;
 import com.tenten.linkhub.domain.space.service.FavoriteService;
 import com.tenten.linkhub.domain.space.service.SpaceService;
@@ -48,6 +47,7 @@ import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequ
 import com.tenten.linkhub.domain.space.service.dto.favorite.FavoriteSpacesFindResponses;
 import com.tenten.linkhub.domain.space.service.dto.favorite.SpaceRegisterInFavoriteResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.controller.annotation.SpaceViewList;
 import com.tenten.linkhub.global.response.ErrorResponse;
@@ -123,7 +123,7 @@ public class SpaceController {
                 request.pageSize(),
                 StringUtils.hasText(request.sort()) ? Sort.by(request.sort()) : Sort.unsorted());
 
-        SpacesWithNicknameFindByQueryFacadeResponses responses = spaceFacade.findPublicSpacesWithNicknameByQuery(
+        SpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(
                 spaceMapper.toPublicSpacesFindByQueryRequest(request, pageRequest)
         );
 
@@ -291,7 +291,7 @@ public class SpaceController {
                 StringUtils.hasText(request.sort()) ? Sort.by(request.sort()) : Sort.unsorted());
 
         PublicSpacesFindByQueryRequest serviceRequest = spaceMapper.toPublicSpacesFindByQueryRequest(request, pageRequest);
-        SpacesWithNicknameFindByQueryFacadeResponses responses = spaceFacade.findPublicSpacesWithNicknameByQuery(serviceRequest);
+        SpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(serviceRequest);
 
         PublicSpaceFindWithFilterApiResponses apiResponses = PublicSpaceFindWithFilterApiResponses.from(responses);
 

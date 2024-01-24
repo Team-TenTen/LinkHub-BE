@@ -30,6 +30,4 @@ public interface MemberRepository {
     Slice<MemberWithProfileImageAndFollowingStatus> searchMember(MemberSearchQueryCondition queryCond);
 
     Long findMemberIdByEmail(String email);
-
-    List<Member> findByMemberIds(List<Long> memberIds);
 }

@@ -12,8 +12,6 @@ import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeReques
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceMemberDetailInfo;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
-import com.tenten.linkhub.domain.space.facade.dto.SpacesWithNicknameFindByQueryFacadeResponses;
-import com.tenten.linkhub.domain.space.facade.dto.SpacesWithNicknameFindByQueryFacadeResponses.SpacesWithNicknameFindByQueryResponse;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.link.Link;
 import com.tenten.linkhub.domain.space.model.space.Favorite;
@@ -27,17 +25,14 @@ import com.tenten.linkhub.domain.space.repository.scrap.ScrapRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.service.LinkService;
 import com.tenten.linkhub.domain.space.service.dto.link.LinkCreateRequest;
-import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.exception.PolicyViolationException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +44,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 
+@Transactional
 class SpaceFacadeTest extends IntegrationApplicationTest {
 
     @Autowired
@@ -83,16 +79,6 @@ class SpaceFacadeTest extends IntegrationApplicationTest {
         setUpData();
     }
 
-    @AfterEach
-    void tearDown() {
-        spaceJpaRepository.deleteAll();
-        memberJpaRepository.deleteAll();
-        favoriteJpaRepository.deleteAll();
-        linkJpaRepository.deleteAll();
-        scrapRepository.deleteAll();
-    }
-
-    @Transactional
     @Test
     @DisplayName("유저는 스페이스를 생성할 수 있다.")
     void createSpace() {
@@ -127,7 +113,6 @@ class SpaceFacadeTest extends IntegrationApplicationTest {
         assertThat(spaceImage.getName()).isEqualTo("테스트 이미지3");
     }
 
-    @Transactional
     @Test
     @DisplayName("유저는 spaceId를 통해 스페이스의 상세 정보를 조회할 수 있다.")
     void getSpaceDetailById() {
@@ -157,7 +142,6 @@ class SpaceFacadeTest extends IntegrationApplicationTest {
         assertThat(spaceMemberDetailInfos.get(0).profilePath()).isEqualTo("https://testprofileimage");
     }
 
-    @Transactional
     @Test
     @DisplayName("프라이빗 스페이스의 상세 조회 시 권한이 없는 유저는 UnauthorizedAccessException가 발생한다.")
     void getSpaceDetailById_UnauthorizedAccessException() {
@@ -172,7 +156,6 @@ class SpaceFacadeTest extends IntegrationApplicationTest {
                 .isInstanceOf(UnauthorizedAccessException.class);
     }
 
-    @Transactional
     @Test
     @DisplayName("스페이스 상세 정보 조회 시 스페이스 멤버들의 정보는 정렬되어 반환 받는다.")
     void getSpaceDetailById_orderTest() {
@@ -198,7 +181,6 @@ class SpaceFacadeTest extends IntegrationApplicationTest {
         assertThat(spaceMemberDetailInfos.get(2).SpaceMemberRole()).isEqualTo(Role.CAN_VIEW);
     }
 
-    @Transactional
     @Test
     @DisplayName("유저는 스페이스 이미지를 포함한 스페이스의 정보들을 변경할 수 있다.")
     void updateSpace() {
@@ -236,7 +218,6 @@ class SpaceFacadeTest extends IntegrationApplicationTest {
         assertThat(space.getSpaceImages().get(0).getPath()).isEqualTo("https://updateimage");
     }
 
-    @Transactional
     @Test
     @DisplayName("유저는 스페이스 이미지를 제외한 스페이스의 정보를 변경할 수 있다.")
     void updateSpace_emptySpaceImage() {
@@ -273,7 +254,6 @@ class SpaceFacadeTest extends IntegrationApplicationTest {
         assertThat(space.getSpaceImages().get(0).getPath()).isEqualTo("https://testimage1");
     }
 
-    @Transactional
     @Test
     @DisplayName("유저는 스페이스를 삭제할 수 있다.")
     void deleteSpace() {
@@ -286,7 +266,6 @@ class SpaceFacadeTest extends IntegrationApplicationTest {
         assertThat(space.isEmpty()).isEqualTo(true);
     }
 
-    @Transactional
     @Test
     @DisplayName("스페이스의 주인이 아닌 유저가 스페이스를 삭제할 경우 UnauthorizedAccessException가 발생한다. ")
     void deleteSpace_UnauthorizedAccessException() {
@@ -295,7 +274,6 @@ class SpaceFacadeTest extends IntegrationApplicationTest {
                 .isInstanceOf(UnauthorizedAccessException.class);
     }
 
-    @Transactional
     @Test
     @DisplayName("유저는 다른 유저의 스페이스를 복사하여 자신의 새로운 스페이스로 생성할 수 있다.")
     void scrapAndCreateNewSpace() {
@@ -327,7 +305,6 @@ class SpaceFacadeTest extends IntegrationApplicationTest {
         assertThat(scrapedLinks.get(2).getLinkTags().get(0).getTag().getName()).isEqualTo("의류");
     }
 
-    @Transactional
     @Test
     @DisplayName("유저가 스페이스를 삭제할 때 해당 스페이스가 가져오기한 스페이스면 해당 Scrap 엔티티도 삭제된다.")
     void deleteSpace_scrapSpace() {
@@ -358,7 +335,6 @@ class SpaceFacadeTest extends IntegrationApplicationTest {
         assertThat(isScrapExists).isFalse();
     }
 
-    @Transactional
     @Test
     @DisplayName("유저가 같은 스페이스를 두번 복사할 경우 PolicyViolationException가 발생한다.")
     void scrapAndCreateNewSpace_PolicyViolationException() {
@@ -381,73 +357,6 @@ class SpaceFacadeTest extends IntegrationApplicationTest {
 
         assertThatThrownBy(() -> spaceFacade.scrapAndCreateNewSpace(request))
                 .isInstanceOf(PolicyViolationException.class);
-    }
-
-    @Transactional
-    @Test
-    @DisplayName("유저는 공개 스페이스를 카테고리 필터링 없이 페이지네이션 조회할 수 있다.")
-    void findPublicSpacesWithNicknameByQuery_noFilter() {
-        //given
-        PublicSpacesFindByQueryRequest request = new PublicSpacesFindByQueryRequest(
-                PageRequest.of(0, 10),
-                null,
-                null
-        );
-
-        //when
-        SpacesWithNicknameFindByQueryFacadeResponses responses = spaceFacade.findPublicSpacesWithNicknameByQuery(request);
-
-        //then
-        List<SpacesWithNicknameFindByQueryResponse> content = responses.responses().getContent();
-
-        assertThat(content.size()).isEqualTo(2);
-        assertThat(content.get(0).spaceName()).isEqualTo("첫번째 스페이스");
-        assertThat(content.get(0).ownerNickName()).isEqualTo("프롱이");
-        assertThat(content.get(1).spaceName()).isEqualTo("두번째 스페이스");
-        assertThat(content.get(1).ownerNickName()).isEqualTo("프롱이");
-    }
-
-    @Transactional
-    @Test
-    @DisplayName("유저는 공개 스페이스를 카테고리 필터조건과 함께 페이지네이션 조회할 수 있다.")
-    void findPublicSpacesWithNicknameByQuery_filter() {
-        //given
-        PublicSpacesFindByQueryRequest request = new PublicSpacesFindByQueryRequest(
-                PageRequest.of(0, 10),
-                null,
-                Category.KNOWLEDGE_ISSUE_CAREER
-        );
-
-        //when
-        SpacesWithNicknameFindByQueryFacadeResponses responses = spaceFacade.findPublicSpacesWithNicknameByQuery(request);
-
-        //then
-        List<SpacesWithNicknameFindByQueryResponse> content = responses.responses().getContent();
-
-        assertThat(content.size()).isEqualTo(1);
-        assertThat(content.get(0).spaceName()).isEqualTo("첫번째 스페이스");
-        assertThat(content.get(0).ownerNickName()).isEqualTo("프롱이");
-    }
-
-    @Test
-    @DisplayName("유저는 공개 스페이스의 스페이스 네임을 검색할 수 있다.")
-    void findPublicSpacesWithNicknameByQuery_search() {
-        //given
-        PublicSpacesFindByQueryRequest request = new PublicSpacesFindByQueryRequest(
-                PageRequest.of(0, 10),
-                "두번째 스페이스",
-                null
-        );
-
-        //when
-        SpacesWithNicknameFindByQueryFacadeResponses responses = spaceFacade.findPublicSpacesWithNicknameByQuery(request);
-
-        //then
-        List<SpacesWithNicknameFindByQueryResponse> content = responses.responses().getContent();
-
-        assertThat(content.size()).isEqualTo(1);
-        assertThat(content.get(0).spaceName()).isEqualTo("두번째 스페이스");
-        assertThat(content.get(0).ownerNickName()).isEqualTo("프롱이");
     }
 
     private void setUpData() {
@@ -517,27 +426,14 @@ class SpaceFacadeTest extends IntegrationApplicationTest {
                 true
         );
 
-        Space space3 = new Space(
-                anotherMemberId,
-                "두번째 스페이스",
-                "두번째 스페이스 소개글",
-                Category.ETC,
-                new SpaceImage("https://testimage2", "테스트 이미지2"),
-                new SpaceMember(anotherMemberId, Role.OWNER),
-                true,
-                true,
-                true,
-                true
-        );
-
         space.addSpaceMember(new SpaceMember(anotherMemberId, Role.CAN_VIEW));
         space.addSpaceMember(new SpaceMember(setUpMemberId3, Role.CAN_EDIT));
 
-        mySpaceId = spaceJpaRepository.save(space).getId();
+        Space savedSpace = spaceJpaRepository.save(space);
+        mySpaceId = savedSpace.getId();
         anotherSpaceId = spaceJpaRepository.save(space2).getId();
-        spaceJpaRepository.save(space3).getId();
 
-        Favorite favorite = new Favorite(space, myMemberId);
+        Favorite favorite = new Favorite(savedSpace, myMemberId);
         favoriteJpaRepository.save(favorite);
 
         linkService.createLink(
