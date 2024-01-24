@@ -75,9 +75,4 @@ public class DefaultMemberRepository implements MemberRepository {
         return memberJpaRepository.findMemberIdByEmail(email);
     }
 
-    @Override
-    public List<Member> findByMemberIds(List<Long> memberIds) {
-        return memberJpaRepository.findByIds(memberIds);
-    }
-
 }

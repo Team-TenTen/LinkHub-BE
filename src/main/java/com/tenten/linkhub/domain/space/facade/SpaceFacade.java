@@ -2,13 +2,11 @@ package com.tenten.linkhub.domain.space.facade;
 
 import com.tenten.linkhub.domain.member.service.MemberService;
 import com.tenten.linkhub.domain.member.service.dto.MemberInfos;
-import com.tenten.linkhub.domain.member.service.dto.MemberNicknames;
 import com.tenten.linkhub.domain.space.facade.dto.NewSpacesScrapFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeResponse;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
-import com.tenten.linkhub.domain.space.facade.dto.SpacesWithNicknameFindByQueryFacadeResponses;
 import com.tenten.linkhub.domain.space.facade.mapper.SpaceFacadeMapper;
 import com.tenten.linkhub.domain.space.handler.dto.ScrapSaveEvent;
 import com.tenten.linkhub.domain.space.handler.dto.SpaceImageDeleteEvent;
@@ -17,11 +15,8 @@ import com.tenten.linkhub.domain.space.service.LinkService;
 import com.tenten.linkhub.domain.space.service.SpaceImageUploader;
 import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
-import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceMemberInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
-import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponse;
-import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 
 import java.util.List;
@@ -93,24 +88,9 @@ public class SpaceFacade {
         return savedSpaceId;
     }
 
-    public SpacesWithNicknameFindByQueryFacadeResponses findPublicSpacesWithNicknameByQuery(PublicSpacesFindByQueryRequest request) {
-        SpacesFindByQueryResponses serviceResponses = spaceService.findPublicSpacesByQuery(request);
-
-        List<Long> memberIds = getMemberIds(serviceResponses);
-        MemberNicknames memberNicknames = memberService.findMemberNicknamesByMemberIds(memberIds);
-
-        return SpacesWithNicknameFindByQueryFacadeResponses.of(serviceResponses, memberNicknames);
-    }
-
     private List<Long> getMemberIds(SpaceWithSpaceImageAndSpaceMemberInfo response) {
         return response.spaceMemberInfos().stream()
                 .map(SpaceMemberInfo::memberId)
-                .toList();
-    }
-
-    private List<Long> getMemberIds(SpacesFindByQueryResponses response) {
-        return response.responses().getContent().stream()
-                .map(SpacesFindByQueryResponse::ownerId)
                 .toList();
     }
 
@@ -135,4 +115,5 @@ public class SpaceFacade {
 
         return spaceViews;
     }
+
 }
