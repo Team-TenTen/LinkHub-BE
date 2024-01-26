@@ -11,7 +11,7 @@ import com.tenten.linkhub.domain.space.facade.mapper.SpaceFacadeMapper;
 import com.tenten.linkhub.domain.space.handler.dto.ScrapSaveEvent;
 import com.tenten.linkhub.domain.space.handler.dto.SpaceImageDeleteEvent;
 import com.tenten.linkhub.domain.space.handler.dto.SpaceDetailFindEvent;
-import com.tenten.linkhub.domain.space.service.LinkService;
+import com.tenten.linkhub.domain.link.service.LinkService;
 import com.tenten.linkhub.domain.space.service.SpaceImageUploader;
 import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
