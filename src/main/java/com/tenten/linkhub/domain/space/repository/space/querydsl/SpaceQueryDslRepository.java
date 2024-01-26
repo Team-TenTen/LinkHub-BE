@@ -37,7 +37,7 @@ public class SpaceQueryDslRepository {
                         member.nickname
                 ))
                 .from(space)
-                .join(member).on(space.memberId.eq(member.id))
+                .leftJoin(member).on(space.memberId.eq(member.id))
                 .where(space.isDeleted.eq(false),
                         space.isVisible.eq(true),
                         dynamicQueryFactory.eqSpaceName(condition.keyWord()),
