@@ -2,6 +2,7 @@ package com.tenten.linkhub.domain.space.facade;
 
 import com.tenten.linkhub.domain.member.service.MemberService;
 import com.tenten.linkhub.domain.member.service.dto.MemberInfos;
+
 import com.tenten.linkhub.domain.space.facade.dto.NewSpacesScrapFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
@@ -11,18 +12,19 @@ import com.tenten.linkhub.domain.space.facade.mapper.SpaceFacadeMapper;
 import com.tenten.linkhub.domain.space.handler.dto.ScrapSaveEvent;
 import com.tenten.linkhub.domain.space.handler.dto.SpaceImageDeleteEvent;
 import com.tenten.linkhub.domain.space.handler.dto.SpaceDetailFindEvent;
-import com.tenten.linkhub.domain.link.service.LinkService;
 import com.tenten.linkhub.domain.space.service.SpaceImageUploader;
 import com.tenten.linkhub.domain.space.service.SpaceService;
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceMemberInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
+
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 
 import java.util.List;
 import java.util.Optional;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +36,6 @@ public class SpaceFacade {
     private final SpaceService spaceService;
     private final MemberService memberService;
     private final SpaceImageUploader spaceImageUploader;
-    private final LinkService linkService;
     private final SpaceFacadeMapper mapper;
     private final ApplicationEventPublisher eventPublisher;
 

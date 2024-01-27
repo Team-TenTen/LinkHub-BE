@@ -1,6 +1,7 @@
 package com.tenten.linkhub.domain.space.controller;
 
 import com.tenten.linkhub.domain.auth.MemberDetails;
+
 import com.tenten.linkhub.domain.space.controller.dto.comment.CommentUpdateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.comment.CommentUpdateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RepliesFindApiRequest;
@@ -31,6 +32,7 @@ import com.tenten.linkhub.domain.space.controller.dto.spacemember.SpaceMemberRol
 import com.tenten.linkhub.domain.space.controller.mapper.CommentApiMapper;
 import com.tenten.linkhub.domain.space.controller.mapper.FavoriteApiMapper;
 import com.tenten.linkhub.domain.space.controller.mapper.SpaceApiMapper;
+import com.tenten.linkhub.domain.space.controller.annotation.SpaceViewList;
 import com.tenten.linkhub.domain.space.facade.CommentFacade;
 import com.tenten.linkhub.domain.space.facade.SpaceFacade;
 import com.tenten.linkhub.domain.space.facade.dto.CommentAndChildCountAndMemberInfoResponses;
@@ -49,15 +51,17 @@ import com.tenten.linkhub.domain.space.service.dto.favorite.SpaceRegisterInFavor
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
-import com.tenten.linkhub.domain.space.controller.annotation.SpaceViewList;
+
 import com.tenten.linkhub.global.response.ErrorResponse;
 import com.tenten.linkhub.global.response.ErrorWithDetailCodeResponse;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -67,6 +71,7 @@ import java.util.List;
 import java.util.Objects;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
@@ -99,6 +104,7 @@ public class SpaceController {
     private final CommentFacade commentFacade;
     private final CommentService commentService;
     private final FavoriteService favoriteService;
+
     private final SpaceApiMapper spaceMapper;
     private final CommentApiMapper commentMapper;
     private final FavoriteApiMapper favoriteMapper;

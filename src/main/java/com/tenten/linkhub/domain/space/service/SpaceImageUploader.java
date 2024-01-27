@@ -3,7 +3,9 @@ package com.tenten.linkhub.domain.space.service;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
 import com.tenten.linkhub.global.aws.dto.ImageSaveRequest;
 import com.tenten.linkhub.global.aws.s3.ImageFileUploader;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
