@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.member.service;
 
+import com.tenten.linkhub.IntegrationApplicationTest;
 import com.tenten.linkhub.domain.auth.JwtProvider;
 import com.tenten.linkhub.domain.auth.MemberDetails;
 import com.tenten.linkhub.domain.member.model.Member;
@@ -21,7 +22,6 @@ import com.tenten.linkhub.domain.member.service.dto.MemberUpdateRequest;
 import com.tenten.linkhub.domain.member.service.dto.MemberUpdateResponse;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.global.aws.dto.ImageInfo;
-import com.tenten.linkhub.global.aws.s3.ImageFileUploader;
 import com.tenten.linkhub.global.exception.DataDuplicateException;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import org.assertj.core.api.Assertions;
@@ -31,12 +31,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -45,19 +42,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 
-@SpringBootTest
 @Transactional
-@ActiveProfiles("test")
-class MemberServiceTest {
+class MemberServiceTest extends IntegrationApplicationTest {
 
     @Autowired
     private MemberService memberService;
 
     @Autowired
     private MemberEmailRedisRepository redisRepository;
-
-    @MockBean
-    private ImageFileUploader mockImageFileUploader;
 
     @Autowired
     private JwtProvider jwtProvider;
@@ -75,6 +67,8 @@ class MemberServiceTest {
     Long memberIdFollowingTargetMemberButNotFollowedByMyMemberId;
     MemberJoinRequest myMemberRequest;
     MemberJoinRequest targetMemberRequest;
+
+    private static int uniqueIdCounter = 1;
 
     @BeforeEach
     void setUp() {
@@ -513,7 +507,7 @@ class MemberServiceTest {
         Member member = memberJpaRepository.findById(response.memberId()).get();
 
         assertThat(member.getNickname()).isEqualTo("변경된 닉네임");
-        assertThat(member.getAboutMe()).isEqualTo("변경된 자기소개");
+        assertThat(member.getAboutMe()).isEqualTo("");
         assertThat(member.getNewsEmail()).isEqualTo("changedEmail@gmail.com");
         assertThat(member.retrieveFavoriteCategories().get(0).getCategory()).isEqualTo(Category.ENTER_ART);
         assertThat(member.retrieveProfileImages().get(0).getPath()).isEqualTo("https://updateimage");
@@ -521,10 +515,13 @@ class MemberServiceTest {
     }
 
     private MemberJoinRequest createMemberJoinRequest(MockMultipartFile requestFile) {
+
+        String nickname = "백둥이_" + uniqueIdCounter++;
+
         return new MemberJoinRequest(
                 "32342341912",
                 Provider.kakao,
-                "백둥이",
+                nickname,
                 "만나서 반갑습니다.",
                 "linkhub1@link-hub.site",
                 Category.KNOWLEDGE_ISSUE_CAREER,

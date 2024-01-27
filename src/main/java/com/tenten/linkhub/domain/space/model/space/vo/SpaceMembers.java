@@ -34,7 +34,7 @@ public class SpaceMembers {
     private List<SpaceMember> spaceMemberList = new ArrayList<>();
 
     public void addSpaceMember(SpaceMember spaceMember) {
-        validateNotNull(spaceMember, "spaceImages");
+        validateNotNull(spaceMember, "spaceMember");
         validateDuplicationSpaceMember(spaceMember.getMemberId());
 
         this.spaceMemberList.add(spaceMember);

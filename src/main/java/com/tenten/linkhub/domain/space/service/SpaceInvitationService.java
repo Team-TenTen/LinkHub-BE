@@ -8,9 +8,12 @@ import com.tenten.linkhub.domain.space.repository.invitation.InvitationRepositor
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.service.dto.invitation.SpaceInvitationAcceptRequest;
 import com.tenten.linkhub.domain.space.service.dto.invitation.SpaceInvitationRequest;
+
 import com.tenten.linkhub.global.exception.DataDuplicateException;
 import com.tenten.linkhub.global.response.ErrorCode;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

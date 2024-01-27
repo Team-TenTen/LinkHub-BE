@@ -6,13 +6,10 @@ import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.favorite.FavoriteRepository;
-import com.tenten.linkhub.domain.space.repository.link.LinkRepository;
 import com.tenten.linkhub.domain.space.repository.scrap.ScrapRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.repository.space.dto.MemberSpacesQueryCondition;
 import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberRepository;
-import com.tenten.linkhub.domain.space.repository.tag.TagRepository;
-import com.tenten.linkhub.domain.space.repository.tag.dto.TagInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
 import com.tenten.linkhub.domain.space.service.dto.space.MemberSpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.NewSpacesScrapRequest;
@@ -25,12 +22,21 @@ import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndS
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.spacemember.SpaceMemberRoleChangeRequest;
 import com.tenten.linkhub.domain.space.service.mapper.SpaceMapper;
+
+import com.tenten.linkhub.domain.link.service.LinkService;
+import com.tenten.linkhub.domain.link.repository.link.LinkRepository;
+import com.tenten.linkhub.domain.link.repository.tag.TagRepository;
+import com.tenten.linkhub.domain.link.repository.tag.dto.TagInfo;
+
 import com.tenten.linkhub.global.exception.PolicyViolationException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
@@ -38,6 +44,7 @@ import java.util.Objects;
 import static com.tenten.linkhub.domain.space.model.space.Role.OWNER;
 import static com.tenten.linkhub.global.response.ErrorCode.LINK_COUNT_LIMIT_FOR_SCRAP;
 import static com.tenten.linkhub.global.response.ErrorCode.SPACE_SCRAP_LIMIT;
+import static com.tenten.linkhub.global.util.CommonValidator.validateMinMaxSize;
 
 @RequiredArgsConstructor
 @Service
@@ -55,6 +62,7 @@ public class DefaultSpaceService implements SpaceService {
     @Override
     @Transactional(readOnly = true)
     public SpacesFindByQueryResponses findPublicSpacesByQuery(PublicSpacesFindByQueryRequest request) {
+        validateSearchKeWord(request.keyWord());
         Slice<SpaceAndSpaceImageOwnerNickName> spaceAndSpaceImageOwnerNickName = spaceRepository.findPublicSpacesJoinSpaceImageByQuery(mapper.toQueryCond(request));
 
         return SpacesFindByQueryResponses.from(spaceAndSpaceImageOwnerNickName);
@@ -120,6 +128,8 @@ public class DefaultSpaceService implements SpaceService {
     @Override
     @Transactional(readOnly = true)
     public SpacesFindByQueryResponses findMemberSpacesByQuery(MemberSpacesFindRequest request) {
+        validateSearchKeWord(request.keyWord());
+
         Boolean isMySpace = Objects.equals(request.requestMemberId(), request.targetMemberId());
         MemberSpacesQueryCondition queryCondition = mapper.toMemberSpacesQueryCondition(request, isMySpace);
 
@@ -152,7 +162,6 @@ public class DefaultSpaceService implements SpaceService {
         space.validateVisibilityAndMembership(memberId);
     }
 
-
     @Override
     @Transactional
     public Long changeSpaceMembersRole(SpaceMemberRoleChangeRequest request) {
@@ -166,7 +175,7 @@ public class DefaultSpaceService implements SpaceService {
 
     @Override
     @Transactional(readOnly = true)
-    public void validateScrapTargetSpace(Long spaceId, Long memberId) {
+    public void validateScrapSourceSpace(Long spaceId, Long memberId) {
         if (scrapRepository.existsBySourceSpaceIdAndMemberId(spaceId, memberId)) {
             throw new PolicyViolationException(SPACE_SCRAP_LIMIT);
         }
@@ -205,6 +214,12 @@ public class DefaultSpaceService implements SpaceService {
         Space space = spaceRepository.getById(spaceId);
 
         space.deleteSpaceMember(memberId);
+    }
+
+    private void validateSearchKeWord(String keyWord) {
+        if (StringUtils.hasText(keyWord)) {
+            validateMinMaxSize(keyWord, 2, 255, "keyWord");
+        }
     }
 
 }

@@ -1,13 +1,14 @@
 package com.tenten.linkhub.domain.space.service;
 
+import com.tenten.linkhub.IntegrationApplicationTest;
 import com.tenten.linkhub.domain.member.model.FavoriteCategory;
 import com.tenten.linkhub.domain.member.model.Member;
 import com.tenten.linkhub.domain.member.model.ProfileImage;
 import com.tenten.linkhub.domain.member.model.Provider;
 import com.tenten.linkhub.domain.member.repository.member.MemberJpaRepository;
-import com.tenten.linkhub.domain.space.exception.LinkViewHistoryException;
-import com.tenten.linkhub.domain.space.facade.LinkFacade;
-import com.tenten.linkhub.domain.space.facade.dto.LinkCreateFacadeRequest;
+import com.tenten.linkhub.domain.link.exception.LinkViewHistoryException;
+import com.tenten.linkhub.domain.link.facade.LinkFacade;
+import com.tenten.linkhub.domain.link.facade.dto.LinkCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.Space;
@@ -22,14 +23,13 @@ import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryRespon
 import com.tenten.linkhub.domain.space.service.dto.spacemember.SpaceMemberRoleChangeRequest;
 import com.tenten.linkhub.global.exception.PolicyViolationException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -37,10 +37,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@ActiveProfiles("test")
-@Transactional
-@SpringBootTest
-class DefaultSpaceServiceTest {
+class DefaultSpaceServiceTest extends IntegrationApplicationTest {
 
     @Autowired
     private SpaceService spaceService;
@@ -63,6 +60,11 @@ class DefaultSpaceServiceTest {
     @BeforeEach
     void setUp() {
         setupData();
+    }
+
+    @AfterEach
+    void tearDown() {
+        spaceJpaRepository.deleteAll();
     }
 
     @Test
@@ -172,6 +174,7 @@ class DefaultSpaceServiceTest {
         assertThat(content.get(0).ownerNickName()).isEqualTo("잠자는 사자의 콧털");
     }
 
+    @Transactional
     @Test
     @DisplayName("유저는 스페이스에서 사용된 태그 목록을 확인할 수 있다. - 링크 생성")
     void getTagsBySpaceId_spaceId_Success() {
@@ -188,6 +191,7 @@ class DefaultSpaceServiceTest {
         assertThat(response.tags()).hasSize(2);
     }
 
+    @Transactional
     @Test
     @DisplayName("스페이스에서 사용된 태그 목록을 조회 시 더이상 스페이스 내에서 사용하지 않는 태그는 조회되지 않는다.")
     void getTagsBySpaceId_spaceId2_Success() {
@@ -205,6 +209,7 @@ class DefaultSpaceServiceTest {
         assertThat(response.tags().get(0).name()).isEqualTo("태그1");
     }
 
+    @Transactional
     @Test
     @DisplayName("스페이스에서 읽음 처리 기능을 활성화하지 않았다면 이력을 저장할 수 없다.")
     void checkLinkViewHistory_MemberIdAndSpaceId_ThrowsException() {
@@ -213,6 +218,7 @@ class DefaultSpaceServiceTest {
                 .isInstanceOf(LinkViewHistoryException.class);
     }
 
+    @Transactional
     @Test
     @DisplayName("스페이스의 멤버가 아니라면 읽음 처리 기능이 활성화 되어있더라도 이력을 저장할 수 없다.")
     void checkLinkViewHistory_MemberIdAndSpaceId2_ThrowsException() {
@@ -221,6 +227,7 @@ class DefaultSpaceServiceTest {
                 .isInstanceOf(LinkViewHistoryException.class);
     }
 
+    @Transactional
     @Test
     @DisplayName("스페이스의 오너는 스페이스 멤버들의 권한을 변경할 수 있다.")
     void changeSpaceMembersRole() {
@@ -239,6 +246,7 @@ class DefaultSpaceServiceTest {
         assertThat(spaceMembers.get(1).getRole()).isEqualTo(Role.CAN_EDIT);
     }
 
+    @Transactional
     @Test
     @DisplayName("스페이스 멤버의 권한을 OWNER로 변경할 경우 기존 OWNER는 CAN_EDIT으로 변경 된다.")
     void changeSpaceMembersRole_changeRoleAsOwner() {
@@ -271,6 +279,7 @@ class DefaultSpaceServiceTest {
                 .isInstanceOf(UnauthorizedAccessException.class);
     }
 
+    @Transactional
     @Test
     @DisplayName("유저는 자신이 속한 스페이스를 나갈 수 있다.")
     void deleteSpaceMemberByMe() {

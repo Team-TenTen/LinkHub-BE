@@ -1,6 +1,6 @@
 package com.tenten.linkhub.domain.space.model.space;
 
-import com.tenten.linkhub.domain.space.exception.LinkViewHistoryException;
+import com.tenten.linkhub.domain.link.exception.LinkViewHistoryException;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.space.dto.SpaceUpdateDto;
 import com.tenten.linkhub.domain.space.model.space.vo.SpaceImages;
@@ -23,8 +23,7 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 import java.util.Objects;
 
-import static com.tenten.linkhub.global.util.CommonValidator.validateMaxSize;
-import static com.tenten.linkhub.global.util.CommonValidator.validateNotNull;
+import static com.tenten.linkhub.global.util.CommonValidator.*;
 
 @Entity
 @Table(name = "spaces")
@@ -84,7 +83,7 @@ public class Space extends BaseEntity {
         validateNotNull(isComment, "isComment");
         validateNotNull(isLinkSummarizable, "isLinkSummarizable");
         validateNotNull(isReadMarkEnabled, "isReadMarkEnabled");
-        validateMaxSize(spaceName, 255, "spaceName");
+        validateMinMaxSize(spaceName, 2, 255, "spaceName");
 
         this.memberId = memberId;
         this.spaceName = spaceName;
@@ -180,7 +179,7 @@ public class Space extends BaseEntity {
     public void updateSpaceAttributes(SpaceUpdateDto updateDto) {
         validateOwnership(updateDto.memberId());
 
-        validateMaxSize(updateDto.spaceName(), 255, "spaceName");
+        validateMinMaxSize(updateDto.spaceName(), 2, 255, "spaceName");
         validateNotNull(updateDto.category(), "category");
         validateNotNull(updateDto.isVisible(), "isMySpace");
         validateNotNull(updateDto.isComment(), "isComment");
@@ -220,7 +219,7 @@ public class Space extends BaseEntity {
     public void checkLinkViewHistoryEnabled(Long memberId) {
         boolean isContainMember = spaceMembers.containMember(memberId);
 
-        if(!isContainMember || isReadMarkEnabled.equals(Boolean.FALSE)){
+        if (!isContainMember || isReadMarkEnabled.equals(Boolean.FALSE)) {
             throw new LinkViewHistoryException("링크의 접속정보를 저장할 수 없습니다.");
         }
     }

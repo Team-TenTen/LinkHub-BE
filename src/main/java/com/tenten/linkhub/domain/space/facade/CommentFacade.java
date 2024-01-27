@@ -2,6 +2,7 @@ package com.tenten.linkhub.domain.space.facade;
 
 import com.tenten.linkhub.domain.member.service.MemberService;
 import com.tenten.linkhub.domain.member.service.dto.MemberInfos;
+
 import com.tenten.linkhub.domain.space.facade.dto.CommentAndChildCountAndMemberInfoResponses;
 import com.tenten.linkhub.domain.space.facade.dto.RepliesAndMemberInfoResponses;
 import com.tenten.linkhub.domain.space.service.CommentService;
@@ -9,8 +10,11 @@ import com.tenten.linkhub.domain.space.service.dto.comment.CommentAndChildCountD
 import com.tenten.linkhub.domain.space.service.dto.comment.CommentAndChildCountResponses;
 import com.tenten.linkhub.domain.space.service.dto.comment.RepliesFindResponse;
 import com.tenten.linkhub.domain.space.service.dto.comment.RepliesFindResponses;
+
 import java.util.List;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +26,7 @@ public class CommentFacade {
     private final MemberService memberService;
 
     public CommentAndChildCountAndMemberInfoResponses findRootComments(Long spaceId, Long myMemberId,
-            Pageable pageable) {
+                                                                       Pageable pageable) {
         CommentAndChildCountResponses commentAndChildCount = commentService.findRootComments(spaceId, pageable);
 
         List<Long> memberIds = getMemberIds(commentAndChildCount);

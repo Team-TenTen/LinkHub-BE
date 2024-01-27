@@ -1,10 +1,9 @@
 package com.tenten.linkhub.domain.space.repository.favorite;
 
 import com.tenten.linkhub.domain.space.model.space.Favorite;
-import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.favorite.dto.MyFavoriteSpacesQueryCondition;
-import com.tenten.linkhub.domain.space.repository.favorite.query.FavoriteQueryRepository;
+import com.tenten.linkhub.domain.space.repository.favorite.querydsl.FavoriteQueryDslRepository;
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Repository;
 public class DefaultFavoriteRepository implements FavoriteRepository {
 
     private final FavoriteJpaRepository favoriteJpaRepository;
-    private final FavoriteQueryRepository favoriteQueryRepository;
+    private final FavoriteQueryDslRepository favoriteQueryDslRepository;
 
     @Override
     public Boolean isExist(Long memberId, Long spaceId) {
@@ -41,7 +40,7 @@ public class DefaultFavoriteRepository implements FavoriteRepository {
 
     @Override
     public Slice<SpaceAndSpaceImageOwnerNickName> findMyFavoriteSpacesByQuery(MyFavoriteSpacesQueryCondition queryCondition) {
-        return favoriteQueryRepository.findMyFavoriteSpacesByQuery(queryCondition);
+        return favoriteQueryDslRepository.findMyFavoriteSpacesByQuery(queryCondition);
     }
 
 }

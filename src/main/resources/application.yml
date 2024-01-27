@@ -11,6 +11,9 @@ spring:
   config:
     activate:
       on-profile: common
+  logging:
+    loki:
+      url: ${LOKI_URL}
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${RDS_URL}
@@ -26,13 +29,15 @@ spring:
       port: 6379
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL57Dialect
         format_sql: true
-        default_batch_fetch_size: 1000
+        default_batch_fetch_size: 200
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
   security:
     oauth2:
       client:
@@ -51,12 +56,18 @@ spring:
             authorization-grant-type: authorization_code
             client-name: kakao
             scope: profile_image, profile_nickname
-
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
 ---
 spring:
   config:
     activate:
       on-profile: local
+  application:
+    name: LinkHub-server-local
 ---
 spring:
   config:
@@ -64,6 +75,8 @@ spring:
       on-profile: prod
   jpa:
     show-sql: false
+  application:
+    name: LinkHub-server-prod
 ---
 cloud:
   aws:
@@ -101,6 +114,9 @@ jwt:
 
 server:
   forward-headers-strategy: framework
+  tomcat:
+    mbeanregistry:
+      enabled: true
 
 kakao:
   admin-key:
