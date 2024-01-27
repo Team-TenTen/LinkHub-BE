@@ -1,6 +1,6 @@
 package com.tenten.linkhub.domain.space.model.space;
 
-import com.tenten.linkhub.domain.space.exception.LinkViewHistoryException;
+import com.tenten.linkhub.domain.link.exception.LinkViewHistoryException;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.space.dto.SpaceUpdateDto;
 import com.tenten.linkhub.domain.space.model.space.vo.SpaceImages;

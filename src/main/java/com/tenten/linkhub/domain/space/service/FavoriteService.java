@@ -12,9 +12,12 @@ import com.tenten.linkhub.domain.space.service.dto.favorite.FavoriteSpacesFindRe
 import com.tenten.linkhub.domain.space.service.dto.favorite.MyFavoriteSpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.favorite.SpaceRegisterInFavoriteResponse;
 import com.tenten.linkhub.domain.space.service.mapper.FavoriteMapper;
+
 import com.tenten.linkhub.global.exception.DataDuplicateException;
 import com.tenten.linkhub.global.response.ErrorCode;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -68,7 +71,7 @@ public class FavoriteService {
     }
 
     private void checkDuplicateFavorite(Long spaceId, Long memberId) {
-        if (favoriteRepository.isExist(memberId, spaceId)){
+        if (favoriteRepository.isExist(memberId, spaceId)) {
             throw new DataDuplicateException(ErrorCode.DUPLICATE_FAVORITE);
         }
     }

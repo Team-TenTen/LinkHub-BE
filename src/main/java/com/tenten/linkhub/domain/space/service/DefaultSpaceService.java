@@ -6,13 +6,10 @@ import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.favorite.FavoriteRepository;
-import com.tenten.linkhub.domain.space.repository.link.LinkRepository;
 import com.tenten.linkhub.domain.space.repository.scrap.ScrapRepository;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
 import com.tenten.linkhub.domain.space.repository.space.dto.MemberSpacesQueryCondition;
 import com.tenten.linkhub.domain.space.repository.spacemember.SpaceMemberRepository;
-import com.tenten.linkhub.domain.space.repository.tag.TagRepository;
-import com.tenten.linkhub.domain.space.repository.tag.dto.TagInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
 import com.tenten.linkhub.domain.space.service.dto.space.MemberSpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.NewSpacesScrapRequest;
@@ -25,9 +22,17 @@ import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndS
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.spacemember.SpaceMemberRoleChangeRequest;
 import com.tenten.linkhub.domain.space.service.mapper.SpaceMapper;
+
+import com.tenten.linkhub.domain.link.service.LinkService;
+import com.tenten.linkhub.domain.link.repository.link.LinkRepository;
+import com.tenten.linkhub.domain.link.repository.tag.TagRepository;
+import com.tenten.linkhub.domain.link.repository.tag.dto.TagInfo;
+
 import com.tenten.linkhub.global.exception.PolicyViolationException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
