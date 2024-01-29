@@ -7,8 +7,9 @@ import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.repository.common.dto.QSpaceAndOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
-import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickNames;
+import com.tenten.linkhub.domain.space.repository.common.mapper.RepositoryDtoMapper;
 import com.tenten.linkhub.domain.space.repository.favorite.dto.MyFavoriteSpacesQueryCondition;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
@@ -21,14 +22,12 @@ import static com.tenten.linkhub.domain.member.model.QMember.member;
 import static com.tenten.linkhub.domain.space.model.space.QFavorite.favorite;
 import static com.tenten.linkhub.domain.space.model.space.QSpaceImage.spaceImage;
 
+@RequiredArgsConstructor
 @Repository
 public class FavoriteQueryDslRepository {
 
     private final JPAQueryFactory queryFactory;
-
-    public FavoriteQueryDslRepository(JPAQueryFactory queryFactory) {
-        this.queryFactory = queryFactory;
-    }
+    private final RepositoryDtoMapper mapper;
 
     public Slice<SpaceAndSpaceImageOwnerNickName> findMyFavoriteSpacesByQuery(MyFavoriteSpacesQueryCondition condition) {
         List<SpaceAndOwnerNickName> spaceAndOwnerNickNames = queryFactory
@@ -52,9 +51,7 @@ public class FavoriteQueryDslRepository {
         List<Long> spaceIds = getSpaceIds(spaceAndOwnerNickNames);
         List<SpaceImage> spaceImages = findSpaceImagesBySpaceIds(spaceIds);
 
-        SpaceAndSpaceImageOwnerNickNames spaceAndSpaceImageOwnerNickNames = SpaceAndSpaceImageOwnerNickNames.of(spaceAndOwnerNickNames, spaceImages);
-
-        List<SpaceAndSpaceImageOwnerNickName> contents = spaceAndSpaceImageOwnerNickNames.contents();
+        List<SpaceAndSpaceImageOwnerNickName> contents = mapper.toSpaceAndSpaceImageOwnerNickNames(spaceAndOwnerNickNames, spaceImages);
         boolean hasNext = false;
 
         if (contents.size() > condition.pageable().getPageSize()) {

@@ -9,12 +9,14 @@ import com.tenten.linkhub.global.util.SearchKeywordParser;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import static com.querydsl.core.types.dsl.Expressions.numberTemplate;
 import static com.tenten.linkhub.domain.space.model.space.QSpace.space;
 
 @NoArgsConstructor
+@Component
 public class DynamicQueryFactory {
 
     public OrderSpecifier<String> spaceSort(Pageable pageable) {
