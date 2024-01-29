@@ -129,7 +129,7 @@ public class SpaceController {
                 request.pageSize(),
                 StringUtils.hasText(request.sort()) ? Sort.by(request.sort()) : Sort.unsorted());
 
-        SpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(
+        SpacesFindByQueryResponses responses = spaceService.searchPublicSpacesByQuery(
                 spaceMapper.toPublicSpacesFindByQueryRequest(request, pageRequest)
         );
 

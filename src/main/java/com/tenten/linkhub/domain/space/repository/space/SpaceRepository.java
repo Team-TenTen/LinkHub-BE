@@ -10,6 +10,8 @@ public interface SpaceRepository {
 
     Slice<SpaceAndSpaceImageOwnerNickName> findPublicSpacesJoinSpaceImageByQuery(QueryCondition queryCondition);
 
+    Slice<SpaceAndSpaceImageOwnerNickName> searchPublicSpacesJoinSpaceImageByQuery(QueryCondition queryCondition);
+
     Space save(Space space);
 
     Space getById(Long spaceId);

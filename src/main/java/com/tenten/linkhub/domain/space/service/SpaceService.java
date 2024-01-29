@@ -15,6 +15,8 @@ public interface SpaceService {
 
     SpacesFindByQueryResponses findPublicSpacesByQuery(PublicSpacesFindByQueryRequest request);
 
+    SpacesFindByQueryResponses searchPublicSpacesByQuery(PublicSpacesFindByQueryRequest request);
+
     Long createSpace(SpaceCreateRequest spaceCreateRequest);
 
     SpaceWithSpaceImageAndSpaceMemberInfo getSpaceWithSpaceImageAndSpaceMemberById(Long spaceId, Long memberId);

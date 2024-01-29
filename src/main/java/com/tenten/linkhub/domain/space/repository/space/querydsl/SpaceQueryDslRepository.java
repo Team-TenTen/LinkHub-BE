@@ -60,6 +60,38 @@ public class SpaceQueryDslRepository {
         return new SliceImpl<>(contents, condition.pageable(), hasNext);
     }
 
+    public Slice<SpaceAndSpaceImageOwnerNickName> searchPublicSpacesJoinSpaceImageByCondition(QueryCondition condition) {
+        List<SpaceAndOwnerNickName> spaceAndOwnerNickNames = queryFactory
+                .select(new QSpaceAndOwnerNickName(
+                        space,
+                        member.nickname
+                ))
+                .from(space)
+                .leftJoin(member).on(space.memberId.eq(member.id))
+                .where(space.isDeleted.eq(false),
+                        space.isVisible.eq(true),
+                        dynamicQueryFactory.eqSpaceName(condition.keyWord()),
+                        dynamicQueryFactory.eqCategory(condition.filter())
+                )
+                .orderBy(dynamicQueryFactory.spaceSort(condition.pageable()))
+                .offset(condition.pageable().getOffset())
+                .limit(condition.pageable().getPageSize() + 1)
+                .fetch();
+
+        List<Long> spaceIds = getSpaceIds(spaceAndOwnerNickNames);
+        List<SpaceImage> spaceImages = findSpaceImagesBySpaceIds(spaceIds);
+
+        List<SpaceAndSpaceImageOwnerNickName> contents = mapper.toSpaceAndSpaceImageOwnerNickNames(spaceAndOwnerNickNames, spaceImages);
+        boolean hasNext = false;
+
+        if (contents.size() > condition.pageable().getPageSize()) {
+            contents.remove(condition.pageable().getPageSize());
+            hasNext = true;
+        }
+
+        return new SliceImpl<>(contents, condition.pageable(), hasNext);
+    }
+
     public Slice<SpaceAndSpaceImageOwnerNickName> findMemberSpacesJoinSpaceImageByCondition(MemberSpacesQueryCondition condition) {
         List<SpaceAndOwnerNickName> spaceAndOwnerNickNames = queryFactory
                 .select(new QSpaceAndOwnerNickName(

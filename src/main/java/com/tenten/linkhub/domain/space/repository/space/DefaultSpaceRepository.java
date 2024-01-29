@@ -27,6 +27,11 @@ public class DefaultSpaceRepository implements SpaceRepository {
     }
 
     @Override
+    public Slice<SpaceAndSpaceImageOwnerNickName> searchPublicSpacesJoinSpaceImageByQuery(QueryCondition queryCondition) {
+        return spaceQueryDslRepository.searchPublicSpacesJoinSpaceImageByCondition(queryCondition);
+    }
+
+    @Override
     public Space save(Space space) {
         return spaceJpaRepository.save(space);
     }
