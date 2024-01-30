@@ -9,6 +9,7 @@ import com.tenten.linkhub.domain.member.repository.member.MemberJpaRepository;
 import com.tenten.linkhub.domain.link.exception.LinkViewHistoryException;
 import com.tenten.linkhub.domain.link.facade.LinkFacade;
 import com.tenten.linkhub.domain.link.facade.dto.LinkCreateFacadeRequest;
+import com.tenten.linkhub.domain.space.common.SpaceCursorPageRequest;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.domain.space.model.space.Role;
 import com.tenten.linkhub.domain.space.model.space.Space;
@@ -17,9 +18,11 @@ import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.repository.space.SpaceJpaRepository;
 import com.tenten.linkhub.domain.space.service.dto.space.MemberSpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindWithFilterRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
+import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindWithCursorResponses;
 import com.tenten.linkhub.domain.space.service.dto.spacemember.SpaceMemberRoleChangeRequest;
 import com.tenten.linkhub.global.exception.PolicyViolationException;
 import com.tenten.linkhub.global.exception.UnauthorizedAccessException;
@@ -69,7 +72,7 @@ class DefaultSpaceServiceTest extends IntegrationApplicationTest {
 
     @Test
     @DisplayName("유저는 올바른 키워드, 필터, 정렬 조건들을 통해 Space를 검색할 수 있다.")
-    void findSpacesByQuery() {
+    void searchPublicSpacesByQuery() {
         //given
         PageRequest pageRequest = PageRequest.of(
                 0,
@@ -81,7 +84,7 @@ class DefaultSpaceServiceTest extends IntegrationApplicationTest {
                 Category.KNOWLEDGE_ISSUE_CAREER);
 
         //when
-        SpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(request);
+        SpacesFindByQueryResponses responses = spaceService.searchPublicSpacesByQuery(request);
 
         //then
         List<SpacesFindByQueryResponse> content = responses.responses().getContent();
@@ -92,6 +95,52 @@ class DefaultSpaceServiceTest extends IntegrationApplicationTest {
         assertThat(content.get(0).category()).isEqualTo(Category.KNOWLEDGE_ISSUE_CAREER);
         assertThat(content.get(0).spaceImagePath()).isEqualTo("https://testimage1");
         assertThat(content.get(0).ownerNickName()).isEqualTo("잠자는 사자의 콧털");
+    }
+
+    @Test
+    @DisplayName("길이 2미만의 키워드로 검색 시 IllegalArgumentException가 발생한다.")
+    void searchPublicSpacesByQuery_sortKeyword_IllegalArgumentException() {
+        //given
+        PageRequest pageRequest = PageRequest.of(
+                0,
+                10,
+                Sort.by("created_at").descending());
+
+        PublicSpacesFindByQueryRequest request = new PublicSpacesFindByQueryRequest(pageRequest,
+                "첫",
+                Category.KNOWLEDGE_ISSUE_CAREER);
+
+        //when //then
+        assertThatThrownBy(() -> spaceService.searchPublicSpacesByQuery(request))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("유저는 공개된 스페이스를 필터 조건과 함께 페이지네이션 조회할 수 있다.")
+    void findPublicSpacesWithFilter() {
+        //given
+        SpaceCursorPageRequest pageRequest = SpaceCursorPageRequest.of(
+                10,
+                "created_at",
+                Category.KNOWLEDGE_ISSUE_CAREER);
+
+        PublicSpacesFindWithFilterRequest request = new PublicSpacesFindWithFilterRequest(pageRequest, null, null);
+
+        //when
+        SpacesFindWithCursorResponses response = spaceService.findPublicSpacesWithFilter(request);
+
+        //then
+        List<SpacesFindByQueryResponse> content = response.responses().getContent();
+
+        assertThat(content.size()).isEqualTo(2);
+        assertThat(content.get(0).spaceName()).isEqualTo("세번째 스페이스");
+        assertThat(content.get(0).category()).isEqualTo(Category.KNOWLEDGE_ISSUE_CAREER);
+        assertThat(content.get(0).spaceImagePath()).isEqualTo("https://testimage3");
+        assertThat(content.get(0).ownerNickName()).isEqualTo("백둥이");
+        assertThat(content.get(1).spaceName()).isEqualTo("첫번째 스페이스");
+        assertThat(content.get(1).category()).isEqualTo(Category.KNOWLEDGE_ISSUE_CAREER);
+        assertThat(content.get(1).spaceImagePath()).isEqualTo("https://testimage1");
+        assertThat(content.get(1).ownerNickName()).isEqualTo("잠자는 사자의 콧털");
     }
 
     @Test
