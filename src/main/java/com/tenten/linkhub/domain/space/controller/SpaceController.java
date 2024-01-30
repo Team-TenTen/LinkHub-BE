@@ -283,11 +283,12 @@ public class SpaceController {
      * 스페이스 필터 조회 API
      */
     @Operation(
-            summary = "스페이스 필터 조회 API", description = "메인 페이지용 스페이스 필터 조회이며 pageNumber, pageSize, sort, filter를 받아 검색합니다. (sort, filter조건 없이 사용 가능합니다.)\n\n " +
-            "sort: {created_at, updated_at, favorite_count, view_count}\n\n " +
+            summary = "스페이스 필터 조회 API", description = "메인 페이지용 스페이스 필터 조회이며 lastSpaceId(정렬 조건 favorite_count인 경우 lastFavoriteCount 추가로 필요), pageSize, sort, filter를 받아 조회합니다. (sort, filter조건 없이 사용 가능합니다.)\n\n " +
+            "첫 페이지 조회의 경우 lastSpaceId 없이 요청하면 됩니다. (정렬 조건 favorite_count의 경우 lastSpaceId, lastFavoriteCount 둘다 없이 요청.)\n\n " +
+            "sort: {created_at, favorite_count}\n\n " +
             "filter: {ENTER_ART, LIFE_KNOWHOW_SHOPPING, HOBBY_LEISURE_TRAVEL, KNOWLEDGE_ISSUE_CAREER, ETC}",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "검색이 성공적으로 완료 되었습니다."),
+                    @ApiResponse(responseCode = "200", description = "조회가 성공적으로 완료 되었습니다."),
             })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PublicSpaceFindWithFilterApiResponses> findPublicSpacesWithFilter(
