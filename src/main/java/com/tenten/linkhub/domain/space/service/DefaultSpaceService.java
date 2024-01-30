@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.space.service;
 
+import com.tenten.linkhub.domain.space.common.SpaceCursorSlice;
 import com.tenten.linkhub.domain.space.model.space.Scrap;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
@@ -14,12 +15,14 @@ import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
 import com.tenten.linkhub.domain.space.service.dto.space.MemberSpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.NewSpacesScrapRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindWithFilterRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponse;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
+import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindWithCursorResponses;
 import com.tenten.linkhub.domain.space.service.dto.spacemember.SpaceMemberRoleChangeRequest;
 import com.tenten.linkhub.domain.space.service.mapper.SpaceMapper;
 
@@ -61,18 +64,17 @@ public class DefaultSpaceService implements SpaceService {
 
     @Override
     @Transactional(readOnly = true)
-    public SpacesFindByQueryResponses findPublicSpacesByQuery(PublicSpacesFindByQueryRequest request) {
-        validateSearchKeWord(request.keyWord());
-        Slice<SpaceAndSpaceImageOwnerNickName> spaceAndSpaceImageOwnerNickName = spaceRepository.findPublicSpacesJoinSpaceImageByQuery(mapper.toQueryCond(request));
+    public SpacesFindWithCursorResponses findPublicSpacesWithFilter(PublicSpacesFindWithFilterRequest request) {
+        SpaceCursorSlice<SpaceAndSpaceImageOwnerNickName> spaceAndSpaceImageOwnerNickName = spaceRepository.findPublicSpacesJoinSpaceImageByQuery(mapper.toCursorPageQueryCondition(request));
 
-        return SpacesFindByQueryResponses.from(spaceAndSpaceImageOwnerNickName);
+        return SpacesFindWithCursorResponses.from(spaceAndSpaceImageOwnerNickName);
     }
 
     @Override
     @Transactional(readOnly = true)
     public SpacesFindByQueryResponses searchPublicSpacesByQuery(PublicSpacesFindByQueryRequest request) {
         validateSearchKeWord(request.keyWord());
-        Slice<SpaceAndSpaceImageOwnerNickName> spaceAndSpaceImageOwnerNickName = spaceRepository.findPublicSpacesJoinSpaceImageByQuery(mapper.toQueryCond(request));
+        Slice<SpaceAndSpaceImageOwnerNickName> spaceAndSpaceImageOwnerNickName = spaceRepository.searchPublicSpacesJoinSpaceImageByQuery(mapper.toQueryCond(request));
 
         return SpacesFindByQueryResponses.from(spaceAndSpaceImageOwnerNickName);
     }

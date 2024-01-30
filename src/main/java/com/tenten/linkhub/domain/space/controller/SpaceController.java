@@ -2,6 +2,7 @@ package com.tenten.linkhub.domain.space.controller;
 
 import com.tenten.linkhub.domain.auth.MemberDetails;
 
+import com.tenten.linkhub.domain.space.common.SpaceCursorPageRequest;
 import com.tenten.linkhub.domain.space.controller.dto.comment.CommentUpdateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.comment.CommentUpdateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RepliesFindApiRequest;
@@ -48,10 +49,11 @@ import com.tenten.linkhub.domain.space.service.dto.comment.ReplyCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.favorite.FavoriteSpacesFindResponses;
 import com.tenten.linkhub.domain.space.service.dto.favorite.SpaceRegisterInFavoriteResponse;
-import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindWithFilterRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 
+import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindWithCursorResponses;
 import com.tenten.linkhub.global.response.ErrorResponse;
 import com.tenten.linkhub.global.response.ErrorWithDetailCodeResponse;
 
@@ -291,13 +293,13 @@ public class SpaceController {
     public ResponseEntity<PublicSpaceFindWithFilterApiResponses> findPublicSpacesWithFilter(
             @ModelAttribute PublicSpacesFindWithFilterApiRequest request
     ) {
-        PageRequest pageRequest = PageRequest.of(
-                request.pageNumber(),
+        SpaceCursorPageRequest pageRequest = SpaceCursorPageRequest.of(
                 request.pageSize(),
-                StringUtils.hasText(request.sort()) ? Sort.by(request.sort()) : Sort.unsorted());
+                request.sort(),
+                request.filter());
 
-        PublicSpacesFindByQueryRequest serviceRequest = spaceMapper.toPublicSpacesFindByQueryRequest(request, pageRequest);
-        SpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(serviceRequest);
+        PublicSpacesFindWithFilterRequest serviceRequest = spaceMapper.toPublicSpacesFindWithFilterRequest(request, pageRequest);
+        SpacesFindWithCursorResponses responses = spaceService.findPublicSpacesWithFilter(serviceRequest);
 
         PublicSpaceFindWithFilterApiResponses apiResponses = PublicSpaceFindWithFilterApiResponses.from(responses);
 

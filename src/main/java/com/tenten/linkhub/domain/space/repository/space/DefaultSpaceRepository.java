@@ -1,7 +1,9 @@
 package com.tenten.linkhub.domain.space.repository.space;
 
+import com.tenten.linkhub.domain.space.common.SpaceCursorSlice;
 import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndSpaceImageOwnerNickName;
+import com.tenten.linkhub.domain.space.repository.space.dto.CursorPageQueryCondition;
 import com.tenten.linkhub.domain.space.repository.space.dto.MemberSpacesQueryCondition;
 import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
 import com.tenten.linkhub.domain.space.repository.space.querydsl.SpaceQueryDslRepository;
@@ -22,7 +24,7 @@ public class DefaultSpaceRepository implements SpaceRepository {
     }
 
     @Override
-    public Slice<SpaceAndSpaceImageOwnerNickName> findPublicSpacesJoinSpaceImageByQuery(QueryCondition queryCondition) {
+    public SpaceCursorSlice<SpaceAndSpaceImageOwnerNickName> findPublicSpacesJoinSpaceImageByQuery(CursorPageQueryCondition queryCondition) {
         return spaceQueryDslRepository.findPublicSpacesJoinSpaceImageByCondition(queryCondition);
     }
 

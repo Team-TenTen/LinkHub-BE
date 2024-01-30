@@ -7,10 +7,11 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.tenten.linkhub.domain.space.model.category.Category;
 import com.tenten.linkhub.global.util.SearchKeywordParser;
 import lombok.NoArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import java.util.Objects;
 
 import static com.querydsl.core.types.dsl.Expressions.numberTemplate;
 import static com.tenten.linkhub.domain.space.model.space.QSpace.space;
@@ -19,21 +20,44 @@ import static com.tenten.linkhub.domain.space.model.space.QSpace.space;
 @Component
 public class DynamicQueryFactory {
 
-    public OrderSpecifier<String> spaceSort(Pageable pageable) {
-        for (Sort.Order sort : pageable.getSort()) {
-            String property = sort.getProperty();
+    public BooleanExpression ltLastFavoriteCountAndId(Long lastFavoriteCount, Long lastId, Sort sort) {
+        String requestSort = getRequestSort(sort);
 
-            switch (property) {
-                case "favorite_count" -> {
-                    return new OrderSpecifier(Order.DESC, space.favoriteCount);
-                }
-                case "created_at" -> {
-                    return new OrderSpecifier(Order.DESC, space.createdAt);
-                }
+        if (isCreatedAtRequest(requestSort, lastId)) {
+            return space.id.lt(lastId);
+        }
+
+        if (isFavoriteCountRequest(requestSort, lastFavoriteCount, lastId)) {
+            return space.favoriteCount.lt(lastFavoriteCount)
+                    .or(space.favoriteCount.eq(lastFavoriteCount).and(space.id.lt(lastId)));
+        }
+
+        return null;
+    }
+
+    public OrderSpecifier<String>[] spaceSort(Sort sort) {
+        String property = getRequestSort(sort);
+
+        if (Objects.isNull(property)) {
+            return null;
+        }
+
+        switch (property) {
+            case "favorite_count" -> {
+                return new OrderSpecifier[]{
+                        new OrderSpecifier(Order.DESC, space.favoriteCount),
+                        new OrderSpecifier(Order.DESC, space.id)
+                };
+            }
+
+            case "created_at" -> {
+                return new OrderSpecifier[]{
+                        new OrderSpecifier(Order.DESC, space.id)
+                };
             }
         }
 
-        return new OrderSpecifier(Order.ASC, NullExpression.DEFAULT, OrderSpecifier.NullHandling.Default);
+        return null;
     }
 
     public BooleanExpression eqCategory(Category filter) {
@@ -65,6 +89,24 @@ public class DynamicQueryFactory {
         }
 
         return space.isVisible.eq(true);
+    }
+
+    private String getRequestSort(Sort sort) {
+        return sort.stream()
+                .findFirst()
+                .map(Sort.Order::getProperty)
+                .orElse(null);
+    }
+
+    private boolean isCreatedAtRequest(String requestSort, Long lastId) {
+        return Objects.equals(requestSort, "created_at") &&
+                Objects.nonNull(lastId);
+    }
+
+    private boolean isFavoriteCountRequest(String requestSort, Long lastFavoriteCount, Long lastId) {
+        return Objects.equals(requestSort, "favorite_count") &&
+                Objects.nonNull(lastFavoriteCount) &&
+                Objects.nonNull(lastId);
     }
 
 }
