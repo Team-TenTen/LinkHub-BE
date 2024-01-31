@@ -18,6 +18,7 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.tenten.linkhub.domain.member.model.QMember.member;
 import static com.tenten.linkhub.domain.space.model.space.QSpace.space;
@@ -62,15 +63,7 @@ public class SpaceQueryDslRepository {
             hasNext = true;
         }
 
-        Space lastSpace = contents.get(contents.size() - 1).space();
-
-        return SpaceCursorSlice.of(
-                lastSpace.getFavoriteCount(),
-                lastSpace.getId(),
-                pageable.pageSize(),
-                hasNext,
-                contents
-        );
+        return mapper.toSpaceCursorSlice(contents, pageable, hasNext);
     }
 
     public Slice<SpaceAndSpaceImageOwnerNickName> searchPublicSpacesJoinSpaceImageByCondition(QueryCondition condition) {

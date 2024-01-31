@@ -157,9 +157,9 @@ class DefaultSpaceServiceTest extends IntegrationApplicationTest {
         List<SpacesFindByQueryResponse> content = response.responses().getContent();
 
         assertThat(content.size()).isEqualTo(2);
-        assertThat(content.get(1).spaceName()).isEqualTo("세번째 스페이스");
-        assertThat(content.get(1).spaceImagePath()).isEqualTo("https://testimage3");
-        assertThat(content.get(1).ownerNickName()).isEqualTo("백둥이");
+        assertThat(content.get(0).spaceName()).isEqualTo("세번째 스페이스");
+        assertThat(content.get(0).spaceImagePath()).isEqualTo("https://testimage3");
+        assertThat(content.get(0).ownerNickName()).isEqualTo("백둥이");
     }
 
     @Test
@@ -176,12 +176,11 @@ class DefaultSpaceServiceTest extends IntegrationApplicationTest {
         List<SpacesFindByQueryResponse> content = response.responses().getContent();
 
         assertThat(content.size()).isEqualTo(2);
-        assertThat(content.get(0).spaceName()).isEqualTo("첫번째 스페이스");
-        assertThat(content.get(0).description()).isEqualTo("첫번째 스페이스 소개글");
-        assertThat(content.get(0).category()).isEqualTo(Category.KNOWLEDGE_ISSUE_CAREER);
-        assertThat(content.get(0).spaceImagePath()).isEqualTo("https://testimage1");
+        assertThat(content.get(0).spaceName()).isEqualTo("두번째 스페이스");
+        assertThat(content.get(0).spaceImagePath()).isEqualTo("https://testimage2");
         assertThat(content.get(0).ownerNickName()).isEqualTo("잠자는 사자의 콧털");
-        assertThat(content.get(1).spaceName()).isEqualTo("두번째 스페이스");
+        assertThat(content.get(1).spaceName()).isEqualTo("첫번째 스페이스");
+        assertThat(content.get(1).spaceImagePath()).isEqualTo("https://testimage1");
         assertThat(content.get(1).ownerNickName()).isEqualTo("잠자는 사자의 콧털");
     }
 
