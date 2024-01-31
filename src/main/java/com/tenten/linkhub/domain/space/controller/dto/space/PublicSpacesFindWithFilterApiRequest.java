@@ -4,8 +4,11 @@ import com.tenten.linkhub.domain.space.model.category.Category;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public record PublicSpacesFindWithFilterApiRequest(
-        @Schema(title = "페이지 번호", example = "0")
-        Integer pageNumber,
+        @Schema(title = "마지막 favoriteCount", example = "1")
+        Long lastFavoriteCount,
+
+        @Schema(title = "마지막 spaceId", example = "1")
+        Long lastSpaceId,
 
         @Schema(title = "페이지 크기", example = "10")
         Integer pageSize,

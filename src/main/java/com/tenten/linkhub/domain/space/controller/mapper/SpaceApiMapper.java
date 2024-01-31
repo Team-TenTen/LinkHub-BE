@@ -1,5 +1,6 @@
 package com.tenten.linkhub.domain.space.controller.mapper;
 
+import com.tenten.linkhub.domain.space.common.SpaceCursorPageRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.NewSpacesScrapApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.PublicSpacesFindWithFilterApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.space.SpaceCreateApiRequest;
@@ -11,6 +12,7 @@ import com.tenten.linkhub.domain.space.facade.dto.NewSpacesScrapFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceCreateFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceDetailGetByIdFacadeRequest;
 import com.tenten.linkhub.domain.space.facade.dto.SpaceUpdateFacadeRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindWithFilterRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
 import com.tenten.linkhub.domain.space.service.dto.spacemember.SpaceMemberRoleChangeRequest;
@@ -28,7 +30,7 @@ public interface SpaceApiMapper {
 
     PublicSpacesFindByQueryRequest toPublicSpacesFindByQueryRequest(PublicSpacesFindByQueryApiRequest request, Pageable pageable);
 
-    PublicSpacesFindByQueryRequest toPublicSpacesFindByQueryRequest(PublicSpacesFindWithFilterApiRequest request, Pageable pageable);
+    PublicSpacesFindWithFilterRequest toPublicSpacesFindWithFilterRequest(PublicSpacesFindWithFilterApiRequest request, SpaceCursorPageRequest pageable);
 
     SpaceCreateFacadeRequest toSpaceCreateFacadeRequest(SpaceCreateApiRequest request, MultipartFile file, Long memberId);
 
