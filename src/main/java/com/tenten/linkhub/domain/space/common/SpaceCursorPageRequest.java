@@ -5,17 +5,16 @@ import org.springframework.data.domain.Sort;
 import org.springframework.util.StringUtils;
 
 public record SpaceCursorPageRequest(
-        Integer pageSize,
+        int pageSize,
         Sort sort,
         Category filter
 ) {
 
     public static SpaceCursorPageRequest of(
-            Integer pageSize,
+            int pageSize,
             String sort,
             Category filter
-            )
-    {
+    ) {
         return new SpaceCursorPageRequest(
                 pageSize,
                 StringUtils.hasText(sort) ? Sort.by(sort) : Sort.unsorted(),
