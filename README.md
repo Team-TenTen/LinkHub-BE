@@ -16,65 +16,34 @@
 
 ## 🔗 기능 시연 🔗
 ### 메인 화면 및 검색
-  좋아요를 많이 받은 상위 링크들과 최신순 혹은 즐겨찾기 순의 스페이스(링크 저장소)를 필터링하여 보여준다. 또한 검색 기능을 제공하여 편의성 확보
-  <div style="text-align:center; margin-top:5px;">
-  <div style="display:inline-block; margin-right:10px;">
-    <img height="300" src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/14368d47-d597-4bac-a375-4886b10f3eb4">
-    <p style="margin-top:1px;">메인 페이지</p>
-  </div>
-  <div style="display:inline-block; margin-right:10px;">
-    <img height="300" src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/4ace19c3-0419-4955-a4de-1b2e355046de">
-    <p style="margin-top:1px;">스페이스(링크 저장소) 검색</p>
-  </div>
-  <div style="display:inline-block;">
-    <img height="300" src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/de209ba9-8871-4953-b86e-18360a794269">
-    <p style="margin-top:1px;">유저 검색</p>
-  </div>
-  </div>
+좋아요를 많이 받은 상위 링크들과 최신순 혹은 즐겨찾기 순의 스페이스(링크 저장소)를 필터링하여 보여준다. 또한 검색 기능을 제공하여 편의성 확보
+| 메인 페이지 | 스페이스(링크 저장소) 검색 | 유저 검색 |
+|:---:|:---:|:---:|
+| ![메인 페이지](https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/14368d47-d597-4bac-a375-4886b10f3eb4) | ![스페이스(링크 저장소) 검색](https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/4ace19c3-0419-4955-a4de-1b2e355046de) | ![유저 검색](https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/de209ba9-8871-4953-b86e-18360a794269) |
 
 ### 링크 아카이빙
-  링크의 메타태그를 통해 자동으로 제목을 추천해주며 태그를 통해 추후 필터링의 용이성을 올림
-  <div style="text-align:center; margin-top:5px;">
-  <div style="display:inline-block; margin-right:10px;">
-    <img height="300" src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/73319202-e0eb-437d-8521-9907fc4bf856">
-    <p style="margin-top:1px;">링크 생성</p>
-  </div>
-  <div style="display:inline-block;">
-    <img height="300" src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/18b07c5f-e369-4772-88c3-81e28a29c0ef">
-    <p style="margin-top:1px;">링크 필터링</p>
-  </div>
-  </div>
+링크의 메타태그를 통해 자동으로 제목을 추천해주며 태그를 통해 추후 필터링의 용이성을 올림
+| 링크 생성 | 링크 필터링 |
+|:---:|:---:|
+| <img src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/73319202-e0eb-437d-8521-9907fc4bf856" width="300"> | <img src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/18b07c5f-e369-4772-88c3-81e28a29c0ef" width="300"> |
 
 ### 공유 아카이빙 공간
-  스페이스 초대 기능을 통해 언제든지 팀원들을 초대할 수 있으며 viewer 및 editor 등의 세부 권한 지정이 가능하다. 또한 설정 시 팀원들의 링크 조회 이력을 표시할 수 있다.
-  <div style="text-align:center; margin-top:5px;">
-  <div style="display:inline-block; margin-right:10px;">
-    <img height="300" src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/cae806df-b646-491d-97ba-611179d92cc7">
-    <p style="margin-top:1px;">초대 하기</p>
-  </div>
-  <div style="display:inline-block; margin-right:10px;">
-    <img height="300" src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/9ed2649d-49ce-4209-9136-84b29e2a938e">
-    <p style="margin-top:1px;">초대 받기</p>
-  </div>
-  <div style="display:inline-block;">
-    <img height="300" src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/e4748848-8b7e-41af-9a40-cb0de6524f28">
-    <p style="margin-top:1px;">링크 조회 이력 표시</p>
-  </div>
-  </div>
+스페이스 초대 기능을 통해 언제든지 팀원들을 초대할 수 있으며 viewer 및 editor 등의 세부 권한 지정이 가능하다. 또한 설정 시 팀원들의 링크 조회 이력을 표시할 수 있다.
+| 초대 하기 | 초대 받기 | 링크 조회 이력 표시 |
+|:---:|:---:|:---:|
+| ![초대 하기](https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/cae806df-b646-491d-97ba-611179d92cc7) | ![초대 받기](https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/9ed2649d-49ce-4209-9136-84b29e2a938e) | ![링크 조회 이력 표시](https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/e4748848-8b7e-41af-9a40-cb0de6524f28) |
 
 ### 즐겨찾기
-  공개된 스페이스(링크 저장소)는 즐겨찾기 기능을 통해 구독을 할 수 있다. 또한 많은 유저들에게 즐겨찾기된 스페이스는 메인화면 즐겨찾기 순 옵션에서 상위에 노출되게 된다.
-  <div style="text-align:center; margin-top:5px;">
-    <img height="300" src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/e7d6fc60-fe21-499c-bb9e-7c6db1d5354a">
-    <p style="margin-top:1px;">즐겨찾기</p>
-  </div>
+공개된 스페이스(링크 저장소)는 즐겨찾기 기능을 통해 구독을 할 수 있다. 또한 많은 유저들에게 즐겨찾기된 스페이스는 메인화면 즐겨찾기 순 옵션에서 상위에 노출되게 된다.
+| 즐겨찾기 |
+|:---:|
+| <img src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/e7d6fc60-fe21-499c-bb9e-7c6db1d5354a" width="300"> |
 
 ### 가져오기
-  공개된 스페이스를(링크 저장소) 복사하여 편집 가능한 나의 스페이스로 만들 수 있다. 즐겨찾기와 다르게 원본의 이후 변경사항은 반영되지 않는다.
-  <div style="text-align:center; margin-top:5px;">
-    <img height="300" src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/e8757df5-c505-4473-a0d9-4412e8cf656e">
-    <p style="margin-top:1px;">가져오기</p>
-  </div>
+공개된 스페이스를(링크 저장소) 복사하여 편집 가능한 나의 스페이스로 만들 수 있다. 즐겨찾기와 다르게 원본의 이후 변경사항은 반영되지 않는다.
+| 가져오기 |
+|:---:|
+| <img src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/e8757df5-c505-4473-a0d9-4412e8cf656e" width="300"> |
 
 ## 👨‍👩‍👦 서버 팀원 소개
 | Team Leader |Developer |                                   Developer                                    |
