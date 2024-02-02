@@ -5,10 +5,12 @@ import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.model.space.SpaceMember;
 import com.tenten.linkhub.domain.space.model.space.dto.SpaceUpdateDto;
+import com.tenten.linkhub.domain.space.repository.space.dto.CursorPageQueryCondition;
 import com.tenten.linkhub.domain.space.repository.space.dto.MemberSpacesQueryCondition;
 import com.tenten.linkhub.domain.space.repository.space.dto.QueryCondition;
 import com.tenten.linkhub.domain.space.service.dto.space.MemberSpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.NewSpacesScrapRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindWithFilterRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
@@ -25,6 +27,14 @@ public class SpaceMapper {
                 request.pageable(),
                 request.keyWord(),
                 request.filter());
+    }
+
+    public CursorPageQueryCondition toCursorPageQueryCondition(PublicSpacesFindWithFilterRequest request) {
+        return new CursorPageQueryCondition(
+                request.pageable(),
+                request.lastFavoriteCount(),
+                request.lastSpaceId()
+        );
     }
 
     public Space toSpace(SpaceCreateRequest request, SpaceMember spaceMember, SpaceImage spaceImage) {
