@@ -25,7 +25,7 @@
 링크의 메타태그를 통해 자동으로 제목을 추천해주며 태그를 통해 추후 필터링의 용이성을 올림
 | 링크 생성 | 링크 필터링 |
 |:---:|:---:|
-| <img src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/73319202-e0eb-437d-8521-9907fc4bf856" width="300"> | <img src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/18b07c5f-e369-4772-88c3-81e28a29c0ef" width="300"> |
+| <img src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/73319202-e0eb-437d-8521-9907fc4bf856" width="250"> | <img src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/18b07c5f-e369-4772-88c3-81e28a29c0ef" width="250"> |
 
 ### 공유 아카이빙 공간
 스페이스 초대 기능을 통해 언제든지 팀원들을 초대할 수 있으며 viewer 및 editor 등의 세부 권한 지정이 가능하다. 또한 설정 시 팀원들의 링크 조회 이력을 표시할 수 있다.
@@ -37,13 +37,19 @@
 공개된 스페이스(링크 저장소)는 즐겨찾기 기능을 통해 구독을 할 수 있다. 또한 많은 유저들에게 즐겨찾기된 스페이스는 메인화면 즐겨찾기 순 옵션에서 상위에 노출되게 된다.
 | 즐겨찾기 |
 |:---:|
-| <img src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/e7d6fc60-fe21-499c-bb9e-7c6db1d5354a" width="300"> |
+| <img src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/e7d6fc60-fe21-499c-bb9e-7c6db1d5354a" width="250"> |
 
 ### 가져오기
-공개된 스페이스를(링크 저장소) 복사하여 편집 가능한 나의 스페이스로 만들 수 있다. 즐겨찾기와 다르게 원본의 이후 변경사항은 반영되지 않는다.
+공개된 스페이스(링크 저장소)를 복사하여 편집 가능한 나의 스페이스로 만들 수 있다. 즐겨찾기와 다르게 원본의 이후 변경사항은 반영되지 않는다.
 | 가져오기 |
 |:---:|
-| <img src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/e8757df5-c505-4473-a0d9-4412e8cf656e" width="300"> |
+| <img src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/e8757df5-c505-4473-a0d9-4412e8cf656e" width="250"> |
+
+### 댓글
+댓글이 허용된 스페이스(링크 저장소)는 댓글을 작성할 수 있으며 대댓글도 작성할 수 있다.
+| 댓글 확인 | 댓글 쓰기 |
+|:---:|:---:|
+| <img src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/a3053906-45bf-4b42-9fec-4a9e92362e24" width="250"> | <img src="https://github.com/Team-TenTen/LinkHub-BE/assets/108216455/92077dcd-04cf-4edb-b5ef-f8b8c5f57fdc" width="250"> |
 
 ## 👨‍👩‍👦 서버 팀원 소개
 | Team Leader |Developer |                                   Developer                                    |
