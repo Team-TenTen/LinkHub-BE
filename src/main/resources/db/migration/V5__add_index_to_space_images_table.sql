@@ -1,0 +1,1 @@
+CREATE INDEX idx_space_images_space_id ON space_images(space_id);
