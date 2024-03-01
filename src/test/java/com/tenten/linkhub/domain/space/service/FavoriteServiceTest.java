@@ -65,10 +65,9 @@ class FavoriteServiceTest extends IntegrationApplicationTest {
 
     @Test
     @DisplayName("유저는 스페이스를 즐겨찾기에 등록할 수 있다.")
-    void createFavorite() throws InterruptedException {
+    void createFavorite() {
         //when
         SpaceRegisterInFavoriteResponse response = favoriteService.createFavorite(setUpSpaceId1, setUpMemberId1);
-        Thread.sleep(100);
 
         //then
         Favorite savedFavorite = favoriteJpaRepository.findById(response.favoriteId()).get();
@@ -100,7 +99,6 @@ class FavoriteServiceTest extends IntegrationApplicationTest {
             });
         }
         latch.await();
-        Thread.sleep(1000);
 
         //then
         Space space = spaceJpaRepository.findById(setUpSpaceId1).get();
@@ -109,14 +107,12 @@ class FavoriteServiceTest extends IntegrationApplicationTest {
 
     @Test
     @DisplayName("유저는 스페이스 즐겨찾기를 취소할 수 있다.")
-    void cancelFavoriteSpace() throws InterruptedException {
+    void cancelFavoriteSpace() {
         //given
         favoriteService.createFavorite(setUpSpaceId1, setUpMemberId1);
-        Thread.sleep(100);
 
         //when
         Long deletedFavoriteId = favoriteService.cancelFavoriteSpace(setUpSpaceId1, setUpMemberId1);
-        Thread.sleep(100);
 
         //then
         Space space = spaceJpaRepository.findById(setUpSpaceId1).get();
@@ -177,11 +173,10 @@ class FavoriteServiceTest extends IntegrationApplicationTest {
 
     @Test
     @DisplayName("유저는 자신이 즐겨찾기 등록한 스페이스를 키워드, 필터 조건 없이 조회할 수 있다.")
-    void findMyFavoriteSpaces_emptyKeyWord_emptyFilter() throws InterruptedException {
+    void findMyFavoriteSpaces_emptyKeyWord_emptyFilter() {
         //given
         favoriteService.createFavorite(setUpSpaceId1, setUpMemberId1);
         favoriteService.createFavorite(setUpSpaceId2, setUpMemberId1);
-        Thread.sleep(10);
 
         PageRequest pageRequest = PageRequest.of(0, 10);
         MyFavoriteSpacesFindRequest request = new MyFavoriteSpacesFindRequest(pageRequest, null, null, setUpMemberId1);
