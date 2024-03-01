@@ -22,9 +22,7 @@ public interface SpaceRepository {
 
     Slice<SpaceAndSpaceImageOwnerNickName> findMemberSpacesJoinSpaceImageByQuery(MemberSpacesQueryCondition queryCondition);
 
-    void increaseFavoriteCount(Long spaceId);
-
-    void decreaseFavoriteCount(Long spaceId);
-
     void increaseScrapCount(Long spaceId);
+
+    Space getByIdWithPessimisticLock(Long spaceId);
 }

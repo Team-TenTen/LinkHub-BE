@@ -228,4 +228,11 @@ public class Space extends BaseEntity {
         spaceMembers.deleteSpaceMember(memberId);
     }
 
+    public void increaseFavoriteCount() {
+        favoriteCount++;
+    }
+
+    public void decreaseFavoriteCount() {
+        favoriteCount--;
+    }
 }
