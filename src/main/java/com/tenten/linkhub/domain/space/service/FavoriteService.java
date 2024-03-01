@@ -34,8 +34,6 @@ public class FavoriteService {
         Space space = spaceRepository.getById(spaceId);
         space.validateVisibilityAndMembership(memberId);
 
-        checkDuplicateFavorite(spaceId, memberId);
-
         Favorite favorite = mapper.toFavorite(space, memberId);
         Favorite savedFavorite = favoriteRepository.save(favorite);
 
@@ -44,6 +42,21 @@ public class FavoriteService {
         return SpaceRegisterInFavoriteResponse.of(
                 savedFavorite.getId(),
                 space.getFavoriteCount() + 1);
+    }
+
+    @Transactional
+    public SpaceRegisterInFavoriteResponse createFavoriteWithLock(Long spaceId, Long memberId) {
+        Space space = spaceRepository.getByIdWhitLock(spaceId);
+        space.validateVisibilityAndMembership(memberId);
+
+        Favorite favorite = mapper.toFavorite(space, memberId);
+        Favorite savedFavorite = favoriteRepository.save(favorite);
+
+        space.addFavoriteCount();
+
+        return SpaceRegisterInFavoriteResponse.of(
+                savedFavorite.getId(),
+                space.getFavoriteCount());
     }
 
     @Transactional
@@ -72,5 +85,4 @@ public class FavoriteService {
             throw new DataDuplicateException(ErrorCode.DUPLICATE_FAVORITE);
         }
     }
-
 }

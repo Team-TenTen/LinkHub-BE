@@ -25,4 +25,6 @@ public interface SpaceRepository {
     void increaseScrapCount(Long spaceId);
 
     Slice<SpaceAndSpaceImageOwnerNickName> findPublicSpacesJoinSpaceImageByLikeQuery(QueryCondition queryCondition);
+
+    Space getByIdWhitLock(Long spaceId);
 }

@@ -38,6 +38,12 @@ public class DefaultSpaceRepository implements SpaceRepository {
     }
 
     @Override
+    public Space getByIdWhitLock(Long spaceId) {
+        return spaceJpaRepository.findByIdWithLock(spaceId)
+                .orElseThrow(() -> new DataNotFoundException("해당 spaceId를 가진 Space를 찾을 수 없습니다."));
+    }
+
+    @Override
     public Space getSpaceJoinSpaceMemberById(Long spaceId) {
         return spaceJpaRepository.findSpaceJoinSpaceMemberById(spaceId)
                 .orElseThrow(() -> new DataNotFoundException("해당 spaceId를 가진 SpaceWithSpaceImage를 찾을 수 없습니다."));

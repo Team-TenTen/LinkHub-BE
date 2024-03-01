@@ -16,7 +16,7 @@ spring:
       url: ${LOKI_URL}
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/link_hub_query_test?serverTimezone=Asia/Seoul&rewriteBatchedStatements=true # ${RDS_URL}
+    url: ${RDS_URL} # ${RDS_URL}
     username: root # ${RDS_USERNAME}
     password: 12345! # ${RDS_PASSWORD}
   servlet:

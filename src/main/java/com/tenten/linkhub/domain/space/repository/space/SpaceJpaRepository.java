@@ -1,7 +1,9 @@
 package com.tenten.linkhub.domain.space.repository.space;
 
 import com.tenten.linkhub.domain.space.model.space.Space;
+import jakarta.persistence.LockModeType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
@@ -29,4 +31,8 @@ public interface SpaceJpaRepository extends JpaRepository<Space, Long> {
     @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE spaces SET scrap_count = scrap_count + 1 WHERE id = :spaceId AND is_deleted = false ", nativeQuery = true)
     void increaseScrapCount(Long spaceId);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT s FROM Space s WHERE s.id = :spaceId AND s.isDeleted = false ")
+    Optional<Space> findByIdWithLock(Long spaceId);
 }

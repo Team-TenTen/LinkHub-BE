@@ -549,6 +549,21 @@ public class SpaceController {
     }
 
     /**
+     * 테스트용 스페이스 즐겨찾기 (비관락을 이용한 락킹 리드)
+     */
+    @PostMapping(value = "/{spaceId}/favorites/locking-read",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<SpaceRegisterInFavoriteApiResponse> registerSpaceInFavoriteWithLock(
+            @AuthenticationPrincipal MemberDetails memberDetails,
+            @PathVariable Long spaceId
+    ) {
+        SpaceRegisterInFavoriteResponse response = favoriteService.createFavoriteWithLock(spaceId, memberDetails.memberId());
+        SpaceRegisterInFavoriteApiResponse apiResponse = SpaceRegisterInFavoriteApiResponse.from(response.favoriteCount());
+
+        return ResponseEntity.ok(apiResponse);
+    }
+
+    /**
      * 스페이스 즐겨찾기 취소 API
      */
     @Operation(
