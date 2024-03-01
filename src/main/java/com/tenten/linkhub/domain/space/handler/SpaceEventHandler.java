@@ -1,8 +1,6 @@
 package com.tenten.linkhub.domain.space.handler;
 
-import com.tenten.linkhub.domain.space.handler.dto.FavoriteDeleteEvent;
 import com.tenten.linkhub.domain.space.handler.dto.SpaceImageDeleteEvent;
-import com.tenten.linkhub.domain.space.handler.dto.FavoriteSaveEvent;
 import com.tenten.linkhub.domain.space.handler.dto.SpaceDetailFindEvent;
 import com.tenten.linkhub.domain.space.handler.dto.ScrapSaveEvent;
 import com.tenten.linkhub.domain.space.repository.space.SpaceRepository;
@@ -38,20 +36,6 @@ public class SpaceEventHandler {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleDeleteImageEvent(SpaceImageDeleteEvent event) {
         imageFileUploader.deleteImages(event.spaceImageNames());
-    }
-
-    @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void handleSaveFavoriteEvent(FavoriteSaveEvent event) {
-        spaceRepository.increaseFavoriteCount(event.spaceId());
-    }
-
-    @Async
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void handleDeleteFavoriteEvent(FavoriteDeleteEvent event) {
-        spaceRepository.decreaseFavoriteCount(event.spaceId());
     }
 
     @Async

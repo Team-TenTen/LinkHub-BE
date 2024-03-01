@@ -10,7 +10,6 @@ import com.tenten.linkhub.domain.space.repository.space.querydsl.SpaceQueryDslRe
 import com.tenten.linkhub.global.exception.DataNotFoundException;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class DefaultSpaceRepository implements SpaceRepository {
@@ -56,20 +55,14 @@ public class DefaultSpaceRepository implements SpaceRepository {
     }
 
     @Override
-    @Transactional
-    public void increaseFavoriteCount(Long spaceId) {
-        spaceJpaRepository.increaseFavoriteCount(spaceId);
-    }
-
-    @Override
-    @Transactional
-    public void decreaseFavoriteCount(Long spaceId) {
-        spaceJpaRepository.decreaseFavoriteCount(spaceId);
-    }
-
-    @Override
     public void increaseScrapCount(Long spaceId) {
         spaceJpaRepository.increaseScrapCount(spaceId);
+    }
+
+    @Override
+    public Space getByIdWithPessimisticLock(Long spaceId) {
+        return spaceJpaRepository.findByIdWithPessimisticLock(spaceId)
+                .orElseThrow(() -> new DataNotFoundException("해당 spaceId를 가진 Space를 찾을 수 없습니다."));
     }
 
 }
