@@ -32,7 +32,6 @@ public class FavoriteService {
     @Transactional
     public SpaceRegisterInFavoriteResponse createFavorite(Long spaceId, Long memberId) {
         Space space = spaceRepository.getById(spaceId);
-        space.validateVisibilityAndMembership(memberId);
 
         Favorite favorite = mapper.toFavorite(space, memberId);
         Favorite savedFavorite = favoriteRepository.save(favorite);
@@ -47,12 +46,11 @@ public class FavoriteService {
     @Transactional
     public SpaceRegisterInFavoriteResponse createFavoriteWithLock(Long spaceId, Long memberId) {
         Space space = spaceRepository.getByIdWhitLock(spaceId);
-        space.validateVisibilityAndMembership(memberId);
 
         Favorite favorite = mapper.toFavorite(space, memberId);
         Favorite savedFavorite = favoriteRepository.save(favorite);
 
-        space.addFavoriteCount();
+        space.increaseFavoriteCount();
 
         return SpaceRegisterInFavoriteResponse.of(
                 savedFavorite.getId(),
