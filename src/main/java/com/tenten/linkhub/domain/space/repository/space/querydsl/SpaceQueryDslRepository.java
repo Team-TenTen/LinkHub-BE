@@ -76,7 +76,7 @@ public class SpaceQueryDslRepository {
                 .leftJoin(member).on(space.memberId.eq(member.id))
                 .where(space.isDeleted.eq(false),
                         space.isVisible.eq(true),
-                        dynamicQueryFactory.eqSpaceNameWithPlus(condition.keyWord()),
+                        dynamicQueryFactory.eqSpaceName(condition.keyWord()),
                         dynamicQueryFactory.eqCategory(condition.filter())
                 )
                 .orderBy(dynamicQueryFactory.spaceSort(condition.pageable().getSort()))
@@ -110,10 +110,43 @@ public class SpaceQueryDslRepository {
                 .where(spaceMember.memberId.eq(condition.memberId()),
                         space.isDeleted.eq(false),
                         dynamicQueryFactory.eqIsVisible(condition.isMySpace()),
-                        dynamicQueryFactory.eqSpaceNameWithPlus(condition.keyWord()),
+                        dynamicQueryFactory.eqSpaceName(condition.keyWord()),
                         dynamicQueryFactory.eqCategory(condition.filter())
                 )
                 .orderBy(space.id.desc())
+                .offset(condition.pageable().getOffset())
+                .limit(condition.pageable().getPageSize() + 1)
+                .fetch();
+
+        List<Long> spaceIds = getSpaceIds(spaceAndOwnerNickNames);
+        List<SpaceImage> spaceImages = findSpaceImagesBySpaceIds(spaceIds);
+
+        List<SpaceAndSpaceImageOwnerNickName> contents = mapper.toSpaceAndSpaceImageOwnerNickNames(spaceAndOwnerNickNames, spaceImages);
+        ;
+        boolean hasNext = false;
+
+        if (contents.size() > condition.pageable().getPageSize()) {
+            contents.remove(condition.pageable().getPageSize());
+            hasNext = true;
+        }
+
+        return new SliceImpl<>(contents, condition.pageable(), hasNext);
+    }
+
+    public Slice<SpaceAndSpaceImageOwnerNickName> findPublicSpacesJoinSpaceImageByConditionWithLikeQuery(QueryCondition condition) {
+        List<SpaceAndOwnerNickName> spaceAndOwnerNickNames = queryFactory
+                .select(new QSpaceAndOwnerNickName(
+                        space,
+                        member.nickname
+                ))
+                .from(space)
+                .join(member).on(space.memberId.eq(member.id))
+                .where(space.isDeleted.eq(false),
+                        space.isVisible.eq(true),
+                        dynamicQueryFactory.eqSpaceNameWithLikeQuery(condition.keyWord()),
+                        dynamicQueryFactory.eqCategory(condition.filter())
+                )
+                .orderBy(space.createdAt.desc())
                 .offset(condition.pageable().getOffset())
                 .limit(condition.pageable().getPageSize() + 1)
                 .fetch();
@@ -148,38 +181,4 @@ public class SpaceQueryDslRepository {
                 .toList();
     }
 
-    public Slice<SpaceAndSpaceImageOwnerNickName> findPublicSpacesJoinSpaceImageByConditionWithLikeQuery(QueryCondition condition) {
-        List<SpaceAndOwnerNickName> spaceAndOwnerNickNames = queryFactory
-                .select(new QSpaceAndOwnerNickName(
-                        space,
-                        member.nickname
-                ))
-                .from(space)
-                .join(member).on(space.memberId.eq(member.id))
-                .where(space.isDeleted.eq(false),
-                        space.isVisible.eq(true),
-                        dynamicQueryFactory.eqSpaceNameWithLikeQuery(condition.keyWord()),
-                        dynamicQueryFactory.eqCategory(condition.filter())
-                )
-                .orderBy(dynamicQueryFactory.spaceSort(condition.pageable()))
-                .offset(condition.pageable().getOffset())
-                .limit(condition.pageable().getPageSize() + 1)
-                .fetch();
-
-        List<Long> spaceIds = getSpaceIds(spaceAndOwnerNickNames);
-
-        List<SpaceImage> spaceImages = findSpaceImagesBySpaceIds(spaceIds);
-
-        SpaceAndSpaceImageOwnerNickNames spaceAndSpaceImageOwnerNickNames = SpaceAndSpaceImageOwnerNickNames.of(spaceAndOwnerNickNames, spaceImages);
-
-        List<SpaceAndSpaceImageOwnerNickName> contents = spaceAndSpaceImageOwnerNickNames.contents();
-        boolean hasNext = false;
-
-        if (contents.size() > condition.pageable().getPageSize()) {
-            contents.remove(condition.pageable().getPageSize());
-            hasNext = true;
-        }
-
-        return new SliceImpl<>(contents, condition.pageable(), hasNext);
-    }
 }

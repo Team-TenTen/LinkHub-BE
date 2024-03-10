@@ -47,7 +47,7 @@ public class FavoriteService {
 
     @Transactional
     public SpaceRegisterInFavoriteResponse createFavoriteWithLock(Long spaceId, Long memberId) {
-        Space space = spaceRepository.getByIdWhitLock(spaceId);
+        Space space = spaceRepository.getByIdWithPessimisticLock(spaceId);
 
         Favorite favorite = mapper.toFavorite(space, memberId);
         Favorite savedFavorite = favoriteRepository.save(favorite);
