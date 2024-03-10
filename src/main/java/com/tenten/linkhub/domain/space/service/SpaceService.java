@@ -4,16 +4,20 @@ import com.tenten.linkhub.domain.space.service.dto.space.DeletedSpaceImageNames;
 import com.tenten.linkhub.domain.space.service.dto.space.MemberSpacesFindRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.NewSpacesScrapRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindWithFilterRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceUpdateRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceWithSpaceImageAndSpaceMemberInfo;
+import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindWithCursorResponses;
 import com.tenten.linkhub.domain.space.service.dto.spacemember.SpaceMemberRoleChangeRequest;
 
 public interface SpaceService {
 
-    SpacesFindByQueryResponses findPublicSpacesByQuery(PublicSpacesFindByQueryRequest request);
+    SpacesFindWithCursorResponses findPublicSpacesWithFilter(PublicSpacesFindWithFilterRequest request);
+
+    SpacesFindByQueryResponses searchPublicSpacesByQuery(PublicSpacesFindByQueryRequest request);
 
     SpacesFindByQueryResponses findPublicSpacesByLikeQuery(PublicSpacesFindByQueryRequest request);
 

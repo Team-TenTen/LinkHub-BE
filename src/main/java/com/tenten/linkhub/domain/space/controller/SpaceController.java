@@ -1,6 +1,8 @@
 package com.tenten.linkhub.domain.space.controller;
 
 import com.tenten.linkhub.domain.auth.MemberDetails;
+
+import com.tenten.linkhub.domain.space.common.SpaceCursorPageRequest;
 import com.tenten.linkhub.domain.space.controller.dto.comment.CommentUpdateApiRequest;
 import com.tenten.linkhub.domain.space.controller.dto.comment.CommentUpdateApiResponse;
 import com.tenten.linkhub.domain.space.controller.dto.comment.RepliesFindApiRequest;
@@ -31,6 +33,7 @@ import com.tenten.linkhub.domain.space.controller.dto.spacemember.SpaceMemberRol
 import com.tenten.linkhub.domain.space.controller.mapper.CommentApiMapper;
 import com.tenten.linkhub.domain.space.controller.mapper.FavoriteApiMapper;
 import com.tenten.linkhub.domain.space.controller.mapper.SpaceApiMapper;
+import com.tenten.linkhub.domain.space.controller.annotation.SpaceViewList;
 import com.tenten.linkhub.domain.space.facade.CommentFacade;
 import com.tenten.linkhub.domain.space.facade.SpaceFacade;
 import com.tenten.linkhub.domain.space.facade.dto.CommentAndChildCountAndMemberInfoResponses;
@@ -46,18 +49,21 @@ import com.tenten.linkhub.domain.space.service.dto.comment.ReplyCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.comment.RootCommentCreateRequest;
 import com.tenten.linkhub.domain.space.service.dto.favorite.FavoriteSpacesFindResponses;
 import com.tenten.linkhub.domain.space.service.dto.favorite.SpaceRegisterInFavoriteResponse;
-import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindByQueryRequest;
+import com.tenten.linkhub.domain.space.service.dto.space.PublicSpacesFindWithFilterRequest;
 import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindByQueryResponses;
 import com.tenten.linkhub.domain.space.service.dto.space.SpaceTagGetResponses;
-import com.tenten.linkhub.domain.space.controller.annotation.SpaceViewList;
+
+import com.tenten.linkhub.domain.space.service.dto.space.SpacesFindWithCursorResponses;
 import com.tenten.linkhub.global.response.ErrorResponse;
 import com.tenten.linkhub.global.response.ErrorWithDetailCodeResponse;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -67,6 +73,7 @@ import java.util.List;
 import java.util.Objects;
 
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
@@ -99,6 +106,7 @@ public class SpaceController {
     private final CommentFacade commentFacade;
     private final CommentService commentService;
     private final FavoriteService favoriteService;
+
     private final SpaceApiMapper spaceMapper;
     private final CommentApiMapper commentMapper;
     private final FavoriteApiMapper favoriteMapper;
@@ -123,7 +131,7 @@ public class SpaceController {
                 request.pageSize(),
                 StringUtils.hasText(request.sort()) ? Sort.by(request.sort()) : Sort.unsorted());
 
-        SpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(
+        SpacesFindByQueryResponses responses = spaceService.searchPublicSpacesByQuery(
                 spaceMapper.toPublicSpacesFindByQueryRequest(request, pageRequest)
         );
 
@@ -303,23 +311,24 @@ public class SpaceController {
      * 스페이스 필터 조회 API
      */
     @Operation(
-            summary = "스페이스 필터 조회 API", description = "메인 페이지용 스페이스 필터 조회이며 pageNumber, pageSize, sort, filter를 받아 검색합니다. (sort, filter조건 없이 사용 가능합니다.)\n\n " +
-            "sort: {created_at, updated_at, favorite_count, view_count}\n\n " +
+            summary = "스페이스 필터 조회 API", description = "메인 페이지용 스페이스 필터 조회이며 lastSpaceId(정렬 조건 favorite_count인 경우 lastFavoriteCount 추가로 필요), pageSize, sort, filter를 받아 조회합니다. (sort, filter조건 없이 사용 가능합니다.)\n\n " +
+            "첫 페이지 조회의 경우 lastSpaceId 없이 요청하면 됩니다. (정렬 조건 favorite_count의 경우 lastSpaceId, lastFavoriteCount 둘다 없이 요청.)\n\n " +
+            "sort: {created_at, favorite_count}\n\n " +
             "filter: {ENTER_ART, LIFE_KNOWHOW_SHOPPING, HOBBY_LEISURE_TRAVEL, KNOWLEDGE_ISSUE_CAREER, ETC}",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "검색이 성공적으로 완료 되었습니다."),
+                    @ApiResponse(responseCode = "200", description = "조회가 성공적으로 완료 되었습니다."),
             })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PublicSpaceFindWithFilterApiResponses> findPublicSpacesWithFilter(
             @ModelAttribute PublicSpacesFindWithFilterApiRequest request
     ) {
-        PageRequest pageRequest = PageRequest.of(
-                request.pageNumber(),
+        SpaceCursorPageRequest pageRequest = SpaceCursorPageRequest.of(
                 request.pageSize(),
-                StringUtils.hasText(request.sort()) ? Sort.by(request.sort()) : Sort.unsorted());
+                request.sort(),
+                request.filter());
 
-        PublicSpacesFindByQueryRequest serviceRequest = spaceMapper.toPublicSpacesFindByQueryRequest(request, pageRequest);
-        SpacesFindByQueryResponses responses = spaceService.findPublicSpacesByQuery(serviceRequest);
+        PublicSpacesFindWithFilterRequest serviceRequest = spaceMapper.toPublicSpacesFindWithFilterRequest(request, pageRequest);
+        SpacesFindWithCursorResponses responses = spaceService.findPublicSpacesWithFilter(serviceRequest);
 
         PublicSpaceFindWithFilterApiResponses apiResponses = PublicSpaceFindWithFilterApiResponses.from(responses);
 

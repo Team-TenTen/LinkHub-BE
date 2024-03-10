@@ -21,18 +21,10 @@ public interface SpaceJpaRepository extends JpaRepository<Space, Long> {
     Optional<Space> findById(Long spaceId);
 
     @Modifying(clearAutomatically = true)
-    @Query(value = "UPDATE spaces SET favorite_count = favorite_count + 1 WHERE id = :spaceId AND is_deleted = false ", nativeQuery = true)
-    void increaseFavoriteCount(Long spaceId);
-
-    @Modifying(clearAutomatically = true)
-    @Query(value = "UPDATE spaces SET favorite_count = favorite_count - 1 WHERE id = :spaceId AND is_deleted = false ", nativeQuery = true)
-    void decreaseFavoriteCount(Long spaceId);
-
-    @Modifying(clearAutomatically = true)
     @Query(value = "UPDATE spaces SET scrap_count = scrap_count + 1 WHERE id = :spaceId AND is_deleted = false ", nativeQuery = true)
     void increaseScrapCount(Long spaceId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT s FROM Space s WHERE s.id = :spaceId AND s.isDeleted = false ")
-    Optional<Space> findByIdWithLock(Long spaceId);
+    Optional<Space> findByIdWithPessimisticLock(Long spaceId);
 }
