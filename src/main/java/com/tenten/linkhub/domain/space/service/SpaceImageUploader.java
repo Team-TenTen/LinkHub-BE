@@ -6,18 +6,27 @@ import com.tenten.linkhub.global.aws.s3.ImageFileUploader;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
-@RequiredArgsConstructor
 @Component
 public class SpaceImageUploader {
     private static final String SPACE_IMAGE_FOLDER = "space-image/";
-    private static final String SPACE_DEFAULT_IMAGE_PATH = "https://linkhub-s3.s3.ap-northeast-2.amazonaws.com/space-image/space-default-v1.png";
+    private final String SPACE_DEFAULT_IMAGE_PATH;
 
     private final ImageFileUploader imageFileUploader;
+
+    public SpaceImageUploader(
+            @Value("${cloud.aws.s3.space-default-image-path}")
+            String spaceDefaultImagePath,
+            ImageFileUploader imageFileUploader
+    ) {
+        this.SPACE_DEFAULT_IMAGE_PATH = spaceDefaultImagePath;
+        this.imageFileUploader = imageFileUploader;
+    }
 
     public Optional<ImageInfo> getNewImageInfoOrEmptyImageInfo(MultipartFile file){
         if (file == null){

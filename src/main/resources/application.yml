@@ -82,6 +82,8 @@ cloud:
   aws:
     s3:
       bucket: ${AWS_S3_BUCKET}
+      space-default-image-path: ${SPACE_DEFAULT_IMAGE_PATH}
+      member-default-image-path: ${MEMBER_DEFAULT_IMAGE_PATH}
     credentials:
       access-key: ${AWS_ACCESS_KEY}
       secret-key: ${AWS_SECRET_KEY}
