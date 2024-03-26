@@ -40,7 +40,7 @@ import com.tenten.linkhub.global.infrastructure.ses.AwsSesService;
 import com.tenten.linkhub.global.response.ErrorCode;
 import com.tenten.linkhub.global.util.email.EmailDto;
 import com.tenten.linkhub.global.util.email.VerificationCodeCreator;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -51,14 +51,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-@RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
 public class MemberServiceImpl implements MemberService {
 
     private static final String MEMBER_IMAGE_FOLDER = "member-image/";
-    private static final String MEMBER_DEFAULT_IMAGE_PATH = "https://team-10-bucket.s3.ap-northeast-2.amazonaws.com/member-image/member-default-v1.png";
     private static final Long CODE_VALID_DURATION = 60 * 5L;
+    private final String MEMBER_DEFAULT_IMAGE_PATH;
 
     private final MemberRepository memberRepository;
     private final FollowRepository followRepository;
@@ -68,6 +67,29 @@ public class MemberServiceImpl implements MemberService {
     private final ImageFileUploader imageFileUploader;
     private final JwtProvider jwtProvider;
     private final MemberMapper mapper;
+
+    public MemberServiceImpl(
+            @Value("${cloud.aws.s3.member-default-image-path}")
+            String memberDefaultImagePath,
+            MemberRepository memberRepository,
+            FollowRepository followRepository,
+            AwsSesService emailService,
+            VerificationCodeCreator verificationCodeCreator,
+            MemberEmailRedisRepository memberEmailRedisRepository,
+            ImageFileUploader imageFileUploader,
+            JwtProvider jwtProvider,
+            MemberMapper mapper
+    ) {
+        MEMBER_DEFAULT_IMAGE_PATH = memberDefaultImagePath;
+        this.memberRepository = memberRepository;
+        this.followRepository = followRepository;
+        this.emailService = emailService;
+        this.verificationCodeCreator = verificationCodeCreator;
+        this.memberEmailRedisRepository = memberEmailRedisRepository;
+        this.imageFileUploader = imageFileUploader;
+        this.jwtProvider = jwtProvider;
+        this.mapper = mapper;
+    }
 
     @Transactional
     @Override

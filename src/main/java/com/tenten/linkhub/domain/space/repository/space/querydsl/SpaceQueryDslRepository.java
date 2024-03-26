@@ -3,7 +3,6 @@ package com.tenten.linkhub.domain.space.repository.space.querydsl;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.tenten.linkhub.domain.space.common.SpaceCursorPageRequest;
 import com.tenten.linkhub.domain.space.common.SpaceCursorSlice;
-import com.tenten.linkhub.domain.space.model.space.Space;
 import com.tenten.linkhub.domain.space.model.space.SpaceImage;
 import com.tenten.linkhub.domain.space.repository.common.dto.QSpaceAndOwnerNickName;
 import com.tenten.linkhub.domain.space.repository.common.dto.SpaceAndOwnerNickName;
@@ -18,7 +17,6 @@ import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Objects;
 
 import static com.tenten.linkhub.domain.member.model.QMember.member;
 import static com.tenten.linkhub.domain.space.model.space.QSpace.space;
