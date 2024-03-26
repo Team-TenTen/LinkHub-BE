@@ -39,7 +39,7 @@ public class DynamicQueryFactory {
         String property = getRequestSort(sort);
 
         if (Objects.isNull(property)) {
-            return null;
+            return new OrderSpecifier[0];
         }
 
         switch (property) {
@@ -49,15 +49,15 @@ public class DynamicQueryFactory {
                         new OrderSpecifier(Order.DESC, space.id)
                 };
             }
-
             case "created_at" -> {
                 return new OrderSpecifier[]{
                         new OrderSpecifier(Order.DESC, space.id)
                 };
             }
+            default -> {
+                return new OrderSpecifier[0];
+            }
         }
-
-        return null;
     }
 
     public BooleanExpression eqCategory(Category filter) {
@@ -92,6 +92,10 @@ public class DynamicQueryFactory {
     }
 
     private String getRequestSort(Sort sort) {
+        if (Objects.isNull(sort)) {
+            return null;
+        }
+
         return sort.stream()
                 .findFirst()
                 .map(Sort.Order::getProperty)
