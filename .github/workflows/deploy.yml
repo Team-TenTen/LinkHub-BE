@@ -38,7 +38,7 @@ jobs:
           docker push ${{ secrets.LINKHUB_IMAGE }}:latest
 
       - name: Deploy to EC2
-        uses: appleboy/ssh-action@v0.1.10
+        uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
